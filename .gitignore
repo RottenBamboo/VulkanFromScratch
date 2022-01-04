@@ -1,0 +1,8 @@
+assets/scenes
+build
+.vs
+.vscode
+.idea
+output/*
+.DS_Store
+cmake-build-debug
