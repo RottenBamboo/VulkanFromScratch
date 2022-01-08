@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.21)
 project(VulkanFromScratch)
 
 set(CMAKE_CXX_STANDARD 14)
-set(Vulkan_INCLUDE_DIRS "${VULKAN_SDK_PATH}/Include") # 1.1 Make sure this include path is correct
-set(Vulkan_LIBRARIES "${VULKAN_SDK_PATH}/Lib") # 1.2 Make sure lib path is correct
+set(Vulkan_INCLUDE_DIRS "${VULKAN_SDK_PATH}/Include")
+set(Vulkan_LIBRARIES "${VULKAN_SDK_PATH}/Lib")
 set(Vulkan_FOUND "True")
 set(GLFW_INCLUDE_DIRS "${GLFW_PATH}/include")
 
