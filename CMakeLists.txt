@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 
 project(VulkanFromScratch)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(Vulkan_INCLUDE_DIRS "${VULKAN_SDK_PATH}/Include")
 set(Vulkan_LIBRARIES "${VULKAN_SDK_PATH}/Lib")
 set(Vulkan_FOUND "True")
