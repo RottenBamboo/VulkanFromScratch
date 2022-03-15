@@ -70,6 +70,7 @@ private:
     VkRenderPass renderPass;
     VkPipelineLayout pipelineLayout;
     VkPipeline graphicsPipeline;
+    std::vector<VkFramebuffer> swapChainFrameBuffers;
     void initWindow()
     {
         glfwInit();
@@ -92,8 +93,30 @@ private:
         createImageView();
         createRenderPass();
         createGraphicsPipeline();
+        createFrameBuffers();
     }
 
+    void createFrameBuffers()
+    {
+        swapChainFrameBuffers.resize(swapChainImageViews.size());
+        for(size_t i = 0; i < swapChainImageViews.size(); i++)
+        {
+            VkImageView attachments[] = {swapChainImageViews[i]};
+            VkFramebufferCreateInfo framebufferInfo{};
+            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            framebufferInfo.renderPass = renderPass;
+            framebufferInfo.attachmentCount = 1;
+            framebufferInfo.pAttachments = attachments;
+            framebufferInfo.width = swapChainExtent.width;
+            framebufferInfo.height = swapChainExtent.height;
+            framebufferInfo.layers = 1;
+
+            if(vkCreateFramebuffer(device, &framebufferInfo, nullptr, &swapChainFrameBuffers[i]) != VK_SUCCESS)
+            {
+                throw::std::runtime_error("failed to create framebuffer");
+            }
+        }
+    }
     void createRenderPass()
     {
         VkAttachmentDescription colorAttachment{};
@@ -201,6 +224,7 @@ private:
         }
 
         vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+        vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
     }
     void pickPhysicalDevice()
     {
@@ -672,6 +696,11 @@ private:
 
     void cleanup()
     {
+        for(auto frameBuffer : swapChainFrameBuffers)
+        {
+            vkDestroyFramebuffer(device, frameBuffer, nullptr);
+        }
+
         vkDestroyPipeline(device, graphicsPipeline, nullptr);
         vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
         vkDestroyRenderPass(device, renderPass, nullptr);
