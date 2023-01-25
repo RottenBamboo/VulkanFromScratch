@@ -7,7 +7,7 @@ set(Vulkan_INCLUDE_DIRS "${VULKAN_SDK_PATH}/Include")
 set(Vulkan_LIBRARIES "${VULKAN_SDK_PATH}/Lib")
 set(Vulkan_FOUND "True")
 set(GLFW_INCLUDE_DIRS "${GLFW_PATH}/include")
-
+set(STB_INCLUDE_DIRS "external/stb")
 add_executable(VulkanFromScratch src/main.cpp)
 
 find_package(Vulkan REQUIRED)
@@ -25,3 +25,4 @@ find_package(glfw3 CONFIG REQUIRED)
 target_include_directories(${PROJECT_NAME} PUBLIC ${GLFW_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} glfw ${GLFW_LIBRARIES})
 
+target_include_directories(${PROJECT_NAME} PUBLIC ${STB_INCLUDE_DIRS})
