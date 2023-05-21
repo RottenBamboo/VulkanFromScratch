@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.24.3)
 
 project(VulkanFromScratch)
 
@@ -9,7 +9,7 @@ set(Vulkan_FOUND "True")
 set(GLFW_INCLUDE_DIRS "${GLFW_PATH}/include")
 set(STB_INCLUDE_DIRS "external/stb")
 set(TINYOBJLOADER_INCLUDE_DIRS "external/tinyobjloader")
-add_executable(VulkanFromScratch src/main.cpp)
+add_executable(VulkanFromScratch src/RBApplication.cpp src/RBApplication.h src/RBWindows.h src/RBWindows.cpp src/AppMain.cpp)
 
 find_package(Vulkan REQUIRED)
 target_include_directories(${PROJECT_NAME} PUBLIC ${Vulkan_INCLUDE_DIRS})
