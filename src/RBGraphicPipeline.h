@@ -1,0 +1,16 @@
+//
+// Created by 王旭 on 2023/5/22.
+//
+
+#ifndef VULKANFROMSCRATCH_RBGRAPHICPIPELINE_H
+#define VULKANFROMSCRATCH_RBGRAPHICPIPELINE_H
+
+
+
+class RBGraphicPipeline {
+
+};
+
+
+
+#endif //VULKANFROMSCRATCH_RBGRAPHICPIPELINE_H
