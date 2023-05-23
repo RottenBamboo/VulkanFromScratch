@@ -1287,8 +1287,8 @@ private:
 
     void createGraphicsPipeline()
     {
-        auto vertShaderCode = realFile("../shader/vert.spv");
-        auto fragShaderCode = realFile("../shader/frag.spv");
+        auto vertShaderCode = readFile("../shader/vert.spv");
+        auto fragShaderCode = readFile("../shader/frag.spv");
 
         VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
         VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
@@ -1833,7 +1833,7 @@ private:
         return true;
     }
 
-    static std::vector<char> realFile(const std::string& filename)
+    static std::vector<char> readFile(const std::string& filename)
     {
         std::ifstream file(filename, std::ios::ate | std::ios::binary);
         if(!file.is_open())

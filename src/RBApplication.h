@@ -5,7 +5,9 @@
 #pragma once
 #ifndef VULKANFROMSCRATCH_RBAPPLICATION_H
 #define VULKANFROMSCRATCH_RBAPPLICATION_H
+
 #include "RBWindows.h"
+#include "RBDevice.h"
 #include <stdexcept>
 #include <iostream>
 #include <string>
@@ -19,6 +21,7 @@ namespace RottenBamboo {
         void run();
     private:
         RBWindows windows{WIDTH, HEIGHT, "Vulkan"};
+        RBDevice device{&windows};
     };
 }
 
