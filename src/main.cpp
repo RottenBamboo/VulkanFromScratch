@@ -219,31 +219,31 @@ private:
 
     void initVulkan()
     {
-        createInstance();
-        setupDebugMessenger();
-        createSurface();
-        pickPhysicalDevice();
-        createLogicalDevice();
+        createInstance();//bingo
+        setupDebugMessenger();//bingo
+        createSurface();//bingo
+        pickPhysicalDevice();//bingo
+        createLogicalDevice();//bingo
         createSwapChain();
-        createImageView();
-        createRenderPass();
-        createDescriptorSetLayout();
-        createGraphicsPipeline();
-        createCommandPool();
-        createColorResources();
-        createDepthResources();
-        createFrameBuffers();
-        createTextureImage();
-        createTextureImageView();
-        createTextureSampler();
+        createImageView();//bingo
+        createRenderPass();//bingo
+        createDescriptorSetLayout();//bingo
+        createGraphicsPipeline();//bingo
+        createCommandPool();//bingo
+        createColorResources();//bingo
+        createDepthResources();//bingo
+        createFrameBuffers();//bingo
+        createTextureImage();//bingo
+        createTextureImageView();//bingo
+        createTextureSampler();//bingo
         loadModel();
-        createVertexBuffer();
-        createIndexBuffer();
-        createUniformBuffers();
-        createDescriptorPool();
-        createDescriptorSets();
-        createCommandBuffers();
-        createSyncObjects();
+        createVertexBuffer();//bingo
+        createIndexBuffer();//bingo
+        createUniformBuffers();//bingo
+        createDescriptorPool();//bingo
+        createDescriptorSets();//bingo
+        createCommandBuffers();//bingo
+        createSyncObjects();//bingo
     }
 
     void loadModel()

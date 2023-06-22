@@ -7,7 +7,7 @@
 
 namespace RottenBamboo {
 
-    VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger) {
+    VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator, VkDebugUtilsMessengerEXT *pDebugMessenger) {
         auto func = (PFN_vkCreateDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
         if (func != nullptr) {
             return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
@@ -16,12 +16,13 @@ namespace RottenBamboo {
         }
     }
 
-    void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) {
+    void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks *pAllocator) {
         auto func = (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
         if (func != nullptr) {
             func(instance, debugMessenger, pAllocator);
         }
     }
+
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
             VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
             VkDebugUtilsMessageTypeFlagsEXT messageType,
@@ -34,8 +35,7 @@ namespace RottenBamboo {
         return VK_FALSE;
     }
 
-    RBDevice::RBDevice(RBWindows* window)
-    {
+    RBDevice::RBDevice(RBWindows *window) {
         createInstance();
         setupDebugMessenger();
         createSurface(window);
@@ -43,8 +43,7 @@ namespace RottenBamboo {
         createLogicalDevice();
     }
 
-    RBDevice::~RBDevice()
-    {
+    RBDevice::~RBDevice() {
         vkDestroyDevice(device, nullptr);
         if (enableValidationLayers) {
             DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
@@ -53,8 +52,7 @@ namespace RottenBamboo {
         vkDestroyInstance(instance, nullptr);
     }
 
-    RBDevice::QueueFamilyIndices RBDevice::findQueueFamilies(VkPhysicalDevice device)
-    {
+    QueueFamilyIndices RBDevice::findQueueFamilies(VkPhysicalDevice device) {
         QueueFamilyIndices indices;
 
         uint32_t queueFamilyCount = 0;
@@ -64,7 +62,7 @@ namespace RottenBamboo {
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
         int i = 0;
-        for (const auto& queueFamily : queueFamilies) {
+        for (const auto &queueFamily: queueFamilies) {
             if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
                 indices.graphicsFamily = i;
             }
@@ -86,50 +84,43 @@ namespace RottenBamboo {
     }
 
 
-    bool RBDevice::checkDeviceExtensionSupport(VkPhysicalDevice device)
-    {
+    bool RBDevice::checkDeviceExtensionSupport(VkPhysicalDevice device) {
         uint32_t extensionCount;
         vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
         std::vector<VkExtensionProperties> availableExtensions(extensionCount);
         vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
-        std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
-        for(const auto& extension : availableExtensions)
-        {
+        std::set < std::string > requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
+        for (const auto &extension: availableExtensions) {
             requiredExtensions.erase(extension.extensionName);
         }
         return requiredExtensions.empty();
     }
 
-    RBDevice::SwapChainSupportDetails RBDevice::querySwapChainSupport(VkPhysicalDevice device)
-    {
+    RBDevice::SwapChainSupportDetails RBDevice::querySwapChainSupport(VkPhysicalDevice device) {
         SwapChainSupportDetails details;
         vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
         uint32_t formatCount;
         vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
-        if(formatCount != 0)
-        {
+        if (formatCount != 0) {
             details.formats.resize(formatCount);
             vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
         }
         uint32_t presentModeCount;
         vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
-        if(presentModeCount != 0)
-        {
+        if (presentModeCount != 0) {
             details.presentModes.resize(presentModeCount);
             vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
         }
         return details;
     }
 
-    bool RBDevice::isDeviceSuitable(VkPhysicalDevice device)
-    {
+    bool RBDevice::isDeviceSuitable(VkPhysicalDevice device) {
         QueueFamilyIndices indices = findQueueFamilies(device);
 
         bool extensionSupported = checkDeviceExtensionSupport(device);
 
         bool swapChainAdequate = false;
-        if(extensionSupported)
-        {
+        if (extensionSupported) {
             SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
             swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
         }
@@ -140,17 +131,14 @@ namespace RottenBamboo {
         return indices.graphicsFamily.has_value() && extensionSupported && swapChainAdequate;
     }
 
-    void RBDevice::createSurface(RBWindows* window)
-    {
-        if(glfwCreateWindowSurface(instance, window->GetWindow(), nullptr, &surface) != VK_SUCCESS)
-        {
+    void RBDevice::createSurface(RBWindows *window) {
+        if (glfwCreateWindowSurface(instance, window->GetWindow(), nullptr, &surface) != VK_SUCCESS) {
             throw std::runtime_error("failed to create window surface!");
         }
     }
 
     void RBDevice::setupDebugMessenger() {
-        if (!enableValidationLayers)
-        {
+        if (!enableValidationLayers) {
             return;
         }
 
@@ -162,57 +150,48 @@ namespace RottenBamboo {
         }
     }
 
-    VkSampleCountFlagBits RBDevice::getMaxUsableSampleCount()
-    {
+    VkSampleCountFlagBits RBDevice::getMaxUsableSampleCount() {
         VkPhysicalDeviceProperties physicalDeviceProperties;
         vkGetPhysicalDeviceProperties(physicalDevice, &physicalDeviceProperties);
         VkSampleCountFlags counts = physicalDeviceProperties.limits.framebufferColorSampleCounts & physicalDeviceProperties.limits.framebufferDepthSampleCounts;
-        if(counts & VK_SAMPLE_COUNT_64_BIT) {return VK_SAMPLE_COUNT_64_BIT;}
-        if(counts & VK_SAMPLE_COUNT_32_BIT) {return VK_SAMPLE_COUNT_32_BIT;}
-        if(counts & VK_SAMPLE_COUNT_16_BIT) {return VK_SAMPLE_COUNT_16_BIT;}
-        if(counts & VK_SAMPLE_COUNT_8_BIT)  {return VK_SAMPLE_COUNT_8_BIT;}
-        if(counts & VK_SAMPLE_COUNT_4_BIT)  {return VK_SAMPLE_COUNT_4_BIT;}
-        if(counts & VK_SAMPLE_COUNT_2_BIT)  {return VK_SAMPLE_COUNT_2_BIT;}
+        if (counts & VK_SAMPLE_COUNT_64_BIT) { return VK_SAMPLE_COUNT_64_BIT; }
+        if (counts & VK_SAMPLE_COUNT_32_BIT) { return VK_SAMPLE_COUNT_32_BIT; }
+        if (counts & VK_SAMPLE_COUNT_16_BIT) { return VK_SAMPLE_COUNT_16_BIT; }
+        if (counts & VK_SAMPLE_COUNT_8_BIT) { return VK_SAMPLE_COUNT_8_BIT; }
+        if (counts & VK_SAMPLE_COUNT_4_BIT) { return VK_SAMPLE_COUNT_4_BIT; }
+        if (counts & VK_SAMPLE_COUNT_2_BIT) { return VK_SAMPLE_COUNT_2_BIT; }
         return VK_SAMPLE_COUNT_1_BIT;
     }
 
-    void RBDevice::pickPhysicalDevice()
-    {
+    void RBDevice::pickPhysicalDevice() {
         uint32_t deviceCount = 0;
         vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
-        if(deviceCount == 0)
-        {
+        if (deviceCount == 0) {
             throw std::runtime_error("filed to find GPUs with Vulkan support!");
-        }
-        else
-        {
+        } else {
             std::vector<VkPhysicalDevice> devices(deviceCount);
             vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
-            for(const auto& device : devices)
-            {
-                if(isDeviceSuitable(device))
-                {
+            for (const auto &device: devices) {
+                if (isDeviceSuitable(device)) {
                     physicalDevice = device;
                     msaaSamples = getMaxUsableSampleCount();
                     break;
                 }
             }
 
-            if(physicalDevice == VK_NULL_HANDLE) {
+            if (physicalDevice == VK_NULL_HANDLE) {
                 throw std::runtime_error("failed to find a suitable GPU!");
             }
         }
     }
 
-    void RBDevice::createLogicalDevice()
-    {
+    void RBDevice::createLogicalDevice() {
         QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-        std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
+        std::set < uint32_t > uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
         float queuePriority = 1.0f;
-        for(uint32_t queueFamily:uniqueQueueFamilies)
-        {
+        for (uint32_t queueFamily: uniqueQueueFamilies) {
             VkDeviceQueueCreateInfo queueCreateInfo{};
             queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
             queueCreateInfo.queueFamilyIndex = queueFamily;
@@ -235,17 +214,13 @@ namespace RottenBamboo {
         createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
         createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
-        if(enableValidationLayers)
-        {
+        if (enableValidationLayers) {
             createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
             createInfo.ppEnabledLayerNames = validationLayers.data();
-        }
-        else
-        {
+        } else {
             createInfo.enabledLayerCount = 0;
         }
-        if(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS)
-        {
+        if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
             throw std::runtime_error("failed to create logical device!");
         }
 

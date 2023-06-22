@@ -12,12 +12,13 @@
 
 namespace RottenBamboo {
     class RBWindows {
-    private:
+    public:
         GLFWwindow *window;
+        bool framebufferResized = false;
+    private:
         const uint32_t width;
         const uint32_t height;
         std::string windowName = "window";
-        bool framebufferResized = false;
 
         void InitWindow();
 

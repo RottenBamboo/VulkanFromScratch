@@ -6,12 +6,14 @@
 #define VULKANFROMSCRATCH_RBDEVICE_H
 #define VK_USE_PLATFORM_MACOS_MVK
 #define GLFW_INCLUDE_VULKAN
+
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
 #include <iostream>
 #include <string>
 #include <set>
 #include <unordered_map>
+#include "RBCommon.h"
 #include "RBWindows.h"
 
 namespace RottenBamboo {
@@ -22,34 +24,32 @@ namespace RottenBamboo {
     const bool enableValidationLayers = true;
 #endif
 
-    VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
+    VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator, VkDebugUtilsMessengerEXT *pDebugMessenger);
 
-    void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
+    void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks *pAllocator);
 
-    const std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation"};
-    const std::vector<const char*> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+    const std::vector<const char *> validationLayers = {"VK_LAYER_KHRONOS_validation"};
+    const std::vector<const char *> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 
     class RBDevice {
 
-    private:
+    public:
         VkInstance instance;
-
         VkDebugUtilsMessengerEXT debugMessenger;
-
         VkSurfaceKHR surface;
-
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
-
         VkDevice device;
-
-        VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
-
         VkQueue graphicsQueue;
         VkQueue presentQueue;
 
+    private:
+
+        VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
+
+
     public:
 
-        RBDevice(RBWindows* window);
+        RBDevice(RBWindows *window);
 
         ~RBDevice();
 
@@ -57,7 +57,7 @@ namespace RottenBamboo {
 
         void setupDebugMessenger();
 
-        void createSurface(RBWindows* window);
+        void createSurface(RBWindows *window);
 
         void pickPhysicalDevice();
 
@@ -70,15 +70,6 @@ namespace RottenBamboo {
         std::vector<const char *> getRequiredExtensions();
 
         void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo);
-
-        struct QueueFamilyIndices
-        {
-            std::optional<uint32_t> graphicsFamily;
-            std::optional<uint32_t> presentFamily;
-            bool isComplete() {
-                return graphicsFamily.has_value() && presentFamily.has_value();
-            }
-        };
 
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 

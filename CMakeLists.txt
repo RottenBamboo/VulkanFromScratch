@@ -9,7 +9,7 @@ set(Vulkan_FOUND "True")
 set(GLFW_INCLUDE_DIRS "${GLFW_PATH}/include")
 set(STB_INCLUDE_DIRS "external/stb")
 set(TINYOBJLOADER_INCLUDE_DIRS "external/tinyobjloader")
-add_executable(VulkanFromScratch src/RBApplication.cpp src/RBApplication.h src/RBWindows.h src/RBWindows.cpp src/AppMain.cpp src/RBGraphicPipeline.cpp src/RBGraphicPipeline.h src/RBDevice.cpp src/RBDevice.h)
+add_executable(VulkanFromScratch src/RBApplication.cpp src/RBApplication.h src/RBWindows.h src/RBWindows.cpp src/AppMain.cpp src/RBGraphicPipeline.cpp src/RBGraphicPipeline.h src/RBDevice.cpp src/RBDevice.h src/RBSwapChain.cpp src/RBSwapChain.h src/RBCommon.cpp src/RBCommon.h src/RBCommandBuffer.cpp src/RBCommandBuffer.h src/RBDescriptors.cpp src/RBDescriptors.h)
 
 find_package(Vulkan REQUIRED)
 target_include_directories(${PROJECT_NAME} PUBLIC ${Vulkan_INCLUDE_DIRS})
