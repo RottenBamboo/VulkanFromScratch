@@ -17,6 +17,8 @@ namespace RottenBamboo {
         VkCommandPool commandPool;
         std::vector<VkCommandBuffer> commandBuffers;
 
+        void InitializeCommandBuffer();
+
         RBCommandBuffer(RBDevice &device);
 
         ~RBCommandBuffer();

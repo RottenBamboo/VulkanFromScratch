@@ -20,15 +20,18 @@ namespace RottenBamboo {
         const uint32_t height;
         std::string windowName = "window";
 
-        void InitWindow();
 
     public:
         GLFWwindow* GetWindow() { return window; }
+
         static void framebufferResizeCallback(GLFWwindow *window, int width, int height);
 
         RBWindows(uint32_t width, uint32_t height, std::string name);
 
         ~RBWindows();
+
+        void InitializeWindow();
+
         bool shouldClose() { return glfwWindowShouldClose(window); }
     };
 }

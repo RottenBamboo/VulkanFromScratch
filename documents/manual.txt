@@ -13,3 +13,7 @@ make: *** [VulkanFromScratch] Error 2
 ./compile.sh
 This instruction is for compiling shader file. If you want to change shader file, you need to compile it again. This command will compile shader file and generate spv file.
 This file is in shader folder. you must write your glslc file path in compile.sh file to compile shader file right.
+
+debug mode
+add this line in CMakeLists.txt file to debug
+set(CMAKE_BUILD_TYPE "Debug")

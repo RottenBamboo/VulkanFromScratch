@@ -29,7 +29,6 @@ namespace RottenBamboo {
         std::vector<VkSemaphore> imageAvailableSemaphores;
         std::vector<VkSemaphore> renderFinishedSemaphores;
         std::vector<VkFence> inFlightFences;
-        uint32_t currentFrame = 0;
         VkSwapchainKHR swapChain;
     private:
 
@@ -41,8 +40,6 @@ namespace RottenBamboo {
         VkImage depthImage;
         VkDeviceMemory depthImageMemory;
         VkImageView depthImageView;
-
-        const int MAX_FRAMES_IN_FLIGHT = 2;
 
         struct SwapChainSupportDetails {
             VkSurfaceCapabilitiesKHR capabilities;
@@ -78,6 +75,8 @@ namespace RottenBamboo {
         void cleanupSwapChain();
 
     public:
+
+        void InitializeSwapChain();
 
         void recreateSwapChain();
 

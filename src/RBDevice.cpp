@@ -35,12 +35,18 @@ namespace RottenBamboo {
         return VK_FALSE;
     }
 
-    RBDevice::RBDevice(RBWindows *window) {
+    void RBDevice::InitializeDevice()
+    {
         createInstance();
         setupDebugMessenger();
-        createSurface(window);
+        createSurface(rbWindows);
         pickPhysicalDevice();
         createLogicalDevice();
+    }
+
+    RBDevice::RBDevice(RBWindows& window) : rbWindows(window)
+    {
+
     }
 
     RBDevice::~RBDevice() {
@@ -131,8 +137,8 @@ namespace RottenBamboo {
         return indices.graphicsFamily.has_value() && extensionSupported && swapChainAdequate;
     }
 
-    void RBDevice::createSurface(RBWindows *window) {
-        if (glfwCreateWindowSurface(instance, window->GetWindow(), nullptr, &surface) != VK_SUCCESS) {
+    void RBDevice::createSurface(RBWindows& window) {
+        if (glfwCreateWindowSurface(instance, window.GetWindow(), nullptr, &surface) != VK_SUCCESS) {
             throw std::runtime_error("failed to create window surface!");
         }
     }

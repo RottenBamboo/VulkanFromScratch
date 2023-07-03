@@ -112,7 +112,7 @@ namespace RottenBamboo{
         for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
         {
             VkDescriptorBufferInfo bufferInfo{};
-            bufferInfo.buffer = uniformBuffers[i];
+            bufferInfo.buffer = rbBufferPtr[i].buffer;
             bufferInfo.offset = 0;
             bufferInfo.range = sizeof(UniformBufferObject);
 
@@ -416,85 +416,6 @@ namespace RottenBamboo{
         endSingleTimeCommands(commandBuffer);
     }
 
-    void RBDescriptors::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
-        VkCommandBuffer commandBuffer = beginSingleTimeCommands();
-
-        VkBufferCopy copyRegion{};
-        copyRegion.size = size;
-
-        vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
-
-        endSingleTimeCommands(commandBuffer);
-    }
-
-    void RBDescriptors::createIndexBuffer()
-    {
-        VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
-
-        VkBuffer stagingBuffer;
-        VkDeviceMemory stagingBufferMemory;
-        createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
-        void* data;
-        vkMapMemory(rbDevice.device, stagingBufferMemory, 0, bufferSize, 0, &data);
-        memcpy(data, indices.data(), (size_t) bufferSize);
-        vkUnmapMemory(rbDevice.device, stagingBufferMemory);
-
-        createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
-
-        copyBuffer(stagingBuffer, indexBuffer, bufferSize);
-
-        vkDestroyBuffer(rbDevice.device, stagingBuffer, nullptr);
-        vkFreeMemory(rbDevice.device, stagingBufferMemory, nullptr);
-    }
-
-    void RBDescriptors::createVertexBuffer()
-    {
-        VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
-        VkBuffer stagingBuffer;
-        VkDeviceMemory stagingBufferMemory;
-        createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
-        void* data;
-        vkMapMemory(rbDevice.device, stagingBufferMemory, 0, bufferSize, 0, &data);
-        memcpy(data, vertices.data(), (size_t) bufferSize);
-        vkUnmapMemory(rbDevice.device, stagingBufferMemory);
-
-        createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
-
-        copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
-
-        vkDestroyBuffer(rbDevice.device, stagingBuffer, nullptr);
-        vkFreeMemory(rbDevice.device, stagingBufferMemory, nullptr);
-    }
-
-    void RBDescriptors::createUniformBuffers()
-    {
-        VkDeviceSize bufferSize = sizeof(UniformBufferObject);
-        uniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
-        uniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
-        uniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
-
-        for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
-        {
-            createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffers[i], uniformBuffersMemory[i]);
-            vkMapMemory(rbDevice.device, uniformBuffersMemory[i], 0, bufferSize, 0 ,&uniformBuffersMapped[i]);
-        }
-    }
-
-    void RBDescriptors::updateUniformBuffer(uint32_t currentImage)
-    {
-        static auto startTime = std::chrono::high_resolution_clock::now();
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
-        UniformBufferObject ubo{};
-        ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float) swapChainExtent.height, 0.1f, 10.0f);
-        ubo.proj[1][1] *= -1;
-        memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
-    }
     void RBDescriptors::createTextureSampler()
     {
         VkPhysicalDeviceProperties properties{};
@@ -526,60 +447,16 @@ namespace RottenBamboo{
         }
     }
 
-    void RBDescriptors::loadModel()
+    RBDescriptors::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers) : rbDevice(device), rbCommandBuffer(commandBuffer), rbBufferPtr(uniformBuffers)
     {
-        tinyobj::attrib_t attrib;
-        std::vector<tinyobj::shape_t> shapes;
-        std::vector<tinyobj::material_t> materials;
-        std::string warn, err;
-
-        if(!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, MODEL_PATH.c_str()))
-        {
-            throw std::runtime_error(warn + err);
-        }
-
-        std::unordered_map<Vertex, uint32_t> uniqueVertices{};
-
-        for(const auto& shape : shapes)
-        {
-            for(const auto& index : shape.mesh.indices)
-            {
-                Vertex vertex{};
-
-                vertex.pos = {
-                        attrib.vertices[3 * index.vertex_index + 0],
-                        attrib.vertices[3 * index.vertex_index + 1],
-                        attrib.vertices[3 * index.vertex_index + 2]
-                };
-
-                vertex.texCoord = {
-                        attrib.texcoords[2 * index.texcoord_index + 0],
-                        1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
-                };
-
-                vertex.color = {1.0f, 1.0f, 1.0f};
-
-                if(uniqueVertices.count(vertex) == 0)
-                {
-                    uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
-                    vertices.push_back(vertex);
-                }
-
-                indices.push_back(uniqueVertices[vertex]);
-            }
-        }
     }
 
-    RBDescriptors::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer) : rbDevice(device), rbCommandBuffer(commandBuffer)
+    void RBDescriptors::InitializeDescriptors()
     {
         createDescriptorSetLayout();
         createTextureImage();
         createTextureImageView();
         createTextureSampler();
-        loadModel();
-        createVertexBuffer();
-        createIndexBuffer();
-        createUniformBuffers();
         createDescriptorPool();
         createDescriptorSets();
     }
@@ -591,19 +468,9 @@ namespace RottenBamboo{
         vkDestroyImageView(rbDevice.device, textureImageView, nullptr);
         vkDestroyImage(rbDevice.device, textureImage, nullptr);
         vkFreeMemory(rbDevice.device, textureImageMemory, nullptr);
-        for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-            vkDestroyBuffer(rbDevice.device, uniformBuffers[i], nullptr);
-            vkFreeMemory(rbDevice.device, uniformBuffersMemory[i], nullptr);
-        }
 
         vkDestroyDescriptorPool(rbDevice.device, descriptorPool, nullptr);
         vkDestroyDescriptorSetLayout(rbDevice.device, descriptorSetLayout, nullptr);
-
-        vkDestroyBuffer(rbDevice.device, indexBuffer, nullptr);
-        vkFreeMemory(rbDevice.device, indexBufferMemory, nullptr);
-
-        vkDestroyBuffer(rbDevice.device, vertexBuffer, nullptr);
-        vkFreeMemory(rbDevice.device, vertexBufferMemory, nullptr);
 
     }
 }

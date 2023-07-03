@@ -190,6 +190,11 @@ namespace RottenBamboo {
     }
 
     RBGraphicPipeline::RBGraphicPipeline(RBSwapChain &swapChain, RBDescriptors &descriptors) : rbSwapChain(swapChain), rbDescriptors(descriptors) {
+
+    }
+
+    void RBGraphicPipeline::InitializeGraphicPipeline()
+    {
         createGraphicsPipeline();
     }
 

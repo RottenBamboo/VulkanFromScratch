@@ -45,11 +45,13 @@ namespace RottenBamboo {
     private:
 
         VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
+        RBWindows& rbWindows;
 
 
     public:
+        void InitializeDevice();
 
-        RBDevice(RBWindows *window);
+        RBDevice(RBWindows& window);
 
         ~RBDevice();
 
@@ -57,7 +59,7 @@ namespace RottenBamboo {
 
         void setupDebugMessenger();
 
-        void createSurface(RBWindows *window);
+        void createSurface(RBWindows& window);
 
         void pickPhysicalDevice();
 

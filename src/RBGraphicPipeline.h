@@ -27,6 +27,7 @@ namespace RottenBamboo {
 
         void createGraphicsPipeline();
 
+        void InitializeGraphicPipeline();
     private:
         RBSwapChain &rbSwapChain;
         RBDescriptors &rbDescriptors;

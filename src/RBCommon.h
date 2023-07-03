@@ -5,7 +5,7 @@
 #ifndef VULKANFROMSCRATCH_COMMON_H
 #define VULKANFROMSCRATCH_COMMON_H
 #define GLFW_INCLUDE_VULKAN
-
+#define MAX_FRAMES_IN_FLIGHT 2
 #include <glm/gtx/hash.hpp>
 #include <vulkan/vulkan.h>
 #include <vector>
@@ -65,6 +65,13 @@ struct UniformBufferObject {
     glm::mat4 model;
     glm::mat4 view;
     glm::mat4 proj;
+public:
+    UniformBufferObject()
+    {
+        model = glm::mat4();
+        view = glm::mat4();
+        proj = glm::mat4();
+    }
 };
 
 struct QueueFamilyIndices {
@@ -76,7 +83,7 @@ struct QueueFamilyIndices {
     }
 };
 
-extern const int MAX_FRAMES_IN_FLIGHT;
+//extern const int MAX_FRAMES_IN_FLIGHT;
 
 extern const std::string MODEL_PATH;
 extern const std::string TEXTURE_PATH;

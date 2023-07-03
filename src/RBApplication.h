@@ -12,6 +12,7 @@
 #include "RBDescriptors.h"
 #include "RBSwapChain.h"
 #include "RBGraphicPipeline.h"
+#include "RBBuffer.h"
 #include <stdexcept>
 #include <iostream>
 #include <string>
@@ -26,13 +27,32 @@ namespace RottenBamboo {
         void drawFrame();
         void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
         RBApplication();
-    private:
-        RBWindows windows{WIDTH, HEIGHT, "Vulkan"};
-        RBDevice device{&windows};
-        RBCommandBuffer commandBuffer{device};
-        RBDescriptors descriptors{device, commandBuffer};
-        RBSwapChain swapChain{device, windows, commandBuffer, descriptors};
+        ~RBApplication();
+        void InitializeWindow();
+        void InitializeDevice();
+        void InitializeCommandBuffer();
+        void InitializeSwapChain();
+
+        void loadModel();
+
+        void InitializeBuffers();
+        void InitializeDescriptors();
+        void InitializeGraphicPipeline();
+
         RBGraphicPipeline graphicPipeline{swapChain, descriptors};
+        RBSwapChain swapChain{device, windows, commandBuffer, descriptors};
+        RBDescriptors descriptors{device, commandBuffer, uniformBuffers};
+
+        RBBuffer<Vertex> vertexBuffer{device, commandBuffer, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT};
+        RBBuffer<uint32_t> indexBuffer{device, commandBuffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT};
+        RBBuffer<UniformBufferObject> uniformBuffers[MAX_FRAMES_IN_FLIGHT]{{device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}, {device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}};
+
+        RBCommandBuffer commandBuffer{device};
+        RBDevice device{windows};
+        RBWindows windows{WIDTH, HEIGHT, "Vulkan"};
+
+    private:
+        void updateUniformBuffer(uint32_t currentImage);
     };
 }
 

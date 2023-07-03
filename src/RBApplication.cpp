@@ -7,6 +7,117 @@
 namespace RottenBamboo {
 
     RBApplication::RBApplication() {
+        InitializeWindow();
+        InitializeDevice();
+        InitializeCommandBuffer();
+        loadModel();
+        InitializeBuffers();
+        InitializeDescriptors();
+        InitializeSwapChain();
+        InitializeGraphicPipeline();
+    }
+
+    RBApplication::~RBApplication() {
+    }
+
+    void RBApplication::InitializeWindow()
+    {
+        windows.InitializeWindow();
+    }
+
+    void RBApplication::InitializeDevice()
+    {
+        device.InitializeDevice();
+    }
+    void RBApplication::InitializeCommandBuffer()
+    {
+        commandBuffer.InitializeCommandBuffer();
+    }
+
+    void RBApplication::InitializeSwapChain()
+    {
+        swapChain.InitializeSwapChain();
+    }
+
+    void RBApplication::InitializeBuffers()
+    {
+        for(int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+        {
+            uniformBuffers[i].CreateBufferNoStageing();
+        }
+
+        vertexBuffer.CreateBuffer();
+
+        indexBuffer.CreateBuffer();
+    }
+
+    void RBApplication::InitializeDescriptors()
+    {
+        descriptors.InitializeDescriptors();
+    }
+
+    void RBApplication::InitializeGraphicPipeline()
+    {
+        graphicPipeline.InitializeGraphicPipeline();
+    };
+
+    void RBApplication::loadModel()
+    {
+        tinyobj::attrib_t attrib;
+        std::vector<tinyobj::shape_t> shapes;
+        std::vector<tinyobj::material_t> materials;
+        std::string warn, err;
+
+        if(!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, MODEL_PATH.c_str()))
+        {
+            throw std::runtime_error(warn + err);
+        }
+
+        std::unordered_map<Vertex, uint32_t> uniqueVertices{};
+
+        for(const auto& shape : shapes)
+        {
+            for(const auto& index : shape.mesh.indices)
+            {
+                Vertex vertex{};
+
+                vertex.pos = {
+                        attrib.vertices[3 * index.vertex_index + 0],
+                        attrib.vertices[3 * index.vertex_index + 1],
+                        attrib.vertices[3 * index.vertex_index + 2]
+                };
+
+                vertex.texCoord = {
+                        attrib.texcoords[2 * index.texcoord_index + 0],
+                        1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
+                };
+
+                vertex.color = {1.0f, 1.0f, 1.0f};
+
+                if(uniqueVertices.count(vertex) == 0)
+                {
+                    uniqueVertices[vertex] = static_cast<uint32_t>(vertexBuffer.data.size());
+                    vertexBuffer.data.push_back(vertex);
+                }
+
+                indexBuffer.data.push_back(uniqueVertices[vertex]);
+            }
+        }
+    }
+
+    void RBApplication::updateUniformBuffer(uint32_t currentImage)
+    {
+        static auto startTime = std::chrono::high_resolution_clock::now();
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+        UniformBufferObject ubo{};
+        ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float) swapChainExtent.height, 0.1f, 10.0f);
+        ubo.proj[1][1] *= -1;
+
+        memcpy(uniformBuffers[currentImage].bufferMapped, &ubo, sizeof(ubo));
     }
 
     void RBApplication::run() {
@@ -42,7 +153,6 @@ namespace RottenBamboo {
 
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicPipeline.graphicsPipeline);
-
         VkViewport viewport{};
         viewport.x = 0.0f;
         viewport.y = 0.0f;
@@ -55,15 +165,15 @@ namespace RottenBamboo {
         scissor.offset = {0, 0};
         scissor.extent = swapChainExtent;
 
-        VkBuffer vertexBuffers[] = {descriptors.vertexBuffer};
+        VkBuffer vertexBuffers[] = {vertexBuffer.buffer};
         VkDeviceSize offsets[] = {0};
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-        vkCmdBindIndexBuffer(commandBuffer, descriptors.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+        vkCmdBindIndexBuffer(commandBuffer, indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
 
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicPipeline.pipelineLayout, 0, 1, &descriptors.descriptorSets[currentFrame], 0, nullptr);
 
-        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(descriptors.indices.size()), 1, 0, 0, 0);
+        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indexBuffer.data.size()), 1, 0, 0, 0);
 
         vkCmdEndRenderPass(commandBuffer);
         if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
@@ -88,12 +198,15 @@ namespace RottenBamboo {
             throw std::runtime_error("failed to acquire swap chain image!");
         }
 
-        descriptors.updateUniformBuffer(currentFrame);
+        updateUniformBuffer(currentFrame);
 
         vkResetFences(device.device, 1, &swapChain.inFlightFences[currentFrame]);
 
+        result = vkResetCommandBuffer(commandBuffer.commandBuffers[currentFrame], /*vkCommandBufferResetFlagBits*/ 0);
+        if (result != VK_SUCCESS) {
+            throw std::runtime_error("failed to reset command buffer!");
+        }
 
-        vkResetCommandBuffer(commandBuffer.commandBuffers[currentFrame], /*vkCommandBufferResetFlagBits*/ 0);
         recordCommandBuffer(commandBuffer.commandBuffers[currentFrame], imageIndex);
 
         //submit the command buffer

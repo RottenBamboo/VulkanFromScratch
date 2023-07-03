@@ -401,6 +401,16 @@ namespace RottenBamboo{
         }
     }
 
+    void RBSwapChain::InitializeSwapChain()
+    {
+        CreateSwapChain(refDevice, refWindow);
+        createImageView();
+        createColorResources();
+        createDepthResources();
+        createRenderPass();
+        createFrameBuffers();
+        createSyncObjects();
+    }
 
     void RBSwapChain::recreateSwapChain()
     {
@@ -422,13 +432,7 @@ namespace RottenBamboo{
         createFrameBuffers();
     }
     RBSwapChain::RBSwapChain(RBDevice& device, RBWindows& window, RBCommandBuffer& commandBuffer, RBDescriptors& descriptors) : refDevice(device), refWindow(window), refCommandBuffer(commandBuffer), refDescriptors(descriptors){
-        CreateSwapChain(device, window);
-        createImageView();
-        createColorResources();
-        createDepthResources();
-        createRenderPass();
-        createFrameBuffers();
-        createSyncObjects();
+
     }
 
     void RBSwapChain::cleanupSwapChain()

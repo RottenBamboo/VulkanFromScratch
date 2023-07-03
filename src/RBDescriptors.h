@@ -13,6 +13,7 @@
 #include "RBCommon.h"
 #include "RBDevice.h"
 #include "RBCommandBuffer.h"
+#include "RBBuffer.h"
 
 
 namespace RottenBamboo {
@@ -24,11 +25,7 @@ namespace RottenBamboo {
         VkImage textureImage;
         VkImageView textureImageView;
         VkSampler textureSampler;
-
-        std::vector<VkBuffer> uniformBuffers;
-        std::vector<VkDeviceMemory> uniformBuffersMemory;
-        std::vector<void *> uniformBuffersMapped;
-
+        RBBuffer<UniformBufferObject> *rbBufferPtr;
 
         RBDevice &rbDevice;
         RBCommandBuffer &rbCommandBuffer;
@@ -59,37 +56,22 @@ namespace RottenBamboo {
 
         VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
 
-        void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
-
         void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory);
 
         void createTextureImage();
 
-        void createIndexBuffer();
-
-        void createVertexBuffer();
-
-        void createUniformBuffers();
-
         void createTextureSampler();
 
-        void loadModel();
-
     public:
-        std::vector<Vertex> vertices;
-        std::vector<uint32_t> indices;
-        VkBuffer vertexBuffer;
-        VkDeviceMemory vertexBufferMemory;
-        VkBuffer indexBuffer;
-        VkDeviceMemory indexBufferMemory;
+
         VkDescriptorSetLayout descriptorSetLayout;
         std::vector<VkDescriptorSet> descriptorSets;
 
-        void updateUniformBuffer(uint32_t currentImage);
-
-        RBDescriptors(RBDevice &device, RBCommandBuffer &rbCommandBuffer);
+        RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers);
 
         ~RBDescriptors();
+
+        void InitializeDescriptors();
     };
 }
 

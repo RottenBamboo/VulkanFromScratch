@@ -38,6 +38,10 @@ namespace RottenBamboo {
     }
 
     RBCommandBuffer::RBCommandBuffer(RBDevice &device) : rbDevice(device) {
+    }
+
+    void RBCommandBuffer::InitializeCommandBuffer()
+    {
         createCommandPool();
         createCommandBuffers();
     }

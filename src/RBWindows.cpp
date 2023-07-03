@@ -11,7 +11,7 @@ namespace RottenBamboo {
     }
 
     RBWindows::RBWindows(uint32_t width, uint32_t height, std::string name) : width{width}, height{height}, windowName{name} {
-        InitWindow();
+
     }
 
     RBWindows::~RBWindows() {
@@ -19,7 +19,7 @@ namespace RottenBamboo {
         glfwTerminate();
     }
 
-    void RBWindows::InitWindow() {
+    void RBWindows::InitializeWindow() {
         glfwInit();
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
