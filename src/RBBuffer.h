@@ -25,14 +25,19 @@ namespace RottenBamboo {
         VkBufferUsageFlagBits rbFlagBits;
         ~RBBuffer()
         {
-            vkDestroyBuffer(rbDevice.device, buffer, nullptr);
-            vkFreeMemory(rbDevice.device, memory, nullptr);
-            data.clear();
-            bufferMapped = nullptr;
+            ReleaseBuffer();
         }
 
         RBBuffer(RBDevice& device, RBCommandBuffer& commandBuffer, VkBufferUsageFlagBits flagBits) : rbDevice(device), rbCommandBuffer(commandBuffer), rbFlagBits(flagBits)
         {
+        }
+
+        void ReleaseBuffer()
+        {
+            vkDestroyBuffer(rbDevice.device, buffer, nullptr);
+            vkFreeMemory(rbDevice.device, memory, nullptr);
+            data.clear();
+            bufferMapped = nullptr;
         }
 
         void CreateBuffer()

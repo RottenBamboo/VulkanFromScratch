@@ -13,6 +13,7 @@
 #include "RBSwapChain.h"
 #include "RBGraphicPipeline.h"
 #include "RBBuffer.h"
+#include "RBMesh.h"
 #include <stdexcept>
 #include <iostream>
 #include <string>
@@ -36,6 +37,7 @@ namespace RottenBamboo {
         void loadModel();
 
         void InitializeBuffers();
+        void InitializeMesh();
         void InitializeDescriptors();
         void InitializeGraphicPipeline();
 
@@ -43,8 +45,7 @@ namespace RottenBamboo {
         RBSwapChain swapChain{device, windows, commandBuffer, descriptors};
         RBDescriptors descriptors{device, commandBuffer, uniformBuffers};
 
-        RBBuffer<Vertex> vertexBuffer{device, commandBuffer, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT};
-        RBBuffer<uint32_t> indexBuffer{device, commandBuffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT};
+        RBMesh mesh{device, commandBuffer};
         RBBuffer<UniformBufferObject> uniformBuffers[MAX_FRAMES_IN_FLIGHT]{{device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}, {device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}};
 
         RBCommandBuffer commandBuffer{device};

@@ -46,9 +46,12 @@ namespace RottenBamboo {
             uniformBuffers[i].CreateBufferNoStageing();
         }
 
-        vertexBuffer.CreateBuffer();
+        InitializeMesh();
+    }
 
-        indexBuffer.CreateBuffer();
+    void RBApplication::InitializeMesh()
+    {
+        mesh.InitializeMesh();
     }
 
     void RBApplication::InitializeDescriptors()
@@ -96,11 +99,11 @@ namespace RottenBamboo {
 
                 if(uniqueVertices.count(vertex) == 0)
                 {
-                    uniqueVertices[vertex] = static_cast<uint32_t>(vertexBuffer.data.size());
-                    vertexBuffer.data.push_back(vertex);
+                    uniqueVertices[vertex] = static_cast<uint32_t>(mesh.vertexBuffer.data.size());
+                    mesh.vertexBuffer.data.push_back(vertex);
                 }
 
-                indexBuffer.data.push_back(uniqueVertices[vertex]);
+                mesh.indexBuffer.data.push_back(uniqueVertices[vertex]);
             }
         }
     }
@@ -165,15 +168,15 @@ namespace RottenBamboo {
         scissor.offset = {0, 0};
         scissor.extent = swapChainExtent;
 
-        VkBuffer vertexBuffers[] = {vertexBuffer.buffer};
+        VkBuffer vertexBuffers[] = {mesh.vertexBuffer.buffer};
         VkDeviceSize offsets[] = {0};
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-        vkCmdBindIndexBuffer(commandBuffer, indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+        vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
 
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicPipeline.pipelineLayout, 0, 1, &descriptors.descriptorSets[currentFrame], 0, nullptr);
 
-        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indexBuffer.data.size()), 1, 0, 0, 0);
+        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
 
         vkCmdEndRenderPass(commandBuffer);
         if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
