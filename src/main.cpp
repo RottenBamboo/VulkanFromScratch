@@ -219,31 +219,31 @@ private:
 
     void initVulkan()
     {
-        createInstance();
-        setupDebugMessenger();
-        createSurface();
-        pickPhysicalDevice();
-        createLogicalDevice();
+        createInstance();//bingo
+        setupDebugMessenger();//bingo
+        createSurface();//bingo
+        pickPhysicalDevice();//bingo
+        createLogicalDevice();//bingo
         createSwapChain();
-        createImageView();
-        createRenderPass();
-        createDescriptorSetLayout();
-        createGraphicsPipeline();
-        createCommandPool();
-        createColorResources();
-        createDepthResources();
-        createFrameBuffers();
-        createTextureImage();
-        createTextureImageView();
-        createTextureSampler();
+        createImageView();//bingo
+        createRenderPass();//bingo
+        createDescriptorSetLayout();//bingo
+        createGraphicsPipeline();//bingo
+        createCommandPool();//bingo
+        createColorResources();//bingo
+        createDepthResources();//bingo
+        createFrameBuffers();//bingo
+        createTextureImage();//bingo
+        createTextureImageView();//bingo
+        createTextureSampler();//bingo
         loadModel();
-        createVertexBuffer();
-        createIndexBuffer();
-        createUniformBuffers();
-        createDescriptorPool();
-        createDescriptorSets();
-        createCommandBuffers();
-        createSyncObjects();
+        createVertexBuffer();//bingo
+        createIndexBuffer();//bingo
+        createUniformBuffers();//bingo
+        createDescriptorPool();//bingo
+        createDescriptorSets();//bingo
+        createCommandBuffers();//bingo
+        createSyncObjects();//bingo
     }
 
     void loadModel()
@@ -1287,8 +1287,8 @@ private:
 
     void createGraphicsPipeline()
     {
-        auto vertShaderCode = realFile("../shader/vert.spv");
-        auto fragShaderCode = realFile("../shader/frag.spv");
+        auto vertShaderCode = readFile("../shader/vert.spv");
+        auto fragShaderCode = readFile("../shader/frag.spv");
 
         VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
         VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
@@ -1833,7 +1833,7 @@ private:
         return true;
     }
 
-    static std::vector<char> realFile(const std::string& filename)
+    static std::vector<char> readFile(const std::string& filename)
     {
         std::ifstream file(filename, std::ios::ate | std::ios::binary);
         if(!file.is_open())
