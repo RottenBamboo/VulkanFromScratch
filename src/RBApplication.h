@@ -41,16 +41,18 @@ namespace RottenBamboo {
         void InitializeDescriptors();
         void InitializeGraphicPipeline();
 
-        RBGraphicPipeline graphicPipeline{swapChain, descriptors};
-        RBSwapChain swapChain{device, windows, commandBuffer, descriptors};
-        RBDescriptors descriptors{device, commandBuffer, uniformBuffers};
+        RBWindows windows{WIDTH, HEIGHT, "Vulkan"};
+        RBDevice device{windows};
+        RBCommandBuffer commandBuffer{device};
 
         RBMesh mesh{device, commandBuffer};
+
+        RBDescriptors descriptors{device, commandBuffer, uniformBuffers};
+        RBSwapChain swapChain{device, windows, commandBuffer, descriptors};
+        RBGraphicPipeline graphicPipeline{swapChain, descriptors};
+
         RBBuffer<UniformBufferObject> uniformBuffers[MAX_FRAMES_IN_FLIGHT]{{device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}, {device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}};
 
-        RBCommandBuffer commandBuffer{device};
-        RBDevice device{windows};
-        RBWindows windows{WIDTH, HEIGHT, "Vulkan"};
 
     private:
         void updateUniformBuffer(uint32_t currentImage);
