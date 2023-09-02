@@ -406,7 +406,8 @@ namespace RottenBamboo{
 
         vkCmdPipelineBarrier(
                 commandBuffer,
-                sourceStage, destinationStage,
+                sourceStage,
+                destinationStage,
                 0,
                 0, nullptr,
                 0, nullptr,
