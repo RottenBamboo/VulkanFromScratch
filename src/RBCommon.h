@@ -8,6 +8,7 @@
 #define MAX_FRAMES_IN_FLIGHT 2
 #include <glm/gtx/hash.hpp>
 #include <vulkan/vulkan.h>
+#include <array>
 #include <vector>
 #include <optional>
 #include <string>
