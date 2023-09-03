@@ -297,22 +297,22 @@ namespace RottenBamboo {
         appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
         appInfo.apiVersion = VK_API_VERSION_1_0;
 
+        //add portability extension
+
         VkInstanceCreateInfo createInfo{};
+#if(versionMajor > 1 || (versionMajor == 1 && versionMinor > 2))
+        createInfo.flags = VK_INSTANCE_CREATE_FLAG_BITS_MAX_ENUM;
+#endif
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         createInfo.pApplicationInfo = &appInfo;
 
         auto extensions = getRequiredExtensions();
-        //add portability extension
-        float versionMajor = VK_API_VERSION_MAJOR(VK_HEADER_VERSION_COMPLETE);
-        float versionMinor = VK_API_VERSION_MINOR(VK_HEADER_VERSION_COMPLETE);
-        if(versionMajor > 1 || (versionMajor == 1 && versionMinor > 2))
+#if(versionMajor > 1 || (versionMajor == 1 && versionMinor > 2))
+        for (auto criticalExtension: criticalExtensions)
         {
-            for (auto criticalExtension: criticalExtensions)
-            {
-                extensions.push_back(criticalExtension);
-            }
+            extensions.push_back(criticalExtension);
         }
-
+#endif
         createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
         createInfo.ppEnabledExtensionNames = extensions.data();
 
