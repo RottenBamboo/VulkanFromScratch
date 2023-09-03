@@ -30,7 +30,7 @@ namespace RottenBamboo {
 
     const std::vector<const char *> validationLayers = {"VK_LAYER_KHRONOS_validation"};
     const std::vector<const char *> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
-    const std::vector<const char *> criticalExtensions = {"VK_KHR_protability_enumeration"};
+    const std::vector<const char *> criticalExtensions = {"VK_KHR_portability_enumeration"};
 
     static float GetVersionMajor() {
         return VK_API_VERSION_MAJOR(VK_HEADER_VERSION_COMPLETE);
@@ -39,7 +39,6 @@ namespace RottenBamboo {
     static float GetVersionMinor() {
         return VK_API_VERSION_MINOR(VK_HEADER_VERSION_COMPLETE);
     }
-
     class RBDevice {
 
     public:
