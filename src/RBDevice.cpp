@@ -300,19 +300,20 @@ namespace RottenBamboo {
         //add portability extension
 
         VkInstanceCreateInfo createInfo{};
-#if(versionMajor > 1 || (versionMajor == 1 && versionMinor > 2))
+        if(!(GetVersionMajor() > 1 || (GetVersionMajor() == 1 && GetVersionMinor() > 2)))
+        {
+            #define VK_INSTANCE_CREATE_FLAG_BITS_MAX_ENUM 0;
+        }
         createInfo.flags = VK_INSTANCE_CREATE_FLAG_BITS_MAX_ENUM;
-#endif
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         createInfo.pApplicationInfo = &appInfo;
 
         auto extensions = getRequiredExtensions();
-#if(versionMajor > 1 || (versionMajor == 1 && versionMinor > 2))
+        if(GetVersionMajor() > 1 || (GetVersionMajor() == 1 && GetVersionMinor() > 2))
         for (auto criticalExtension: criticalExtensions)
         {
             extensions.push_back(criticalExtension);
         }
-#endif
         createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
         createInfo.ppEnabledExtensionNames = extensions.data();
 

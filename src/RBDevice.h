@@ -32,8 +32,13 @@ namespace RottenBamboo {
     const std::vector<const char *> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
     const std::vector<const char *> criticalExtensions = {"VK_KHR_protability_enumeration"};
 
-    #define VERSION_MAJOR VK_API_VERSION_MAJOR(VK_HEADER_VERSION_COMPLETE);
-    #define VERSION_MINOR VK_API_VERSION_MINOR(VK_HEADER_VERSION_COMPLETE);
+    static float GetVersionMajor() {
+        return VK_API_VERSION_MAJOR(VK_HEADER_VERSION_COMPLETE);
+    }
+
+    static float GetVersionMinor() {
+        return VK_API_VERSION_MINOR(VK_HEADER_VERSION_COMPLETE);
+    }
 
     class RBDevice {
 
