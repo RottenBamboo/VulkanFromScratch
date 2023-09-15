@@ -85,6 +85,8 @@ struct QueueFamilyIndices {
 };
 
 //extern const int MAX_FRAMES_IN_FLIGHT;
+static double timeStamp;
+static const float C_intervalTime = 1.0f / 120.0f;
 
 extern const std::string MODEL_PATH;
 extern const std::string TEXTURE_PATH;
