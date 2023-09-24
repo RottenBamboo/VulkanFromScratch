@@ -1,0 +1,45 @@
+{
+  "homebrew_version": "3.2.17-133-g890190c",
+  "used_options": [
+
+  ],
+  "unused_options": [
+
+  ],
+  "built_as_bottle": true,
+  "poured_from_bottle": true,
+  "installed_as_dependency": false,
+  "installed_on_request": true,
+  "changed_files": [
+    "lib/pkgconfig/glm.pc"
+  ],
+  "time": 1639210354,
+  "source_modified_time": 1586806844,
+  "compiler": "clang",
+  "aliases": [
+
+  ],
+  "runtime_dependencies": [
+
+  ],
+  "source": {
+    "spec": "stable",
+    "versions": {
+      "stable": "0.9.9.8",
+      "head": null,
+      "version_scheme": 0
+    },
+    "path": "/opt/homebrew/Library/Taps/homebrew/homebrew-core/Formula/glm.rb",
+    "tap_git_head": "ce56f629664808dc50823a4f2b682f93a7f8418c",
+    "tap": "homebrew/core"
+  },
+  "arch": "arm64",
+  "built_on": {
+    "os": "Macintosh",
+    "os_version": "macOS 12.0",
+    "cpu_family": "arm_firestorm_icestorm",
+    "xcode": "13.1",
+    "clt": "13.1.0.0.1.1633545042",
+    "preferred_perl": "5.30"
+  }
+}
