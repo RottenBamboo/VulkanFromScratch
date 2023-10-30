@@ -14,6 +14,7 @@
 #include "RBDevice.h"
 #include "RBCommandBuffer.h"
 #include "RBBuffer.h"
+#include "RBDescriptorSetLayout.h"
 
 
 namespace RottenBamboo {
@@ -63,6 +64,7 @@ namespace RottenBamboo {
 
     public:
 
+        //RBDescriptorSetLayout descriptorSetLayout1;
         VkDescriptorSetLayout descriptorSetLayout;
         std::vector<VkDescriptorSet> descriptorSets;
 

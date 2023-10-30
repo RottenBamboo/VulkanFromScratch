@@ -6,9 +6,10 @@
 #define VULKANFROMSCRATCH_RBDESCRIPTORSET_H
 
 
-class RBDescriptorSet {
-
-};
-
+namespace RottenBamboo {
+    class RBDescriptorSet {
+        //void createDescriptorSets();
+    };
+}
 
 #endif //VULKANFROMSCRATCH_RBDESCRIPTORSET_H
