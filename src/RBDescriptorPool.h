@@ -8,7 +8,7 @@
 
 #include <vulkan/vulkan.h>
 #include <vector>
-#include "RBDescriptorSetLayout.h"
+#include "RBDescriptorSetLayoutManager.h"
 #include "RBDevice.h"
 namespace RottenBamboo {
     class RBDescriptorPool {
@@ -19,7 +19,7 @@ namespace RottenBamboo {
         void createDescriptorPool();
     private:
         RBDevice &rbDevice;
-        const RBDescriptorSetLayout &handle;
+        const RBDescriptorSetLayoutManager &handle;
         std::vector<VkDescriptorPoolSize> poolSizes;
         std::vector<VkDescriptorPool> pools;
         std::vector<uint32_t> poolSetCount;

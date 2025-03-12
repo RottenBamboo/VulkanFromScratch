@@ -5,11 +5,11 @@
 #ifndef VULKANFROMSCRATCH_RBDESCRIPTORMANAGER_H
 #define VULKANFROMSCRATCH_RBDESCRIPTORMANAGER_H
 
-#include "RBDescriptorSetLayout.h"
+#include "RBDescriptorSetLayoutManager.h"
 
 namespace RottenBamboo {
     class RBDescriptorManager {
-        //RBDescriptorSetLayout layout;
+        //RBDescriptorSetLayoutManager layout;
     };
 }
 
