@@ -14,7 +14,6 @@ namespace RottenBamboo {
         for(int i = 0; i < bindings.size(); i++)
         {
             fillDescriptorByType(bindings[i]);
-            this->bindings.push_back(bindings[i]);
         }
     }
     RBDescriptorSetLayoutManager::~RBDescriptorSetLayoutManager()
@@ -30,11 +29,9 @@ namespace RottenBamboo {
     void RBDescriptorSetLayoutManager::fillDescriptorByType(VkDescriptorSetLayoutBinding binding)
     {
         VkDescriptorSetLayoutBinding bindingVarable{};
-        bindingVarable.binding = binding.binding;
-        bindingVarable.descriptorType = binding.descriptorType;
-        bindingVarable.descriptorCount = binding.descriptorCount;
-        bindingVarable.stageFlags = binding.stageFlags;
+        bindingVarable = binding;
         bindingVarable.pImmutableSamplers = nullptr;
+        this->bindings.push_back(bindingVarable);
     }
 
     void RBDescriptorSetLayoutManager::createDescriptorSetLayout() {

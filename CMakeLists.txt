@@ -23,7 +23,7 @@ set(TINYOBJLOADER_INCLUDE_DIRS "external/tinyobjloader")
 
 include_directories(${PROJECT_NAME} PUBLIC ${GLM_PATH})
 
-add_executable(${PROJECT_NAME} src/RBApplication.cpp src/RBApplication.h src/RBWindows.h src/RBWindows.cpp src/AppMain.cpp src/RBGraphicPipeline.cpp src/RBGraphicPipeline.h src/RBDevice.cpp src/RBDevice.h src/RBSwapChain.cpp src/RBSwapChain.h src/RBCommon.cpp src/RBCommon.h src/RBCommandBuffer.cpp src/RBCommandBuffer.h src/RBDescriptors.cpp src/RBDescriptors.h src/RBBuffer.cpp src/RBBuffer.h src/RBMesh.cpp src/RBMesh.h src/RBDescriptorPool.cpp src/RBDescriptorPool.h src/RBDescriptorSet.cpp src/RBDescriptorSet.h src/RBDescriptorSetLayoutManager.cpp src/RBDescriptorSetLayoutManager.h
+add_executable(${PROJECT_NAME} src/RBApplication.cpp src/RBApplication.h src/RBWindows.h src/RBWindows.cpp src/AppMain.cpp src/RBGraphicPipeline.cpp src/RBGraphicPipeline.h src/RBDevice.cpp src/RBDevice.h src/RBSwapChain.cpp src/RBSwapChain.h src/RBCommon.cpp src/RBCommon.h src/RBCommandBuffer.cpp src/RBCommandBuffer.h src/RBDescriptors.cpp src/RBDescriptors.h src/RBBuffer.cpp src/RBBuffer.h src/RBMesh.cpp src/RBMesh.h src/RBDescriptorPool.cpp src/RBDescriptorPool.h src/RBDescriptorSetManager.cpp src/RBDescriptorSetManager.h src/RBDescriptorSetLayoutManager.cpp src/RBDescriptorSetLayoutManager.h
         src/RBDescriptorManager.cpp
         src/RBDescriptorManager.h src/RBPipelineLayout.cpp src/RBPipelineLayout.h)
 
