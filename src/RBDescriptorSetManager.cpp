@@ -22,12 +22,6 @@ namespace RottenBamboo{
         return &descriptorSets[index];
     }
 
-    void RBDescriptorSetManager::fillDescriptotSet(VkWriteDescriptorSet descriptorWrite)
-    {
-        VkWriteDescriptorSet descriptorWriteVariable{};
-        descriptorWriteVariable = descriptorWrite;
-    }
-
     void RBDescriptorSetManager::updateDescriptorSets(RBDevice &device, std::vector<VkWriteDescriptorSet> descriptorWrites)
     {
         vkUpdateDescriptorSets(device.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
