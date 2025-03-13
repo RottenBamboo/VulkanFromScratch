@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
         executablePath = executablePath.substr(0, lastSlash);
     }
 
-    for (int i = 0; i < 2; ++i) { // 两次 parent_path
+    for (int i = 0; i < 1; ++i) { // 两次 parent_path
         size_t parentSlash = executablePath.find_last_of("\\/");
         if (parentSlash != std::string::npos) {
             executablePath = executablePath.substr(0, parentSlash);
