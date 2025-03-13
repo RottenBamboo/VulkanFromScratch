@@ -31,8 +31,6 @@ namespace RottenBamboo {
         RBDevice &rbDevice;
         RBCommandBuffer &rbCommandBuffer;
 
-        RBDescriptorSetLayoutManager descriptorSetLayoutManager;
-
         void createDescriptorSetLayout();
 
         void createDescriptorPool();
@@ -67,7 +65,8 @@ namespace RottenBamboo {
     public:
 
         //RBDescriptorSetLayoutManager descriptorSetLayout1;
-        VkDescriptorSetLayout descriptorSetLayout;
+        //VkDescriptorSetLayout descriptorSetLayout;
+        RBDescriptorSetLayoutManager descriptorSetLayoutManager;
         std::vector<VkDescriptorSet> descriptorSets;
 
         RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers);

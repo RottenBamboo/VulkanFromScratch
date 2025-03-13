@@ -63,7 +63,7 @@ namespace RottenBamboo{
 
         std::vector<VkDescriptorSetLayoutBinding> bindings = {uboLayoutBinding, samplerLayoutBinding};
         descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(rbDevice, bindings);
-        descriptorSetLayout = descriptorSetLayoutManager.createDescriptorSetLayout();
+        descriptorSetLayoutManager.createDescriptorSetLayout();
     }
 
     void RBDescriptors::createDescriptorPool()
@@ -89,7 +89,7 @@ namespace RottenBamboo{
 
     void RBDescriptors::createDescriptorSets()
     {
-        std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetLayout);
+        std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetLayoutManager.descriptorSetLayout);
         VkDescriptorSetAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
         allocInfo.descriptorPool = descriptorPool;
@@ -464,7 +464,7 @@ namespace RottenBamboo{
         vkFreeMemory(rbDevice.device, textureImageMemory, nullptr);
 
         vkDestroyDescriptorPool(rbDevice.device, descriptorPool, nullptr);
-        vkDestroyDescriptorSetLayout(rbDevice.device, descriptorSetLayout, nullptr);
+        descriptorSetLayoutManager.Destroy();
 
     }
 }
