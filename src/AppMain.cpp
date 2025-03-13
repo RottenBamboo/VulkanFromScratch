@@ -9,46 +9,43 @@
 #ifdef _WIN32
 #include <windows.h> // Windows API
 #else
-#include <unistd.h>  // POSIX API
+#include <filesystem>
 #endif
 
 int main(int argc, char* argv[]) {
+
+#ifdef _WIN32
     if (argc < 1) {
         std::cerr << "No executable path provided!" << std::endl;
         return -1;
     }
 
-    // 获取可执行文件的路径
     std::string executablePath = argv[0];
     size_t lastSlash = executablePath.find_last_of("\\/");
     if (lastSlash != std::string::npos) {
         executablePath = executablePath.substr(0, lastSlash);
     }
 
-    // 设置工作目录
-#ifdef _WIN32
+    for (int i = 0; i < 2; ++i) { // 两次 parent_path
+        size_t parentSlash = executablePath.find_last_of("\\/");
+        if (parentSlash != std::string::npos) {
+            executablePath = executablePath.substr(0, parentSlash);
+        } else {
+            std::cerr << "Failed to get parent directory!" << std::endl;
+            return -1;
+        }
+    }
     if (!SetCurrentDirectory(executablePath.c_str())) {
         std::cerr << "Failed to change working directory!" << std::endl;
         return -1;
     }
-#else
-    if (chdir(executablePath.c_str()) != 0) {
-        std::cerr << "Failed to change working directory!" << std::endl;
-        return -1;
-    }
-#endif
-
-    // 输出当前工作目录
-#ifdef _WIN32
     char currentDir[MAX_PATH];
     if (GetCurrentDirectory(MAX_PATH, currentDir)) {
         std::cout << "Current working directory: " << currentDir << std::endl;
     }
 #else
-    char currentDir[1024];
-    if (getcwd(currentDir, sizeof(currentDir)) != nullptr) {
-        std::cout << "Current working directory: " << currentDir << std::endl;
-    }
+    std::filesystem::current_path(std::filesystem::path(argv[0]).parent_path());
+    std::cout << "Current working directory: " << std::filesystem::current_path() << std::endl;
 #endif
 
     RottenBamboo::RBApplication app{};
