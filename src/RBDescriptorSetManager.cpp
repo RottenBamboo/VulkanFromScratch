@@ -8,6 +8,12 @@ namespace RottenBamboo{
     {
     }
 
+    RBDescriptorSetManager::~RBDescriptorSetManager()
+    {
+        clearDescriptorSets();
+        clearDescriptorWrites();
+    }
+
     void RBDescriptorSetManager::allocateDescriptorSets(RBDevice &device, VkDescriptorSetAllocateInfo &allocInfo, int size)
     {
         descriptorSets.resize(size);
@@ -17,13 +23,59 @@ namespace RottenBamboo{
         }
     }
 
+    void RBDescriptorSetManager::fillDescriptotSetsWriteBuffer(uint32_t dstSetIndex, uint32_t dstBinding, uint32_t dstArrayElement, uint32_t descriptorCount, VkDescriptorType descriptorType, const VkDescriptorBufferInfo* pBufferInfo)
+    {
+        VkWriteDescriptorSet descriptorWrite{};
+        descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrite.dstSet = descriptorSets[dstSetIndex];
+        descriptorWrite.dstBinding = dstBinding;
+        descriptorWrite.dstArrayElement = dstArrayElement;
+        descriptorWrite.descriptorCount = descriptorCount;
+        descriptorWrite.descriptorType = descriptorType;
+        descriptorWrite.pBufferInfo = pBufferInfo;
+        this->descriptorWrites.push_back(descriptorWrite);
+    }
+
+    void RBDescriptorSetManager::fillDescriptotSetsWriteImage(uint32_t dstSetIndex, uint32_t dstBinding, uint32_t dstArrayElement, uint32_t descriptorCount, VkDescriptorType descriptorType, const VkDescriptorImageInfo* pImageInfo)
+    {
+        VkWriteDescriptorSet descriptorWrite{};
+        descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrite.dstSet = descriptorSets[dstSetIndex];
+        descriptorWrite.dstBinding = dstBinding;
+        descriptorWrite.dstArrayElement = dstArrayElement;
+        descriptorWrite.descriptorCount = descriptorCount;
+        descriptorWrite.descriptorType = descriptorType;
+        descriptorWrite.pImageInfo = pImageInfo;
+        this->descriptorWrites.push_back(descriptorWrite);
+    }
+
     VkDescriptorSet* RBDescriptorSetManager::getDescriptorSet(int index)
     {
         return &descriptorSets[index];
     }
 
+    void RBDescriptorSetManager::updateDescriptorSets(RBDevice &device)
+    {
+        vkUpdateDescriptorSets(device.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+        clearDescriptorWrites();
+    }
+
     void RBDescriptorSetManager::updateDescriptorSets(RBDevice &device, std::vector<VkWriteDescriptorSet> descriptorWrites)
     {
         vkUpdateDescriptorSets(device.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+    }
+
+    void RBDescriptorSetManager::clearDescriptorWrites()
+    {
+        descriptorWrites.clear();
+        descriptorWrites.reserve(0);
+        //std::cout << "descriptorWrites size: " << descriptorWrites.size() << std::endl;
+    }
+
+    void RBDescriptorSetManager::clearDescriptorSets()
+    {
+        descriptorSets.clear();
+        descriptorSets.reserve(0);
+        //std::cout << "descriptorWrites size: " << descriptorWrites.size() << std::endl;
     }
 }

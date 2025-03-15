@@ -5,6 +5,7 @@
 #pragma once
 #ifndef VULKANFROMSCRATCH_DESCRIPTORS_H
 #define VULKANFROMSCRATCH_DESCRIPTORS_H
+#define GLM_ENABLE_EXPERIMENTAL
 
 #include <glm/gtx/hash.hpp>
 #include <vulkan/vulkan.h>
@@ -66,7 +67,6 @@ namespace RottenBamboo {
     public:
 
         RBDescriptorSetLayoutManager descriptorSetLayoutManager;
-        //std::vector<VkDescriptorSet> descriptorSets;
         RBDescriptorSetManager descriptorSetManager;
 
         RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers);

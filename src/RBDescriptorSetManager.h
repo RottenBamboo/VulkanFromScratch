@@ -15,8 +15,14 @@ namespace RottenBamboo {
 
     public:
         RBDescriptorSetManager(RBDevice &device);
+        ~RBDescriptorSetManager();
         void allocateDescriptorSets(RBDevice &device, VkDescriptorSetAllocateInfo &allocInfo, int size);
+        void updateDescriptorSets(RBDevice &device);
         void updateDescriptorSets(RBDevice &device, std::vector<VkWriteDescriptorSet> descriptorWrites);
+        void fillDescriptotSetsWriteBuffer(uint32_t dstSetIndex, uint32_t dstBinding, uint32_t dstArrayElement, uint32_t descriptorCount, VkDescriptorType descriptorType, const VkDescriptorBufferInfo* pBufferInfo);
+        void fillDescriptotSetsWriteImage(uint32_t dstSetIndex, uint32_t dstBinding, uint32_t dstArrayElement, uint32_t descriptorCount, VkDescriptorType descriptorType, const VkDescriptorImageInfo* pImageInfo);
+        void clearDescriptorWrites();
+        void clearDescriptorSets();
         VkDescriptorSet* getDescriptorSet(int index);
     public:
         std::vector<VkDescriptorSet> descriptorSets;

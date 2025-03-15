@@ -6,6 +6,8 @@
 #define VULKANFROMSCRATCH_COMMON_H
 #define GLFW_INCLUDE_VULKAN
 #define MAX_FRAMES_IN_FLIGHT 2
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include <glm/gtx/hash.hpp>
 #include <vulkan/vulkan.h>
 #include <array>

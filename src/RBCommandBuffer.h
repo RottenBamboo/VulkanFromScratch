@@ -5,6 +5,7 @@
 #pragma once
 #ifndef VULKANFROMSCRATCH_RBCOMMANDBUFFER_H
 #define VULKANFROMSCRATCH_RBCOMMANDBUFFER_H
+#define GLM_ENABLE_EXPERIMENTAL
 
 #include <glm/gtx/hash.hpp>
 #include <GLFW/glfw3.h>
