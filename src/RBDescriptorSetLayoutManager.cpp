@@ -19,11 +19,13 @@ namespace RottenBamboo {
     RBDescriptorSetLayoutManager::~RBDescriptorSetLayoutManager()
     {
         Destroy();
+        std::cout << "RBDescriptorSetLayoutManager::~RBDescriptorSetLayoutManager()" << std::endl;
     }
 
     void RBDescriptorSetLayoutManager::Destroy()
     {
         vkDestroyDescriptorSetLayout(rbDevice.device, descriptorSetLayout, nullptr);
+        std::cout << "RBDescriptorSetLayoutManager::Destroy()" << std::endl;
     }
 
     void RBDescriptorSetLayoutManager::fillDescriptorByType(VkDescriptorSetLayoutBinding binding)

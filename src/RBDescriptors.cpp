@@ -62,8 +62,8 @@ namespace RottenBamboo{
         samplerLayoutBinding.pImmutableSamplers = nullptr;
 
         std::vector<VkDescriptorSetLayoutBinding> bindings = {uboLayoutBinding, samplerLayoutBinding};
-        descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(rbDevice, bindings);
-        descriptorSetLayoutManager.createDescriptorSetLayout();
+        descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(rbDevice, bindings);
+        descriptorSetManager.descriptorSetLayoutManager.createDescriptorSetLayout();
     }
 
     void RBDescriptors::createDescriptorPool()
@@ -89,19 +89,9 @@ namespace RottenBamboo{
 
     void RBDescriptors::createDescriptorSets()
     {
-        std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetLayoutManager.descriptorSetLayout);
-        VkDescriptorSetAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-        allocInfo.descriptorPool = descriptorPool;
-        allocInfo.descriptorSetCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
-        allocInfo.pSetLayouts = layouts.data();
-
-        //descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
-        //if(vkAllocateDescriptorSets(rbDevice.device, &allocInfo, descriptorSets.data()) != VK_SUCCESS)
-        //{
-        //    throw std::runtime_error("failed to allocate descriptor sets!");
-        //}
-        descriptorSetManager.allocateDescriptorSets(rbDevice, allocInfo, MAX_FRAMES_IN_FLIGHT);
+        std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout);
+        descriptorSetManager.fillDescriptorSetsAllocateInfo(descriptorPool, MAX_FRAMES_IN_FLIGHT, layouts.data());
+        descriptorSetManager.allocateDescriptorSets(rbDevice, MAX_FRAMES_IN_FLIGHT);
 
         for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
         {
@@ -426,17 +416,17 @@ namespace RottenBamboo{
         }
     }
 
-    RBDescriptors::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers) : rbDevice(device), rbCommandBuffer(commandBuffer), rbBufferPtr(uniformBuffers), descriptorSetLayoutManager(device), descriptorSetManager(device)
+    RBDescriptors::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers) : rbDevice(device), rbCommandBuffer(commandBuffer), rbBufferPtr(uniformBuffers), descriptorSetManager(device)
     {
     }
 
     void RBDescriptors::InitializeDescriptors()
     {
-        createDescriptorSetLayout();
         createTextureImage();
         createTextureImageView();
         createTextureSampler();
         createDescriptorPool();
+        createDescriptorSetLayout();
         createDescriptorSets();
     }
 
@@ -449,7 +439,7 @@ namespace RottenBamboo{
         vkFreeMemory(rbDevice.device, textureImageMemory, nullptr);
 
         vkDestroyDescriptorPool(rbDevice.device, descriptorPool, nullptr);
-        descriptorSetLayoutManager.Destroy();
+        //descriptorSetManager.Destroy();
 
     }
 }

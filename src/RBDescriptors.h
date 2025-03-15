@@ -15,7 +15,6 @@
 #include "RBDevice.h"
 #include "RBCommandBuffer.h"
 #include "RBBuffer.h"
-#include "RBDescriptorSetLayoutManager.h"
 #include "RBDescriptorSetManager.h"
 
 
@@ -66,7 +65,6 @@ namespace RottenBamboo {
 
     public:
 
-        RBDescriptorSetLayoutManager descriptorSetLayoutManager;
         RBDescriptorSetManager descriptorSetManager;
 
         RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers);

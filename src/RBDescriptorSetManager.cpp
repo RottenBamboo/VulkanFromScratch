@@ -10,17 +10,23 @@ namespace RottenBamboo{
 
     RBDescriptorSetManager::~RBDescriptorSetManager()
     {
-        clearDescriptorSets();
-        clearDescriptorWrites();
+        Destroy();
+        std::cout << "RBDescriptorSetManager::~RBDescriptorSetManager" << std::endl;
     }
 
-    void RBDescriptorSetManager::allocateDescriptorSets(RBDevice &device, VkDescriptorSetAllocateInfo &allocInfo, int size)
+    void RBDescriptorSetManager::Destroy()
     {
-        descriptorSets.resize(size);
-        if(vkAllocateDescriptorSets(rbDevice.device, &allocInfo, descriptorSets.data()) != VK_SUCCESS)
-        {
-            throw std::runtime_error("failed to allocate descriptor sets!");
-        }
+        clearDescriptorSets();
+        clearDescriptorWrites();
+        std::cout << "RBDescriptorSetManager::Destroy" << std::endl;
+    }
+
+    void RBDescriptorSetManager::fillDescriptorSetsAllocateInfo(VkDescriptorPool &descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSetLayout* pSetLayouts)
+    {
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = descriptorPool;
+        allocInfo.descriptorSetCount = descriptorSetCount;
+        allocInfo.pSetLayouts = pSetLayouts;
     }
 
     void RBDescriptorSetManager::fillDescriptotSetsWriteBuffer(uint32_t dstSetIndex, uint32_t dstBinding, uint32_t dstArrayElement, uint32_t descriptorCount, VkDescriptorType descriptorType, const VkDescriptorBufferInfo* pBufferInfo)
@@ -49,9 +55,13 @@ namespace RottenBamboo{
         this->descriptorWrites.push_back(descriptorWrite);
     }
 
-    VkDescriptorSet* RBDescriptorSetManager::getDescriptorSet(int index)
+    void RBDescriptorSetManager::allocateDescriptorSets(RBDevice &device, int size)
     {
-        return &descriptorSets[index];
+        descriptorSets.resize(size);
+        if(vkAllocateDescriptorSets(rbDevice.device, &(this->allocInfo), descriptorSets.data()) != VK_SUCCESS)
+        {
+            throw std::runtime_error("failed to allocate descriptor sets!");
+        }
     }
 
     void RBDescriptorSetManager::updateDescriptorSets(RBDevice &device)
@@ -78,4 +88,10 @@ namespace RottenBamboo{
         descriptorSets.reserve(0);
         //std::cout << "descriptorWrites size: " << descriptorWrites.size() << std::endl;
     }
+
+    VkDescriptorSet* RBDescriptorSetManager::getDescriptorSet(int index)
+    {
+        return &descriptorSets[index];
+    }
+
 }
