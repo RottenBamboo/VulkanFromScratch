@@ -9,13 +9,17 @@ namespace RottenBamboo {
     {
     }
 
-    void RBDescriptorSetLayoutManager::fillDescriptorSetLayoutBinding(RBDevice &device, std::vector<VkDescriptorSetLayoutBinding> bindings)
+    void RBDescriptorSetLayoutManager::fillDescriptorSetLayoutBinding(uint32_t index, uint32_t descriptorCount, VkDescriptorType descriptorType, VkShaderStageFlags stageFlags, const VkSampler* pImmutableSamplers)
     {
-        for(int i = 0; i < bindings.size(); i++)
-        {
-            fillDescriptorByType(bindings[i]);
-        }
+        VkDescriptorSetLayoutBinding binding{};
+        binding.binding = index;
+        binding.descriptorType = descriptorType;
+        binding.descriptorCount = descriptorCount;
+        binding.stageFlags = stageFlags;
+        binding.pImmutableSamplers = pImmutableSamplers;
+        this->bindings.push_back(binding);
     }
+
     RBDescriptorSetLayoutManager::~RBDescriptorSetLayoutManager()
     {
         Destroy();
@@ -26,14 +30,6 @@ namespace RottenBamboo {
     {
         vkDestroyDescriptorSetLayout(rbDevice.device, descriptorSetLayout, nullptr);
         std::cout << "RBDescriptorSetLayoutManager::Destroy()" << std::endl;
-    }
-
-    void RBDescriptorSetLayoutManager::fillDescriptorByType(VkDescriptorSetLayoutBinding binding)
-    {
-        VkDescriptorSetLayoutBinding bindingVarable{};
-        bindingVarable = binding;
-        bindingVarable.pImmutableSamplers = nullptr;
-        this->bindings.push_back(bindingVarable);
     }
 
     void RBDescriptorSetLayoutManager::createDescriptorSetLayout() {

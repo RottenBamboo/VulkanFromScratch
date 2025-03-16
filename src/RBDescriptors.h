@@ -22,7 +22,6 @@ namespace RottenBamboo {
     class RBDescriptors {
     private:
         //duplicated member in graphicpipeline
-        VkDescriptorPool descriptorPool;
         VkDeviceMemory textureImageMemory;
         VkImage textureImage;
         VkImageView textureImageView;

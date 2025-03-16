@@ -130,8 +130,8 @@ namespace RottenBamboo {
             glfwPollEvents();
             drawFrame();
             float interval = C_intervalTime - (glfwGetTime() - timeStamp);
-            int intervalMiliseconds = int(interval * 1000);
-            std::this_thread::sleep_for(std::chrono::milliseconds(intervalMiliseconds));
+            //int intervalMiliseconds = int(interval * 1000);
+            //std::this_thread::sleep_for(std::chrono::milliseconds(intervalMiliseconds));
             timeStamp = glfwGetTime();
         }
         vkDeviceWaitIdle(device.device);

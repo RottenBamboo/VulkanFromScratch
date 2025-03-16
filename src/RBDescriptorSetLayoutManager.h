@@ -23,8 +23,7 @@ namespace RottenBamboo {
 
     public:
         RBDescriptorSetLayoutManager(RBDevice &device);
-        void fillDescriptorSetLayoutBinding(RBDevice &device, std::vector<VkDescriptorSetLayoutBinding> bindings);
-        void fillDescriptorByType(VkDescriptorSetLayoutBinding bindings);
+        void fillDescriptorSetLayoutBinding(uint32_t index, uint32_t descriptorCount, VkDescriptorType descriptorType, VkShaderStageFlags stageFlags, const VkSampler* pImmutableSamplers);
         ~RBDescriptorSetLayoutManager();
         void createDescriptorSetLayout();
         void Destroy();

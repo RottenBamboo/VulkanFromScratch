@@ -11,6 +11,7 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include "RBDevice.h"
+#include "RBDescriptorPoolManager.h"
 #include "RBDescriptorSetLayoutManager.h"
 
 namespace RottenBamboo {
@@ -21,6 +22,7 @@ namespace RottenBamboo {
 
     public:
         RBDescriptorSetLayoutManager descriptorSetLayoutManager{rbDevice};
+        RBDescriptorPoolManager descriptorPoolManager{rbDevice};
         VkDescriptorSetAllocateInfo allocInfo;
         std::vector<VkDescriptorSet> descriptorSets;
         std::vector<VkWriteDescriptorSet> descriptorWrites;
