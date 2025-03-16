@@ -1,5 +1,5 @@
 //
-// Created by 王旭 on 2024/7/31.
+// Created by rottenbamboo on 2024/7/31.
 //
 
 #ifndef VULKANFROMSCRATCH_RBPIPELINELAYOUT_H
