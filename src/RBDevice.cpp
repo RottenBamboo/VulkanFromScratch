@@ -301,7 +301,8 @@ namespace RottenBamboo {
         bool bPortabilityExtension = (GetVersionMajor() > 1 || (GetVersionMajor() == 1 && GetVersionMinor() > 2));
         VkInstanceCreateInfo createInfo{};
         //#define VK_INSTANCE_CREATE_FLAG_BITS_MAX_ENUM bPortabilityExtension ? 0x7FFFFFFF : 0;
-        createInfo.flags = 0;
+        #define VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR bPortabilityExtension ? 0x00000001 : 0;
+        createInfo.flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         createInfo.pApplicationInfo = &appInfo;
 
