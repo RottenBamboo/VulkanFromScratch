@@ -407,7 +407,7 @@ namespace RottenBamboo{
     {
         vkDestroySampler(rbDevice.device, textureSampler, nullptr);
         vkDestroyImageView(rbDevice.device, textureImageView, nullptr);
-        vkDestroyImageView(rbDevice.device, textureImageView, nullptr);
+        //vkDestroyImageView(rbDevice.device, textureImageView, nullptr);
         vkDestroyImage(rbDevice.device, textureImage, nullptr);
         vkFreeMemory(rbDevice.device, textureImageMemory, nullptr);
     }

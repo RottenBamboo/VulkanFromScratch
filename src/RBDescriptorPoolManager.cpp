@@ -27,6 +27,8 @@ namespace RottenBamboo {
     void RBDescriptorPoolManager::fillDescriptorPoolCreateInfo(VkStructureType type, uint32_t maxSets)
     {
         poolInfo.sType = type;
+        poolInfo.flags = 0;
+        poolInfo.pNext = nullptr;
         poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
         poolInfo.pPoolSizes = poolSizes.data();
         poolInfo.maxSets = maxSets;
