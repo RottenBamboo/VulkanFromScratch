@@ -18,13 +18,21 @@ namespace RottenBamboo {
     private:
         RBDevice &rbDevice;
 
-    private:
-        VkDeviceMemory textureImageMemory;
+    public:
+        RBImageManager(RBDevice &device);
+        ~RBImageManager();
+        void createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
+        void createTextureSampler();
+
         VkImage textureImage;
         VkImageView textureImageView;
         VkSampler textureSampler;
+    private:
         void createTextureImage();
-    };
+        void createTextureImageView();
+
+        VkDeviceMemory textureImageMemory;
+        };
 }
 
 

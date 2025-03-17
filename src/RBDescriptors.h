@@ -16,6 +16,7 @@
 #include "RBCommandBuffer.h"
 #include "RBBuffer.h"
 #include "RBDescriptorSetManager.h"
+#include "RBImageManager.h"
 
 
 namespace RottenBamboo {
@@ -24,8 +25,6 @@ namespace RottenBamboo {
         //duplicated member in graphicpipeline
         VkDeviceMemory textureImageMemory;
         VkImage textureImage;
-        VkImageView textureImageView;
-        VkSampler textureSampler;
         RBBuffer<UniformBufferObject> *rbBufferPtr;
 
         RBDevice &rbDevice;
@@ -54,8 +53,6 @@ namespace RottenBamboo {
         void createImage(RBDevice &rbDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage &image,
                     VkDeviceMemory &imageMemory);
 
-        VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
-
         void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory);
 
         void createTextureImage();
@@ -65,6 +62,7 @@ namespace RottenBamboo {
     public:
 
         RBDescriptorSetManager descriptorSetManager;
+        RBImageManager rbImageManager;
 
         RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers);
 

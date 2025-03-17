@@ -75,8 +75,8 @@ namespace RottenBamboo{
 
             VkDescriptorImageInfo imageInfo{};
             imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            imageInfo.imageView = textureImageView;
-            imageInfo.sampler = textureSampler;
+            imageInfo.imageView = rbImageManager.textureImageView;
+            imageInfo.sampler = rbImageManager.textureSampler;
 
             descriptorSetManager.fillDescriptotSetsWriteBuffer(i, 0, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
             descriptorSetManager.fillDescriptotSetsWriteImage(i, 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &imageInfo);
@@ -143,28 +143,6 @@ namespace RottenBamboo{
         generateMipmaps(textureImage, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, mipLevels);
     }
 
-    VkImageView RBDescriptors::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
-    {
-        VkImageViewCreateInfo viewInfo{};
-        viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-        viewInfo.image = image;
-        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        viewInfo.format = format;
-        viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        viewInfo.subresourceRange.baseMipLevel = 0;
-        viewInfo.subresourceRange.levelCount = mipLevels;
-        viewInfo.subresourceRange.baseArrayLayer = 0;
-        viewInfo.subresourceRange.layerCount = 1;
-        viewInfo.subresourceRange.aspectMask = aspectFlags;
-
-        VkImageView imageView;
-        if(vkCreateImageView(rbDevice.device, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
-        {
-            throw std::runtime_error("failed to create texture image view!");
-        }
-        return imageView;
-    }
-
     uint32_t RBDescriptors::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice& physicalDevice)
     {
         VkPhysicalDeviceMemoryProperties memProperties;
@@ -180,7 +158,7 @@ namespace RottenBamboo{
 
     void RBDescriptors::createTextureImageView()
     {
-        textureImageView = createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
+        rbImageManager.createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
     }
 
     void RBDescriptors::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
@@ -360,36 +338,14 @@ namespace RottenBamboo{
 
     void RBDescriptors::createTextureSampler()
     {
-        VkPhysicalDeviceProperties properties{};
-        vkGetPhysicalDeviceProperties(rbDevice.physicalDevice, &properties);
-
-        VkSamplerCreateInfo samplerInfo{};
-        samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-        samplerInfo.magFilter = VK_FILTER_LINEAR;
-        samplerInfo.minFilter = VK_FILTER_LINEAR;
-        samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        samplerInfo.anisotropyEnable = VK_TRUE;
-        samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
-        vkGetPhysicalDeviceProperties(rbDevice.physicalDevice, &properties);
-        samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
-        samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-        samplerInfo.unnormalizedCoordinates = VK_FALSE;
-        samplerInfo.compareEnable = VK_FALSE;
-        samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-        samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-        samplerInfo.minLod = 0.0f;
-        samplerInfo.maxLod = static_cast<float>(mipLevels);
-        samplerInfo.mipLodBias = 0.0f;
-
-        if(vkCreateSampler(rbDevice.device, &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS)
-        {
-            throw std::runtime_error("failed to create texture sampler!");
-        }
+        rbImageManager.createTextureSampler();
     }
 
-    RBDescriptors::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers) : rbDevice(device), rbCommandBuffer(commandBuffer), rbBufferPtr(uniformBuffers), descriptorSetManager(device)
+    RBDescriptors::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers) : rbDevice(device),
+    rbCommandBuffer(commandBuffer),
+    rbBufferPtr(uniformBuffers),
+    descriptorSetManager(device),
+    rbImageManager(device)
     {
     }
 
@@ -405,9 +361,6 @@ namespace RottenBamboo{
 
     RBDescriptors::~RBDescriptors()
     {
-        vkDestroySampler(rbDevice.device, textureSampler, nullptr);
-        vkDestroyImageView(rbDevice.device, textureImageView, nullptr);
-        //vkDestroyImageView(rbDevice.device, textureImageView, nullptr);
         vkDestroyImage(rbDevice.device, textureImage, nullptr);
         vkFreeMemory(rbDevice.device, textureImageMemory, nullptr);
     }
