@@ -51,7 +51,7 @@ namespace RottenBamboo {
             throw std::runtime_error("failed to create texture sampler!");
         }
     }
-    void RBImageManager::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
+    void RBImageManager::createImageView(VkImage &image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
     {
         VkImageViewCreateInfo viewInfo{};
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;

@@ -21,7 +21,7 @@ namespace RottenBamboo {
     public:
         RBImageManager(RBDevice &device);
         ~RBImageManager();
-        void createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
+        void createImageView(VkImage &image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
         void createTextureSampler();
 
         VkImage textureImage;
