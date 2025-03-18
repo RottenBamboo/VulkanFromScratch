@@ -17,6 +17,7 @@
 #include "RBBuffer.h"
 #include "RBDescriptorSetManager.h"
 #include "RBImageManager.h"
+#include "RBBufferManager.h"
 
 
 namespace RottenBamboo {
@@ -47,8 +48,6 @@ namespace RottenBamboo {
         void endSingleTimeCommands(VkCommandBuffer commandBuffer);
 
         VkCommandBuffer beginSingleTimeCommands();
-
-        uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice &physicalDevice);
 
         void createImage(RBDevice &rbDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage &image,
                     VkDeviceMemory &imageMemory);

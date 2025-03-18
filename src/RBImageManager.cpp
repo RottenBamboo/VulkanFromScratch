@@ -86,7 +86,6 @@ namespace RottenBamboo {
     }
     void RBImageManager::createTextureSampler()
     {
-
         if(vkCreateSampler(rbDevice.device, &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS)
         {
             throw std::runtime_error("failed to create texture sampler!");
@@ -115,6 +114,7 @@ namespace RottenBamboo {
         viewInfo.components.a = a;
         std::cout << "RBImageManager::fillViewInfoComponentMapping()" << std::endl;
     }
+
     void RBImageManager::fillViewInfoSubResourceRange(VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount)
     {
         viewInfo.subresourceRange.aspectMask = aspectFlags;

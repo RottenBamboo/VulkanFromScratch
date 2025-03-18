@@ -16,9 +16,9 @@ namespace RottenBamboo {
     class RBDescriptorSetLayoutManager {
 
     public:
-        VkDescriptorSetLayout descriptorSetLayout;
+        VkDescriptorSetLayout descriptorSetLayout{};
     private:
-        std::vector<VkDescriptorSetLayoutBinding> bindings;
+        std::vector<VkDescriptorSetLayoutBinding> bindings{};
         RBDevice &rbDevice;
 
     public:

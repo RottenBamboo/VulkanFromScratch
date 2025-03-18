@@ -23,9 +23,9 @@ namespace RottenBamboo {
     public:
         RBDescriptorSetLayoutManager descriptorSetLayoutManager{rbDevice};
         RBDescriptorPoolManager descriptorPoolManager{rbDevice};
-        VkDescriptorSetAllocateInfo allocInfo;
-        std::vector<VkDescriptorSet> descriptorSets;
-        std::vector<VkWriteDescriptorSet> descriptorWrites;
+        VkDescriptorSetAllocateInfo allocInfo{};
+        std::vector<VkDescriptorSet> descriptorSets{};
+        std::vector<VkWriteDescriptorSet> descriptorWrites{};
 
     public:
         RBDescriptorSetManager(RBDevice &device);

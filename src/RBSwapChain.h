@@ -53,8 +53,6 @@ namespace RottenBamboo {
 
         VkFormat findDepthFormat();
 
-        uint32_t findMemoryType(VkPhysicalDevice *physical_device, uint32_t typeFilter, VkMemoryPropertyFlags properties);
-
         void createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage &image,
                          VkDeviceMemory &imageMemory);
 

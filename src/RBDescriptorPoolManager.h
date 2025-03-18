@@ -15,8 +15,8 @@ namespace RottenBamboo {
     private:
         RBDevice &rbDevice;
 
-        std::vector<VkDescriptorPoolSize> poolSizes;
-        VkDescriptorPoolCreateInfo poolInfo;
+        std::vector<VkDescriptorPoolSize> poolSizes{};
+        VkDescriptorPoolCreateInfo poolInfo{};
 
     public:;
         RBDescriptorPoolManager(RBDevice &device);
@@ -27,7 +27,7 @@ namespace RottenBamboo {
         RBDescriptorPoolManager(const RBDescriptorPoolManager &) = delete;
         RBDescriptorPoolManager(RBDescriptorPoolManager &&) = default;
 
-        VkDescriptorPool descriptorPool;
+        VkDescriptorPool descriptorPool{};
     };
 }
 

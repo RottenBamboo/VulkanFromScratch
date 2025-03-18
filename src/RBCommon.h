@@ -87,6 +87,20 @@ struct QueueFamilyIndices {
     }
 };
 
+namespace RottenBamboo {
+    static uint32_t findMemoryType(VkPhysicalDevice &physicalDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties) {
+        VkPhysicalDeviceMemoryProperties memProperties;
+        vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
+        for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+            if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+                return i;
+            }
+        }
+
+        throw std::runtime_error("failed to find suitable memory type!");
+    }
+}
+
 //extern const int MAX_FRAMES_IN_FLIGHT;
 static double timeStamp;
 static const float C_intervalTime = 1.0f / 120.0f;

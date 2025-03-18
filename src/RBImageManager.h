@@ -34,11 +34,11 @@ namespace RottenBamboo {
         void fillViewInfoComponentMapping(VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a);
         void fillViewInfo(VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
 
-        VkImage textureImage;
-        VkImageView textureImageView;
-        VkSampler textureSampler;
-        VkSamplerCreateInfo samplerInfo;
-        VkImageViewCreateInfo viewInfo;
+        VkImage textureImage{};
+        VkImageView textureImageView{};
+        VkSampler textureSampler{};
+        VkSamplerCreateInfo samplerInfo{};
+        VkImageViewCreateInfo viewInfo{};
 
     private:
         void createTextureImage();

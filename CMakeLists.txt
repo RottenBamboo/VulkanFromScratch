@@ -39,7 +39,8 @@ add_executable(${PROJECT_NAME} src/RBApplication.cpp src/RBApplication.h
         src/RBDescriptorSetLayoutManager.cpp src/RBDescriptorSetLayoutManager.h
         src/RBDescriptorManager.cpp src/RBDescriptorManager.h
         src/RBPipelineLayout.cpp src/RBPipelineLayout.h
-        src/RBImageManager.cpp src/RBImageManager.h)
+        src/RBImageManager.cpp src/RBImageManager.h
+        src/RBBufferManager.cpp src/RBBufferManager.h)
 
 find_package(Vulkan REQUIRED)
 target_include_directories(${PROJECT_NAME} PUBLIC ${Vulkan_INCLUDE_DIRS})
