@@ -13,12 +13,14 @@ namespace RottenBamboo {
 
     RBImageManager::RBImageManager(RBDevice &device) : rbDevice(device)
     {
+        std::cout << "RBImageManager::RBImageManager()" << std::endl;
     }
 
     RBImageManager::~RBImageManager()
     {
         vkDestroySampler(rbDevice.device, textureSampler, nullptr);
         vkDestroyImageView(rbDevice.device, textureImageView, nullptr);
+        std::cout << "RBImageManager::~RBImageManager()" << std::endl;
     }
 
     void RBImageManager::fillSamplerAddressMode(VkSamplerAddressMode addressMode)
@@ -26,12 +28,14 @@ namespace RottenBamboo {
         samplerInfo.addressModeU = addressMode;
         samplerInfo.addressModeV = addressMode;
         samplerInfo.addressModeW = addressMode;
+        std::cout << "RBImageManager::fillSamplerAddressMode()" << std::endl;
     }
 
     void RBImageManager::fillSamplerFilter(VkFilter filter)
     {
         samplerInfo.magFilter = filter;
         samplerInfo.minFilter = filter;
+        std::cout << "RBImageManager::fillSamplerFilter()" << std::endl;
     }
 
     void RBImageManager::fillSamplerAnisotropy(bool enable, float maxAnisotropy)
@@ -45,12 +49,14 @@ namespace RottenBamboo {
             }
             samplerInfo.maxAnisotropy = maxAnisotropy;
         }
+        std::cout << "RBImageManager::fillSamplerAnisotropy()" << std::endl;
     }
 
     void RBImageManager::fillSamplerCompare(bool enable, VkCompareOp compareOp)
     {
         samplerInfo.compareEnable = enable;
         samplerInfo.compareOp = compareOp;
+        std::cout << "RBImageManager::fillSamplerCompare()" << std::endl;
     }
 
     void RBImageManager::fillSamplerMipmap(VkSamplerMipmapMode mipmapMode, float minLod, float maxLod, float mipLodBias)
@@ -59,6 +65,7 @@ namespace RottenBamboo {
         samplerInfo.minLod = minLod;
         samplerInfo.maxLod = maxLod;
         samplerInfo.mipLodBias = mipLodBias;
+        std::cout << "RBImageManager::fillSamplerMipmap()" << std::endl;
     }
 
     void RBImageManager::fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels)
@@ -75,6 +82,7 @@ namespace RottenBamboo {
         fillSamplerAnisotropy(VK_TRUE, properties.limits.maxSamplerAnisotropy);
         fillSamplerCompare(VK_FALSE, compareOp);
         fillSamplerMipmap(mipmapMode, 0.0f, static_cast<float>(mipLevels), 0.0f);
+        std::cout << "RBImageManager::fillSampler()" << std::endl;
     }
     void RBImageManager::createTextureSampler()
     {
@@ -83,6 +91,7 @@ namespace RottenBamboo {
         {
             throw std::runtime_error("failed to create texture sampler!");
         }
+        std::cout << "RBImageManager::createTextureSampler()" << std::endl;
     }
 
     void RBImageManager::fillViewInfo(VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
@@ -95,6 +104,7 @@ namespace RottenBamboo {
         viewInfo.flags = 0;
         fillViewInfoSubResourceRange(aspectFlags, 0, mipLevels, 0, 1);
         fillViewInfoComponentMapping(VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A);
+        std::cout << "RBImageManager::fillViewInfo()" << std::endl;
     }
 
     void RBImageManager::fillViewInfoComponentMapping(VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a)
@@ -103,6 +113,7 @@ namespace RottenBamboo {
         viewInfo.components.g = g;
         viewInfo.components.b = b;
         viewInfo.components.a = a;
+        std::cout << "RBImageManager::fillViewInfoComponentMapping()" << std::endl;
     }
     void RBImageManager::fillViewInfoSubResourceRange(VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount)
     {
@@ -111,6 +122,7 @@ namespace RottenBamboo {
         viewInfo.subresourceRange.levelCount = levelCount;
         viewInfo.subresourceRange.baseArrayLayer = baseArrayLayer;
         viewInfo.subresourceRange.layerCount = layerCount;
+        std::cout << "RBImageManager::fillViewInfoSubResourceRange()" << std::endl;
     }
 
     void RBImageManager::createImageView()
@@ -119,6 +131,7 @@ namespace RottenBamboo {
         {
             throw std::runtime_error("failed to create texture image view!");
         }
+        std::cout << "RBImageManager::createImageView()" << std::endl;
     }
 
     void RBImageManager::createTextureImage() {

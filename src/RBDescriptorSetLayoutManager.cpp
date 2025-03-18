@@ -7,6 +7,7 @@
 namespace RottenBamboo {
     RBDescriptorSetLayoutManager::RBDescriptorSetLayoutManager(RBDevice &device) : rbDevice(device)
     {
+        std::cout << "RBDescriptorSetLayoutManager::RBDescriptorSetLayoutManager()" << std::endl;
     }
 
     void RBDescriptorSetLayoutManager::fillDescriptorSetLayoutBinding(uint32_t index, uint32_t descriptorCount, VkDescriptorType descriptorType, VkShaderStageFlags stageFlags, const VkSampler* pImmutableSamplers)
@@ -18,6 +19,7 @@ namespace RottenBamboo {
         binding.stageFlags = stageFlags;
         binding.pImmutableSamplers = pImmutableSamplers;
         this->bindings.push_back(binding);
+        std::cout << "RBDescriptorSetLayoutManager::fillDescriptorSetLayoutBinding()" << std::endl;
     }
 
     RBDescriptorSetLayoutManager::~RBDescriptorSetLayoutManager()
@@ -41,5 +43,6 @@ namespace RottenBamboo {
         if (vkCreateDescriptorSetLayout(rbDevice.device, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS) {
             throw std::runtime_error("failed to create descriptor set layout!");
         }
+        std::cout << "RBDescriptorSetLayoutManager::createDescriptorSetLayout()" << std::endl;
     }
 }

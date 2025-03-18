@@ -6,19 +6,20 @@
 namespace RottenBamboo{
     RBDescriptorSetManager::RBDescriptorSetManager(RBDevice &device) : rbDevice(device)
     {
+        std::cout << "RBDescriptorSetManager::RBDescriptorSetManager()" << std::endl;
     }
 
     RBDescriptorSetManager::~RBDescriptorSetManager()
     {
         Destroy();
-        std::cout << "RBDescriptorSetManager::~RBDescriptorSetManager" << std::endl;
+        std::cout << "RBDescriptorSetManager::~RBDescriptorSetManager()" << std::endl;
     }
 
     void RBDescriptorSetManager::Destroy()
     {
         clearDescriptorSets();
         clearDescriptorWrites();
-        std::cout << "RBDescriptorSetManager::Destroy" << std::endl;
+        std::cout << "RBDescriptorSetManager::Destroy()" << std::endl;
     }
 
     void RBDescriptorSetManager::fillDescriptorSetsAllocateInfo(VkDescriptorPool &descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSetLayout* pSetLayouts)
@@ -28,6 +29,7 @@ namespace RottenBamboo{
         allocInfo.pNext = nullptr;
         allocInfo.descriptorSetCount = descriptorSetCount;
         allocInfo.pSetLayouts = pSetLayouts;
+        std::cout << "RBDescriptorSetManager::fillDescriptorSetsAllocateInfo()" << std::endl;
     }
 
     void RBDescriptorSetManager::fillDescriptotSetsWriteBuffer(uint32_t dstSetIndex, uint32_t dstBinding, uint32_t dstArrayElement, uint32_t descriptorCount, VkDescriptorType descriptorType, const VkDescriptorBufferInfo* pBufferInfo)
@@ -41,6 +43,7 @@ namespace RottenBamboo{
         descriptorWrite.descriptorType = descriptorType;
         descriptorWrite.pBufferInfo = pBufferInfo;
         this->descriptorWrites.push_back(descriptorWrite);
+        std::cout << "RBDescriptorSetManager::fillDescriptotSetsWriteBuffer()" << std::endl;
     }
 
     void RBDescriptorSetManager::fillDescriptotSetsWriteImage(uint32_t dstSetIndex, uint32_t dstBinding, uint32_t dstArrayElement, uint32_t descriptorCount, VkDescriptorType descriptorType, const VkDescriptorImageInfo* pImageInfo)
@@ -54,6 +57,7 @@ namespace RottenBamboo{
         descriptorWrite.descriptorType = descriptorType;
         descriptorWrite.pImageInfo = pImageInfo;
         this->descriptorWrites.push_back(descriptorWrite);
+        std::cout << "RBDescriptorSetManager::fillDescriptotSetsWriteImage()" << std::endl;
     }
 
     void RBDescriptorSetManager::allocateDescriptorSets(RBDevice &device, int size)
@@ -63,31 +67,34 @@ namespace RottenBamboo{
         {
             throw std::runtime_error("failed to allocate descriptor sets!");
         }
+        std::cout << "RBDescriptorSetManager::allocateDescriptorSets()" << std::endl;
     }
 
     void RBDescriptorSetManager::updateDescriptorSets(RBDevice &device)
     {
         vkUpdateDescriptorSets(device.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
         clearDescriptorWrites();
+        std::cout << "RBDescriptorSetManager::updateDescriptorSets()" << std::endl;
     }
 
     void RBDescriptorSetManager::updateDescriptorSets(RBDevice &device, std::vector<VkWriteDescriptorSet> descriptorWrites)
     {
         vkUpdateDescriptorSets(device.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+        std::cout << "RBDescriptorSetManager::updateDescriptorSets(RBDevice &device, std::vector<VkWriteDescriptorSet> descriptorWrites)" << std::endl;
     }
 
     void RBDescriptorSetManager::clearDescriptorWrites()
     {
         descriptorWrites.clear();
         descriptorWrites.reserve(0);
-        //std::cout << "descriptorWrites size: " << descriptorWrites.size() << std::endl;
+        std::cout << "RBDescriptorSetManager::clearDescriptorWrites() " << "descriptorWrites size: " << descriptorWrites.size() << std::endl;
     }
 
     void RBDescriptorSetManager::clearDescriptorSets()
     {
         descriptorSets.clear();
         descriptorSets.reserve(0);
-        //std::cout << "descriptorWrites size: " << descriptorWrites.size() << std::endl;
+        std::cout << "RBDescriptorSetManager::clearDescriptorSets() " << "descriptorWrites size: " << descriptorWrites.size() << std::endl;
     }
 
     VkDescriptorSet* RBDescriptorSetManager::getDescriptorSet(int index)
