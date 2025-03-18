@@ -125,7 +125,7 @@ namespace RottenBamboo{
         RBBufferManager stageBufferManager(rbDevice);
         stageBufferManager.CreateBufferAllocBindMemory(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_SHARING_MODE_EXCLUSIVE, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-        void* data;
+        void* data = nullptr;
         stageBufferManager.copyMemory(imageSize, data, pixels);
 
         stbi_image_free(pixels);

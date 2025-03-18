@@ -15,6 +15,7 @@
 #include <optional>
 #include <string>
 #include <algorithm>
+#include <stdexcept>
 
 struct Vertex {
     glm::vec3 pos;
