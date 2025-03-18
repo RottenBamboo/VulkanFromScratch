@@ -158,7 +158,9 @@ namespace RottenBamboo{
 
     void RBDescriptors::createTextureImageView()
     {
-        rbImageManager.createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
+        rbImageManager.fillViewInfo(textureImage, VK_IMAGE_VIEW_TYPE_2D, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
+        rbImageManager.createImageView();
+
     }
 
     void RBDescriptors::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
@@ -338,6 +340,7 @@ namespace RottenBamboo{
 
     void RBDescriptors::createTextureSampler()
     {
+        rbImageManager.fillSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, VK_SAMPLER_MIPMAP_MODE_LINEAR, VK_COMPARE_OP_LESS_OR_EQUAL, mipLevels);
         rbImageManager.createTextureSampler();
     }
 

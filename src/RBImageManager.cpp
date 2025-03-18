@@ -21,60 +21,93 @@ namespace RottenBamboo {
         vkDestroyImageView(rbDevice.device, textureImageView, nullptr);
     }
 
-    void RBImageManager::createTextureSampler()
+    void RBImageManager::fillSamplerAddressMode(VkSamplerAddressMode addressMode)
+    {
+        samplerInfo.addressModeU = addressMode;
+        samplerInfo.addressModeV = addressMode;
+        samplerInfo.addressModeW = addressMode;
+    }
+
+    void RBImageManager::fillSamplerFilter(VkFilter filter)
+    {
+        samplerInfo.magFilter = filter;
+        samplerInfo.minFilter = filter;
+    }
+
+    void RBImageManager::fillSamplerAnisotropy(bool enable, float maxAnisotropy)
+    {
+        samplerInfo.anisotropyEnable = enable;
+        if(enable)
+        {
+            if(maxAnisotropy == 0)
+            {
+                throw std::runtime_error("Anisotropy is enabled but maxAnisotropy is 0");
+            }
+            samplerInfo.maxAnisotropy = maxAnisotropy;
+        }
+    }
+
+    void RBImageManager::fillSamplerCompare(bool enable, VkCompareOp compareOp)
+    {
+        samplerInfo.compareEnable = enable;
+        samplerInfo.compareOp = compareOp;
+    }
+
+    void RBImageManager::fillSamplerMipmap(VkSamplerMipmapMode mipmapMode, float minLod, float maxLod, float mipLodBias)
+    {
+        samplerInfo.mipmapMode = mipmapMode;
+        samplerInfo.minLod = minLod;
+        samplerInfo.maxLod = maxLod;
+        samplerInfo.mipLodBias = mipLodBias;
+    }
+
+    void RBImageManager::fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels)
     {
         VkPhysicalDeviceProperties properties{};
         vkGetPhysicalDeviceProperties(rbDevice.physicalDevice, &properties);
 
-        VkSamplerCreateInfo samplerInfo{};
         samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-        samplerInfo.magFilter = VK_FILTER_LINEAR;
-        samplerInfo.minFilter = VK_FILTER_LINEAR;
-        samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        samplerInfo.anisotropyEnable = VK_TRUE;
-        samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
-        vkGetPhysicalDeviceProperties(rbDevice.physicalDevice, &properties);
-        samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
         samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
         samplerInfo.unnormalizedCoordinates = VK_FALSE;
-        samplerInfo.compareEnable = VK_FALSE;
-        samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-        samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-        samplerInfo.minLod = 0.0f;
-        samplerInfo.maxLod = static_cast<float>(mipLevels);
-        samplerInfo.mipLodBias = 0.0f;
+        fillSamplerFilter(filter);
+        fillSamplerAddressMode(addressMode);
+        fillSamplerAnisotropy(VK_TRUE, properties.limits.maxSamplerAnisotropy);
+        fillSamplerCompare(VK_FALSE, compareOp);
+        fillSamplerMipmap(mipmapMode, 0.0f, static_cast<float>(mipLevels), 0.0f);
+    }
+    void RBImageManager::createTextureSampler()
+    {
 
         if(vkCreateSampler(rbDevice.device, &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS)
         {
             throw std::runtime_error("failed to create texture sampler!");
         }
     }
-    void RBImageManager::createImageView(VkImage &image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
+
+    void RBImageManager::fillViewInfo(VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
     {
-        VkImageViewCreateInfo viewInfo{};
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         viewInfo.image = image;
-        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        viewInfo.viewType = viewType;
         viewInfo.format = format;
-        viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        viewInfo.subresourceRange.baseMipLevel = 0;
-        viewInfo.subresourceRange.levelCount = mipLevels;
-        viewInfo.subresourceRange.baseArrayLayer = 0;
-        viewInfo.subresourceRange.layerCount = 1;
-        viewInfo.subresourceRange.aspectMask = aspectFlags;
+        fillViewInfoSubResourceRange(aspectFlags, 0, mipLevels, 0, 1);
+    }
 
-        VkImageView imageView;
+    void RBImageManager::fillViewInfoSubResourceRange(VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount)
+    {
+        viewInfo.subresourceRange.aspectMask = aspectFlags;
+        viewInfo.subresourceRange.baseMipLevel = baseMipLevel;
+        viewInfo.subresourceRange.levelCount = levelCount;
+        viewInfo.subresourceRange.baseArrayLayer = baseArrayLayer;
+        viewInfo.subresourceRange.layerCount = layerCount;
+    }
+
+    void RBImageManager::createImageView()
+    {
         if(vkCreateImageView(rbDevice.device, &viewInfo, nullptr, &textureImageView) != VK_SUCCESS)
         {
             throw std::runtime_error("failed to create texture image view!");
         }
-    }
-
-    void RBImageManager::createTextureImageView()
-    {
-        createImageView(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
     }
 
     void RBImageManager::createTextureImage() {
