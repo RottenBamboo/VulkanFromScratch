@@ -67,6 +67,7 @@ namespace RottenBamboo {
         vkGetPhysicalDeviceProperties(rbDevice.physicalDevice, &properties);
 
         samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+        samplerInfo.pNext = nullptr;
         samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
         samplerInfo.unnormalizedCoordinates = VK_FALSE;
         fillSamplerFilter(filter);
@@ -88,11 +89,21 @@ namespace RottenBamboo {
     {
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         viewInfo.image = image;
+        viewInfo.pNext = nullptr;
         viewInfo.viewType = viewType;
         viewInfo.format = format;
+        viewInfo.flags = 0;
         fillViewInfoSubResourceRange(aspectFlags, 0, mipLevels, 0, 1);
+        fillViewInfoComponentMapping(VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A);
     }
 
+    void RBImageManager::fillViewInfoComponentMapping(VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a)
+    {
+        viewInfo.components.r = r;
+        viewInfo.components.g = g;
+        viewInfo.components.b = b;
+        viewInfo.components.a = a;
+    }
     void RBImageManager::fillViewInfoSubResourceRange(VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount)
     {
         viewInfo.subresourceRange.aspectMask = aspectFlags;
