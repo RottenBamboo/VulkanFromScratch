@@ -24,7 +24,7 @@ namespace RottenBamboo {
 
         ~RBCommandBuffer();
 
-        VkCommandBuffer beginSingleTimeCommands();
+        VkCommandBuffer beginSingleTimeCommands(VkCommandBufferLevel level);
 
         void endSingleTimeCommands(VkCommandBuffer commandBuffer);
 

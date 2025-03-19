@@ -34,23 +34,26 @@ namespace RottenBamboo {
 
             i++;
         }
+        std::cout << "RBCommandBuffer::findQueueFamilies()" << std::endl;
         return indices;
     }
 
     RBCommandBuffer::RBCommandBuffer(RBDevice &device) : rbDevice(device) {
+        std::cout << "RBCommandBuffer::RBCommandBuffer()" << std::endl;
     }
 
     void RBCommandBuffer::InitializeCommandBuffer()
     {
         createCommandPool();
         createCommandBuffers();
+        std::cout << "RBCommandBuffer::InitializeCommandBuffer()" << std::endl;
     }
 
-    VkCommandBuffer RBCommandBuffer::beginSingleTimeCommands()
+    VkCommandBuffer RBCommandBuffer::beginSingleTimeCommands(VkCommandBufferLevel level)
     {
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        allocInfo.level = level;
         allocInfo.commandPool = commandPool;
         allocInfo.commandBufferCount = 1;
         VkCommandBuffer commandBuffer;
@@ -61,6 +64,7 @@ namespace RottenBamboo {
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
         vkBeginCommandBuffer(commandBuffer, &beginInfo);
+        std::cout << "RBCommandBuffer::beginSingleTimeCommands()" << std::endl;
         return commandBuffer;
     }
 
@@ -76,6 +80,7 @@ namespace RottenBamboo {
         vkQueueWaitIdle(rbDevice.graphicsQueue);
 
         vkFreeCommandBuffers(rbDevice.device, commandPool, 1, &commandBuffer);
+        std::cout << "RBCommandBuffer::endSingleTimeCommands()" << std::endl;
     }
 
     void RBCommandBuffer::createCommandBuffers() {
@@ -90,6 +95,7 @@ namespace RottenBamboo {
         if (vkAllocateCommandBuffers(rbDevice.device, &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
             throw std::runtime_error("failed to allocate command buffers!");
         }
+        std::cout << "RBCommandBuffer::createCommandBuffers()" << std::endl;
     }
 
     void RBCommandBuffer::createCommandPool() {
@@ -102,9 +108,11 @@ namespace RottenBamboo {
         if (vkCreateCommandPool(rbDevice.device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
             throw std::runtime_error("failed to create command pool!");
         }
+        std::cout << "RBCommandBuffer::createCommandBuffers()" << std::endl;
     }
 
     RBCommandBuffer::~RBCommandBuffer() {
         vkDestroyCommandPool(rbDevice.device, commandPool, nullptr);
+        std::cout << "RBCommandBuffer::RBCommandBuffer()" << std::endl;
     }
 }
