@@ -24,6 +24,10 @@ namespace RottenBamboo {
 
         ~RBCommandBuffer();
 
+        VkCommandBuffer beginSingleTimeCommands();
+
+        void endSingleTimeCommands(VkCommandBuffer commandBuffer);
+
     private:
         RBDevice &rbDevice;
 

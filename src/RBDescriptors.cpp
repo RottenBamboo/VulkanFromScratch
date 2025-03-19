@@ -122,7 +122,7 @@ namespace RottenBamboo{
     }
 
     void RBDescriptors::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
-        VkCommandBuffer commandBuffer = beginSingleTimeCommands();
+        VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands();
 
         VkBufferImageCopy region{};
         region.bufferOffset = 0;
@@ -141,7 +141,7 @@ namespace RottenBamboo{
 
         vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
-        endSingleTimeCommands(commandBuffer);
+        rbCommandBuffer.endSingleTimeCommands(commandBuffer);
     }
 
     void RBDescriptors::generateMipmaps(VkImage image, VkFormat imageFormat, uint32_t texWidth, uint32_t texHeight, uint32_t mipLevels)
@@ -154,7 +154,7 @@ namespace RottenBamboo{
             throw std::runtime_error("texture image format does not support linear blitting!");
         }
 
-        VkCommandBuffer commandBuffer = beginSingleTimeCommands();
+        VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands();
 
         VkImageMemoryBarrier barrier{};
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -213,43 +213,11 @@ namespace RottenBamboo{
 
         vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
-        endSingleTimeCommands(commandBuffer);
-    }
-
-    VkCommandBuffer RBDescriptors::beginSingleTimeCommands()
-    {
-        VkCommandBufferAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandPool = rbCommandBuffer.commandPool;
-        allocInfo.commandBufferCount = 1;
-        VkCommandBuffer commandBuffer;
-        vkAllocateCommandBuffers(rbDevice.device, &allocInfo, &commandBuffer);
-
-        VkCommandBufferBeginInfo beginInfo{};
-        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-        vkBeginCommandBuffer(commandBuffer, &beginInfo);
-        return commandBuffer;
-    }
-
-    void RBDescriptors::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
-        vkEndCommandBuffer(commandBuffer);
-
-        VkSubmitInfo submitInfo{};
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &commandBuffer;
-
-        vkQueueSubmit(rbDevice.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(rbDevice.graphicsQueue);
-
-        vkFreeCommandBuffers(rbDevice.device, rbCommandBuffer.commandPool, 1, &commandBuffer);
+        rbCommandBuffer.endSingleTimeCommands(commandBuffer);
     }
 
     void RBDescriptors::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels) {
-        VkCommandBuffer commandBuffer = beginSingleTimeCommands();
+        VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands();
 
         VkImageMemoryBarrier barrier{};
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -293,7 +261,7 @@ namespace RottenBamboo{
                 1, &barrier
         );
 
-        endSingleTimeCommands(commandBuffer);
+        rbCommandBuffer.endSingleTimeCommands(commandBuffer);
     }
 
     void RBDescriptors::createTextureSampler()
