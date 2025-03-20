@@ -33,7 +33,9 @@ namespace RottenBamboo {
         void fillViewInfoSubResourceRange(VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount);
         void fillViewInfoComponentMapping(VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a);
         void fillViewInfo(VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
-
+        void transitionImageLayout(VkCommandBuffer &commandBuffer, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
+        void CopyBufferToImage(VkCommandBuffer &commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+        void fillBufferImageCopy(VkBufferImageCopy &region, uint32_t width, uint32_t height);
         VkImage textureImage{};
         VkImageView textureImageView{};
         VkSampler textureSampler{};
@@ -43,8 +45,11 @@ namespace RottenBamboo {
     private:
         void createTextureImage();
         void createTextureImageView();
+        void fillImageMemoryBarrier(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout);
 
         VkDeviceMemory textureImageMemory;
+        VkImageMemoryBarrier barrier{};
+        VkBufferImageCopy region{};
         };
 }
 

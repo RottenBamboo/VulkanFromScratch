@@ -11,40 +11,33 @@
 
 namespace RottenBamboo {
 
-    RBImageManager::RBImageManager(RBDevice &device) : rbDevice(device)
-    {
+    RBImageManager::RBImageManager(RBDevice &device) : rbDevice(device) {
         std::cout << "RBImageManager::RBImageManager()" << std::endl;
     }
 
-    RBImageManager::~RBImageManager()
-    {
+    RBImageManager::~RBImageManager() {
         vkDestroySampler(rbDevice.device, textureSampler, nullptr);
         vkDestroyImageView(rbDevice.device, textureImageView, nullptr);
         std::cout << "RBImageManager::~RBImageManager()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerAddressMode(VkSamplerAddressMode addressMode)
-    {
+    void RBImageManager::fillSamplerAddressMode(VkSamplerAddressMode addressMode) {
         samplerInfo.addressModeU = addressMode;
         samplerInfo.addressModeV = addressMode;
         samplerInfo.addressModeW = addressMode;
         std::cout << "RBImageManager::fillSamplerAddressMode()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerFilter(VkFilter filter)
-    {
+    void RBImageManager::fillSamplerFilter(VkFilter filter) {
         samplerInfo.magFilter = filter;
         samplerInfo.minFilter = filter;
         std::cout << "RBImageManager::fillSamplerFilter()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerAnisotropy(bool enable, float maxAnisotropy)
-    {
+    void RBImageManager::fillSamplerAnisotropy(bool enable, float maxAnisotropy) {
         samplerInfo.anisotropyEnable = enable;
-        if(enable)
-        {
-            if(maxAnisotropy == 0)
-            {
+        if (enable) {
+            if (maxAnisotropy == 0) {
                 throw std::runtime_error("Anisotropy is enabled but maxAnisotropy is 0");
             }
             samplerInfo.maxAnisotropy = maxAnisotropy;
@@ -52,15 +45,13 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillSamplerAnisotropy()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerCompare(bool enable, VkCompareOp compareOp)
-    {
+    void RBImageManager::fillSamplerCompare(bool enable, VkCompareOp compareOp) {
         samplerInfo.compareEnable = enable;
         samplerInfo.compareOp = compareOp;
         std::cout << "RBImageManager::fillSamplerCompare()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerMipmap(VkSamplerMipmapMode mipmapMode, float minLod, float maxLod, float mipLodBias)
-    {
+    void RBImageManager::fillSamplerMipmap(VkSamplerMipmapMode mipmapMode, float minLod, float maxLod, float mipLodBias) {
         samplerInfo.mipmapMode = mipmapMode;
         samplerInfo.minLod = minLod;
         samplerInfo.maxLod = maxLod;
@@ -68,8 +59,7 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillSamplerMipmap()" << std::endl;
     }
 
-    void RBImageManager::fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels)
-    {
+    void RBImageManager::fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels) {
         VkPhysicalDeviceProperties properties{};
         vkGetPhysicalDeviceProperties(rbDevice.physicalDevice, &properties);
 
@@ -84,17 +74,15 @@ namespace RottenBamboo {
         fillSamplerMipmap(mipmapMode, 0.0f, static_cast<float>(mipLevels), 0.0f);
         std::cout << "RBImageManager::fillSampler()" << std::endl;
     }
-    void RBImageManager::createTextureSampler()
-    {
-        if(vkCreateSampler(rbDevice.device, &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS)
-        {
+
+    void RBImageManager::createTextureSampler() {
+        if (vkCreateSampler(rbDevice.device, &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS) {
             throw std::runtime_error("failed to create texture sampler!");
         }
         std::cout << "RBImageManager::createTextureSampler()" << std::endl;
     }
 
-    void RBImageManager::fillViewInfo(VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
-    {
+    void RBImageManager::fillViewInfo(VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels) {
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         viewInfo.image = image;
         viewInfo.pNext = nullptr;
@@ -106,8 +94,7 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillViewInfo()" << std::endl;
     }
 
-    void RBImageManager::fillViewInfoComponentMapping(VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a)
-    {
+    void RBImageManager::fillViewInfoComponentMapping(VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a) {
         viewInfo.components.r = r;
         viewInfo.components.g = g;
         viewInfo.components.b = b;
@@ -115,8 +102,7 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillViewInfoComponentMapping()" << std::endl;
     }
 
-    void RBImageManager::fillViewInfoSubResourceRange(VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount)
-    {
+    void RBImageManager::fillViewInfoSubResourceRange(VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount) {
         viewInfo.subresourceRange.aspectMask = aspectFlags;
         viewInfo.subresourceRange.baseMipLevel = baseMipLevel;
         viewInfo.subresourceRange.levelCount = levelCount;
@@ -125,46 +111,89 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillViewInfoSubResourceRange()" << std::endl;
     }
 
-    void RBImageManager::createImageView()
-    {
-        if(vkCreateImageView(rbDevice.device, &viewInfo, nullptr, &textureImageView) != VK_SUCCESS)
-        {
+    void RBImageManager::createImageView() {
+        if (vkCreateImageView(rbDevice.device, &viewInfo, nullptr, &textureImageView) != VK_SUCCESS) {
             throw std::runtime_error("failed to create texture image view!");
         }
         std::cout << "RBImageManager::createImageView()" << std::endl;
     }
 
-    void RBImageManager::createTextureImage() {
+    void RBImageManager::RBImageManager::fillImageMemoryBarrier(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout) {
+        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        barrier.oldLayout = oldLayout;
+        barrier.newLayout = newLayout;
+        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.image = image;
+        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        barrier.subresourceRange.baseMipLevel = 0;
+        barrier.subresourceRange.levelCount = mipLevels;
+        barrier.subresourceRange.baseArrayLayer = 0;
+        barrier.subresourceRange.layerCount = 1;
+        std::cout << "RBImageManager::fillImageMemoryBarrier()" << std::endl;
 
-//        int texWidth, texHeight, texChannels;
-//        stbi_uc *pixels = stbi_load(TEXTURE_PATH.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-//        mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
-//        VkDeviceSize imageSize = texWidth * texHeight * 4;
-//
-//        if (!pixels) {
-//            throw std::runtime_error("failed to load texture image!");
-//        }
-//
-//        VkBuffer stagingBuffer;
-//        VkDeviceMemory stagingBufferMemory;
-//        createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-//
-//        void *data;
-//        vkMapMemory(rbDevice.device, stagingBufferMemory, 0, imageSize, 0, &data);
-//        memcpy(data, pixels, static_cast<size_t>(imageSize));
-//        vkUnmapMemory(rbDevice.device, stagingBufferMemory);
-//
-//        stbi_image_free(pixels);
-//
-//        createImage(rbDevice, texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
-//                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
-//
-//        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
-//        copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
-//        //transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
-//
-//        vkDestroyBuffer(rbDevice.device, stagingBuffer, nullptr);
-//        vkFreeMemory(rbDevice.device, stagingBufferMemory, nullptr);
-//        generateMipmaps(textureImage, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, mipLevels);
+    }
+
+    void RBImageManager::transitionImageLayout(VkCommandBuffer &commandBuffer, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels) {
+        fillImageMemoryBarrier(image, oldLayout, newLayout);
+        VkPipelineStageFlags sourceStage;
+        VkPipelineStageFlags destinationStage;
+
+        if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+            barrier.srcAccessMask = 0;
+            barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+            sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
+            destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+        } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+            barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+            barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+            sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
+            destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+        } else {
+            throw std::invalid_argument("unsupported layout transition!");
+        }
+
+        vkCmdPipelineBarrier(
+                commandBuffer,
+                sourceStage,
+                destinationStage,
+                0,
+                0, nullptr,
+                0, nullptr,
+                1, &barrier
+        );
+        std::cout << "RBImageManager::transitionImageLayout()" << std::endl;
+    }
+
+    void RBImageManager::fillBufferImageCopy(VkBufferImageCopy &region, uint32_t width, uint32_t height)
+    {
+        region.bufferOffset = 0;
+        region.bufferRowLength = 0;
+        region.bufferImageHeight = 0;
+        region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        region.imageSubresource.mipLevel = 0;
+        region.imageSubresource.baseArrayLayer = 0;
+        region.imageSubresource.layerCount = 1;
+        region.imageOffset = {0, 0, 0};
+        region.imageExtent = {
+                width,
+                height,
+                1
+        };
+    }
+    void RBImageManager::CopyBufferToImage(VkCommandBuffer &commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
+
+        fillBufferImageCopy(region, width, height);
+        vkCmdCopyBufferToImage(
+                commandBuffer,
+                buffer,
+                image,
+                VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                1,
+                &region
+        );
+        std::cout << "RBImageManager::CopyBufferToImage()" << std::endl;
     }
 }

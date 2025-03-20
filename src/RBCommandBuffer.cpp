@@ -56,6 +56,7 @@ namespace RottenBamboo {
         allocInfo.level = level;
         allocInfo.commandPool = commandPool;
         allocInfo.commandBufferCount = 1;
+
         VkCommandBuffer commandBuffer;
         vkAllocateCommandBuffers(rbDevice.device, &allocInfo, &commandBuffer);
 
