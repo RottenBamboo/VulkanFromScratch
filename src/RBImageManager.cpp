@@ -167,6 +167,51 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::transitionImageLayout()" << std::endl;
     }
 
+    void RBImageManager::fillImageInfo(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage)
+    {
+        imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        imageInfo.imageType = VK_IMAGE_TYPE_2D;
+        imageInfo.extent.width = width;
+        imageInfo.extent.height = height;
+        imageInfo.extent.depth = 1;
+        imageInfo.mipLevels = mipLevels;
+        imageInfo.arrayLayers = 1;
+        imageInfo.format = format;
+        imageInfo.tiling = tiling;
+        imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        imageInfo.usage = usage;
+        imageInfo.samples = numSamples;
+        imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        std::cout << "RBImageManager::fillImageInfo()" << std::endl;
+    }
+
+    void RBImageManager::fillAllocInfo(VkDeviceSize size, uint32_t memoryTypeIndex)
+    {
+        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.allocationSize = size;
+        allocInfo.memoryTypeIndex = memoryTypeIndex;
+        std::cout << "RBImageManager::fileAllocInfo()" << std::endl;
+    }
+
+    void RBImageManager::createImage(VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
+    {
+        if (vkCreateImage(rbDevice.device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create image!");
+        }
+
+        VkMemoryRequirements memRequirements;
+        vkGetImageMemoryRequirements(rbDevice.device, image, &memRequirements);
+
+        fillAllocInfo(memRequirements.size, findMemoryType(rbDevice.physicalDevice, memRequirements.memoryTypeBits, properties));
+
+        if (vkAllocateMemory(rbDevice.device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
+            throw std::runtime_error("failed to allocate image memory!");
+        }
+
+        vkBindImageMemory(rbDevice.device, image, imageMemory, 0);
+        std::cout << "RBImageManager::createImage()" << std::endl;
+    }
+
     void RBImageManager::fillBufferImageCopy(VkBufferImageCopy &region, uint32_t width, uint32_t height)
     {
         region.bufferOffset = 0;
@@ -183,7 +228,7 @@ namespace RottenBamboo {
                 1
         };
     }
-    void RBImageManager::CopyBufferToImage(VkCommandBuffer &commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
+    void RBImageManager::copyBufferToImage(VkCommandBuffer &commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
 
         fillBufferImageCopy(region, width, height);
         vkCmdCopyBufferToImage(

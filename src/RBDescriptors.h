@@ -43,9 +43,6 @@ namespace RottenBamboo {
 
         void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
-        void createImage(RBDevice &rbDevice, uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage &image,
-                    VkDeviceMemory &imageMemory);
-
         void createTextureImage();
 
         void createTextureSampler();
