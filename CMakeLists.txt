@@ -5,9 +5,6 @@ project(VulkanFromScratch)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE "Debug")
 
-# 添加标准库路径
-include_directories(/Library/Developer/CommandLineTools/usr/include/c++/v1)
-
 # 设置 GLM 路径
 set(GLM_PATH "${CMAKE_SOURCE_DIR}/external/glm/0.9.9.8/include")
 include_directories(${GLM_PATH})
