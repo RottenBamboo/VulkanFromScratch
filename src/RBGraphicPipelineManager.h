@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#ifndef VULKANFROMSCRATCH_RBGRAPHICPIPELINE_H
-#define VULKANFROMSCRATCH_RBGRAPHICPIPELINE_H
+#ifndef VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H
+#define VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H
 
 #include <fstream>
 #include <tiny_obj_loader.h>
@@ -14,16 +14,16 @@
 #include <iostream>
 
 namespace RottenBamboo {
-    class RBGraphicPipeline {
+    class RBGraphicPipelineManager {
     public:
 
         VkPipelineLayout pipelineLayout;
 
         VkPipeline graphicsPipeline;
 
-        RBGraphicPipeline(RBSwapChain &swapChain, RBDescriptors &descriptors);
+        RBGraphicPipelineManager(RBSwapChain &swapChain, RBDescriptors &descriptors);
 
-        ~RBGraphicPipeline();
+        ~RBGraphicPipelineManager();
 
         void createGraphicsPipeline();
 
@@ -38,4 +38,4 @@ namespace RottenBamboo {
     };
 }
 
-#endif //VULKANFROMSCRATCH_RBGRAPHICPIPELINE_H
+#endif //VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H

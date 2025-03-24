@@ -2,11 +2,11 @@
 // Created by rottenbamboo on 2023/5/22.
 //
 
-#include "RBGraphicPipeline.h"
+#include "RBGraphicPipelineManager.h"
 
 namespace RottenBamboo {
 
-    VkShaderModule RBGraphicPipeline::createShaderModule(const std::vector<char> &code) {
+    VkShaderModule RBGraphicPipelineManager::createShaderModule(const std::vector<char> &code) {
         VkShaderModuleCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         createInfo.codeSize = code.size();
@@ -19,7 +19,7 @@ namespace RottenBamboo {
         return shaderModule;
     }
 
-    std::vector<char> RBGraphicPipeline::readFile(const std::string &filename) {
+    std::vector<char> RBGraphicPipelineManager::readFile(const std::string &filename) {
         std::ifstream file(filename, std::ios::ate | std::ios::binary);
         if (!file.is_open()) {
             throw std::runtime_error("failed to open file!");
@@ -32,7 +32,7 @@ namespace RottenBamboo {
         return buffer;
     }
 
-    void RBGraphicPipeline::createGraphicsPipeline() {
+    void RBGraphicPipelineManager::createGraphicsPipeline() {
         auto vertShaderCode = readFile("../shader/vert.spv");
         auto fragShaderCode = readFile("../shader/frag.spv");
 
@@ -189,16 +189,16 @@ namespace RottenBamboo {
         vkDestroyShaderModule(rbSwapChain.refDevice.device, fragShaderModule, nullptr);
     }
 
-    RBGraphicPipeline::RBGraphicPipeline(RBSwapChain &swapChain, RBDescriptors &descriptors) : rbSwapChain(swapChain), rbDescriptors(descriptors) {
+    RBGraphicPipelineManager::RBGraphicPipelineManager(RBSwapChain &swapChain, RBDescriptors &descriptors) : rbSwapChain(swapChain), rbDescriptors(descriptors) {
 
     }
 
-    void RBGraphicPipeline::InitializeGraphicPipeline()
+    void RBGraphicPipelineManager::InitializeGraphicPipeline()
     {
         createGraphicsPipeline();
     }
 
-    RBGraphicPipeline::~RBGraphicPipeline() {
+    RBGraphicPipelineManager::~RBGraphicPipelineManager() {
         vkDestroyPipeline(rbSwapChain.refDevice.device, graphicsPipeline, nullptr);
 
         vkDestroyPipelineLayout(rbSwapChain.refDevice.device, pipelineLayout, nullptr);
