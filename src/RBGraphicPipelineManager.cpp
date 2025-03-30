@@ -32,84 +32,137 @@ namespace RottenBamboo {
         return buffer;
     }
 
-    void RBGraphicPipelineManager::createGraphicsPipeline() {
-        auto vertShaderCode = readFile("../shader/vert.spv");
-        auto fragShaderCode = readFile("../shader/frag.spv");
+    void RBGraphicPipelineManager::fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName)
+    {
+        auto shaderCode = readFile(shaderName);
+        VkPipelineShaderStageCreateInfo shaderStageInfo{};
 
-        VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
-        VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
+        shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        shaderStageInfo.pNext = nullptr;
+        shaderStageInfo.stage = stage;
+        shaderStageInfo.module = createShaderModule(shaderCode);
+        shaderStageInfo.pName = "main";
+        shaderStageInfos.push_back(shaderStageInfo);
+        std::cout << "RBGraphicPipelineManager::~fillShaderModule()" << std::endl;
 
-        VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
-        vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-        vertShaderStageInfo.module = vertShaderModule;
-        vertShaderStageInfo.pName = "main";
+    }
 
-        VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
-        fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-        fragShaderStageInfo.module = fragShaderModule;
-        fragShaderStageInfo.pName = "main";
-
-        VkPipelineShaderStageCreateInfo shaderStage[] = {vertShaderStageInfo, fragShaderStageInfo};
-
-        VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+    void RBGraphicPipelineManager::fillVertexInputStateCreateInfo()
+    {
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+        vertexInputInfo.pNext = nullptr;
 
-        auto bindingDescription = Vertex::getBindingDescription();
-        auto attributeDescriptions = Vertex::getAttributeDescriptions();
+        bindingDescription = Vertex::getBindingDescription();
+        attributeDescriptions = Vertex::getAttributeDescriptions();
 
         vertexInputInfo.vertexBindingDescriptionCount = 1;
         vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+
         vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
         vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+        std::cout << "RBGraphicPipelineManager::~fillVertexInputInfo()" << std::endl;
+    }
 
-        VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
+    void RBGraphicPipelineManager::fillInputAssemblyStateCreateInfo(VkPrimitiveTopology typology, VkBool32 primitiveRestartEnable)
+    {
         inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-        inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-        inputAssembly.primitiveRestartEnable = VK_FALSE;
+        inputAssembly.pNext = nullptr;
+        inputAssembly.topology = typology;
+        inputAssembly.primitiveRestartEnable = primitiveRestartEnable;
+        std::cout << "RBGraphicPipelineManager::~fillInputAssembly()" << std::endl;
+    }
 
-        VkViewport viewport{};
-        viewport.x = 0.0f;
-        viewport.y = 0.0f;
-        viewport.width = swapChainExtent.width;
-        viewport.height = swapChainExtent.height;
-        viewport.minDepth = 0.0f;
-        viewport.maxDepth = 1.0f;
+    void RBGraphicPipelineManager::fillViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height, uint32_t minDepth, uint32_t maxDepth)
+    {
+        viewport.x = x;
+        viewport.y = y;
+        viewport.width = width;
+        viewport.height = height;
+        viewport.minDepth = minDepth;
+        viewport.maxDepth = maxDepth;
+        std::cout << "RBGraphicPipelineManager::~fillViewport()" << std::endl;
+    }
 
-        VkRect2D scissor{};
-        scissor.offset = {0, 0};
-        scissor.extent = swapChainExtent;
+    void RBGraphicPipelineManager::fillScissor(VkOffset2D offset, VkExtent2D extent)
+    {
+        scissor.offset = offset;
+        scissor.extent = extent;
+    }
 
-        VkPipelineViewportStateCreateInfo viewportState{};
+    void RBGraphicPipelineManager::fillViewportStateCreateInfo()
+    {
         viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+        viewportState.pNext = nullptr;
         viewportState.viewportCount = 1;
         viewportState.pViewports = &viewport;
         viewportState.scissorCount = 1;
         viewportState.pScissors = &scissor;
+    }
 
-        VkPipelineRasterizationStateCreateInfo rasterizer{};
+    void RBGraphicPipelineManager::fillRasterizerStateCreateInfo(VkBool32 depthClampEnable,
+                                                                 VkBool32 rasterizerDiscardEnable,
+                                                                 VkPolygonMode polygonMode,
+                                                                 VkCullModeFlags cullMode,
+                                                                 VkFrontFace frontFace,
+                                                                 VkBool32 depthBiasEnable,
+                                                                 float depthBiasConstantFactor,
+                                                                 float depthBiasClamp,
+                                                                 float depthBirasSlopeFactor,
+                                                                 float lineWidth)
+    {
         rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-        rasterizer.depthClampEnable = VK_FALSE;
-        rasterizer.rasterizerDiscardEnable = VK_FALSE;
-        rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
-        rasterizer.lineWidth = 1.0f;
-        rasterizer.cullMode = VK_CULL_MODE_NONE;
+        rasterizer.depthClampEnable = depthClampEnable;
+        rasterizer.pNext = nullptr;
+        rasterizer.rasterizerDiscardEnable = rasterizerDiscardEnable;
+        rasterizer.polygonMode = polygonMode;
+        rasterizer.lineWidth = lineWidth;
+        rasterizer.cullMode = cullMode;
         //rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
-        rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-        rasterizer.depthBiasEnable = VK_FALSE;
-        rasterizer.depthBiasConstantFactor = 0.0f;
-        rasterizer.depthBiasClamp = 0.0f;
-        rasterizer.depthBiasSlopeFactor = 0.0f;
+        rasterizer.frontFace = frontFace;
+        rasterizer.depthBiasEnable = depthBiasEnable;
+        rasterizer.depthBiasConstantFactor = depthBiasConstantFactor;
+        rasterizer.depthBiasClamp = depthBiasClamp;
+        rasterizer.depthBiasSlopeFactor = depthBirasSlopeFactor;
+    }
 
-        VkPipelineMultisampleStateCreateInfo multisampling{};
+    void RBGraphicPipelineManager::fillMultipleSampleStateCreateInfo(VkPipelineMultisampleStateCreateFlags flags,
+                                                                     VkSampleCountFlagBits rasterizationSamples,
+                                                                     VkBool32 sampleShadingEnable,
+                                                                     float minSampleShading,
+                                                                     const VkSampleMask* pSampleMask,
+                                                                     VkBool32 alphaToCoverageEnable,
+                                                                     VkBool32 alphaToOneEnable)
+    {
         multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-        multisampling.sampleShadingEnable = VK_TRUE;
-        multisampling.rasterizationSamples = msaaSamples;
-        multisampling.minSampleShading = .2f;
-        multisampling.pSampleMask = nullptr;
-        multisampling.alphaToCoverageEnable = VK_FALSE;
-        multisampling.alphaToOneEnable = VK_FALSE;
+        multisampling.pNext = nullptr;
+        multisampling.flags = flags;
+        multisampling.rasterizationSamples = rasterizationSamples;
+        multisampling.sampleShadingEnable = sampleShadingEnable;
+        multisampling.minSampleShading = minSampleShading;
+        multisampling.pSampleMask = pSampleMask;
+        multisampling.alphaToCoverageEnable = alphaToCoverageEnable;
+        multisampling.alphaToOneEnable = alphaToOneEnable;
+    }
+
+    void RBGraphicPipelineManager::createGraphicsPipeline() {
+
+        fillShaderModule("../shader/vert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main");
+        fillShaderModule("../shader/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
+
+        fillVertexInputStateCreateInfo();
+
+        fillInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);
+
+        fillViewport(0, 0, swapChainExtent.width, swapChainExtent.height, 0, 1);
+
+        VkOffset2D offset{0, 0};
+        fillScissor(offset, swapChainExtent);
+
+        fillViewportStateCreateInfo();
+
+        fillRasterizerStateCreateInfo(VK_FALSE, VK_FALSE, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, VK_FRONT_FACE_CLOCKWISE, VK_FALSE, 0.0f, 0.0f, 0.0f, 1.0f);
+
+        fillMultipleSampleStateCreateInfo(0, msaaSamples, VK_TRUE, 0.2f, nullptr, VK_FALSE, VK_FALSE);
 
         VkPipelineDepthStencilStateCreateInfo depthStencil{};
         depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
@@ -122,7 +175,6 @@ namespace RottenBamboo {
         depthStencil.stencilTestEnable = VK_FALSE;
         //depthStencil.front = {};
         //depthStencil.back = {};
-
 
         VkPipelineColorBlendAttachmentState colorBlendAttachment{};
         colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
@@ -166,7 +218,7 @@ namespace RottenBamboo {
         VkGraphicsPipelineCreateInfo pipelineInfo{};
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
         pipelineInfo.stageCount = 2;
-        pipelineInfo.pStages = shaderStage;
+        pipelineInfo.pStages = shaderStageInfos.data();
         pipelineInfo.pVertexInputState = &vertexInputInfo;
         pipelineInfo.pInputAssemblyState = &inputAssembly;
         pipelineInfo.pViewportState = &viewportState;
