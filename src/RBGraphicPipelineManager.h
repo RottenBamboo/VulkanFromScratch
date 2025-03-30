@@ -59,6 +59,59 @@ namespace RottenBamboo {
                                                const VkSampleMask* pSampleMask,
                                                VkBool32 alphaToCoverageEnable,
                                                VkBool32 alphaToOneEnable);
+
+        void fillDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateFlags flags,
+                                             VkBool32 depthTestEnable,
+                                             VkBool32 depthWriteEnable,
+                                             VkCompareOp depthCompareOp,
+                                             VkBool32 depthBoundsTestEnable,
+                                             VkBool32 stencilTestEnable,
+                                             VkStencilOpState front,
+                                             VkStencilOpState back,
+                                             float minDepthBounds,
+                                             float maxDepthBounds);
+
+        void fillColorBlendAttachmentState(VkBool32 blendEnable,
+                                           VkBlendFactor srcColorBlendFactor,
+                                           VkBlendFactor dstColorBlendFactor,
+                                           VkBlendOp colorBlendOp,
+                                           VkBlendFactor srcAlphaBlendFactor,
+                                           VkBlendFactor dstAlphaBlendFactor,
+                                           VkBlendOp alphaBlendOp,
+                                           VkColorComponentFlags colorWriteMask);
+
+        void fillPipelineColorBlendStateCreateInfo(VkBool32 logicOpEnable,
+                                                   VkLogicOp logicOp,
+                                                   uint32_t attachmentCount,
+                                                   const VkPipelineColorBlendAttachmentState* pAttachments,
+                                                   float blendConstants[4]);
+
+        void fillDynamicStateCrateInfo();
+
+        void fillPipelineLayoutInfo();
+
+        void createPipelineLayout();
+
+        void fillGraphicsPipelineCreateInfo(uint32_t stageCount,
+                                            const VkPipelineShaderStageCreateInfo* pStages,
+                                            const VkPipelineVertexInputStateCreateInfo* pVertexInputState,
+                                            const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                            const VkPipelineTessellationStateCreateInfo* pTessellationState,
+                                            const VkPipelineViewportStateCreateInfo* pViewportState,
+                                            const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                            const VkPipelineMultisampleStateCreateInfo* pMultisampleState,
+                                            const VkPipelineDepthStencilStateCreateInfo* pDepthStencilState,
+                                            const VkPipelineColorBlendStateCreateInfo* pColorBlendState,
+                                            const VkPipelineDynamicStateCreateInfo* pDynamicState,
+                                            VkPipelineLayout layout,
+                                            VkRenderPass renderPass,
+                                            uint32_t subpass,
+                                            VkPipeline basePipelineHandle,
+                                            int32_t basePipelineIndex
+        );
+
+        void createGraphicsPipelines();
+
     private:
 
         RBSwapChain &rbSwapChain;
@@ -91,6 +144,20 @@ namespace RottenBamboo {
         VkPipelineRasterizationStateCreateInfo rasterizer{};
 
         VkPipelineMultisampleStateCreateInfo multisampling{};
+
+        VkPipelineDepthStencilStateCreateInfo depthStencil{};
+
+        VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+
+        VkPipelineColorBlendStateCreateInfo colorBlending{};
+
+        std::vector<VkDynamicState> dynamicStates;
+
+        VkPipelineDynamicStateCreateInfo dynamicState{};
+
+        VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+
+        VkGraphicsPipelineCreateInfo pipelineInfo{};
     };
 }
 

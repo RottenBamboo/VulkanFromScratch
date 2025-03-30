@@ -144,6 +144,135 @@ namespace RottenBamboo {
         multisampling.alphaToOneEnable = alphaToOneEnable;
     }
 
+    void RBGraphicPipelineManager::fillDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateFlags flags,
+                                                                   VkBool32 depthTestEnable,
+                                                                   VkBool32 depthWriteEnable,
+                                                                   VkCompareOp depthCompareOp,
+                                                                   VkBool32 depthBoundsTestEnable,
+                                                                   VkBool32 stencilTestEnable,
+                                                                   VkStencilOpState front,
+                                                                   VkStencilOpState back,
+                                                                   float minDepthBounds,
+                                                                   float maxDepthBounds)
+    {
+        depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+        depthStencil.flags = flags;
+        depthStencil.depthTestEnable = VK_TRUE;
+        depthStencil.depthWriteEnable = VK_TRUE;
+        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+        depthStencil.depthBoundsTestEnable = VK_FALSE;
+        depthStencil.stencilTestEnable = VK_FALSE;
+        depthStencil.front = front;
+        depthStencil.back = back;
+        depthStencil.minDepthBounds = 0.0f;
+        depthStencil.maxDepthBounds = 1.0f;
+    }
+
+    void RBGraphicPipelineManager::fillColorBlendAttachmentState(VkBool32 blendEnable,
+                                                                 VkBlendFactor srcColorBlendFactor,
+                                                                 VkBlendFactor dstColorBlendFactor,
+                                                                 VkBlendOp colorBlendOp,
+                                                                 VkBlendFactor srcAlphaBlendFactor,
+                                                                 VkBlendFactor dstAlphaBlendFactor,
+                                                                 VkBlendOp alphaBlendOp,
+                                                                 VkColorComponentFlags colorWriteMask)
+    {
+        colorBlendAttachment.blendEnable = blendEnable;
+        colorBlendAttachment.srcColorBlendFactor = srcColorBlendFactor;
+        colorBlendAttachment.dstColorBlendFactor = dstColorBlendFactor;
+        colorBlendAttachment.colorBlendOp = colorBlendOp;
+        colorBlendAttachment.srcAlphaBlendFactor = srcAlphaBlendFactor;
+        colorBlendAttachment.dstAlphaBlendFactor = dstAlphaBlendFactor;
+        colorBlendAttachment.alphaBlendOp = alphaBlendOp;
+        colorBlendAttachment.colorWriteMask = colorWriteMask;
+    }
+
+    void RBGraphicPipelineManager::fillPipelineColorBlendStateCreateInfo(VkBool32 logicOpEnable,
+                                                                         VkLogicOp logicOp,
+                                                                         uint32_t attachmentCount,
+                                                                         const VkPipelineColorBlendAttachmentState* pAttachments,
+                                                                         float blendConstants[4])
+    {
+        colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+        colorBlending.pNext = nullptr;
+        colorBlending.flags = 0;
+        colorBlending.logicOpEnable = VK_FALSE;
+        colorBlending.logicOp = VK_LOGIC_OP_AND;
+        colorBlending.attachmentCount = 1;
+        colorBlending.pAttachments = pAttachments;
+        colorBlending.blendConstants[0] = 0.0f;
+        colorBlending.blendConstants[1] = 0.0f;
+        colorBlending.blendConstants[2] = 0.0f;
+        colorBlending.blendConstants[3] = 0.0f;
+    }
+
+    void RBGraphicPipelineManager::fillDynamicStateCrateInfo()
+    {
+        dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+        dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+        dynamicState.pDynamicStates = dynamicStates.data();
+
+    }
+
+    void RBGraphicPipelineManager::fillPipelineLayoutInfo()
+    {
+        pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        pipelineLayoutInfo.setLayoutCount = 1;
+        pipelineLayoutInfo.pSetLayouts = &rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout;
+    }
+
+    void RBGraphicPipelineManager::createPipelineLayout()
+    {
+        if (vkCreatePipelineLayout(rbSwapChain.refDevice.device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
+            throw ::std::runtime_error("failed to create pipeline layout");
+        }
+    }
+
+    void RBGraphicPipelineManager::fillGraphicsPipelineCreateInfo(uint32_t stageCount,
+                                                              const VkPipelineShaderStageCreateInfo* pStages,
+                                                              const VkPipelineVertexInputStateCreateInfo* pVertexInputState,
+                                                              const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                                              const VkPipelineTessellationStateCreateInfo* pTessellationState,
+                                                              const VkPipelineViewportStateCreateInfo* pViewportState,
+                                                              const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                                              const VkPipelineMultisampleStateCreateInfo* pMultisampleState,
+                                                              const VkPipelineDepthStencilStateCreateInfo* pDepthStencilState,
+                                                              const VkPipelineColorBlendStateCreateInfo* pColorBlendState,
+                                                              const VkPipelineDynamicStateCreateInfo* pDynamicState,
+                                                              VkPipelineLayout layout,
+                                                              VkRenderPass renderPass,
+                                                              uint32_t subpass,
+                                                              VkPipeline basePipelineHandle,
+                                                              int32_t basePipelineIndex
+                                                              )
+    {
+        pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+        pipelineInfo.stageCount = 2;
+        pipelineInfo.pStages = shaderStageInfos.data();
+        pipelineInfo.pVertexInputState = &vertexInputInfo;
+        pipelineInfo.pInputAssemblyState = &inputAssembly;
+        pipelineInfo.pTessellationState = nullptr;
+        pipelineInfo.pViewportState = &viewportState;
+        pipelineInfo.pRasterizationState = &rasterizer;
+        pipelineInfo.pMultisampleState = &multisampling;
+        pipelineInfo.pDepthStencilState = &depthStencil;
+        pipelineInfo.pColorBlendState = &colorBlending;
+        pipelineInfo.pDynamicState = nullptr;
+        pipelineInfo.layout = pipelineLayout;
+        pipelineInfo.renderPass = rbSwapChain.renderPass;
+        pipelineInfo.subpass = 0;
+        pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+        pipelineInfo.basePipelineIndex = -1;
+
+    }
+
+    void RBGraphicPipelineManager::createGraphicsPipelines()
+    {
+        if (vkCreateGraphicsPipelines(rbSwapChain.refDevice.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
+            throw ::std::runtime_error("failed to create graphics pipeline");
+        }
+    }
+
     void RBGraphicPipelineManager::createGraphicsPipeline() {
 
         fillShaderModule("../shader/vert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main");
@@ -164,78 +293,24 @@ namespace RottenBamboo {
 
         fillMultipleSampleStateCreateInfo(0, msaaSamples, VK_TRUE, 0.2f, nullptr, VK_FALSE, VK_FALSE);
 
-        VkPipelineDepthStencilStateCreateInfo depthStencil{};
-        depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-        depthStencil.depthTestEnable = VK_TRUE;
-        depthStencil.depthWriteEnable = VK_TRUE;
-        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-        depthStencil.depthBoundsTestEnable = VK_FALSE;
-        //depthStencil.minDepthBounds = 0.0f;
-        //depthStencil.maxDepthBounds = 1.0f;
-        depthStencil.stencilTestEnable = VK_FALSE;
-        //depthStencil.front = {};
-        //depthStencil.back = {};
+        fillDepthStencilStateCreateInfo(0, VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS, VK_FALSE, VK_FALSE, {}, {}, 0.0f, 1.0f);
 
-        VkPipelineColorBlendAttachmentState colorBlendAttachment{};
-        colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-        colorBlendAttachment.blendEnable = VK_FALSE;
-        colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;
-        colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;
-        colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-        colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-        colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-        colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+        fillColorBlendAttachmentState(VK_FALSE, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD,
+                                      VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD,
+                                      VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT);
 
-        VkPipelineColorBlendStateCreateInfo colorBlending{};
-        colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-        colorBlending.logicOpEnable = VK_FALSE;
-        colorBlending.attachmentCount = 1;
-        colorBlending.pAttachments = &colorBlendAttachment;
-        colorBlending.blendConstants[0] = 0.0f;
-        colorBlending.blendConstants[1] = 0.0f;
-        colorBlending.blendConstants[2] = 0.0f;
-        colorBlending.blendConstants[3] = 0.0f;
+        float blendConstants[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+        fillPipelineColorBlendStateCreateInfo(VK_FALSE, VK_LOGIC_OP_AND, 1, &colorBlendAttachment, blendConstants);
 
-        std::vector<VkDynamicState> dynamicStates = {
-                VK_DYNAMIC_STATE_VIEWPORT,
-                VK_DYNAMIC_STATE_LINE_WIDTH
-        };
+        dynamicStates.push_back(VK_DYNAMIC_STATE_VIEWPORT);
+        dynamicStates.push_back(VK_DYNAMIC_STATE_LINE_WIDTH);
+        fillDynamicStateCrateInfo();
 
-        VkPipelineDynamicStateCreateInfo dynamicState{};
-        dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-        dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
-        dynamicState.pDynamicStates = dynamicStates.data();
+        fillPipelineLayoutInfo();
+        createPipelineLayout();
+        fillGraphicsPipelineCreateInfo(2, shaderStageInfos.data(), &vertexInputInfo, &inputAssembly, nullptr, &viewportState, &rasterizer, &multisampling, &depthStencil, &colorBlending, nullptr, pipelineLayout, rbSwapChain.renderPass, 0, VK_NULL_HANDLE, -1);
 
-        VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-        pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        pipelineLayoutInfo.setLayoutCount = 1;
-        pipelineLayoutInfo.pSetLayouts = &rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout;
-
-        if (vkCreatePipelineLayout(rbSwapChain.refDevice.device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
-            throw ::std::runtime_error("failed to create pipeline layout");
-        }
-
-        VkGraphicsPipelineCreateInfo pipelineInfo{};
-        pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-        pipelineInfo.stageCount = 2;
-        pipelineInfo.pStages = shaderStageInfos.data();
-        pipelineInfo.pVertexInputState = &vertexInputInfo;
-        pipelineInfo.pInputAssemblyState = &inputAssembly;
-        pipelineInfo.pViewportState = &viewportState;
-        pipelineInfo.pRasterizationState = &rasterizer;
-        pipelineInfo.pMultisampleState = &multisampling;
-        pipelineInfo.pDepthStencilState = &depthStencil;
-        pipelineInfo.pColorBlendState = &colorBlending;
-        pipelineInfo.pDynamicState = nullptr;
-        pipelineInfo.layout = pipelineLayout;
-        pipelineInfo.renderPass = rbSwapChain.renderPass;
-        pipelineInfo.subpass = 0;
-        pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
-        pipelineInfo.basePipelineIndex = -1;
-
-        if (vkCreateGraphicsPipelines(rbSwapChain.refDevice.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
-            throw ::std::runtime_error("failed to create graphics pipeline");
-        }
+        createGraphicsPipelines();
 
         vkDestroyShaderModule(rbSwapChain.refDevice.device, vertShaderModule, nullptr);
         vkDestroyShaderModule(rbSwapChain.refDevice.device, fragShaderModule, nullptr);
