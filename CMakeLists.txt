@@ -40,7 +40,7 @@ add_executable(${PROJECT_NAME}
         src/RBDescriptorSetLayoutManager.cpp src/RBDescriptorSetLayoutManager.h
         src/RBPipelineLayoutManager.cpp src/RBPipelineLayoutManager.h
         src/RBImageManager.cpp src/RBImageManager.h
-        src/RBBufferManager.cpp src/RBBufferManager.h)
+        src/RBBufferManager.cpp src/RBBufferManager.h feature/lightingPass.cpp feature/lightingPass.h)
 
 # find Vulkan SDK
 find_package(Vulkan REQUIRED)

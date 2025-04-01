@@ -1,0 +1,14 @@
+//
+// Created by 王旭 on 2025/4/2.
+//
+
+#ifndef VULKANFROMSCRATCH_LIGHTINGPASS_H
+#define VULKANFROMSCRATCH_LIGHTINGPASS_H
+
+
+class lightingPass {
+
+};
+
+
+#endif //VULKANFROMSCRATCH_LIGHTINGPASS_H
