@@ -21,6 +21,7 @@ endif()
 # set STB and tinyobjloader path
 set(STB_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/stb")
 set(TINYOBJLOADER_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/tinyobjloader")
+include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # add executable file
 add_executable(${PROJECT_NAME}
@@ -40,7 +41,8 @@ add_executable(${PROJECT_NAME}
         src/RBDescriptorSetLayoutManager.cpp src/RBDescriptorSetLayoutManager.h
         src/RBPipelineLayoutManager.cpp src/RBPipelineLayoutManager.h
         src/RBImageManager.cpp src/RBImageManager.h
-        src/RBBufferManager.cpp src/RBBufferManager.h feature/lightingPass.cpp feature/lightingPass.h)
+        src/RBBufferManager.cpp src/RBBufferManager.h
+        feature/LightingPass.cpp feature/LightingPass.h)
 
 # find Vulkan SDK
 find_package(Vulkan REQUIRED)
