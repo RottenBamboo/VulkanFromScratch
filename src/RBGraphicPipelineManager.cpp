@@ -13,7 +13,7 @@ namespace RottenBamboo {
         createInfo.pCode = reinterpret_cast<const uint32_t *>(code.data());
 
         VkShaderModule shaderModule;
-        if (vkCreateShaderModule(rbSwapChain.refDevice.device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+        if (vkCreateShaderModule(rbDevice.device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
             throw ::std::runtime_error("failed to create shader module!");
         }
         return shaderModule;
@@ -87,6 +87,7 @@ namespace RottenBamboo {
     {
         scissor.offset = offset;
         scissor.extent = extent;
+        std::cout << "RBGraphicPipelineManager::fillScissor()" << std::endl;
     }
 
     void RBGraphicPipelineManager::fillViewportStateCreateInfo()
@@ -97,6 +98,7 @@ namespace RottenBamboo {
         viewportState.pViewports = &viewport;
         viewportState.scissorCount = 1;
         viewportState.pScissors = &scissor;
+        std::cout << "RBGraphicPipelineManager::fillViewportStateCreateInfo()" << std::endl;
     }
 
     void RBGraphicPipelineManager::fillRasterizerStateCreateInfo(VkBool32 depthClampEnable,
@@ -122,7 +124,7 @@ namespace RottenBamboo {
         rasterizer.depthBiasEnable = depthBiasEnable;
         rasterizer.depthBiasConstantFactor = depthBiasConstantFactor;
         rasterizer.depthBiasClamp = depthBiasClamp;
-        rasterizer.depthBiasSlopeFactor = depthBirasSlopeFactor;
+        std::cout << "RBGraphicPipelineManager::fillRasterizerStateCreateInfo()" << std::endl;
     }
 
     void RBGraphicPipelineManager::fillMultipleSampleStateCreateInfo(VkPipelineMultisampleStateCreateFlags flags,
@@ -142,6 +144,7 @@ namespace RottenBamboo {
         multisampling.pSampleMask = pSampleMask;
         multisampling.alphaToCoverageEnable = alphaToCoverageEnable;
         multisampling.alphaToOneEnable = alphaToOneEnable;
+        std::cout << "RBGraphicPipelineManager::fillMultipleSampleStateCreateInfo()" << std::endl;
     }
 
     void RBGraphicPipelineManager::fillDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateFlags flags,
@@ -166,6 +169,7 @@ namespace RottenBamboo {
         depthStencil.back = back;
         depthStencil.minDepthBounds = 0.0f;
         depthStencil.maxDepthBounds = 1.0f;
+        std::cout << "RBGraphicPipelineManager::fillDepthStencilStateCreateInfo()" << std::endl;
     }
 
     void RBGraphicPipelineManager::fillColorBlendAttachmentState(VkBool32 blendEnable,
@@ -185,6 +189,7 @@ namespace RottenBamboo {
         colorBlendAttachment.dstAlphaBlendFactor = dstAlphaBlendFactor;
         colorBlendAttachment.alphaBlendOp = alphaBlendOp;
         colorBlendAttachment.colorWriteMask = colorWriteMask;
+        std::cout << "RBGraphicPipelineManager::fillColorBlendAttachmentState()" << std::endl;
     }
 
     void RBGraphicPipelineManager::fillPipelineColorBlendStateCreateInfo(VkBool32 logicOpEnable,
@@ -204,6 +209,7 @@ namespace RottenBamboo {
         colorBlending.blendConstants[1] = 0.0f;
         colorBlending.blendConstants[2] = 0.0f;
         colorBlending.blendConstants[3] = 0.0f;
+        std::cout << "RBGraphicPipelineManager::fillPipelineColorBlendStateCreateInfo()" << std::endl;
     }
 
     void RBGraphicPipelineManager::fillDynamicStateCrateInfo()
@@ -211,21 +217,8 @@ namespace RottenBamboo {
         dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
         dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
         dynamicState.pDynamicStates = dynamicStates.data();
+        std::cout << "RBGraphicPipelineManager::fillDynamicStateCrateInfo()" << std::endl;
 
-    }
-
-    void RBGraphicPipelineManager::fillPipelineLayoutInfo()
-    {
-        pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        pipelineLayoutInfo.setLayoutCount = 1;
-        pipelineLayoutInfo.pSetLayouts = &rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout;
-    }
-
-    void RBGraphicPipelineManager::createPipelineLayout()
-    {
-        if (vkCreatePipelineLayout(rbSwapChain.refDevice.device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
-            throw ::std::runtime_error("failed to create pipeline layout");
-        }
     }
 
     void RBGraphicPipelineManager::fillGraphicsPipelineCreateInfo(uint32_t stageCount,
@@ -258,22 +251,25 @@ namespace RottenBamboo {
         pipelineInfo.pDepthStencilState = &depthStencil;
         pipelineInfo.pColorBlendState = &colorBlending;
         pipelineInfo.pDynamicState = nullptr;
-        pipelineInfo.layout = pipelineLayout;
+        pipelineInfo.layout = rbPipelineLayoutManager.pipelineLayout;
         pipelineInfo.renderPass = rbSwapChain.renderPass;
         pipelineInfo.subpass = 0;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
         pipelineInfo.basePipelineIndex = -1;
+        std::cout << "RBGraphicPipelineManager::fillGraphicsPipelineCreateInfo()" << std::endl;
 
     }
 
     void RBGraphicPipelineManager::createGraphicsPipelines()
     {
-        if (vkCreateGraphicsPipelines(rbSwapChain.refDevice.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
+        if (vkCreateGraphicsPipelines(rbDevice.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
             throw ::std::runtime_error("failed to create graphics pipeline");
         }
+        std::cout << "RBGraphicPipelineManager::createGraphicsPipelines()" << std::endl;
     }
 
-    void RBGraphicPipelineManager::createGraphicsPipeline() {
+    void RBGraphicPipelineManager::createGraphicsPipeline()
+    {
 
         fillShaderModule("../shader/vert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main");
         fillShaderModule("../shader/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
@@ -306,30 +302,39 @@ namespace RottenBamboo {
         dynamicStates.push_back(VK_DYNAMIC_STATE_LINE_WIDTH);
         fillDynamicStateCrateInfo();
 
-        fillPipelineLayoutInfo();
-        createPipelineLayout();
-        fillGraphicsPipelineCreateInfo(2, shaderStageInfos.data(), &vertexInputInfo, &inputAssembly, nullptr, &viewportState, &rasterizer, &multisampling, &depthStencil, &colorBlending, nullptr, pipelineLayout, rbSwapChain.renderPass, 0, VK_NULL_HANDLE, -1);
+        rbPipelineLayoutManager.fillPipelineLayoutInfo(&rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout);
+        rbPipelineLayoutManager.createPipelineLayout();
+
+        fillGraphicsPipelineCreateInfo(2, shaderStageInfos.data(), &vertexInputInfo, &inputAssembly, nullptr, &viewportState, &rasterizer, &multisampling, &depthStencil, &colorBlending, nullptr, rbPipelineLayoutManager.pipelineLayout, rbSwapChain.renderPass, 0, VK_NULL_HANDLE, -1);
 
         createGraphicsPipelines();
 
-        vkDestroyShaderModule(rbSwapChain.refDevice.device, vertShaderModule, nullptr);
-        vkDestroyShaderModule(rbSwapChain.refDevice.device, fragShaderModule, nullptr);
+        vkDestroyShaderModule(rbDevice.device, vertShaderModule, nullptr);
+        vkDestroyShaderModule(rbDevice.device, fragShaderModule, nullptr);
+        std::cout << "RBGraphicPipelineManager::createGraphicsPipeline()" << std::endl;
     }
 
-    RBGraphicPipelineManager::RBGraphicPipelineManager(RBSwapChain &swapChain, RBDescriptors &descriptors) : rbSwapChain(swapChain), rbDescriptors(descriptors) {
+    RBGraphicPipelineManager::RBGraphicPipelineManager(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors) : rbDevice(device), rbSwapChain(swapChain), rbDescriptors(descriptors) {
 
+        std::cout << "RBGraphicPipelineManager::RBGraphicPipelineManager()" << std::endl;
     }
 
     void RBGraphicPipelineManager::InitializeGraphicPipeline()
     {
         createGraphicsPipeline();
+        std::cout << "RBGraphicPipelineManager::InitializeGraphicPipeline()" << std::endl;
     }
 
-    RBGraphicPipelineManager::~RBGraphicPipelineManager() {
-        vkDestroyPipeline(rbSwapChain.refDevice.device, graphicsPipeline, nullptr);
+    RBGraphicPipelineManager::~RBGraphicPipelineManager()
+    {
+        for(int i = 0; i < shaderStageInfos.size(); i++)
+        {
+            vkDestroyShaderModule(rbDevice.device, shaderStageInfos[i].module, nullptr);
+        }
 
-        vkDestroyPipelineLayout(rbSwapChain.refDevice.device, pipelineLayout, nullptr);
+        vkDestroyPipeline(rbDevice.device, graphicsPipeline, nullptr);
 
-        vkDestroyDescriptorSetLayout(rbSwapChain.refDevice.device, rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout, nullptr);
+        vkDestroyDescriptorSetLayout(rbDevice.device, rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout, nullptr);
+        std::cout << "RBGraphicPipelineManager::_RBGraphicPipelineManager()" << std::endl;
     }
 }

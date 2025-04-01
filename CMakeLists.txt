@@ -38,7 +38,7 @@ add_executable(${PROJECT_NAME}
         src/RBDescriptorPoolManager.cpp src/RBDescriptorPoolManager.h
         src/RBDescriptorSetManager.cpp src/RBDescriptorSetManager.h
         src/RBDescriptorSetLayoutManager.cpp src/RBDescriptorSetLayoutManager.h
-        src/RBPipelineLayout.cpp src/RBPipelineLayout.h
+        src/RBPipelineLayoutManager.cpp src/RBPipelineLayoutManager.h
         src/RBImageManager.cpp src/RBImageManager.h
         src/RBBufferManager.cpp src/RBBufferManager.h)
 

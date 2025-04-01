@@ -10,6 +10,7 @@
 #include <tiny_obj_loader.h>
 #include "RBCommon.h"
 #include "RBSwapChain.h"
+#include "RBPipelineLayoutManager.h"
 #include <stdexcept>
 #include <iostream>
 
@@ -17,11 +18,13 @@ namespace RottenBamboo {
     class RBGraphicPipelineManager {
     public:
 
-        VkPipelineLayout pipelineLayout;
+        RBDevice &rbDevice;
 
         VkPipeline graphicsPipeline;
 
-        RBGraphicPipelineManager(RBSwapChain &swapChain, RBDescriptors &descriptors);
+        RBPipelineLayoutManager rbPipelineLayoutManager{rbDevice};
+
+        RBGraphicPipelineManager(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors);
 
         ~RBGraphicPipelineManager();
 
@@ -90,8 +93,6 @@ namespace RottenBamboo {
 
         void fillPipelineLayoutInfo();
 
-        void createPipelineLayout();
-
         void fillGraphicsPipelineCreateInfo(uint32_t stageCount,
                                             const VkPipelineShaderStageCreateInfo* pStages,
                                             const VkPipelineVertexInputStateCreateInfo* pVertexInputState,
@@ -154,8 +155,6 @@ namespace RottenBamboo {
         std::vector<VkDynamicState> dynamicStates;
 
         VkPipelineDynamicStateCreateInfo dynamicState{};
-
-        VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 
         VkGraphicsPipelineCreateInfo pipelineInfo{};
     };
