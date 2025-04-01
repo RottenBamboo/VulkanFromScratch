@@ -3,13 +3,23 @@ git submodule update
 
 #ifdef _WIN32
     cmake -G "Visual Studio 17 2022" -S . -B build
+
+    cd build
+
+    cmake --build .
+
+    cd .\Debug\
+
+    .\VulkanFromScratch.exe
 #else
     cmake -S . -B build
+
+    cd build
+
+    cmake --build .
+
+    .\VulkanFromScratch
 #endif
-
-cd build
-
-cmake --build .
 
 if error like this happened. Delete build folder and makeCache file. Then regenerate makelist file by cmake -S . -B build command. Enter build file, then make VulkanFromScratch again.
 /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/stdio.h:107:15: fatal error: 'stdio.h' file not found
