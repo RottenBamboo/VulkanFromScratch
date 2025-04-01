@@ -1,5 +1,5 @@
 //
-// Created by 王旭 on 2025/4/2.
+// Created by rottenbamboo on 2025/4/2.
 //
 
 #include "LightingPass.h"
