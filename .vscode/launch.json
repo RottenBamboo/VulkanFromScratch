@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "VulkanFromScratch",
+        "type": "lldb",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/VulkanFromScratch",
+        "args": [],
+        "cwd": "${workspaceFolder}",
+        "stopOnEntry": false
+      }
+    ]
+  }

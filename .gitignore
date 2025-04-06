@@ -1,7 +1,7 @@
 assets/scenes
 build
 .vs
-.vscode
+#.vscode
 .idea
 output/*
 .DS_Store

@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 3.23.2)
 project(VulkanFromScratch)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 
 # set GLM path
 set(GLM_PATH "${CMAKE_SOURCE_DIR}/external/glm/0.9.9.8/include")
