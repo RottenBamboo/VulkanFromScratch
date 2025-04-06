@@ -18,7 +18,7 @@ git submodule update
 
     cmake --build .
 
-    .\VulkanFromScratch
+    ./VulkanFromScratch
 #endif
 
 if error like this happened. Delete build folder and makeCache file. Then regenerate makelist file by cmake -S . -B build command. Enter build file, then make VulkanFromScratch again.
