@@ -2,9 +2,10 @@
 // Created by rottenbamboo on 2025/4/2.
 //
 
-#ifndef VULKANFROMSCRATCH_LIGHTINGPASS_H
-#define VULKANFROMSCRATCH_LIGHTINGPASS_H
+//#ifndef VULKANFROMSCRATCH_LIGHTINGPASS_H
+//#define VULKANFROMSCRATCH_LIGHTINGPASS_H
 
+#pragma once
 //#include "../src/li"
 #include "RBGraphicPipelineManager.h"
 
@@ -13,8 +14,10 @@ namespace RottenBamboo {
 
         LightingPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors);
 
-        ~LightingPass();
+        ~LightingPass() override;
+
+        void createGraphicsPipeline() override;
     };
 }
 
-#endif //VULKANFROMSCRATCH_LIGHTINGPASS_H
+//#endif //VULKANFROMSCRATCH_LIGHTINGPASS_H

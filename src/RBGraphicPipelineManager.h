@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#ifndef VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H
-#define VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H
+//#ifndef VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H
+//#define VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H
 
 #include <fstream>
 #include <tiny_obj_loader.h>
@@ -26,13 +26,13 @@ namespace RottenBamboo {
 
         RBGraphicPipelineManager(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors);
 
-        ~RBGraphicPipelineManager();
+        virtual ~RBGraphicPipelineManager();
 
-        void createGraphicsPipeline();
+        virtual void createGraphicsPipeline();
 
         void InitializeGraphicPipeline();
 
-        void fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName);
+        virtual void fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName);
 
         void fillVertexInputStateCreateInfo();
 
@@ -160,4 +160,4 @@ namespace RottenBamboo {
     };
 }
 
-#endif //VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H
+//#endif //VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H
