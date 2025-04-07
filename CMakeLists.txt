@@ -9,6 +9,10 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 # set GLM path
 set(GLM_PATH "${CMAKE_SOURCE_DIR}/external/glm/0.9.9.8/include")
 include_directories(${GLM_PATH})
+# set GLM path
+
+set(FEATURE_PATH "${CMAKE_SOURCE_DIR}/feature")
+include_directories(${FEATURE_PATH})
 
 # set GLFW path
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")

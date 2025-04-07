@@ -12,6 +12,7 @@
 #include "RBDescriptors.h"
 #include "RBSwapChain.h"
 #include "RBGraphicPipelineManager.h"
+#include "RBLightingPass.h"
 #include "RBBuffer.h"
 #include "RBMesh.h"
 #include <stdexcept>
