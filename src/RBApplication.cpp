@@ -253,7 +253,9 @@ namespace RottenBamboo {
         {
             windows.framebufferResized = false;
             swapChain.recreateSwapChain();
-            graphicPipelineManager.createGraphicsPipeline();
+            graphicPipelineManager.createGraphicsPipeline("../shader/vert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main",
+                                                          "../shader/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
+
         }
         else if (result != VK_SUCCESS) {
             throw std::runtime_error("failed to present swap chain image!");

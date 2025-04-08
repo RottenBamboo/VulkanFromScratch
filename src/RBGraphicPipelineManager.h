@@ -28,7 +28,8 @@ namespace RottenBamboo {
 
         virtual ~RBGraphicPipelineManager();
 
-        virtual void createGraphicsPipeline();
+        virtual void createGraphicsPipeline(const std::string& vertShaderName, VkShaderStageFlagBits vertStage, const char* pVertName,
+                                            const std::string& fragShaderName, VkShaderStageFlagBits fragStage, const char* pfragName);
 
         void InitializeGraphicPipeline();
 

@@ -268,11 +268,12 @@ namespace RottenBamboo {
         std::cout << "RBGraphicPipelineManager::createGraphicsPipelines()" << std::endl;
     }
 
-    void RBGraphicPipelineManager::createGraphicsPipeline()
+    void RBGraphicPipelineManager::createGraphicsPipeline(const std::string& vertShaderName, VkShaderStageFlagBits vertStage, const char* pVertName,
+                                                          const std::string& fragShaderName, VkShaderStageFlagBits fragStage, const char* pfragName)
     {
 
-        fillShaderModule("../shader/vert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main");
-        fillShaderModule("../shader/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
+        fillShaderModule(vertShaderName, vertStage, pVertName);
+        fillShaderModule(fragShaderName, fragStage, pfragName);
 
         fillVertexInputStateCreateInfo();
 
@@ -321,7 +322,8 @@ namespace RottenBamboo {
 
     void RBGraphicPipelineManager::InitializeGraphicPipeline()
     {
-        createGraphicsPipeline();
+        createGraphicsPipeline("../shader/vert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main",
+                               "../shader/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
         std::cout << "RBGraphicPipelineManager::InitializeGraphicPipeline()" << std::endl;
     }
 
