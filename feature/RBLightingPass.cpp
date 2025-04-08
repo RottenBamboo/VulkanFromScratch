@@ -8,7 +8,7 @@ namespace RottenBamboo {
 
     LightingPass::LightingPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors) : RBGraphicPipelineManager(device, swapChain, descriptors) 
     {
-        //RBGraphicPipelineManager::RBGraphicPipelineManager(device, swapChain, descriptors);
+        //RBGraphicPipelineManager(device, swapChain, descriptors);
         std::cout << "LightingPass::LightingPass()" << std::endl;
     }
     LightingPass::~LightingPass()
@@ -22,5 +22,12 @@ namespace RottenBamboo {
     {
         RBGraphicPipelineManager::createGraphicsPipeline(vertShaderName, vertStage, pVertName, fragShaderName, fragStage, pfragName);
         std::cout << "LightingPass::createGraphicsPipeline()" << std::endl;
+    }
+
+    void LightingPass::InitializeGraphicPipeline()
+    {
+        createGraphicsPipeline("../shader/lightingVert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main",
+                               "../shader/lightingFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
+        std::cout << "RBGraphicPipelineManager::InitializeGraphicPipeline()" << std::endl;
     }
 }

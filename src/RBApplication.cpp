@@ -64,6 +64,7 @@ namespace RottenBamboo {
     void RBApplication::InitializeGraphicPipeline()
     {
         graphicPipelineManager.InitializeGraphicPipeline();
+        lightPass.InitializeGraphicPipeline();
     };
 
     void RBApplication::loadModel()
@@ -184,6 +185,13 @@ namespace RottenBamboo {
 
         vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
 
+        
+        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, lightPass.graphicsPipeline);
+
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, lightPass.rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptors.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
+
+        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
+
         vkCmdEndRenderPass(commandBuffer);
         if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
             throw std::runtime_error("failed to record command buffer!");
@@ -255,6 +263,9 @@ namespace RottenBamboo {
             swapChain.recreateSwapChain();
             graphicPipelineManager.createGraphicsPipeline("../shader/vert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main",
                                                           "../shader/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
+
+            lightPass.createGraphicsPipeline("../shader/lightingVert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main",
+                                             "../shader/lightingFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
 
         }
         else if (result != VK_SUCCESS) {

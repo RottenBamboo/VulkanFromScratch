@@ -16,6 +16,7 @@
 
 namespace RottenBamboo {
     class RBGraphicPipelineManager {
+        
     public:
 
         RBDevice &rbDevice;
@@ -31,7 +32,7 @@ namespace RottenBamboo {
         virtual void createGraphicsPipeline(const std::string& vertShaderName, VkShaderStageFlagBits vertStage, const char* pVertName,
                                             const std::string& fragShaderName, VkShaderStageFlagBits fragStage, const char* pfragName);
 
-        void InitializeGraphicPipeline();
+        virtual void InitializeGraphicPipeline();
 
         virtual void fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName);
 
