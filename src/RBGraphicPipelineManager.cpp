@@ -2,45 +2,26 @@
 // Created by rottenbamboo on 2023/5/22.
 //
 
+#include "RBPipelineUtils.h"
 #include "RBGraphicPipelineManager.h"
 
 namespace RottenBamboo {
 
-    VkShaderModule RBGraphicPipelineManager::createShaderModule(const std::vector<char> &code) {
-        VkShaderModuleCreateInfo createInfo{};
-        createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-        createInfo.codeSize = code.size();
-        createInfo.pCode = reinterpret_cast<const uint32_t *>(code.data());
-
-        VkShaderModule shaderModule;
-        if (vkCreateShaderModule(rbDevice.device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
-            throw ::std::runtime_error("failed to create shader module!");
-        }
-        return shaderModule;
-    }
-
-    std::vector<char> RBGraphicPipelineManager::readFile(const std::string &filename) {
-        std::ifstream file(filename, std::ios::ate | std::ios::binary);
-        if (!file.is_open()) {
-            throw std::runtime_error("failed to open file!");
-        }
-        size_t fileSize = (size_t) file.tellg();
-        std::vector<char> buffer(fileSize);
-        file.seekg(0);
-        file.read(buffer.data(), fileSize);
-        file.close();
-        return buffer;
+    void RBGraphicPipelineManager::setupShaders()
+    {
+        fillShaderModule("../shader/vert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main");
+        fillShaderModule("../shader/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
     }
 
     void RBGraphicPipelineManager::fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName)
     {
-        auto shaderCode = readFile(shaderName);
+        auto shaderCode = RBPipelineUtils::readFile(shaderName);
         VkPipelineShaderStageCreateInfo shaderStageInfo{};
 
         shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         shaderStageInfo.pNext = nullptr;
         shaderStageInfo.stage = stage;
-        shaderStageInfo.module = createShaderModule(shaderCode);
+        shaderStageInfo.module = RBPipelineUtils::createShaderModule(rbDevice, shaderCode);
         shaderStageInfo.pName = "main";
         shaderStageInfos.push_back(shaderStageInfo);
         std::cout << "RBGraphicPipelineManager::~fillShaderModule()" << std::endl;
@@ -260,6 +241,26 @@ namespace RottenBamboo {
 
     }
 
+    void RBGraphicPipelineManager::setupPipelineStates() {
+        fillVertexInputStateCreateInfo();
+        fillInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);
+        fillViewport(0, 0, swapChainExtent.width, swapChainExtent.height, 0, 1);
+        VkOffset2D offset{0, 0};
+        fillScissor(offset, swapChainExtent);
+        fillViewportStateCreateInfo();
+        fillRasterizerStateCreateInfo(VK_FALSE, VK_FALSE, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, VK_FRONT_FACE_CLOCKWISE, VK_FALSE, 0.0f, 0.0f, 0.0f, 1.0f);
+        fillMultipleSampleStateCreateInfo(0, msaaSamples, VK_TRUE, 0.2f, nullptr, VK_FALSE, VK_FALSE);
+        fillDepthStencilStateCreateInfo(0, VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS, VK_FALSE, VK_FALSE, {}, {}, 0.0f, 1.0f);
+        fillColorBlendAttachmentState(VK_TRUE, VK_BLEND_FACTOR_SRC_ALPHA, VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, VK_BLEND_OP_ADD,
+                                      VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD,
+                                      VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT);
+        float blendConstants[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+        fillPipelineColorBlendStateCreateInfo(VK_FALSE, VK_LOGIC_OP_AND, 1, &colorBlendAttachment, blendConstants);
+        dynamicStates.push_back(VK_DYNAMIC_STATE_VIEWPORT);
+        dynamicStates.push_back(VK_DYNAMIC_STATE_LINE_WIDTH);
+        fillDynamicStateCrateInfo();
+    }
+
     void RBGraphicPipelineManager::createGraphicsPipelines()
     {
         if (vkCreateGraphicsPipelines(rbDevice.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
@@ -268,40 +269,11 @@ namespace RottenBamboo {
         std::cout << "RBGraphicPipelineManager::createGraphicsPipelines()" << std::endl;
     }
 
-    void RBGraphicPipelineManager::createGraphicsPipeline(const std::string& vertShaderName, VkShaderStageFlagBits vertStage, const char* pVertName,
-                                                          const std::string& fragShaderName, VkShaderStageFlagBits fragStage, const char* pfragName)
+    void RBGraphicPipelineManager::createGraphicsPipeline()
     {
+        setupShaders();
 
-        fillShaderModule(vertShaderName, vertStage, pVertName);
-        fillShaderModule(fragShaderName, fragStage, pfragName);
-
-        fillVertexInputStateCreateInfo();
-
-        fillInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);
-
-        fillViewport(0, 0, swapChainExtent.width, swapChainExtent.height, 0, 1);
-
-        VkOffset2D offset{0, 0};
-        fillScissor(offset, swapChainExtent);
-
-        fillViewportStateCreateInfo();
-
-        fillRasterizerStateCreateInfo(VK_FALSE, VK_FALSE, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, VK_FRONT_FACE_CLOCKWISE, VK_FALSE, 0.0f, 0.0f, 0.0f, 1.0f);
-
-        fillMultipleSampleStateCreateInfo(0, msaaSamples, VK_TRUE, 0.2f, nullptr, VK_FALSE, VK_FALSE);
-
-        fillDepthStencilStateCreateInfo(0, VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS, VK_FALSE, VK_FALSE, {}, {}, 0.0f, 1.0f);
-
-        fillColorBlendAttachmentState(VK_TRUE, VK_BLEND_FACTOR_SRC_ALPHA, VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA, VK_BLEND_OP_ADD,
-                                      VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD,
-                                      VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT);
-
-        float blendConstants[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-        fillPipelineColorBlendStateCreateInfo(VK_FALSE, VK_LOGIC_OP_AND, 1, &colorBlendAttachment, blendConstants);
-
-        dynamicStates.push_back(VK_DYNAMIC_STATE_VIEWPORT);
-        dynamicStates.push_back(VK_DYNAMIC_STATE_LINE_WIDTH);
-        fillDynamicStateCrateInfo();
+        setupPipelineStates();
 
         rbPipelineLayoutManager.fillPipelineLayoutInfo(&rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout);
         rbPipelineLayoutManager.createPipelineLayout();
@@ -315,15 +287,14 @@ namespace RottenBamboo {
         std::cout << "RBGraphicPipelineManager::createGraphicsPipeline()" << std::endl;
     }
 
-    RBGraphicPipelineManager::RBGraphicPipelineManager(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors) : rbDevice(device), rbSwapChain(swapChain), rbDescriptors(descriptors) {
+    RBGraphicPipelineManager::RBGraphicPipelineManager(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors) : rbDevice(device), rbSwapChain(swapChain), rbDescriptors(descriptors){
 
         std::cout << "RBGraphicPipelineManager::RBGraphicPipelineManager()" << std::endl;
     }
 
     void RBGraphicPipelineManager::InitializeGraphicPipeline()
     {
-        createGraphicsPipeline("../shader/vert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main",
-                               "../shader/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
+        createGraphicsPipeline();
         std::cout << "RBGraphicPipelineManager::InitializeGraphicPipeline()" << std::endl;
     }
 

@@ -11,11 +11,18 @@
 #include "RBCommon.h"
 #include "RBSwapChain.h"
 #include "RBPipelineLayoutManager.h"
+#include "RBPipelineManager.h"
+#include "RBPipelineConfig.h"
 #include <stdexcept>
 #include <iostream>
 
 namespace RottenBamboo {
-    class RBGraphicPipelineManager {
+    class RBGraphicPipelineManager : public RBPipelineManager {
+
+     protected:
+        void setupShaders() override;
+        void setupPipelineStates() override;
+        RBPipelineConfig rbPipelineConfig;
         
     public:
 
@@ -27,10 +34,9 @@ namespace RottenBamboo {
 
         RBGraphicPipelineManager(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors);
 
-        virtual ~RBGraphicPipelineManager();
+        virtual ~RBGraphicPipelineManager() override;
 
-        virtual void createGraphicsPipeline(const std::string& vertShaderName, VkShaderStageFlagBits vertStage, const char* pVertName,
-                                            const std::string& fragShaderName, VkShaderStageFlagBits fragStage, const char* pfragName);
+        virtual void createGraphicsPipeline();
 
         virtual void InitializeGraphicPipeline();
 
@@ -119,10 +125,6 @@ namespace RottenBamboo {
 
         RBSwapChain &rbSwapChain;
         RBDescriptors &rbDescriptors;
-
-        static std::vector<char> readFile(const std::string &filename);
-
-        VkShaderModule createShaderModule(const std::vector<char> &code);
 
         VkShaderModule vertShaderModule;
 

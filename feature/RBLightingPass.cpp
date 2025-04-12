@@ -6,6 +6,13 @@
 
 namespace RottenBamboo {
 
+
+    void LightingPass::setupShaders()
+    {
+        fillShaderModule("../shader/lightingVert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main");
+        fillShaderModule("../shader/lightingFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
+    }
+
     LightingPass::LightingPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors) : RBGraphicPipelineManager(device, swapChain, descriptors) 
     {
         //RBGraphicPipelineManager(device, swapChain, descriptors);
@@ -17,17 +24,15 @@ namespace RottenBamboo {
         std::cout << "LightingPass::~LightingPass()" << std::endl;
     }
 
-    void LightingPass::createGraphicsPipeline(const std::string& vertShaderName, VkShaderStageFlagBits vertStage, const char* pVertName,
-                                              const std::string& fragShaderName, VkShaderStageFlagBits fragStage, const char* pfragName)
+    void LightingPass::createGraphicsPipeline()
     {
-        RBGraphicPipelineManager::createGraphicsPipeline(vertShaderName, vertStage, pVertName, fragShaderName, fragStage, pfragName);
+        RBGraphicPipelineManager::createGraphicsPipeline();
         std::cout << "LightingPass::createGraphicsPipeline()" << std::endl;
     }
 
     void LightingPass::InitializeGraphicPipeline()
     {
-        createGraphicsPipeline("../shader/lightingVert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main",
-                               "../shader/lightingFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
+        createGraphicsPipeline();
         std::cout << "RBGraphicPipelineManager::InitializeGraphicPipeline()" << std::endl;
     }
 }

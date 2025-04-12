@@ -30,10 +30,14 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # add executable file
 add_executable(${PROJECT_NAME}
+        src/RBPipelineUtils.cpp src/RBPipelineUtils.h
+        src/RBShaderModule.cpp src/RBShaderModule.h
         src/RBApplication.cpp src/RBApplication.h
+        src/RBPipelineConfig.h
         src/RBWindows.h src/RBWindows.cpp
         src/AppMain.cpp
         src/RBGraphicPipelineManager.cpp src/RBGraphicPipelineManager.h
+        src/RBPipelineManager.cpp src/RBPipelineManager.h
         src/RBDevice.cpp src/RBDevice.h
         src/RBSwapChain.cpp src/RBSwapChain.h
         src/RBCommon.cpp src/RBCommon.h
