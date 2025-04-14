@@ -64,6 +64,8 @@ namespace RottenBamboo {
     void RBApplication::InitializeGraphicPipeline()
     {
         graphicPipelineManager.InitializeGraphicPipeline();
+
+        lightPassManager.InitializeGraphicPipeline();
     };
 
     void RBApplication::loadModel()
@@ -160,31 +162,30 @@ namespace RottenBamboo {
         renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
         renderPassInfo.pClearValues = clearValues.data();
 
-        vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicPipelineManager.graphicsPipeline);
-        VkViewport viewport{};
-        viewport.x = 0.0f;
-        viewport.y = 0.0f;
-        viewport.width = (float) swapChainExtent.width;
-        viewport.height = (float) swapChainExtent.height;
-        viewport.minDepth = 0.0f;
-        viewport.maxDepth = 1.0f;
-
-        VkRect2D scissor{};
-        scissor.offset = {0, 0};
-        scissor.extent = swapChainExtent;
-
         VkBuffer vertexBuffers[] = {mesh.vertexBuffer.buffer};
         VkDeviceSize offsets[] = {0};
+        
+        vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
         vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+
+        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicPipelineManager.graphicsPipeline);
 
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicPipelineManager.rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptors.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
 
         vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
 
+        
+        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, lightPassManager.graphicsPipeline);
+
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, lightPassManager.rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptors.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
+
+        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
+
         vkCmdEndRenderPass(commandBuffer);
+
         if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
             throw std::runtime_error("failed to record command buffer!");
         }
@@ -254,6 +255,8 @@ namespace RottenBamboo {
             windows.framebufferResized = false;
             swapChain.recreateSwapChain();
             graphicPipelineManager.createGraphicsPipeline();
+
+            lightPassManager.createGraphicsPipeline();
         }
         else if (result != VK_SUCCESS) {
             throw std::runtime_error("failed to present swap chain image!");

@@ -1,23 +1,64 @@
 //
-// Created by rottenbamboo on 2025/4/2.
+// Created by rottenbamboo on 2023/5/22.
 //
 
-//#ifndef VULKANFROMSCRATCH_LIGHTINGPASS_H
-//#define VULKANFROMSCRATCH_LIGHTINGPASS_H
-
 #pragma once
-//#include "../src/li"
-#include "RBGraphicPipelineManager.h"
+
+#include <fstream>
+#include <tiny_obj_loader.h>
+#include "RBCommon.h"
+#include "RBPipelineManager.h"
+#include "RBPipelineConfig.h"
+#include <stdexcept>
+#include <iostream>
 
 namespace RottenBamboo {
-    class LightingPass : public RBGraphicPipelineManager {
+    class RBLightingPass : public RBPipelineManager {
 
-        LightingPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors);
+     protected:
 
-        ~LightingPass() override;
+        RBPipelineConfig rbPipelineConfig;
+
+        void setupShaders() override;
+
+        void setupPipelineStates() override;
+
+    public:
+
+        void createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo) override;
+
+        ~RBLightingPass() override;
 
         void createGraphicsPipeline() override;
+
+        void InitializeGraphicPipeline() override;
+
+        RBLightingPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors, const RBPipelineConfig &config);
+
+        void fillGraphicsPipelineCreateInfo(uint32_t stageCount,
+                                            const VkPipelineShaderStageCreateInfo* pStages,
+                                            const VkPipelineVertexInputStateCreateInfo* pVertexInputState,
+                                            const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
+                                            const VkPipelineTessellationStateCreateInfo* pTessellationState,
+                                            const VkPipelineViewportStateCreateInfo* pViewportState,
+                                            const VkPipelineRasterizationStateCreateInfo* pRasterizationState,
+                                            const VkPipelineMultisampleStateCreateInfo* pMultisampleState,
+                                            const VkPipelineDepthStencilStateCreateInfo* pDepthStencilState,
+                                            const VkPipelineColorBlendStateCreateInfo* pColorBlendState,
+                                            const VkPipelineDynamicStateCreateInfo* pDynamicState,
+                                            VkPipelineLayout layout,
+                                            VkRenderPass renderPass,
+                                            uint32_t subpass,
+                                            VkPipeline basePipelineHandle,
+                                            int32_t basePipelineIndex
+        );
+
+        virtual void fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName);
+
+    private:
+
+        VkShaderModule vertShaderModule;
+
+        VkShaderModule fragShaderModule;
     };
 }
-
-//#endif //VULKANFROMSCRATCH_LIGHTINGPASS_H

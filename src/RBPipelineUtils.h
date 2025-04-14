@@ -1,0 +1,16 @@
+//
+// Created by rottenbamboo on 2025/4/12.
+//
+
+#pragma once
+
+#include "RBCommon.h"
+#include "RBDevice.h"
+
+namespace RottenBamboo {
+    class RBPipelineUtils {
+    public:
+        static VkShaderModule createShaderModule(RBDevice &device, const std::vector<char> &code);
+        static std::vector<char> readFile(const std::string &filename);
+    };
+}
