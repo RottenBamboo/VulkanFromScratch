@@ -13,7 +13,7 @@ namespace RottenBamboo {
         fillShaderModule("../shader/lightingFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
     }
 
-    LightingPass::LightingPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors) : RBGraphicPipelineManager(device, swapChain, descriptors) 
+    LightingPass::LightingPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors, const RBPipelineConfig &config) : RBGraphicPipelineManager(device, swapChain, descriptors, config) 
     {
         //RBGraphicPipelineManager(device, swapChain, descriptors);
         std::cout << "LightingPass::LightingPass()" << std::endl;

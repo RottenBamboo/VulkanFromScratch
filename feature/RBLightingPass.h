@@ -15,7 +15,7 @@ namespace RottenBamboo {
         void setupShaders() override;
     public:
     
-        LightingPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors);
+        LightingPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors, const RBPipelineConfig &config);
 
         ~LightingPass() override;
 

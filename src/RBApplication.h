@@ -48,11 +48,11 @@ namespace RottenBamboo {
         RBCommandBuffer commandBuffer{device};
 
         RBMesh mesh{device, commandBuffer};
-
+        RBPipelineConfig pipelineConfig{};
         RBDescriptors descriptors{device, commandBuffer, uniformBuffers};
         RBSwapChain swapChain{device, windows, commandBuffer, descriptors};
-        RBGraphicPipelineManager graphicPipelineManager{device, swapChain, descriptors};
-        LightingPass lightPassManager{device, swapChain, descriptors};
+        RBGraphicPipelineManager graphicPipelineManager{device, swapChain, descriptors, pipelineConfig};
+        //LightingPass lightPassManager{device, swapChain, descriptors, pipelineConfig};
 
         RBBuffer<UniformBufferObject> uniformBuffers[MAX_FRAMES_IN_FLIGHT]{{device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}, {device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}};
 
