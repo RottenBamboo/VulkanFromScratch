@@ -65,7 +65,7 @@ namespace RottenBamboo {
     {
         graphicPipelineManager.InitializeGraphicPipeline();
 
-        //lightPassManager.InitializeGraphicPipeline();
+        lightPassManager.InitializeGraphicPipeline();
     };
 
     void RBApplication::loadModel()
@@ -178,11 +178,11 @@ namespace RottenBamboo {
         vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
 
         
-        //vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, lightPassManager.graphicsPipeline);
+        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, lightPassManager.graphicsPipeline);
 
-        //vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, lightPassManager.rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptors.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, lightPassManager.rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptors.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
 
-        //vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
+        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
 
         vkCmdEndRenderPass(commandBuffer);
 
@@ -256,7 +256,7 @@ namespace RottenBamboo {
             swapChain.recreateSwapChain();
             graphicPipelineManager.createGraphicsPipeline();
 
-            //lightPassManager.createGraphicsPipeline();
+            lightPassManager.createGraphicsPipeline();
         }
         else if (result != VK_SUCCESS) {
             throw std::runtime_error("failed to present swap chain image!");
