@@ -9,14 +9,16 @@ namespace RottenBamboo {
 
     void RBLightingPass::setupShaders()
     {
-        fillShaderModule("../shader/lightingVert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main");
-        fillShaderModule("../shader/lightingFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main");
+        fillShaderModule("../shader/lightingVert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main", vertShaderModule);
+        fillShaderModule("../shader/lightingFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main", fragShaderModule);
     }
 
-    void RBLightingPass::fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName)
+    void RBLightingPass::fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName, RBShaderModule &shaderModule)
     {
         auto shaderCode = RBPipelineUtils::readFile(shaderName);
         VkPipelineShaderStageCreateInfo shaderStageInfo{};
+
+        shaderModule.createShaderModule(rbDevice, shaderCode);
 
         shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         shaderStageInfo.pNext = nullptr;
@@ -75,14 +77,12 @@ namespace RottenBamboo {
 
         createGraphicsPipelines(pipelineInfo);
 
-        vkDestroyShaderModule(rbDevice.device, vertShaderModule, nullptr);
-        vkDestroyShaderModule(rbDevice.device, fragShaderModule, nullptr);
-
         std::cout << "RBLightingPass::createGraphicsPipeline()" << std::endl;
     }
 
     RBLightingPass::RBLightingPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors, const RBPipelineConfig &config)
-    : RBPipelineManager(device, swapChain, descriptors), rbPipelineConfig(config)
+    : RBPipelineManager(device, swapChain, descriptors), rbPipelineConfig(config),
+      vertShaderModule(device), fragShaderModule(device)
     {
 
         std::cout << "RBLightingPass::RBGraphicPipelineManager()" << std::endl;
@@ -96,12 +96,6 @@ namespace RottenBamboo {
 
     RBLightingPass::~RBLightingPass()
     {
-        for(int i = 0; i < shaderStageInfos.size(); i++)
-        {
-            vkDestroyShaderModule(rbDevice.device, shaderStageInfos[i].module, nullptr);
-        }
-
-        //vkDestroyPipeline(rbDevice.device, graphicsPipeline, nullptr);
         RBPipelineManager::~RBPipelineManager();
         vkDestroyDescriptorSetLayout(rbDevice.device, rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout, nullptr);
         std::cout << "RBLightingPass::~RBLightingPass()" << std::endl;

@@ -10,7 +10,6 @@
 namespace RottenBamboo {
     class RBPipelineUtils {
     public:
-        static VkShaderModule createShaderModule(RBDevice &device, const std::vector<char> &code);
         static std::vector<char> readFile(const std::string &filename);
     };
 }

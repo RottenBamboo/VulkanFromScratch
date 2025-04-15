@@ -10,6 +10,7 @@
 #include <tiny_obj_loader.h>
 #include "RBCommon.h"
 #include "RBPipelineManager.h"
+#include "RBShaderModule.h"
 #include <stdexcept>
 #include <iostream>
 #include "RBPipelineConfig.h"
@@ -55,13 +56,13 @@ namespace RottenBamboo {
                                             int32_t basePipelineIndex
         ) override;
 
-        virtual void fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName);
+        virtual void fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName, RBShaderModule &shaderModule);
 
     private:
 
-        VkShaderModule vertShaderModule;
+        RBShaderModule vertShaderModule;
 
-        VkShaderModule fragShaderModule;
+        RBShaderModule fragShaderModule;
     };
 }
 
