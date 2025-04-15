@@ -212,27 +212,27 @@ namespace RottenBamboo {
         VkPipeline basePipelineHandle,
         int32_t basePipelineIndex
         )
-{
-pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-pipelineInfo.stageCount = 2;
-pipelineInfo.pStages = shaderStageInfos.data();
-pipelineInfo.pVertexInputState = &vertexInputInfo;
-pipelineInfo.pInputAssemblyState = &inputAssembly;
-pipelineInfo.pTessellationState = nullptr;
-pipelineInfo.pViewportState = &viewportState;
-pipelineInfo.pRasterizationState = &rasterizer;
-pipelineInfo.pMultisampleState = &multisampling;
-pipelineInfo.pDepthStencilState = &depthStencil;
-pipelineInfo.pColorBlendState = &colorBlending;
-pipelineInfo.pDynamicState = nullptr;
-pipelineInfo.layout = rbPipelineLayoutManager.pipelineLayout;
-pipelineInfo.renderPass = rbSwapChain.renderPass;
-pipelineInfo.subpass = 0;
-pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
-pipelineInfo.basePipelineIndex = -1;
-std::cout << "RBPipelineManager::fillGraphicsPipelineCreateInfo()" << std::endl;
-
-}
+    {
+        pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+        pipelineInfo.stageCount = 2;
+        pipelineInfo.pStages = shaderStageInfos.data();
+        pipelineInfo.pVertexInputState = &vertexInputInfo;
+        pipelineInfo.pInputAssemblyState = &inputAssembly;
+        pipelineInfo.pTessellationState = nullptr;
+        pipelineInfo.pViewportState = &viewportState;
+        pipelineInfo.pRasterizationState = &rasterizer;
+        pipelineInfo.pMultisampleState = &multisampling;
+        pipelineInfo.pDepthStencilState = &depthStencil;
+        pipelineInfo.pColorBlendState = &colorBlending;
+        pipelineInfo.pDynamicState = nullptr;
+        pipelineInfo.layout = rbPipelineLayoutManager.pipelineLayout;
+        pipelineInfo.renderPass = rbSwapChain.renderPass;
+        pipelineInfo.subpass = 0;
+        pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+        pipelineInfo.basePipelineIndex = -1;
+        std::cout << "RBPipelineManager::fillGraphicsPipelineCreateInfo()" << std::endl;
+    
+    }
     
     void RBPipelineManager::setupPipelineStates()
     {

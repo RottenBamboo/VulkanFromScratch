@@ -94,7 +94,6 @@ namespace RottenBamboo {
 
     RBGraphicPipelineManager::~RBGraphicPipelineManager()
     {
-        RBPipelineManager::~RBPipelineManager();
         vkDestroyDescriptorSetLayout(rbDevice.device, rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout, nullptr);
         std::cout << "RBGraphicPipelineManager::_RBGraphicPipelineManager()" << std::endl;
     }

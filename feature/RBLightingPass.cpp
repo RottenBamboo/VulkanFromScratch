@@ -23,7 +23,7 @@ namespace RottenBamboo {
         shaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         shaderStageInfo.pNext = nullptr;
         shaderStageInfo.stage = stage;
-        shaderStageInfo.module = RBPipelineUtils::createShaderModule(rbDevice, shaderCode);
+        shaderStageInfo.module = shaderModule.get();
         shaderStageInfo.pName = "main";
         shaderStageInfos.push_back(shaderStageInfo);
         std::cout << "RBLightingPass::~fillShaderModule()" << std::endl;
@@ -96,7 +96,6 @@ namespace RottenBamboo {
 
     RBLightingPass::~RBLightingPass()
     {
-        RBPipelineManager::~RBPipelineManager();
         vkDestroyDescriptorSetLayout(rbDevice.device, rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout, nullptr);
         std::cout << "RBLightingPass::~RBLightingPass()" << std::endl;
     }
