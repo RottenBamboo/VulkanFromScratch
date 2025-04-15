@@ -53,7 +53,7 @@ namespace RottenBamboo {
                                             uint32_t subpass,
                                             VkPipeline basePipelineHandle,
                                             int32_t basePipelineIndex
-        );
+        ) override;
 
         virtual void fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName);
 
