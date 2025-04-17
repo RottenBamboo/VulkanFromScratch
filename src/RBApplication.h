@@ -11,7 +11,7 @@
 #include "RBCommandBuffer.h"
 #include "RBDescriptors.h"
 #include "RBSwapChain.h"
-#include "RBGraphicPipelineManager.h"
+#include "RBGBufferPass.h"
 #include "RBLightingPass.h"
 #include "RBBuffer.h"
 #include "RBMesh.h"
@@ -51,7 +51,7 @@ namespace RottenBamboo {
         RBPipelineConfig pipelineConfig{};
         RBDescriptors descriptors{device, commandBuffer, uniformBuffers};
         RBSwapChain swapChain{device, windows, commandBuffer, descriptors};
-        RBGraphicPipelineManager graphicPipelineManager{device, swapChain, descriptors, pipelineConfig};
+        RBGBufferPass gBufferPass{device, swapChain, descriptors, pipelineConfig};
         RBLightingPass lightPassManager{device, swapChain, descriptors, pipelineConfig};
 
         RBBuffer<UniformBufferObject> uniformBuffers[MAX_FRAMES_IN_FLIGHT]{{device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}, {device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}};

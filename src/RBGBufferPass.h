@@ -16,7 +16,7 @@
 #include "RBPipelineConfig.h"
 
 namespace RottenBamboo {
-    class RBGraphicPipelineManager : public RBPipelineManager {
+    class RBGBufferPass : public RBPipelineManager {
 
      protected:
 
@@ -30,13 +30,13 @@ namespace RottenBamboo {
 
         void createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo) override;
 
-        ~RBGraphicPipelineManager() override;
+        ~RBGBufferPass() override;
 
         void createGraphicsPipeline() override;
 
         void InitializeGraphicPipeline() override;
 
-        RBGraphicPipelineManager(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors, const RBPipelineConfig &config);
+        RBGBufferPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors, const RBPipelineConfig &config);
 
         void fillGraphicsPipelineCreateInfo(uint32_t stageCount,
                                             const VkPipelineShaderStageCreateInfo* pStages,

@@ -3,17 +3,17 @@
 //
 
 #include "RBPipelineUtils.h"
-#include "RBGraphicPipelineManager.h"
+#include "RBGBufferPass.h"
 
 namespace RottenBamboo {
 
-    void RBGraphicPipelineManager::setupShaders()
+    void RBGBufferPass::setupShaders()
     {
         fillShaderModule("../shader/vert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main", vertShaderModule);
         fillShaderModule("../shader/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main", fragShaderModule);
     }
 
-    void RBGraphicPipelineManager::fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName, RBShaderModule &shaderModule)
+    void RBGBufferPass::fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName, RBShaderModule &shaderModule)
     {
         auto shaderCode = RBPipelineUtils::readFile(shaderName);
         VkPipelineShaderStageCreateInfo shaderStageInfo{};
@@ -30,19 +30,19 @@ namespace RottenBamboo {
 
     }
 
-    void RBGraphicPipelineManager::setupPipelineStates()
+    void RBGBufferPass::setupPipelineStates()
     {
         RBPipelineManager::setupPipelineStates();
         std::cout << "RBGraphicPipelineManager::setupPipelineStates()" << std::endl;
     }
 
-    void RBGraphicPipelineManager::createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo)
+    void RBGBufferPass::createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo)
     {
         RBPipelineManager::createGraphicsPipelines(pipelineInfo);
         std::cout << "RBGraphicPipelineManager::createGraphicsPipelines()" << std::endl;
     }
 
-    void RBGraphicPipelineManager::fillGraphicsPipelineCreateInfo(uint32_t stageCount,
+    void RBGBufferPass::fillGraphicsPipelineCreateInfo(uint32_t stageCount,
                                         const VkPipelineShaderStageCreateInfo* pStages,
                                         const VkPipelineVertexInputStateCreateInfo* pVertexInputState,
                                         const VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState,
@@ -64,7 +64,7 @@ namespace RottenBamboo {
         std::cout << "RBGraphicPipelineManager::fillGraphicsPipelineCreateInfo()" << std::endl;
     }
 
-    void RBGraphicPipelineManager::createGraphicsPipeline()
+    void RBGBufferPass::createGraphicsPipeline()
     {
         setupShaders();
 
@@ -80,19 +80,19 @@ namespace RottenBamboo {
         std::cout << "RBGraphicPipelineManager::createGraphicsPipeline()" << std::endl;
     }
 
-    RBGraphicPipelineManager::RBGraphicPipelineManager(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors, const RBPipelineConfig &config)
+    RBGBufferPass::RBGBufferPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors, const RBPipelineConfig &config)
         : RBPipelineManager(device, swapChain, descriptors), rbPipelineConfig(config),
         vertShaderModule(device), fragShaderModule(device) {
         std::cout << "RBGraphicPipelineManager::RBGraphicPipelineManager()" << std::endl;
     }
 
-    void RBGraphicPipelineManager::InitializeGraphicPipeline()
+    void RBGBufferPass::InitializeGraphicPipeline()
     {
         createGraphicsPipeline();
         std::cout << "RBGraphicPipelineManager::InitializeGraphicPipeline()" << std::endl;
     }
 
-    RBGraphicPipelineManager::~RBGraphicPipelineManager()
+    RBGBufferPass::~RBGBufferPass()
     {
         vkDestroyDescriptorSetLayout(rbDevice.device, rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout, nullptr);
         std::cout << "RBGraphicPipelineManager::_RBGraphicPipelineManager()" << std::endl;

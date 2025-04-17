@@ -63,7 +63,7 @@ namespace RottenBamboo {
 
     void RBApplication::InitializeGraphicPipeline()
     {
-        graphicPipelineManager.InitializeGraphicPipeline();
+        gBufferPass.InitializeGraphicPipeline();
 
         lightPassManager.InitializeGraphicPipeline();
     };
@@ -171,9 +171,9 @@ namespace RottenBamboo {
 
         vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
 
-        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicPipelineManager.graphicsPipeline);
+        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferPass.graphicsPipeline);
 
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicPipelineManager.rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptors.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferPass.rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptors.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
 
         vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
 
@@ -254,7 +254,7 @@ namespace RottenBamboo {
         {
             windows.framebufferResized = false;
             swapChain.recreateSwapChain();
-            graphicPipelineManager.createGraphicsPipeline();
+            gBufferPass.createGraphicsPipeline();
 
             lightPassManager.createGraphicsPipeline();
         }

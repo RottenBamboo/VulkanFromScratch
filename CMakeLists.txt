@@ -36,7 +36,7 @@ add_executable(${PROJECT_NAME}
         src/RBPipelineConfig.h
         src/RBWindows.h src/RBWindows.cpp
         src/AppMain.cpp
-        src/RBGraphicPipelineManager.cpp src/RBGraphicPipelineManager.h
+        src/RBGBufferPass.cpp src/RBGBufferPass.h
         src/RBPipelineManager.cpp src/RBPipelineManager.h
         src/RBDevice.cpp src/RBDevice.h
         src/RBSwapChain.cpp src/RBSwapChain.h
