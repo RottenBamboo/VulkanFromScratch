@@ -69,26 +69,26 @@ namespace RottenBamboo{
         stbi_image_free(pixels);
 
         rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
-        rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
+        rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, rbImageManager.textureImage, rbImageManager.textureImageMemory);
 
         VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-        rbImageManager.transitionImageLayout(commandBuffer, textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
+        rbImageManager.transitionImageLayout(commandBuffer, rbImageManager.textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
         rbCommandBuffer.endSingleTimeCommands(commandBuffer);
 
-        copyBufferToImage(stageBufferManager.buffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+        copyBufferToImage(stageBufferManager.buffer, rbImageManager.textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 
         VkCommandBuffer commandBufferEnd = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-        rbImageManager.transitionImageLayout(commandBufferEnd, textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
+        rbImageManager.transitionImageLayout(commandBufferEnd, rbImageManager.textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
         rbCommandBuffer.endSingleTimeCommands(commandBufferEnd);
 
         stageBufferManager.destroyBuffer();
 
-        generateMipmaps(textureImage, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, mipLevels);
+        generateMipmaps(rbImageManager.textureImage, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, mipLevels);
     }
 
     void RBDescriptors::createTextureImageView()
     {
-        rbImageManager.fillViewInfo(textureImage, VK_IMAGE_VIEW_TYPE_2D, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
+        rbImageManager.fillViewInfo(rbImageManager.textureImage, VK_IMAGE_VIEW_TYPE_2D, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
         rbImageManager.createImageView();
 
     }
@@ -199,7 +199,5 @@ namespace RottenBamboo{
 
     RBDescriptors::~RBDescriptors()
     {
-        vkDestroyImage(rbDevice.device, textureImage, nullptr);
-        vkFreeMemory(rbDevice.device, textureImageMemory, nullptr);
     }
 }

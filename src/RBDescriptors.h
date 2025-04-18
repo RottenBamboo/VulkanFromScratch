@@ -24,8 +24,8 @@ namespace RottenBamboo {
     class RBDescriptors {
     private:
         //duplicated member in graphicpipeline
-        VkDeviceMemory textureImageMemory;
-        VkImage textureImage;
+        //VkDeviceMemory textureImageMemory;
+        //VkImage textureImage;
         RBBuffer<UniformBufferObject> *rbBufferPtr;
 
         RBDevice &rbDevice;

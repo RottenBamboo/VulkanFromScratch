@@ -41,6 +41,7 @@ namespace RottenBamboo {
         void fillAllocInfo(VkDeviceSize size, uint32_t memoryTypeIndex);
 
         VkImage textureImage{};
+        VkDeviceMemory textureImageMemory;
         VkImageView textureImageView{};
         VkSampler textureSampler{};
         VkSamplerCreateInfo samplerInfo{};
@@ -51,7 +52,6 @@ namespace RottenBamboo {
         void createTextureImageView();
         void fillImageMemoryBarrier(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout);
 
-        VkDeviceMemory textureImageMemory;
         VkImageMemoryBarrier barrier{};
         VkBufferImageCopy region{};
         VkImageCreateInfo imageInfo{};

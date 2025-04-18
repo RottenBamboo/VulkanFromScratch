@@ -11,30 +11,38 @@
 
 namespace RottenBamboo {
 
-    RBImageManager::RBImageManager(RBDevice &device) : rbDevice(device) {
+    RBImageManager::RBImageManager(RBDevice &device) : rbDevice(device) 
+    {
         std::cout << "RBImageManager::RBImageManager()" << std::endl;
     }
 
-    RBImageManager::~RBImageManager() {
+    RBImageManager::~RBImageManager() 
+    {
+
         vkDestroySampler(rbDevice.device, textureSampler, nullptr);
         vkDestroyImageView(rbDevice.device, textureImageView, nullptr);
+        vkDestroyImage(rbDevice.device, textureImage, nullptr);
+        vkFreeMemory(rbDevice.device, textureImageMemory, nullptr);
         std::cout << "RBImageManager::~RBImageManager()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerAddressMode(VkSamplerAddressMode addressMode) {
+    void RBImageManager::fillSamplerAddressMode(VkSamplerAddressMode addressMode) 
+    {
         samplerInfo.addressModeU = addressMode;
         samplerInfo.addressModeV = addressMode;
         samplerInfo.addressModeW = addressMode;
         std::cout << "RBImageManager::fillSamplerAddressMode()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerFilter(VkFilter filter) {
+    void RBImageManager::fillSamplerFilter(VkFilter filter) 
+    {
         samplerInfo.magFilter = filter;
         samplerInfo.minFilter = filter;
         std::cout << "RBImageManager::fillSamplerFilter()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerAnisotropy(bool enable, float maxAnisotropy) {
+    void RBImageManager::fillSamplerAnisotropy(bool enable, float maxAnisotropy) 
+    {
         samplerInfo.anisotropyEnable = enable;
         if (enable) {
             if (maxAnisotropy == 0) {
@@ -45,13 +53,15 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillSamplerAnisotropy()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerCompare(bool enable, VkCompareOp compareOp) {
+    void RBImageManager::fillSamplerCompare(bool enable, VkCompareOp compareOp) 
+    {
         samplerInfo.compareEnable = enable;
         samplerInfo.compareOp = compareOp;
         std::cout << "RBImageManager::fillSamplerCompare()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerMipmap(VkSamplerMipmapMode mipmapMode, float minLod, float maxLod, float mipLodBias) {
+    void RBImageManager::fillSamplerMipmap(VkSamplerMipmapMode mipmapMode, float minLod, float maxLod, float mipLodBias)
+    {
         samplerInfo.mipmapMode = mipmapMode;
         samplerInfo.minLod = minLod;
         samplerInfo.maxLod = maxLod;
@@ -59,7 +69,8 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillSamplerMipmap()" << std::endl;
     }
 
-    void RBImageManager::fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels) {
+    void RBImageManager::fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels) 
+    {
         VkPhysicalDeviceProperties properties{};
         vkGetPhysicalDeviceProperties(rbDevice.physicalDevice, &properties);
 
@@ -76,13 +87,15 @@ namespace RottenBamboo {
     }
 
     void RBImageManager::createTextureSampler() {
-        if (vkCreateSampler(rbDevice.device, &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS) {
+        if (vkCreateSampler(rbDevice.device, &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS) 
+        {
             throw std::runtime_error("failed to create texture sampler!");
         }
         std::cout << "RBImageManager::createTextureSampler()" << std::endl;
     }
 
-    void RBImageManager::fillViewInfo(VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels) {
+    void RBImageManager::fillViewInfo(VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels) 
+    {
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         viewInfo.image = image;
         viewInfo.pNext = nullptr;
@@ -94,7 +107,8 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillViewInfo()" << std::endl;
     }
 
-    void RBImageManager::fillViewInfoComponentMapping(VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a) {
+    void RBImageManager::fillViewInfoComponentMapping(VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a) 
+    {
         viewInfo.components.r = r;
         viewInfo.components.g = g;
         viewInfo.components.b = b;
@@ -102,7 +116,8 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillViewInfoComponentMapping()" << std::endl;
     }
 
-    void RBImageManager::fillViewInfoSubResourceRange(VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount) {
+    void RBImageManager::fillViewInfoSubResourceRange(VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount) 
+    {
         viewInfo.subresourceRange.aspectMask = aspectFlags;
         viewInfo.subresourceRange.baseMipLevel = baseMipLevel;
         viewInfo.subresourceRange.levelCount = levelCount;
@@ -111,14 +126,17 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillViewInfoSubResourceRange()" << std::endl;
     }
 
-    void RBImageManager::createImageView() {
-        if (vkCreateImageView(rbDevice.device, &viewInfo, nullptr, &textureImageView) != VK_SUCCESS) {
+    void RBImageManager::createImageView() 
+    {
+        if (vkCreateImageView(rbDevice.device, &viewInfo, nullptr, &textureImageView) != VK_SUCCESS) 
+        {
             throw std::runtime_error("failed to create texture image view!");
         }
         std::cout << "RBImageManager::createImageView()" << std::endl;
     }
 
-    void RBImageManager::RBImageManager::fillImageMemoryBarrier(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout) {
+    void RBImageManager::RBImageManager::fillImageMemoryBarrier(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout) 
+    {
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         barrier.oldLayout = oldLayout;
         barrier.newLayout = newLayout;
@@ -134,18 +152,21 @@ namespace RottenBamboo {
 
     }
 
-    void RBImageManager::transitionImageLayout(VkCommandBuffer &commandBuffer, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels) {
+    void RBImageManager::transitionImageLayout(VkCommandBuffer &commandBuffer, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels) 
+    {
         fillImageMemoryBarrier(image, oldLayout, newLayout);
         VkPipelineStageFlags sourceStage;
         VkPipelineStageFlags destinationStage;
 
-        if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+        if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
+        {
             barrier.srcAccessMask = 0;
             barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 
             sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
             destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-        } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+        } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) 
+        {
             barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
             barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
@@ -228,8 +249,8 @@ namespace RottenBamboo {
                 1
         };
     }
-    void RBImageManager::copyBufferToImage(VkCommandBuffer &commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
-
+    void RBImageManager::copyBufferToImage(VkCommandBuffer &commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) 
+    {
         fillBufferImageCopy(region, width, height);
         vkCmdCopyBufferToImage(
                 commandBuffer,
