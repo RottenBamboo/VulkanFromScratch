@@ -199,5 +199,7 @@ namespace RottenBamboo{
 
     RBDescriptors::~RBDescriptors()
     {
+        vkDestroyImage(rbDevice.device, rbImageManager.textureImage, nullptr);
+        vkFreeMemory(rbDevice.device, rbImageManager.textureImageMemory, nullptr);
     }
 }

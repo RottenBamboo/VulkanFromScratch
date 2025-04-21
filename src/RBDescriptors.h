@@ -23,12 +23,11 @@
 namespace RottenBamboo {
     class RBDescriptors {
     private:
-        //duplicated member in graphicpipeline
-        //VkDeviceMemory textureImageMemory;
-        //VkImage textureImage;
-        RBBuffer<UniformBufferObject> *rbBufferPtr;
 
         RBDevice &rbDevice;
+
+        RBBuffer<UniformBufferObject> *rbBufferPtr;
+
         RBCommandBuffer &rbCommandBuffer;
 
         void createDescriptorSetLayout();
@@ -50,7 +49,8 @@ namespace RottenBamboo {
     public:
 
         RBDescriptorSetManager descriptorSetManager;
-        RBImageManager rbImageManager;
+        
+        RBImageManager<1> rbImageManager;
 
         RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers);
 

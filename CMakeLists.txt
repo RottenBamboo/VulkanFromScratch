@@ -49,7 +49,7 @@ add_executable(${PROJECT_NAME}
         src/RBDescriptorSetManager.cpp src/RBDescriptorSetManager.h
         src/RBDescriptorSetLayoutManager.cpp src/RBDescriptorSetLayoutManager.h
         src/RBPipelineLayoutManager.cpp src/RBPipelineLayoutManager.h
-        src/RBImageManager.cpp src/RBImageManager.h
+        src/RBImageManager.impl.h src/RBImageManager.h
         src/RBBufferManager.cpp src/RBBufferManager.h
         feature/RBLightingPass.cpp feature/RBLightingPass.h)
 
