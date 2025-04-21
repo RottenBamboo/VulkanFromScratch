@@ -6,10 +6,7 @@
 #define VULKANFROMSCRATCH_RBIMAGEMANAGER_H
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include <glm/gtx/hash.hpp>
 #include <vulkan/vulkan.h>
-#include <vector>
-#include <unordered_map>
 #include "RBDevice.h"
 
 namespace RottenBamboo {
@@ -68,15 +65,15 @@ namespace RottenBamboo {
         void fillAllocInfo(VkDeviceSize size, uint32_t memoryTypeIndex);
 
 
-        VkImage textureImage{};
+        //VkImage textureImage{};
 
-        VkDeviceMemory textureImageMemory;
+        //VkDeviceMemory textureImageMemory;
 
-        VkImageView textureImageView{};
+        //VkImageView textureImageView{};
 
-        VkSampler textureSampler{};
+        //VkSampler textureSampler{};
 
-        RBImageBundle imageBundle{};
+        //RBImageBundle imageBundle{};
 
         std::array<RBImageBundle, ImageCount> imageBundles{};
 

@@ -40,8 +40,8 @@ namespace RottenBamboo{
 
             VkDescriptorImageInfo imageInfo{};
             imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            imageInfo.imageView = rbImageManager.textureImageView;
-            imageInfo.sampler = rbImageManager.textureSampler;
+            imageInfo.imageView = rbImageManager.imageBundles[0].imageView;
+            imageInfo.sampler = rbImageManager.imageBundles[0].sampler;
 
             descriptorSetManager.fillDescriptotSetsWriteBuffer(i, 0, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
             descriptorSetManager.fillDescriptotSetsWriteImage(i, 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &imageInfo);
@@ -68,28 +68,34 @@ namespace RottenBamboo{
 
         stbi_image_free(pixels);
 
-        rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
-        rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, rbImageManager.textureImage, rbImageManager.textureImageMemory);
+        for (auto & imageBundle : rbImageManager.imageBundles)
+        {
+            rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
+            rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageBundle.image, imageBundle.imageMemory);
 
-        VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-        rbImageManager.transitionImageLayout(commandBuffer, rbImageManager.textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
-        rbCommandBuffer.endSingleTimeCommands(commandBuffer);
+            VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+            rbImageManager.transitionImageLayout(commandBuffer, imageBundle.image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
+            rbCommandBuffer.endSingleTimeCommands(commandBuffer);
 
-        copyBufferToImage(stageBufferManager.buffer, rbImageManager.textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+            copyBufferToImage(stageBufferManager.buffer, imageBundle.image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 
-        VkCommandBuffer commandBufferEnd = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-        rbImageManager.transitionImageLayout(commandBufferEnd, rbImageManager.textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
-        rbCommandBuffer.endSingleTimeCommands(commandBufferEnd);
+            VkCommandBuffer commandBufferEnd = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+            rbImageManager.transitionImageLayout(commandBufferEnd, imageBundle.image, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
+            rbCommandBuffer.endSingleTimeCommands(commandBufferEnd);
 
-        stageBufferManager.destroyBuffer();
+            stageBufferManager.destroyBuffer();
 
-        generateMipmaps(rbImageManager.textureImage, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, mipLevels);
+            generateMipmaps(imageBundle.image, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, mipLevels);
+        }
     }
 
     void RBDescriptors::createTextureImageView()
     {
-        rbImageManager.fillViewInfo(rbImageManager.textureImage, VK_IMAGE_VIEW_TYPE_2D, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
-        rbImageManager.createImageView();
+        for (auto & imageBundle : rbImageManager.imageBundles)
+        {
+            rbImageManager.fillViewInfo(imageBundle.image, VK_IMAGE_VIEW_TYPE_2D, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
+            rbImageManager.createImageView();
+        }
 
     }
 
@@ -199,7 +205,10 @@ namespace RottenBamboo{
 
     RBDescriptors::~RBDescriptors()
     {
-        vkDestroyImage(rbDevice.device, rbImageManager.textureImage, nullptr);
-        vkFreeMemory(rbDevice.device, rbImageManager.textureImageMemory, nullptr);
+        for (auto & imageBundle : rbImageManager.imageBundles)
+        {
+            vkDestroyImage(rbDevice.device, imageBundle.image, nullptr);
+            vkFreeMemory(rbDevice.device, imageBundle.imageMemory, nullptr);
+        }
     }
 }
