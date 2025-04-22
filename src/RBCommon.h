@@ -2,8 +2,6 @@
 // Created by rottenbamboo on 2023/5/27.
 //
 #pragma once
-#ifndef VULKANFROMSCRATCH_COMMON_H
-#define VULKANFROMSCRATCH_COMMON_H
 #define GLFW_INCLUDE_VULKAN
 #define MAX_FRAMES_IN_FLIGHT 2
 #define GLM_ENABLE_EXPERIMENTAL
@@ -115,5 +113,3 @@ extern VkSampleCountFlagBits msaaSamples;
 extern VkExtent2D swapChainExtent;
 extern uint32_t currentFrame;
 
-
-#endif //VULKANFROMSCRATCH_COMMON_H

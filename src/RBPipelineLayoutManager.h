@@ -2,10 +2,7 @@
 // Created by rottenbamboo on 2024/7/31.
 //
 
-#ifndef VULKANFROMSCRATCH_RBPIPELINELAYOUTMANAGER_H
-#define VULKANFROMSCRATCH_RBPIPELINELAYOUTMANAGER_H
-
-
+#pragma once
 #include <vulkan/vulkan_core.h>
 #include "RBDevice.h"
 
@@ -31,6 +28,3 @@ namespace RottenBamboo {
         void createPipelineLayout();
     };
 }
-
-
-#endif //VULKANFROMSCRATCH_RBPIPELINELAYOUTMANAGER_H

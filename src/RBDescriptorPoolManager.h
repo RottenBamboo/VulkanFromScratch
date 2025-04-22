@@ -3,8 +3,6 @@
 //
 
 #pragma once
-#ifndef VULKANFROMSCRATCH_RBDESCRIPTORPOOLMANAGER_H
-#define VULKANFROMSCRATCH_RBDESCRIPTORPOOLMANAGER_H
 
 #include <vulkan/vulkan.h>
 #include <vector>
@@ -31,5 +29,3 @@ namespace RottenBamboo {
     };
 }
 
-
-#endif //VULKANFROMSCRATCH_RBDESCRIPTORPOOLMANAGER_H

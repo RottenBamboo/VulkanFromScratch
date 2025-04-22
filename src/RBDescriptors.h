@@ -3,8 +3,6 @@
 //
 
 #pragma once
-#ifndef VULKANFROMSCRATCH_DESCRIPTORS_H
-#define VULKANFROMSCRATCH_DESCRIPTORS_H
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include <glm/gtx/hash.hpp>
@@ -21,6 +19,7 @@
 
 
 namespace RottenBamboo {
+    template<int ImageCount>
     class RBDescriptors {
     private:
 
@@ -49,7 +48,7 @@ namespace RottenBamboo {
     public:
 
         RBDescriptorSetManager descriptorSetManager;
-        
+
         RBImageManager<1> rbImageManager;
 
         RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers);
@@ -60,4 +59,4 @@ namespace RottenBamboo {
     };
 }
 
-#endif //VULKANFROMSCRATCH_DESCRIPTORS_H
+#include "RBDescriptors.impl.h"

@@ -80,7 +80,7 @@ namespace RottenBamboo {
         std::cout << "RBGraphicPipelineManager::createGraphicsPipeline()" << std::endl;
     }
 
-    RBGBufferPass::RBGBufferPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors, const RBPipelineConfig &config)
+    RBGBufferPass::RBGBufferPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors<1> &descriptors, const RBPipelineConfig &config)
         : RBPipelineManager(device, swapChain, descriptors), rbPipelineConfig(config),
         vertShaderModule(device), fragShaderModule(device) {
         std::cout << "RBGraphicPipelineManager::RBGraphicPipelineManager()" << std::endl;

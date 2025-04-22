@@ -419,7 +419,7 @@ namespace RottenBamboo{
         //createGraphicsPipeline();
         createFrameBuffers();
     }
-    RBSwapChain::RBSwapChain(RBDevice& device, RBWindows& window, RBCommandBuffer& commandBuffer, RBDescriptors& descriptors) : refDevice(device), refWindow(window), refCommandBuffer(commandBuffer), refDescriptors(descriptors){
+    RBSwapChain::RBSwapChain(RBDevice& device, RBWindows& window, RBCommandBuffer& commandBuffer, RBDescriptors<1>& descriptors) : refDevice(device), refWindow(window), refCommandBuffer(commandBuffer), refDescriptors(descriptors){
 
     }
 

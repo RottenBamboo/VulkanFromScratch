@@ -5,7 +5,6 @@
 #pragma once
 
 #include <fstream>
-#include <tiny_obj_loader.h>
 #include "RBCommon.h"
 #include "RBPipelineManager.h"
 #include "RBPipelineConfig.h"
@@ -34,7 +33,7 @@ namespace RottenBamboo {
 
         void InitializeGraphicPipeline() override;
 
-        RBLightingPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors, const RBPipelineConfig &config);
+        RBLightingPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors<1> &descriptors, const RBPipelineConfig &config);
 
         void fillGraphicsPipelineCreateInfo(uint32_t stageCount,
                                             const VkPipelineShaderStageCreateInfo* pStages,

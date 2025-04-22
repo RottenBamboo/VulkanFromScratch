@@ -3,11 +3,8 @@
 //
 
 #pragma once
-//#ifndef VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H
-//#define VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H
 
 #include <fstream>
-#include <tiny_obj_loader.h>
 #include "RBCommon.h"
 #include "RBPipelineManager.h"
 #include "RBShaderModule.h"
@@ -36,7 +33,7 @@ namespace RottenBamboo {
 
         void InitializeGraphicPipeline() override;
 
-        RBGBufferPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors, const RBPipelineConfig &config);
+        RBGBufferPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors<1> &descriptors, const RBPipelineConfig &config);
 
         void fillGraphicsPipelineCreateInfo(uint32_t stageCount,
                                             const VkPipelineShaderStageCreateInfo* pStages,
@@ -66,4 +63,3 @@ namespace RottenBamboo {
     };
 }
 
-//#endif //VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H

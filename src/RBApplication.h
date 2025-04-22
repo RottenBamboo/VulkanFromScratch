@@ -3,13 +3,10 @@
 //
 
 #pragma once
-#ifndef VULKANFROMSCRATCH_RBAPPLICATION_H
-#define VULKANFROMSCRATCH_RBAPPLICATION_H
 
 #include "RBWindows.h"
 #include "RBDevice.h"
 #include "RBCommandBuffer.h"
-#include "RBDescriptors.h"
 #include "RBSwapChain.h"
 #include "RBGBufferPass.h"
 #include "RBLightingPass.h"
@@ -49,8 +46,8 @@ namespace RottenBamboo {
 
         RBMesh mesh{device, commandBuffer};
         RBPipelineConfig pipelineConfig{};
-        RBDescriptors descriptors{device, commandBuffer, uniformBuffers};
-        RBDescriptors descriptorsGBudder{device, commandBuffer, uniformBuffers};
+        RBDescriptors<1> descriptors{device, commandBuffer, uniformBuffers};
+        RBDescriptors<1> descriptorsGBudder{device, commandBuffer, uniformBuffers};
         RBSwapChain swapChain{device, windows, commandBuffer, descriptors};
         RBGBufferPass gBufferPass{device, swapChain, descriptors, pipelineConfig};
         RBLightingPass lightPassManager{device, swapChain, descriptors, pipelineConfig};
@@ -62,5 +59,3 @@ namespace RottenBamboo {
         void updateUniformBuffer(uint32_t currentImage);
     };
 }
-
-#endif //VULKANFROMSCRATCH_RBAPPLICATION_H

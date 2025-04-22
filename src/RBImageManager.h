@@ -2,8 +2,7 @@
 // Created by rottenbamboo on 2025/3/17.
 //
 
-#ifndef VULKANFROMSCRATCH_RBIMAGEMANAGER_H
-#define VULKANFROMSCRATCH_RBIMAGEMANAGER_H
+#pragma once
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include <vulkan/vulkan.h>
@@ -103,5 +102,3 @@ namespace RottenBamboo {
 
 // 包含实现文件
 #include "RBImageManager.impl.h"
-
-#endif //VULKANFROMSCRATCH_RBIMAGEMANAGER_H

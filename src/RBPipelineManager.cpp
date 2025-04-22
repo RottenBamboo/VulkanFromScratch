@@ -4,7 +4,7 @@
 
 namespace RottenBamboo {
 
-    RBPipelineManager::RBPipelineManager(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors)
+    RBPipelineManager::RBPipelineManager(RBDevice &device, RBSwapChain &swapChain, RBDescriptors<1> &descriptors)
         : rbDevice(device), rbSwapChain(swapChain), rbDescriptors(descriptors) {}
 
     RBPipelineManager::~RBPipelineManager() 

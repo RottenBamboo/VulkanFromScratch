@@ -3,7 +3,6 @@
 #include "RBCommon.h"
 #include "RBDevice.h"
 #include "RBSwapChain.h"
-#include "RBDescriptors.h"
 #include "RBPipelineLayoutManager.h"
 #include <vector>
 
@@ -14,7 +13,7 @@ namespace RottenBamboo {
 
         RBSwapChain &rbSwapChain;
 
-        RBDescriptors &rbDescriptors;
+        RBDescriptors<1> &rbDescriptors;
 
         std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions;
 
@@ -137,7 +136,7 @@ namespace RottenBamboo {
 
         RBPipelineLayoutManager rbPipelineLayoutManager{rbDevice};
 
-        RBPipelineManager(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors);
+        RBPipelineManager(RBDevice &device, RBSwapChain &swapChain, RBDescriptors<1> &descriptors);
 
         virtual void createGraphicsPipeline() = 0;
 

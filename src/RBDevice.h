@@ -2,8 +2,6 @@
 // Created by rottenbamboo on 2023/5/24.
 //
 #pragma once
-#ifndef VULKANFROMSCRATCH_RBDEVICE_H
-#define VULKANFROMSCRATCH_RBDEVICE_H
 #define VK_USE_PLATFORM_MACOS_MVK
 #define GLFW_INCLUDE_VULKAN
 
@@ -97,5 +95,3 @@ namespace RottenBamboo {
 
     };
 }
-
-#endif //VULKANFROMSCRATCH_RBDEVICE_H

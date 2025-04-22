@@ -42,7 +42,7 @@ add_executable(${PROJECT_NAME}
         src/RBSwapChain.cpp src/RBSwapChain.h
         src/RBCommon.cpp src/RBCommon.h
         src/RBCommandBuffer.cpp src/RBCommandBuffer.h
-        src/RBDescriptors.cpp src/RBDescriptors.h
+        src/RBDescriptors.impl.h src/RBDescriptors.h
         src/RBBuffer.cpp src/RBBuffer.h
         src/RBMesh.cpp src/RBMesh.h
         src/RBDescriptorPoolManager.cpp src/RBDescriptorPoolManager.h
