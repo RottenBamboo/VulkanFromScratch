@@ -36,7 +36,6 @@ add_executable(${PROJECT_NAME}
         src/RBPipelineConfig.h
         src/RBWindows.h src/RBWindows.cpp
         src/AppMain.cpp
-        src/RBGBufferPass.cpp src/RBGBufferPass.h
         src/RBPipelineManager.cpp src/RBPipelineManager.h
         src/RBDevice.cpp src/RBDevice.h
         src/RBSwapChain.cpp src/RBSwapChain.h
@@ -51,6 +50,7 @@ add_executable(${PROJECT_NAME}
         src/RBPipelineLayoutManager.cpp src/RBPipelineLayoutManager.h
         src/RBImageManager.impl.h src/RBImageManager.h
         src/RBBufferManager.cpp src/RBBufferManager.h
+        feature/RBGBufferPass.cpp feature/RBGBufferPass.h
         feature/RBLightingPass.cpp feature/RBLightingPass.h)
 
 # find Vulkan SDK

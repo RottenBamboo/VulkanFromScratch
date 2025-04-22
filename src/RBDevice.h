@@ -83,14 +83,6 @@ namespace RottenBamboo {
 
         bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 
-        struct SwapChainSupportDetails {
-            VkSurfaceCapabilitiesKHR capabilities;
-            std::vector<VkSurfaceFormatKHR> formats;
-            std::vector<VkPresentModeKHR> presentModes;
-        };
-
-        SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
-
         VkSampleCountFlagBits getMaxUsableSampleCount();
 
     };

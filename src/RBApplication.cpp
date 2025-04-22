@@ -63,6 +63,8 @@ namespace RottenBamboo {
     void RBApplication::InitializeDescriptors()
     {
         descriptors.InitializeDescriptors();
+
+        descriptorsGBuffer.InitializeDescriptors();
     }
 
     void RBApplication::InitializeGraphicPipeline()
@@ -177,7 +179,7 @@ namespace RottenBamboo {
 
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferPass.graphicsPipeline);
 
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferPass.rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptors.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferPass.rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptorsGBuffer.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
 
         vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
 
@@ -258,9 +260,9 @@ namespace RottenBamboo {
         {
             windows.framebufferResized = false;
             swapChain.recreateSwapChain();
-            gBufferPass.createGraphicsPipeline();
 
             lightPassManager.createGraphicsPipeline();
+            gBufferPass.createGraphicsPipeline();
         }
         else if (result != VK_SUCCESS) {
             throw std::runtime_error("failed to present swap chain image!");
