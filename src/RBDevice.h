@@ -2,8 +2,6 @@
 // Created by rottenbamboo on 2023/5/24.
 //
 #pragma once
-#ifndef VULKANFROMSCRATCH_RBDEVICE_H
-#define VULKANFROMSCRATCH_RBDEVICE_H
 #define VK_USE_PLATFORM_MACOS_MVK
 #define GLFW_INCLUDE_VULKAN
 
@@ -85,17 +83,7 @@ namespace RottenBamboo {
 
         bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 
-        struct SwapChainSupportDetails {
-            VkSurfaceCapabilitiesKHR capabilities;
-            std::vector<VkSurfaceFormatKHR> formats;
-            std::vector<VkPresentModeKHR> presentModes;
-        };
-
-        SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
-
         VkSampleCountFlagBits getMaxUsableSampleCount();
 
     };
 }
-
-#endif //VULKANFROMSCRATCH_RBDEVICE_H

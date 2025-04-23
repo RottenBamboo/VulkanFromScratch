@@ -3,8 +3,6 @@
 //
 
 #pragma once
-#ifndef VULKANFROMSCRATCH_RBBUFFER_H
-#define VULKANFROMSCRATCH_RBBUFFER_H
 
 #include "RBCommon.h"
 #include "RBCommandBuffer.h"
@@ -155,5 +153,3 @@ namespace RottenBamboo {
     };
 
 }
-
-#endif //VULKANFROMSCRATCH_RBBUFFER_H

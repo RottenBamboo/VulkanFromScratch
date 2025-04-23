@@ -4,10 +4,6 @@
 
 #pragma once
 
-#ifndef VULKANFROMSCRATCH_RBDESCRIPTORSETMANAGER_H
-#define VULKANFROMSCRATCH_RBDESCRIPTORSETMANAGER_H
-
-
 #include <vulkan/vulkan.h>
 #include <vector>
 #include "RBDevice.h"
@@ -43,4 +39,3 @@ namespace RottenBamboo {
     };
 }
 
-#endif //VULKANFROMSCRATCH_RBDESCRIPTORSETMANAGER_H

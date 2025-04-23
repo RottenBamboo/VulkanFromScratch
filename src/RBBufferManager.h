@@ -1,10 +1,7 @@
 //
 // Created by rottenbamboo on 2025/3/19.
 //
-
-#ifndef VULKANFROMSCRATCH_RBBUFFERMANAGER_H
-#define VULKANFROMSCRATCH_RBBUFFERMANAGER_H
-
+#pragma once
 #include <glm/gtx/hash.hpp>
 #include <vulkan/vulkan.h>
 #include <vector>
@@ -35,5 +32,3 @@ namespace RottenBamboo {
         void copyMemory(VkDeviceSize size, void *data, unsigned char *dstData);
     };
 }
-
-#endif //VULKANFROMSCRATCH_RBBUFFERMANAGER_H

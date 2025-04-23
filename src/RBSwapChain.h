@@ -2,8 +2,6 @@
 // Created by rottenbamboo on 2023/5/26.
 //
 #pragma once
-#ifndef VULKANFROMSCRATCH_RBSWAPCHAIN_H
-#define VULKANFROMSCRATCH_RBSWAPCHAIN_H
 #define GLFW_INCLUDE_VULKAN
 
 #include <vulkan/vulkan.h>
@@ -21,7 +19,7 @@ namespace RottenBamboo {
         RBDevice &refDevice;
         RBWindows &refWindow;
         RBCommandBuffer &refCommandBuffer;
-        RBDescriptors &refDescriptors;
+        RBDescriptors<1> &refDescriptors;
         VkRenderPass renderPass;
         std::vector<VkImage> swapChainImages;
         VkFormat swapChainImageFormat;
@@ -40,14 +38,6 @@ namespace RottenBamboo {
         VkImage depthImage;
         VkDeviceMemory depthImageMemory;
         VkImageView depthImageView;
-
-        struct SwapChainSupportDetails {
-            VkSurfaceCapabilitiesKHR capabilities;
-            std::vector<VkSurfaceFormatKHR> formats;
-            std::vector<VkPresentModeKHR> presentModes;
-        };
-
-        SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice& device, VkSurfaceKHR& surface);
 
         VkFormat findSupportedFormat(const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
@@ -80,7 +70,7 @@ namespace RottenBamboo {
 
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice &device, VkSurfaceKHR *surface);
 
-        RBSwapChain(RBDevice &device, RBWindows &window, RBCommandBuffer &commandBuffer, RBDescriptors &descriptors);
+        RBSwapChain(RBDevice &device, RBWindows &window, RBCommandBuffer &commandBuffer, RBDescriptors<1> &descriptors);
 
         void operator=(const RBSwapChain &) = delete;
 
@@ -91,5 +81,3 @@ namespace RottenBamboo {
         ~RBSwapChain();
     };
 }
-
-#endif //VULKANFROMSCRATCH_RBSWAPCHAIN_H

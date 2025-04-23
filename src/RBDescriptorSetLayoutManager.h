@@ -4,9 +4,6 @@
 
 #pragma once
 
-#ifndef VULKANFROMSCRATCH_RBDESCRIPTORSETLAYOUTMANAGER_H
-#define VULKANFROMSCRATCH_RBDESCRIPTORSETLAYOUTMANAGER_H
-
 #include <vulkan/vulkan.h>
 #include "RBCommon.h"
 #include "RBDevice.h"
@@ -31,5 +28,3 @@ namespace RottenBamboo {
 
 }
 
-
-#endif //VULKANFROMSCRATCH_RBDESCRIPTORSETLAYOUTMANAGER_H

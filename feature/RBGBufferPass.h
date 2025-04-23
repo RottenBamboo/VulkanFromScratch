@@ -3,17 +3,14 @@
 //
 
 #pragma once
-//#ifndef VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H
-//#define VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H
 
 #include <fstream>
-#include <tiny_obj_loader.h>
 #include "RBCommon.h"
 #include "RBPipelineManager.h"
-#include "RBShaderModule.h"
+#include "RBPipelineConfig.h"
+#include "RBShaderModule.h" // Added to define RBShaderModule
 #include <stdexcept>
 #include <iostream>
-#include "RBPipelineConfig.h"
 
 namespace RottenBamboo {
     class RBGBufferPass : public RBPipelineManager {
@@ -21,6 +18,8 @@ namespace RottenBamboo {
      protected:
 
         RBPipelineConfig rbPipelineConfig;
+
+        RBDescriptors<4> &rbDescriptors;
 
         void setupShaders() override;
 
@@ -36,7 +35,7 @@ namespace RottenBamboo {
 
         void InitializeGraphicPipeline() override;
 
-        RBGBufferPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors, const RBPipelineConfig &config);
+        RBGBufferPass(RBDevice &device, RBDescriptors<4> &descriptors, const RBPipelineConfig &config);
 
         void fillGraphicsPipelineCreateInfo(uint32_t stageCount,
                                             const VkPipelineShaderStageCreateInfo* pStages,
@@ -50,7 +49,6 @@ namespace RottenBamboo {
                                             const VkPipelineColorBlendStateCreateInfo* pColorBlendState,
                                             const VkPipelineDynamicStateCreateInfo* pDynamicState,
                                             VkPipelineLayout layout,
-                                            VkRenderPass renderPass,
                                             uint32_t subpass,
                                             VkPipeline basePipelineHandle,
                                             int32_t basePipelineIndex
@@ -66,4 +64,3 @@ namespace RottenBamboo {
     };
 }
 
-//#endif //VULKANFROMSCRATCH_RBGRAPHICPIPELINEMANAGER_H

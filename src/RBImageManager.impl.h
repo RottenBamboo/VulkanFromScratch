@@ -2,31 +2,34 @@
 // Created by rottenbamboo on 2025/3/17.
 //
 
-#include "RBImageManager.h"
-
 //#define STB_IMAGE_IMPLEMENTATION
-//#include <stb_image.h>
+#include <stb_image.h>
 //#define TINYOBJLOADER_IMPLEMENTATION
-//#include <tiny_obj_loader.h>
+#include <tiny_obj_loader.h>
 
 namespace RottenBamboo {
 
-    RBImageManager::RBImageManager(RBDevice &device) : rbDevice(device) 
+    template<int ImageCount>
+    RBImageManager<ImageCount>::RBImageManager(RBDevice &device) : rbDevice(device)
     {
         std::cout << "RBImageManager::RBImageManager()" << std::endl;
     }
 
-    RBImageManager::~RBImageManager() 
+    template<int ImageCount>
+    RBImageManager<ImageCount>::~RBImageManager() 
     {
-
-        vkDestroySampler(rbDevice.device, textureSampler, nullptr);
-        vkDestroyImageView(rbDevice.device, textureImageView, nullptr);
-        vkDestroyImage(rbDevice.device, textureImage, nullptr);
-        vkFreeMemory(rbDevice.device, textureImageMemory, nullptr);
+        for (int i = 0; i < ImageCount; i++)
+        {
+            vkDestroyImageView(rbDevice.device, imageBundles[i].imageView, nullptr);
+            vkDestroySampler(rbDevice.device, imageBundles[i].sampler, nullptr);
+            vkDestroyImage(rbDevice.device, imageBundles[i].image, nullptr);
+            vkFreeMemory(rbDevice.device, imageBundles[i].imageMemory, nullptr);
+        }
         std::cout << "RBImageManager::~RBImageManager()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerAddressMode(VkSamplerAddressMode addressMode) 
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::fillSamplerAddressMode(VkSamplerAddressMode addressMode) 
     {
         samplerInfo.addressModeU = addressMode;
         samplerInfo.addressModeV = addressMode;
@@ -34,14 +37,16 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillSamplerAddressMode()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerFilter(VkFilter filter) 
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::fillSamplerFilter(VkFilter filter) 
     {
         samplerInfo.magFilter = filter;
         samplerInfo.minFilter = filter;
         std::cout << "RBImageManager::fillSamplerFilter()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerAnisotropy(bool enable, float maxAnisotropy) 
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::fillSamplerAnisotropy(bool enable, float maxAnisotropy) 
     {
         samplerInfo.anisotropyEnable = enable;
         if (enable) {
@@ -53,14 +58,16 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillSamplerAnisotropy()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerCompare(bool enable, VkCompareOp compareOp) 
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::fillSamplerCompare(bool enable, VkCompareOp compareOp) 
     {
         samplerInfo.compareEnable = enable;
         samplerInfo.compareOp = compareOp;
         std::cout << "RBImageManager::fillSamplerCompare()" << std::endl;
     }
 
-    void RBImageManager::fillSamplerMipmap(VkSamplerMipmapMode mipmapMode, float minLod, float maxLod, float mipLodBias)
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::fillSamplerMipmap(VkSamplerMipmapMode mipmapMode, float minLod, float maxLod, float mipLodBias)
     {
         samplerInfo.mipmapMode = mipmapMode;
         samplerInfo.minLod = minLod;
@@ -69,7 +76,8 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillSamplerMipmap()" << std::endl;
     }
 
-    void RBImageManager::fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels) 
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels) 
     {
         VkPhysicalDeviceProperties properties{};
         vkGetPhysicalDeviceProperties(rbDevice.physicalDevice, &properties);
@@ -86,15 +94,21 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillSampler()" << std::endl;
     }
 
-    void RBImageManager::createTextureSampler() {
-        if (vkCreateSampler(rbDevice.device, &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS) 
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::createTextureSampler()
+    {
+        for (int i = 0; i < ImageCount; i++)
         {
-            throw std::runtime_error("failed to create texture sampler!");
+            if (vkCreateSampler(rbDevice.device, &samplerInfo, nullptr, &imageBundles[i].sampler) != VK_SUCCESS)
+            {
+                throw std::runtime_error("failed to create texture sampler!");
+            }
         }
         std::cout << "RBImageManager::createTextureSampler()" << std::endl;
     }
 
-    void RBImageManager::fillViewInfo(VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels) 
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::fillViewInfo(VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
     {
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         viewInfo.image = image;
@@ -107,7 +121,8 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillViewInfo()" << std::endl;
     }
 
-    void RBImageManager::fillViewInfoComponentMapping(VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a) 
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::fillViewInfoComponentMapping(VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a)
     {
         viewInfo.components.r = r;
         viewInfo.components.g = g;
@@ -116,7 +131,8 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillViewInfoComponentMapping()" << std::endl;
     }
 
-    void RBImageManager::fillViewInfoSubResourceRange(VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount) 
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::fillViewInfoSubResourceRange(VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount)
     {
         viewInfo.subresourceRange.aspectMask = aspectFlags;
         viewInfo.subresourceRange.baseMipLevel = baseMipLevel;
@@ -126,16 +142,21 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillViewInfoSubResourceRange()" << std::endl;
     }
 
-    void RBImageManager::createImageView() 
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::createImageView()
     {
-        if (vkCreateImageView(rbDevice.device, &viewInfo, nullptr, &textureImageView) != VK_SUCCESS) 
+        for (int i = 0; i < ImageCount; i++)
         {
-            throw std::runtime_error("failed to create texture image view!");
+            if (vkCreateImageView(rbDevice.device, &viewInfo, nullptr, &imageBundles[i].imageView) != VK_SUCCESS)
+            {
+                throw std::runtime_error("failed to create texture image view!");
+            }
         }
         std::cout << "RBImageManager::createImageView()" << std::endl;
     }
 
-    void RBImageManager::RBImageManager::fillImageMemoryBarrier(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout) 
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::RBImageManager::fillImageMemoryBarrier(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout)
     {
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         barrier.oldLayout = oldLayout;
@@ -152,21 +173,20 @@ namespace RottenBamboo {
 
     }
 
-    void RBImageManager::transitionImageLayout(VkCommandBuffer &commandBuffer, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels) 
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::transitionImageLayout(VkCommandBuffer &commandBuffer, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels)
     {
         fillImageMemoryBarrier(image, oldLayout, newLayout);
         VkPipelineStageFlags sourceStage;
         VkPipelineStageFlags destinationStage;
 
-        if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL)
-        {
+        if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
             barrier.srcAccessMask = 0;
             barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
 
             sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
             destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-        } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) 
-        {
+        } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
             barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
             barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
@@ -188,7 +208,8 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::transitionImageLayout()" << std::endl;
     }
 
-    void RBImageManager::fillImageInfo(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage)
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::fillImageInfo(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage)
     {
         imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
         imageInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -206,7 +227,8 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fillImageInfo()" << std::endl;
     }
 
-    void RBImageManager::fillAllocInfo(VkDeviceSize size, uint32_t memoryTypeIndex)
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::fillAllocInfo(VkDeviceSize size, uint32_t memoryTypeIndex)
     {
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         allocInfo.allocationSize = size;
@@ -214,7 +236,8 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::fileAllocInfo()" << std::endl;
     }
 
-    void RBImageManager::createImage(VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::createImage(VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
     {
         if (vkCreateImage(rbDevice.device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
             throw std::runtime_error("failed to create image!");
@@ -233,7 +256,8 @@ namespace RottenBamboo {
         std::cout << "RBImageManager::createImage()" << std::endl;
     }
 
-    void RBImageManager::fillBufferImageCopy(VkBufferImageCopy &region, uint32_t width, uint32_t height)
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::fillBufferImageCopy(VkBufferImageCopy &region, uint32_t width, uint32_t height)
     {
         region.bufferOffset = 0;
         region.bufferRowLength = 0;
@@ -249,8 +273,10 @@ namespace RottenBamboo {
                 1
         };
     }
-    void RBImageManager::copyBufferToImage(VkCommandBuffer &commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) 
-    {
+
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::copyBufferToImage(VkCommandBuffer &commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
+
         fillBufferImageCopy(region, width, height);
         vkCmdCopyBufferToImage(
                 commandBuffer,

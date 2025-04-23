@@ -2,8 +2,6 @@
 // Created by rottenbamboo on 2023/5/18.
 //
 #pragma once
-#ifndef VULKANFROMSCRATCH_RBWINDOWS_H
-#define VULKANFROMSCRATCH_RBWINDOWS_H
 #define GLFW_INCLUDE_VULKAN
 
 #include <glm/glm.hpp>
@@ -35,5 +33,3 @@ namespace RottenBamboo {
         bool shouldClose() { return glfwWindowShouldClose(window); }
     };
 }
-
-#endif //VULKANFROMSCRATCH_RBWINDOWS_H

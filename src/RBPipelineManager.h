@@ -3,7 +3,6 @@
 #include "RBCommon.h"
 #include "RBDevice.h"
 #include "RBSwapChain.h"
-#include "RBDescriptors.h"
 #include "RBPipelineLayoutManager.h"
 #include <vector>
 
@@ -12,9 +11,7 @@ namespace RottenBamboo {
     protected:
         RBDevice &rbDevice;
 
-        RBSwapChain &rbSwapChain;
-
-        RBDescriptors &rbDescriptors;
+        VkRenderPass renderPass;
 
         std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions;
 
@@ -121,10 +118,15 @@ namespace RottenBamboo {
                                                     const VkPipelineColorBlendStateCreateInfo* pColorBlendState,
                                                     const VkPipelineDynamicStateCreateInfo* pDynamicState,
                                                     VkPipelineLayout layout,
-                                                    VkRenderPass renderPass,
                                                     uint32_t subpass,
                                                     VkPipeline basePipelineHandle,
                                                     int32_t basePipelineIndex);
+
+        virtual VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+
+        virtual VkFormat findDepthFormat();
+
+        virtual void fillRenderPass();
 
         virtual void fillDynamicStateCrateInfo();
 
@@ -137,7 +139,7 @@ namespace RottenBamboo {
 
         RBPipelineLayoutManager rbPipelineLayoutManager{rbDevice};
 
-        RBPipelineManager(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors);
+        RBPipelineManager(RBDevice &device);
 
         virtual void createGraphicsPipeline() = 0;
 

@@ -54,13 +54,12 @@ namespace RottenBamboo {
                                         const VkPipelineColorBlendStateCreateInfo* pColorBlendState,
                                         const VkPipelineDynamicStateCreateInfo* pDynamicState,
                                         VkPipelineLayout layout,
-                                        VkRenderPass renderPass,
                                         uint32_t subpass,
                                         VkPipeline basePipelineHandle,
                                         int32_t basePipelineIndex
                                         )
     {
-        RBPipelineManager::fillGraphicsPipelineCreateInfo(stageCount, pStages, pVertexInputState, pInputAssemblyState, pTessellationState, pViewportState, pRasterizationState, pMultisampleState, pDepthStencilState, pColorBlendState, pDynamicState, layout, renderPass, subpass, basePipelineHandle, basePipelineIndex);
+        RBPipelineManager::fillGraphicsPipelineCreateInfo(stageCount, pStages, pVertexInputState, pInputAssemblyState, pTessellationState, pViewportState, pRasterizationState, pMultisampleState, pDepthStencilState, pColorBlendState, pDynamicState, layout, subpass, basePipelineHandle, basePipelineIndex);
         std::cout << "RBLightingPass::fillGraphicsPipelineCreateInfo()" << std::endl;
     }
 
@@ -73,16 +72,16 @@ namespace RottenBamboo {
         rbPipelineLayoutManager.fillPipelineLayoutInfo(&rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout);
         rbPipelineLayoutManager.createPipelineLayout();
 
-        fillGraphicsPipelineCreateInfo(2, shaderStageInfos.data(), &vertexInputInfo, &inputAssembly, nullptr, &viewportState, &rasterizer, &multisampling, &depthStencil, &colorBlending, nullptr, rbPipelineLayoutManager.pipelineLayout, rbSwapChain.renderPass, 0, VK_NULL_HANDLE, -1);
+        fillGraphicsPipelineCreateInfo(2, shaderStageInfos.data(), &vertexInputInfo, &inputAssembly, nullptr, &viewportState, &rasterizer, &multisampling, &depthStencil, &colorBlending, nullptr, rbPipelineLayoutManager.pipelineLayout, 0, VK_NULL_HANDLE, -1);
 
         createGraphicsPipelines(pipelineInfo);
 
         std::cout << "RBLightingPass::createGraphicsPipeline()" << std::endl;
     }
 
-    RBLightingPass::RBLightingPass(RBDevice &device, RBSwapChain &swapChain, RBDescriptors &descriptors, const RBPipelineConfig &config)
-    : RBPipelineManager(device, swapChain, descriptors), rbPipelineConfig(config),
-      vertShaderModule(device), fragShaderModule(device)
+    RBLightingPass::RBLightingPass(RBDevice &device, RBDescriptors<1> &descriptors, const RBPipelineConfig &config)
+    : RBPipelineManager(device), rbPipelineConfig(config),
+      vertShaderModule(device), fragShaderModule(device), rbDescriptors(descriptors)
     {
 
         std::cout << "RBLightingPass::RBGraphicPipelineManager()" << std::endl;

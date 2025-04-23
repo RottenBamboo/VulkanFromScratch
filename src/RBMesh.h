@@ -3,8 +3,6 @@
 //
 
 #pragma once
-#ifndef VULKANFROMSCRATCH_RBMESH_H
-#define VULKANFROMSCRATCH_RBMESH_H
 
 #include "RBDevice.h"
 #include "RBBuffer.h"
@@ -29,4 +27,3 @@ namespace RottenBamboo {
 
 } // Rottenbamboo
 
-#endif //VULKANFROMSCRATCH_RBMESH_H
