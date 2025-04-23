@@ -6,7 +6,6 @@ layout(location = 1) in vec2 fragTexCoord;
 layout(location = 0) out vec4 outColor;
 void main()
 {
-    vec4 object = texture(texSampler, fragTexCoord);
-    float isColored = dot(object, vec4(1.0, 1.0, 1.0, 1.0));
-    outColor = isColored > 0 ? vec4(1.0, 1.0, 1.0, 0.15f) : vec4(0.0, 0.0, 0.0, 0.15f);
+    outColor = texture(texSampler, fragTexCoord);
+    outColor.a = 0.5f;
 }
