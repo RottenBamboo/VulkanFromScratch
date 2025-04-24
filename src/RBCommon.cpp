@@ -5,8 +5,8 @@
 #include "RBCommon.h"
 
 
-const std::string MODEL_PATH = "../models/viking_room.obj";
-const std::string TEXTURE_PATH = "../textures/viking_room.png";
+const std::string MODEL_PATH = "../models/Mech.obj";
+const std::string TEXTURE_PATH = "../textures/Mech_BaseMap.jpg";
 
 uint32_t mipLevels;
 

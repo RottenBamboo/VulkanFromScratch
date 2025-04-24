@@ -194,6 +194,7 @@ namespace RottenBamboo {
         std::cout << "RBPipelineManager::fillDynamicStateCrateInfo()" << std::endl;
 
     }
+    
     VkFormat RBPipelineManager::findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
     {
         for(VkFormat format : candidates)

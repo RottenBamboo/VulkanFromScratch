@@ -9,8 +9,8 @@ namespace RottenBamboo {
 
     void RBGBufferPass::setupShaders()
     {
-        fillShaderModule("../shader/vert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main", vertShaderModule);
-        fillShaderModule("../shader/frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main", fragShaderModule);
+        fillShaderModule("../shader/gBufferVert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main", vertShaderModule);
+        fillShaderModule("../shader/gBufferFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main", fragShaderModule);
     }
 
     void RBGBufferPass::fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName, RBShaderModule &shaderModule)
