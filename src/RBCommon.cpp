@@ -6,12 +6,16 @@
 
 
 const std::string MODEL_PATH = "../models/Mech.obj";
-const std::string TEXTURE_PATH = "../textures/Mech_BaseMap.jpg";
+//const std::string TEXTURE_PATH = "../textures/Mech_BaseMap.jpg";
+const std::array<std::string, TEXTURE_PATHS_COUNT> TEXTURE_PATH = {
+    "../textures/Mech_BaseMap.jpg"
+};
 
-const std::array<std::string, 3> TEXTURE_PATHS_MECH = {
+const std::array<std::string, TEXTURE_PATHS_MECH_COUNT> TEXTURE_PATHS_MECH = {
     "../textures/Mech_BaseMap.jpg",
-    "../textures/Mech_NormalMap.jpg",
-    "../textures/Mech_NormalAO.jpg"
+    "../textures/Mech_Normal.jpg",
+    "../textures/Mech_AO.jpeg",
+    "../textures/Mech_Emission.jpeg"
 };
 
 uint32_t mipLevels;
