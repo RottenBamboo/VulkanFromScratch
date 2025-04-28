@@ -16,7 +16,7 @@ namespace RottenBamboo{
     {
         descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, nullptr);
 
-        for(int i = 0; i < rbImageManager.imageBundles.size(); i++)
+        for(int i = 0; i < ImageCount; i++)
         {
             descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(i + 1, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr);
         }
@@ -28,8 +28,8 @@ namespace RottenBamboo{
     template<int ImageCount, int BufferCount>
     void RBDescriptors<ImageCount, BufferCount>::createDescriptorPool()
     {
-        descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * 1));
-        descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * rbImageManager.imageBundles.size()));
+        descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * BufferCount));
+        descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * ImageCount));
         descriptorSetManager.descriptorPoolManager.fillDescriptorPoolCreateInfo(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT));
         descriptorSetManager.descriptorPoolManager.CreateDescriptorPool();
     }
@@ -54,7 +54,7 @@ namespace RottenBamboo{
             // imageInfo.sampler = rbImageManager.imageBundles[0].sampler;
             descriptorSetManager.fillDescriptotSetsWriteBuffer(i, 0, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
 
-            for(int j = 0; j < rbImageManager.imageBundles.size(); j++)
+            for(int j = 0; j < ImageCount; j++)
             {
                 rbImageManager.imageBundles[j].imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
                 rbImageManager.imageBundles[j].imageInfo.imageView = rbImageManager.imageBundles[j].imageView;
