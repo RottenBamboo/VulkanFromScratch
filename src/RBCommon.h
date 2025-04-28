@@ -180,8 +180,12 @@ namespace RottenBamboo {
 static double timeStamp;
 static const float C_intervalTime = 1.0f / 120.0f;
 
+#define TEXTURE_PATHS_COUNT 1
+#define TEXTURE_PATHS_MECH_COUNT 4
+
 extern const std::string MODEL_PATH;
-extern const std::string TEXTURE_PATH;
+extern const std::array<std::string, TEXTURE_PATHS_COUNT> TEXTURE_PATH;
+extern const std::array<std::string, TEXTURE_PATHS_MECH_COUNT> TEXTURE_PATHS_MECH;
 
 extern uint32_t mipLevels;
 

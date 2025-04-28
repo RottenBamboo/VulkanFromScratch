@@ -17,11 +17,11 @@
 #include "RBImageManager.h"
 #include "RBBufferManager.h"
 
-
 namespace RottenBamboo {
-    template<int ImageCount>
+    template<int ImageCount, int BufferCount>
     class RBDescriptors {
     private:
+        const std::array<std::string, ImageCount> paths;
 
         RBDevice &rbDevice;
 
@@ -49,9 +49,9 @@ namespace RottenBamboo {
 
         RBDescriptorSetManager descriptorSetManager;
 
-        RBImageManager<1> rbImageManager;
+        RBImageManager<ImageCount> rbImageManager;
 
-        RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers);
+        RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferObject> *uniformBuffersonst, const std::array<std::string, ImageCount> &texturePaths);
 
         ~RBDescriptors();
 

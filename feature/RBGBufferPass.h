@@ -19,7 +19,7 @@ namespace RottenBamboo {
 
         RBPipelineConfig rbPipelineConfig;
 
-        RBDescriptors<4> &rbDescriptors;
+        RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> &rbDescriptors;
 
         void setupShaders() override;
 
@@ -35,7 +35,7 @@ namespace RottenBamboo {
 
         void InitializeGraphicPipeline() override;
 
-        RBGBufferPass(RBDevice &device, RBDescriptors<4> &descriptors, const RBPipelineConfig &config);
+        RBGBufferPass(RBDevice &device, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> &descriptors, const RBPipelineConfig &config);
 
         void fillGraphicsPipelineCreateInfo(uint32_t stageCount,
                                             const VkPipelineShaderStageCreateInfo* pStages,

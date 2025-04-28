@@ -3,12 +3,15 @@
     "configurations": [
       {
         "name": "VulkanFromScratch",
-        "type": "lldb",
+        "type": "cppdbg",
         "request": "launch",
         "program": "${workspaceFolder}/build/VulkanFromScratch",
         "args": [],
+        "stopAtEntry": false,
         "cwd": "${workspaceFolder}",
-        "stopOnEntry": false
-      }
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "lldb"
+      },
     ]
   }

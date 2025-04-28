@@ -11,6 +11,8 @@
 namespace RottenBamboo {
     
     struct RBImageBundle {
+        VkImageViewCreateInfo viewInfo{};
+        VkDescriptorImageInfo imageInfo{};
         VkImage image;
         VkDeviceMemory imageMemory;
         VkImageView imageView;
@@ -29,7 +31,7 @@ namespace RottenBamboo {
 
         ~RBImageManager();
 
-        void createImageView();
+        void createImageView(VkImageViewCreateInfo &viewInfo, VkImageView &imageView);
 
         void fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels);
 
@@ -45,11 +47,11 @@ namespace RottenBamboo {
 
         void fillSamplerMipmap(VkSamplerMipmapMode mipmapMode, float minLod, float maxLod, float mipLodBias);
 
-        void fillViewInfoSubResourceRange(VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount);
+        void fillViewInfoSubResourceRange(VkImageViewCreateInfo &viewInfo, VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount);
 
-        void fillViewInfoComponentMapping(VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a);
+        void fillViewInfoComponentMapping(VkImageViewCreateInfo &viewInfo, VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a);
 
-        void fillViewInfo(VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
+        void fillViewInfo(VkImageViewCreateInfo &viewInfo, VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
 
         void transitionImageLayout(VkCommandBuffer &commandBuffer, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
 
@@ -77,8 +79,6 @@ namespace RottenBamboo {
         std::array<RBImageBundle, ImageCount> imageBundles{};
 
         VkSamplerCreateInfo samplerInfo{};
-
-        VkImageViewCreateInfo viewInfo{};
 
     private:
 

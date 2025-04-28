@@ -18,7 +18,7 @@ namespace RottenBamboo {
     template<int ImageCount>
     RBImageManager<ImageCount>::~RBImageManager() 
     {
-        for (int i = 0; i < ImageCount; i++)
+        for (int i = 0; i < imageBundles.size(); i++)
         {
             vkDestroyImageView(rbDevice.device, imageBundles[i].imageView, nullptr);
             vkDestroySampler(rbDevice.device, imageBundles[i].sampler, nullptr);
@@ -97,7 +97,7 @@ namespace RottenBamboo {
     template<int ImageCount>
     void RBImageManager<ImageCount>::createTextureSampler()
     {
-        for (int i = 0; i < ImageCount; i++)
+        for (int i = 0; i < imageBundles.size(); i++)
         {
             if (vkCreateSampler(rbDevice.device, &samplerInfo, nullptr, &imageBundles[i].sampler) != VK_SUCCESS)
             {
@@ -108,7 +108,7 @@ namespace RottenBamboo {
     }
 
     template<int ImageCount>
-    void RBImageManager<ImageCount>::fillViewInfo(VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
+    void RBImageManager<ImageCount>::fillViewInfo(VkImageViewCreateInfo& viewInfo, VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels)
     {
         viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
         viewInfo.image = image;
@@ -116,13 +116,13 @@ namespace RottenBamboo {
         viewInfo.viewType = viewType;
         viewInfo.format = format;
         viewInfo.flags = 0;
-        fillViewInfoSubResourceRange(aspectFlags, 0, mipLevels, 0, 1);
-        fillViewInfoComponentMapping(VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A);
+        fillViewInfoSubResourceRange(viewInfo, aspectFlags, 0, mipLevels, 0, 1);
+        fillViewInfoComponentMapping(viewInfo, VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A);
         std::cout << "RBImageManager::fillViewInfo()" << std::endl;
     }
 
     template<int ImageCount>
-    void RBImageManager<ImageCount>::fillViewInfoComponentMapping(VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a)
+    void RBImageManager<ImageCount>::fillViewInfoComponentMapping(VkImageViewCreateInfo& viewInfo, VkComponentSwizzle r, VkComponentSwizzle g, VkComponentSwizzle b, VkComponentSwizzle a)
     {
         viewInfo.components.r = r;
         viewInfo.components.g = g;
@@ -132,7 +132,7 @@ namespace RottenBamboo {
     }
 
     template<int ImageCount>
-    void RBImageManager<ImageCount>::fillViewInfoSubResourceRange(VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount)
+    void RBImageManager<ImageCount>::fillViewInfoSubResourceRange(VkImageViewCreateInfo& viewInfo, VkImageAspectFlags aspectFlags, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount)
     {
         viewInfo.subresourceRange.aspectMask = aspectFlags;
         viewInfo.subresourceRange.baseMipLevel = baseMipLevel;
@@ -143,14 +143,11 @@ namespace RottenBamboo {
     }
 
     template<int ImageCount>
-    void RBImageManager<ImageCount>::createImageView()
+    void RBImageManager<ImageCount>::createImageView(VkImageViewCreateInfo &viewInfo, VkImageView &imageView)
     {
-        for (int i = 0; i < ImageCount; i++)
+        if (vkCreateImageView(rbDevice.device, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
         {
-            if (vkCreateImageView(rbDevice.device, &viewInfo, nullptr, &imageBundles[i].imageView) != VK_SUCCESS)
-            {
-                throw std::runtime_error("failed to create texture image view!");
-            }
+            throw std::runtime_error("failed to create texture image view!");
         }
         std::cout << "RBImageManager::createImageView()" << std::endl;
     }

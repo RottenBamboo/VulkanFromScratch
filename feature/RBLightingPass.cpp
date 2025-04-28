@@ -79,7 +79,7 @@ namespace RottenBamboo {
         std::cout << "RBLightingPass::createGraphicsPipeline()" << std::endl;
     }
 
-    RBLightingPass::RBLightingPass(RBDevice &device, RBDescriptors<1> &descriptors, const RBPipelineConfig &config)
+    RBLightingPass::RBLightingPass(RBDevice &device, RBDescriptors<1, 1> &descriptors, const RBPipelineConfig &config)
     : RBPipelineManager(device), rbPipelineConfig(config),
       vertShaderModule(device), fragShaderModule(device), rbDescriptors(descriptors)
     {

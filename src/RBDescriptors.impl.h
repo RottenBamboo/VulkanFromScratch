@@ -11,25 +11,31 @@
 
 namespace RottenBamboo{
 
-    template<int ImageCount>
-    void RBDescriptors<ImageCount>::createDescriptorSetLayout()
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::createDescriptorSetLayout()
     {
         descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, nullptr);
-        descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(1, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr);
+
+        for(int i = 0; i < rbImageManager.imageBundles.size(); i++)
+        {
+            descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(i + 1, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr);
+        }
+        //descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(1, ImageCount, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr);
+        //descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(1, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr);
         descriptorSetManager.descriptorSetLayoutManager.createDescriptorSetLayout();
     }
 
-    template<int ImageCount>
-    void RBDescriptors<ImageCount>::createDescriptorPool()
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::createDescriptorPool()
     {
-        descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT));
-        descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT));
+        descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * 1));
+        descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * rbImageManager.imageBundles.size()));
         descriptorSetManager.descriptorPoolManager.fillDescriptorPoolCreateInfo(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT));
         descriptorSetManager.descriptorPoolManager.CreateDescriptorPool();
     }
 
-    template<int ImageCount>
-    void RBDescriptors<ImageCount>::createDescriptorSets()
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::createDescriptorSets()
     {
         std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout);
         descriptorSetManager.fillDescriptorSetsAllocateInfo(descriptorSetManager.descriptorPoolManager.descriptorPool, MAX_FRAMES_IN_FLIGHT, layouts.data());
@@ -42,39 +48,50 @@ namespace RottenBamboo{
             bufferInfo.offset = 0;
             bufferInfo.range = sizeof(UniformBufferObject);
 
-            VkDescriptorImageInfo imageInfo{};
-            imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            imageInfo.imageView = rbImageManager.imageBundles[0].imageView;
-            imageInfo.sampler = rbImageManager.imageBundles[0].sampler;
-
+            // VkDescriptorImageInfo imageInfo{};
+            // imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            // imageInfo.imageView = rbImageManager.imageBundles[0].imageView;
+            // imageInfo.sampler = rbImageManager.imageBundles[0].sampler;
             descriptorSetManager.fillDescriptotSetsWriteBuffer(i, 0, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
-            descriptorSetManager.fillDescriptotSetsWriteImage(i, 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &imageInfo);
+
+            for(int j = 0; j < rbImageManager.imageBundles.size(); j++)
+            {
+                rbImageManager.imageBundles[j].imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                rbImageManager.imageBundles[j].imageInfo.imageView = rbImageManager.imageBundles[j].imageView;
+                rbImageManager.imageBundles[j].imageInfo.sampler = rbImageManager.imageBundles[j].sampler;
+                descriptorSetManager.fillDescriptotSetsWriteImage(i, j + 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &rbImageManager.imageBundles[j].imageInfo);
+            }
+
+            //descriptorSetManager.fillDescriptotSetsWriteImage(i, 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &imageInfo);
             descriptorSetManager.updateDescriptorSets(rbDevice);
         }
     }
 
-    template<int ImageCount>
-    void RBDescriptors<ImageCount>::createTextureImage()
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::createTextureImage()
     {
-        int texWidth, texHeight, texChannels;
-        stbi_uc* pixels = stbi_load(TEXTURE_PATH.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-        mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
-        VkDeviceSize imageSize = texWidth * texHeight * 4;
-
-        if (!pixels) {
-            throw std::runtime_error("failed to load texture image!");
-        }
-
-        RBBufferManager stageBufferManager(rbDevice);
-        stageBufferManager.CreateBufferAllocBindMemory(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_SHARING_MODE_EXCLUSIVE, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-        void* data = nullptr;
-        stageBufferManager.copyMemory(imageSize, data, pixels);
-
-        stbi_image_free(pixels);
-
+        int index = 0;
         for (auto & imageBundle : rbImageManager.imageBundles)
         {
+            int texWidth, texHeight, texChannels;
+            stbi_uc* pixels = stbi_load(paths[index].c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+            mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
+            mipLevels = std::min(mipLevels, (uint32_t)8);
+            VkDeviceSize imageSize = texWidth * texHeight * 4;
+    
+            if (!pixels) {
+                throw std::runtime_error("failed to load texture image!");
+            }
+    
+            RBBufferManager stageBufferManager(rbDevice);
+            stageBufferManager.CreateBufferAllocBindMemory(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_SHARING_MODE_EXCLUSIVE, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    
+            void* data = nullptr;
+            stageBufferManager.copyMemory(imageSize, data, pixels);
+    
+            stbi_image_free(pixels);
+
+            
             rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
             rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageBundle.image, imageBundle.imageMemory);
 
@@ -91,22 +108,25 @@ namespace RottenBamboo{
             stageBufferManager.destroyBuffer();
 
             generateMipmaps(imageBundle.image, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, mipLevels);
+            index++;
+            std::cout << "index = " << index << std::endl;
+            std::cout << "mipLevels = " << mipLevels << std::endl;
         }
     }
 
-    template<int ImageCount>
-    void RBDescriptors<ImageCount>::createTextureImageView()
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::createTextureImageView()
     {
         for (auto & imageBundle : rbImageManager.imageBundles)
         {
-            rbImageManager.fillViewInfo(imageBundle.image, VK_IMAGE_VIEW_TYPE_2D, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
-            rbImageManager.createImageView();
+            rbImageManager.fillViewInfo(imageBundle.viewInfo, imageBundle.image, VK_IMAGE_VIEW_TYPE_2D, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
+            rbImageManager.createImageView(imageBundle.viewInfo, imageBundle.imageView);
         }
 
     }
 
-    template<int ImageCount>
-    void RBDescriptors<ImageCount>::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
         VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
         rbImageManager.copyBufferToImage(commandBuffer, buffer, image, width, height);
@@ -114,8 +134,8 @@ namespace RottenBamboo{
         rbCommandBuffer.endSingleTimeCommands(commandBuffer);
     }
 
-    template<int ImageCount>
-    void RBDescriptors<ImageCount>::generateMipmaps(VkImage image, VkFormat imageFormat, uint32_t texWidth, uint32_t texHeight, uint32_t mipLevels)
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::generateMipmaps(VkImage image, VkFormat imageFormat, uint32_t texWidth, uint32_t texHeight, uint32_t mipLevels)
     {
         VkFormatProperties formatProperties;
         vkGetPhysicalDeviceFormatProperties(rbDevice.physicalDevice, imageFormat, &formatProperties);
@@ -187,24 +207,25 @@ namespace RottenBamboo{
         rbCommandBuffer.endSingleTimeCommands(commandBuffer);
     }
 
-    template<int ImageCount>
-    void RBDescriptors<ImageCount>::createTextureSampler()
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::createTextureSampler()
     {
         rbImageManager.fillSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, VK_SAMPLER_MIPMAP_MODE_LINEAR, VK_COMPARE_OP_LESS_OR_EQUAL, mipLevels);
         rbImageManager.createTextureSampler();
     }
 
-    template<int ImageCount>
-    RBDescriptors<ImageCount>::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers) : rbDevice(device),
+    template<int ImageCount, int BufferCount>
+    RBDescriptors<ImageCount, BufferCount>::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers, const std::array<std::string, ImageCount> &texturePaths) : rbDevice(device),
     rbCommandBuffer(commandBuffer),
     rbBufferPtr(uniformBuffers),
     descriptorSetManager(device),
-    rbImageManager(device)
+    rbImageManager(device),
+    paths{texturePaths}
     {
     }
 
-    template<int ImageCount>
-    void RBDescriptors<ImageCount>::InitializeDescriptors()
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptors()
     {
         createTextureImage();
         createTextureImageView();
@@ -214,13 +235,8 @@ namespace RottenBamboo{
         createDescriptorSets();
     }
 
-    template<int ImageCount>
-    RBDescriptors<ImageCount>::~RBDescriptors()
+    template<int ImageCount, int BufferCount>
+    RBDescriptors<ImageCount, BufferCount>::~RBDescriptors()
     {
-        for (auto & imageBundle : rbImageManager.imageBundles)
-        {
-            vkDestroyImage(rbDevice.device, imageBundle.image, nullptr);
-            vkFreeMemory(rbDevice.device, imageBundle.imageMemory, nullptr);
-        }
     }
 }
