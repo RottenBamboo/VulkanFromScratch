@@ -18,7 +18,7 @@
 #include "RBBufferManager.h"
 
 namespace RottenBamboo {
-    template<int ImageCount>
+    template<int ImageCount, int BufferCount>
     class RBDescriptors {
     private:
         const std::array<std::string, ImageCount> paths;
