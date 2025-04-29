@@ -4,8 +4,8 @@
 
 namespace RottenBamboo {
 
-    RBPipelineManager::RBPipelineManager(RBDevice &device)
-        : rbDevice(device) {}
+    RBPipelineManager::RBPipelineManager(int colorAttachmentCount, RBDevice &device)
+        : rbDevice(device), rbColorAttachmentCount(colorAttachmentCount) {}
 
     RBPipelineManager::~RBPipelineManager() 
     {
@@ -221,7 +221,7 @@ namespace RottenBamboo {
         return findSupportedFormat({VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
     }
 
-    void RBPipelineManager::fillRenderPass()
+    void RBPipelineManager::fillRenderPass(int attachmentCount = 1)
     {
         VkAttachmentDescription depthAttachment{};
         depthAttachment.format = findDepthFormat();
@@ -347,7 +347,7 @@ namespace RottenBamboo {
         VkOffset2D offset{0, 0};
         fillScissor(offset, swapChainExtent);
         fillViewportStateCreateInfo();
-        fillRenderPass();
+        fillRenderPass(rbColorAttachmentCount);
         fillRasterizerStateCreateInfo(VK_FALSE, VK_FALSE, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, VK_FRONT_FACE_CLOCKWISE, VK_FALSE, 0.0f, 0.0f, 0.0f, 1.0f);
         fillMultipleSampleStateCreateInfo(0, msaaSamples, VK_TRUE, 0.2f, nullptr, VK_FALSE, VK_FALSE);
         fillDepthStencilStateCreateInfo(0, VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS, VK_FALSE, VK_FALSE, {}, {}, 0.0f, 1.0f);

@@ -9,6 +9,9 @@
 namespace RottenBamboo {
     class RBPipelineManager {
     protected:
+
+        int rbColorAttachmentCount = 1;
+
         RBDevice &rbDevice;
 
         VkRenderPass renderPass;
@@ -126,7 +129,7 @@ namespace RottenBamboo {
 
         virtual VkFormat findDepthFormat();
 
-        virtual void fillRenderPass();
+        virtual void fillRenderPass(int attachmentCount);
 
         virtual void fillDynamicStateCrateInfo();
 
@@ -139,7 +142,7 @@ namespace RottenBamboo {
 
         RBPipelineLayoutManager rbPipelineLayoutManager{rbDevice};
 
-        RBPipelineManager(RBDevice &device);
+        RBPipelineManager(int colorAttachmentCount, RBDevice &device);
 
         virtual void createGraphicsPipeline() = 0;
 

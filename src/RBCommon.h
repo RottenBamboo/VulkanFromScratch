@@ -179,6 +179,8 @@ namespace RottenBamboo {
 //extern const int MAX_FRAMES_IN_FLIGHT;
 static double timeStamp;
 static const float C_intervalTime = 1.0f / 120.0f;
+static const int gBufferPassColorAttachmentCount = 4;
+static const int lightPassColorAttachmentCount = 4;
 
 #define TEXTURE_PATHS_COUNT 1
 #define TEXTURE_PATHS_MECH_COUNT 4
