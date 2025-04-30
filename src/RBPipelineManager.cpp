@@ -4,8 +4,8 @@
 
 namespace RottenBamboo {
 
-    RBPipelineManager::RBPipelineManager(int colorAttachmentCount, RBDevice &device)
-        : rbDevice(device), rbColorAttachmentCount(colorAttachmentCount) {}
+    RBPipelineManager::RBPipelineManager(int colorAttachmentCount, bool bColorResolve, RBDevice &device)
+        : rbDevice(device), rbColorAttachmentCount(colorAttachmentCount), isResolveAttachment(bColorResolve) {}
 
     RBPipelineManager::~RBPipelineManager() 
     {
@@ -221,59 +221,87 @@ namespace RottenBamboo {
         return findSupportedFormat({VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
     }
 
+    void RBPipelineManager::addColorAttachment(VkFormat format, 
+                                                VkSampleCountFlagBits samples, 
+                                                VkAttachmentLoadOp loadOp, 
+                                                VkAttachmentStoreOp storeOp, 
+                                                VkAttachmentLoadOp stencilLoadOp, 
+                                                VkAttachmentStoreOp stencilStoreOp, 
+                                                VkImageLayout initialLayout, 
+                                                VkImageLayout finalLayout)
+    {    
+        VkAttachmentDescription attachment{};
+        attachment.format = format;
+        attachment.samples = samples;
+        attachment.loadOp = loadOp;
+        attachment.storeOp = storeOp;
+        attachment.stencilLoadOp = stencilLoadOp;
+        attachment.stencilStoreOp = stencilStoreOp;
+        attachment.initialLayout = initialLayout;
+        attachment.finalLayout = finalLayout;
+        attachmentDescriptions.push_back(attachment);
+        std::cout << "RBPipelineManager::addColorAttachment()" << std::endl;
+    }
+
     void RBPipelineManager::fillRenderPass(int attachmentCount = 1)
     {
-        VkAttachmentDescription depthAttachment{};
-        depthAttachment.format = findDepthFormat();
-        depthAttachment.samples = msaaSamples;
-        depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-        depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        int ColorAttachKind = 1 + (isResolveAttachment ? 1 : 0);
+        attachmentDescriptions.clear();
+        attachmentDescriptions.reserve(1 + rbColorAttachmentCount * ColorAttachKind);
 
         SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
 
-        VkAttachmentDescription colorAttachment{};
-        colorAttachment.format = surfaceFormat.format;
-        colorAttachment.samples = msaaSamples;
-        colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-        colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-        colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+        for(int i = 0; i < rbColorAttachmentCount; i++)
+        {
+            addColorAttachment(surfaceFormat.format, msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+            
+            if(isResolveAttachment)
+            {
+                addColorAttachment(surfaceFormat.format, VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED,VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+            }
+        }
+        //addColorAttachment(surfaceFormat.format, msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
-        VkAttachmentDescription colorAttachmentResolve{};
-        colorAttachmentResolve.format = surfaceFormat.format;
-        colorAttachmentResolve.samples = VK_SAMPLE_COUNT_1_BIT;
-        colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        colorAttachmentResolve.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-        colorAttachmentResolve.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        colorAttachmentResolve.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        colorAttachmentResolve.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        colorAttachmentResolve.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+        addColorAttachment(findDepthFormat(), msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED,VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
-        VkAttachmentReference colorAttachmentResolveRef{};
-        colorAttachmentResolveRef.attachment = 2;
-        colorAttachmentResolveRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        std::cout << "rbColorAttachmentCount = " << rbColorAttachmentCount << std::endl;
+        
 
-        VkAttachmentReference colorAttachmentRef{};
-        colorAttachmentRef.attachment = 0;
-        colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        //VkAttachmentReference colorAttachmentRef{};
+        //colorAttachmentRef.attachment = 0;
+        //colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+        std::vector<VkAttachmentReference> colorAttachmentRefs(rbColorAttachmentCount);
+        
+        for (int i = 0; i < rbColorAttachmentCount; i++) {
+            colorAttachmentRefs[i].attachment = i;
+            colorAttachmentRefs[i].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        }
+
+        std::vector<VkAttachmentReference> colorAttachmentResolveRef(rbColorAttachmentCount);
+
+        if(isResolveAttachment)
+        {
+            for(int i = 0; i < rbColorAttachmentCount; i++)
+            {
+                colorAttachmentResolveRef[i].attachment = i + rbColorAttachmentCount;
+                colorAttachmentResolveRef[i].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+            }
+        }
 
         VkAttachmentReference depthAttachmentRef{};
-        depthAttachmentRef.attachment = 1;
+        depthAttachmentRef.attachment = rbColorAttachmentCount * ColorAttachKind;
         depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
         VkSubpassDescription subpass{};
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-        subpass.colorAttachmentCount = 1;
-        subpass.pColorAttachments = &colorAttachmentRef;
+        subpass.colorAttachmentCount = rbColorAttachmentCount * ColorAttachKind;
+        subpass.pColorAttachments = colorAttachmentRefs.data();
+        //subpass.pColorAttachments = &colorAttachmentRef;
         subpass.pDepthStencilAttachment = &depthAttachmentRef;
-        subpass.pResolveAttachments = &colorAttachmentResolveRef;
+        subpass.pResolveAttachments = isResolveAttachment ? colorAttachmentResolveRef.data() : nullptr;
 
         VkSubpassDependency dependency{};
         dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -284,12 +312,12 @@ namespace RottenBamboo {
         dependency.dstAccessMask = 0;
         dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
-        std::array<VkAttachmentDescription, 3> attachments = {colorAttachment, depthAttachment, colorAttachmentResolve};
+        //std::array<VkAttachmentDescription, 3> attachments = {colorAttachment, depthAttachment, colorAttachmentResolve};
 
         VkRenderPassCreateInfo renderPassInfo{};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-        renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-        renderPassInfo.pAttachments = attachments.data();
+        renderPassInfo.attachmentCount = static_cast<uint32_t>(attachmentDescriptions.size());
+        renderPassInfo.pAttachments = attachmentDescriptions.data();
         renderPassInfo.subpassCount = 1;
         renderPassInfo.pSubpasses = &subpass;
         renderPassInfo.dependencyCount = 1;
@@ -299,6 +327,7 @@ namespace RottenBamboo {
         {
             throw::std::runtime_error("failed to create render pass!");
         }
+        std::cout << "RBPipelineManager::fillRenderPass()" << std::endl;
     }
 
     void RBPipelineManager::fillGraphicsPipelineCreateInfo(uint32_t stageCount,

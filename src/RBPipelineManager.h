@@ -12,6 +12,8 @@ namespace RottenBamboo {
 
         int rbColorAttachmentCount = 1;
 
+        bool isResolveAttachment = false;
+
         RBDevice &rbDevice;
 
         VkRenderPass renderPass;
@@ -135,19 +137,31 @@ namespace RottenBamboo {
 
         virtual void createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo) = 0;
 
-    public:
+        virtual void addColorAttachment(VkFormat format, 
+            VkSampleCountFlagBits samples, 
+            VkAttachmentLoadOp loadOp, 
+            VkAttachmentStoreOp storeOp, 
+            VkAttachmentLoadOp stencilLoadOp, 
+            VkAttachmentStoreOp stencilStoreOp, 
+            VkImageLayout initialLayout, 
+            VkImageLayout finalLayout);
 
+    public:
 
         VkPipeline graphicsPipeline;
 
         RBPipelineLayoutManager rbPipelineLayoutManager{rbDevice};
 
-        RBPipelineManager(int colorAttachmentCount, RBDevice &device);
+        RBPipelineManager(int colorAttachmentCount, bool bResolveAttachment, RBDevice &device);
 
         virtual void createGraphicsPipeline() = 0;
 
         virtual void InitializeGraphicPipeline() = 0;
 
         virtual ~RBPipelineManager();
+
+        private:
+
+        std::vector<VkAttachmentDescription> attachmentDescriptions;
     };
 }

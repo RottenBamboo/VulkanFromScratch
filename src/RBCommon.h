@@ -180,7 +180,7 @@ namespace RottenBamboo {
 static double timeStamp;
 static const float C_intervalTime = 1.0f / 120.0f;
 static const int gBufferPassColorAttachmentCount = 4;
-static const int lightPassColorAttachmentCount = 4;
+static const int lightPassColorAttachmentCount = 1;
 
 #define TEXTURE_PATHS_COUNT 1
 #define TEXTURE_PATHS_MECH_COUNT 4
