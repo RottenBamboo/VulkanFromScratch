@@ -79,8 +79,8 @@ namespace RottenBamboo {
         std::cout << "RBLightingPass::createGraphicsPipeline()" << std::endl;
     }
 
-    RBLightingPass::RBLightingPass(int colorAttachmentCount, bool bResolveAttachment, RBDevice &device, RBDescriptors<1, 1> &descriptors, const RBPipelineConfig &config)
-    : RBPipelineManager(colorAttachmentCount, bResolveAttachment, device), rbPipelineConfig(config),
+    RBLightingPass::RBLightingPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<1, 1> &descriptors, const RBPipelineConfig &config)
+    : RBPipelineManager(colorAttachmentCount, bResolveAttachment, bDephAttament, device), rbPipelineConfig(config),
       vertShaderModule(device), fragShaderModule(device), rbDescriptors(descriptors)
     {
 

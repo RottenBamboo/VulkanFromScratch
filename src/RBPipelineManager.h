@@ -14,6 +14,8 @@ namespace RottenBamboo {
 
         bool isResolveAttachment = false;
 
+        bool isDepthAttachment = true;
+
         RBDevice &rbDevice;
 
         VkRenderPass renderPass;
@@ -152,7 +154,7 @@ namespace RottenBamboo {
 
         RBPipelineLayoutManager rbPipelineLayoutManager{rbDevice};
 
-        RBPipelineManager(int colorAttachmentCount, bool bResolveAttachment, RBDevice &device);
+        RBPipelineManager(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device);
 
         virtual void createGraphicsPipeline() = 0;
 

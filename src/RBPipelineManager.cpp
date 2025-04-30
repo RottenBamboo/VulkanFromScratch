@@ -4,8 +4,8 @@
 
 namespace RottenBamboo {
 
-    RBPipelineManager::RBPipelineManager(int colorAttachmentCount, bool bColorResolve, RBDevice &device)
-        : rbDevice(device), rbColorAttachmentCount(colorAttachmentCount), isResolveAttachment(bColorResolve) {}
+    RBPipelineManager::RBPipelineManager(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device)
+        : rbDevice(device), rbColorAttachmentCount(colorAttachmentCount), isResolveAttachment(bResolveAttachment), isDepthAttachment(bDephAttament) {}
 
     RBPipelineManager::~RBPipelineManager() 
     {
@@ -246,8 +246,9 @@ namespace RottenBamboo {
     void RBPipelineManager::fillRenderPass(int attachmentCount = 1)
     {
         int ColorAttachKind = 1 + (isResolveAttachment ? 1 : 0);
+        int depthAttachment = isDepthAttachment ? 1 : 0;
         attachmentDescriptions.clear();
-        attachmentDescriptions.reserve(1 + rbColorAttachmentCount * ColorAttachKind);
+        attachmentDescriptions.reserve(depthAttachment + rbColorAttachmentCount * ColorAttachKind);
 
         SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);
 
@@ -262,12 +263,16 @@ namespace RottenBamboo {
                 addColorAttachment(surfaceFormat.format, VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED,VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
             }
         }
-        //addColorAttachment(surfaceFormat.format, msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
-
-        addColorAttachment(findDepthFormat(), msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED,VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+        std::cout << "isResolveAttachment = " << isResolveAttachment << std::endl;
 
         std::cout << "rbColorAttachmentCount = " << rbColorAttachmentCount << std::endl;
-        
+        //addColorAttachment(surfaceFormat.format, msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+
+        if(isDepthAttachment)
+        {
+            addColorAttachment(findDepthFormat(), msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED,VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+        }        
+        std::cout << "isDepthAttachment = " << isDepthAttachment << std::endl;
 
         //VkAttachmentReference colorAttachmentRef{};
         //colorAttachmentRef.attachment = 0;
@@ -299,7 +304,6 @@ namespace RottenBamboo {
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
         subpass.colorAttachmentCount = rbColorAttachmentCount * ColorAttachKind;
         subpass.pColorAttachments = colorAttachmentRefs.data();
-        //subpass.pColorAttachments = &colorAttachmentRef;
         subpass.pDepthStencilAttachment = &depthAttachmentRef;
         subpass.pResolveAttachments = isResolveAttachment ? colorAttachmentResolveRef.data() : nullptr;
 

@@ -79,8 +79,8 @@ namespace RottenBamboo {
         std::cout << "RBGBufferPass::createGraphicsPipeline()" << std::endl;
     }
 
-    RBGBufferPass::RBGBufferPass(int colorAttachmentCount, bool bResolveAttachment, RBDevice &device, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> &descriptors, const RBPipelineConfig &config)
-        : RBPipelineManager(colorAttachmentCount, bResolveAttachment, device), rbPipelineConfig(config),
+    RBGBufferPass::RBGBufferPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> &descriptors, const RBPipelineConfig &config)
+        : RBPipelineManager(colorAttachmentCount, bResolveAttachment, bDephAttament, device), rbPipelineConfig(config),
         vertShaderModule(device), fragShaderModule(device), rbDescriptors(descriptors) 
     {
         std::cout << "RBGBufferPass::RBGBufferPass()" << std::endl;

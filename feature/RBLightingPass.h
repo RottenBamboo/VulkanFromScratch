@@ -35,7 +35,7 @@ namespace RottenBamboo {
 
         void InitializeGraphicPipeline() override;
 
-        RBLightingPass(int colorAttachmentCount, bool bResolveAttachment, RBDevice &device, RBDescriptors<1, 1> &descriptors, const RBPipelineConfig &config);
+        RBLightingPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<1, 1> &descriptors, const RBPipelineConfig &config);
 
         void fillGraphicsPipelineCreateInfo(uint32_t stageCount,
                                             const VkPipelineShaderStageCreateInfo* pStages,
