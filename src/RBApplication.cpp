@@ -62,9 +62,9 @@ namespace RottenBamboo {
 
     void RBApplication::InitializeDescriptors()
     {
-        descriptors.InitializeDescriptors();
-
         descriptorsGBuffer.InitializeDescriptors();
+
+        descriptors.InitializeDescriptors();
     }
 
     void RBApplication::InitializeGraphicPipeline()
@@ -261,9 +261,10 @@ namespace RottenBamboo {
         {
             windows.framebufferResized = false;
             swapChain.recreateSwapChain();
+            
+            gBufferPass.createGraphicsPipeline();
 
             lightPassManager.createGraphicsPipeline();
-            gBufferPass.createGraphicsPipeline();
         }
         else if (result != VK_SUCCESS) {
             throw std::runtime_error("failed to present swap chain image!");

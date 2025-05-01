@@ -25,6 +25,8 @@ namespace RottenBamboo {
 
         void setupPipelineStates() override;
 
+        void setupAttachments() override;
+
     public:
 
         void createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo) override;

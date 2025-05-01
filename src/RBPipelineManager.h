@@ -24,6 +24,12 @@ namespace RottenBamboo {
 
         VkVertexInputBindingDescription bindingDescription;
 
+        VkAttachmentDescription colorAttachmentDescription{}; 
+
+        VkAttachmentDescription colorResolveAttachmentDescription{}; 
+
+        VkAttachmentDescription depthAttachmentDescription{}; 
+
         VkViewport viewport{};
 
         VkRect2D scissor{};
@@ -56,6 +62,8 @@ namespace RottenBamboo {
         virtual void setupShaders() = 0;
 
         virtual void setupPipelineStates() = 0;
+        
+        virtual void setupAttachments() = 0;
 
         // Fill Pipeline States
         virtual void fillVertexInputStateCreateInfo();
@@ -139,13 +147,33 @@ namespace RottenBamboo {
 
         virtual void createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo) = 0;
 
-        virtual void addColorAttachment(VkFormat format, 
-            VkSampleCountFlagBits samples, 
-            VkAttachmentLoadOp loadOp, 
-            VkAttachmentStoreOp storeOp, 
-            VkAttachmentLoadOp stencilLoadOp, 
-            VkAttachmentStoreOp stencilStoreOp, 
-            VkImageLayout initialLayout, 
+        virtual void addColorAttachment(VkAttachmentDescription attachment);
+
+        virtual void fillColorResolveAttachment(VkFormat format,
+            VkSampleCountFlagBits samples,
+            VkAttachmentLoadOp loadOp,
+            VkAttachmentStoreOp storeOp,
+            VkAttachmentLoadOp stencilLoadOp,
+            VkAttachmentStoreOp stencilStoreOp,
+            VkImageLayout initialLayout,
+            VkImageLayout finalLayout);
+
+        virtual void fillColorAttachment(VkFormat format,
+            VkSampleCountFlagBits samples,
+            VkAttachmentLoadOp loadOp,
+            VkAttachmentStoreOp storeOp,
+            VkAttachmentLoadOp stencilLoadOp,
+            VkAttachmentStoreOp stencilStoreOp,
+            VkImageLayout initialLayout,
+            VkImageLayout finalLayout);
+
+        virtual void fillDepthAttachment(VkFormat format,
+            VkSampleCountFlagBits samples,
+            VkAttachmentLoadOp loadOp,
+            VkAttachmentStoreOp storeOp,
+            VkAttachmentLoadOp stencilLoadOp,
+            VkAttachmentStoreOp stencilStoreOp,
+            VkImageLayout initialLayout,
             VkImageLayout finalLayout);
 
     public:
