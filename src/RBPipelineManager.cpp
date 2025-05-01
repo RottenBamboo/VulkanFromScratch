@@ -344,7 +344,7 @@ namespace RottenBamboo {
 
         VkSubpassDescription subpass{};
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-        subpass.colorAttachmentCount = rbColorAttachmentCount * ColorAttachKind;
+        subpass.colorAttachmentCount = rbColorAttachmentCount;
         subpass.pColorAttachments = colorAttachmentRefs.data();
         subpass.pDepthStencilAttachment = &depthAttachmentRef;
         subpass.pResolveAttachments = isResolveAttachment ? colorAttachmentResolveRef.data() : nullptr;
