@@ -23,6 +23,11 @@ namespace RottenBamboo{
         //descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(1, ImageCount, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr);
         //descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(1, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr);
         descriptorSetManager.descriptorSetLayoutManager.createDescriptorSetLayout();
+
+   
+        if (descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout == VK_NULL_HANDLE) {
+            throw std::runtime_error("Failed to create DescriptorSetLayout!");
+        }
     }
 
     template<int ImageCount, int BufferCount>

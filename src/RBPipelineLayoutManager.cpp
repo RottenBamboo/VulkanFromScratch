@@ -19,6 +19,10 @@ namespace RottenBamboo {
         pipelineLayoutInfo.pPushConstantRanges = nullptr;
         pipelineLayoutInfo.flags = 0;
         std::cout << "RBPipelineLayoutManager::fillPipelineLayoutInfo()" << std::endl;
+        
+        if (vkCreatePipelineLayout(rbDevice.device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to create pipeline layout!");
+        }
     }
 
     void RBPipelineLayoutManager::createPipelineLayout()

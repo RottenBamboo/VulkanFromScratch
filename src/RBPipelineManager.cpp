@@ -157,14 +157,21 @@ namespace RottenBamboo {
                                                                  VkBlendOp alphaBlendOp,
                                                                  VkColorComponentFlags colorWriteMask)
     {
-        colorBlendAttachment.blendEnable = blendEnable;
-        colorBlendAttachment.srcColorBlendFactor = srcColorBlendFactor;
-        colorBlendAttachment.dstColorBlendFactor = dstColorBlendFactor;
-        colorBlendAttachment.colorBlendOp = colorBlendOp;
-        colorBlendAttachment.srcAlphaBlendFactor = srcAlphaBlendFactor;
-        colorBlendAttachment.dstAlphaBlendFactor = dstAlphaBlendFactor;
-        colorBlendAttachment.alphaBlendOp = alphaBlendOp;
-        colorBlendAttachment.colorWriteMask = colorWriteMask;
+        colorBlendAttachments.reserve(rbColorAttachmentCount);
+        colorBlendAttachments.clear();
+        for(int i = 0; i < rbColorAttachmentCount; i++)
+        {
+            VkPipelineColorBlendAttachmentState colorBlendAttachment;
+            colorBlendAttachment.blendEnable = blendEnable;
+            colorBlendAttachment.srcColorBlendFactor = srcColorBlendFactor;
+            colorBlendAttachment.dstColorBlendFactor = dstColorBlendFactor;
+            colorBlendAttachment.colorBlendOp = colorBlendOp;
+            colorBlendAttachment.srcAlphaBlendFactor = srcAlphaBlendFactor;
+            colorBlendAttachment.dstAlphaBlendFactor = dstAlphaBlendFactor;
+            colorBlendAttachment.alphaBlendOp = alphaBlendOp;
+            colorBlendAttachment.colorWriteMask = colorWriteMask;
+            colorBlendAttachments.push_back(colorBlendAttachment);
+        }
         std::cout << "RBPipelineManager::fillColorBlendAttachmentState()" << std::endl;
     }
 
@@ -179,7 +186,7 @@ namespace RottenBamboo {
         colorBlending.flags = 0;
         colorBlending.logicOpEnable = VK_FALSE;
         colorBlending.logicOp = VK_LOGIC_OP_AND;
-        colorBlending.attachmentCount = 1;
+        colorBlending.attachmentCount = attachmentCount;
         colorBlending.pAttachments = pAttachments;
         colorBlending.blendConstants[0] = 0.0f;
         colorBlending.blendConstants[1] = 0.0f;
@@ -429,7 +436,7 @@ namespace RottenBamboo {
                                       VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD,
                                       VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT);
         float blendConstants[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-        fillPipelineColorBlendStateCreateInfo(VK_FALSE, VK_LOGIC_OP_AND, 1, &colorBlendAttachment, blendConstants);
+        fillPipelineColorBlendStateCreateInfo(VK_FALSE, VK_LOGIC_OP_AND, rbColorAttachmentCount, colorBlendAttachments.data(), blendConstants);
         dynamicStates.push_back(VK_DYNAMIC_STATE_VIEWPORT);
         dynamicStates.push_back(VK_DYNAMIC_STATE_LINE_WIDTH);
         fillDynamicStateCrateInfo();

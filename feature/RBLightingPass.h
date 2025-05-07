@@ -19,7 +19,7 @@ namespace RottenBamboo {
 
         RBPipelineConfig rbPipelineConfig;
 
-        RBDescriptors<1, 1> &rbDescriptors;
+        RBDescriptors<TEXTURE_PATHS_MECH_LIGHTING_COUNT, 1> &rbDescriptors;
 
         void setupShaders() override;
 
@@ -37,7 +37,7 @@ namespace RottenBamboo {
 
         void InitializeGraphicPipeline() override;
 
-        RBLightingPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<1, 1> &descriptors, const RBPipelineConfig &config);
+        RBLightingPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<TEXTURE_PATHS_MECH_LIGHTING_COUNT, 1> &descriptors, const RBPipelineConfig &config);
 
         void fillGraphicsPipelineCreateInfo(uint32_t stageCount,
                                             const VkPipelineShaderStageCreateInfo* pStages,

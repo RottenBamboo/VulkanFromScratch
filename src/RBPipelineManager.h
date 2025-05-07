@@ -38,7 +38,7 @@ namespace RottenBamboo {
 
         VkGraphicsPipelineCreateInfo pipelineInfo{};
 
-        VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+        std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments{};
 
         std::vector<VkDynamicState> dynamicStates;
 

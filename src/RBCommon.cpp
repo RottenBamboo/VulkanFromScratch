@@ -18,8 +18,15 @@ const std::array<std::string, TEXTURE_PATHS_MECH_COUNT> TEXTURE_PATHS_MECH = {
     "../textures/Mech_Emission.jpeg"
 };
 
+const std::array<std::string, TEXTURE_PATHS_MECH_LIGHTING_COUNT> TEXTURE_PATHS_LIGHTING_MECH = {
+    "../textures/Mech_BaseMap.jpg",
+    "../textures/Mech_Normal.jpg",
+    "../textures/Mech_AO.jpeg",
+    "../textures/Mech_Emission.jpeg"
+};
+
 uint32_t mipLevels;
 
-VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
+VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_2_BIT;
 VkExtent2D swapChainExtent;
 uint32_t currentFrame = 0;

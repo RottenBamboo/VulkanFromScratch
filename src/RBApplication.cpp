@@ -65,6 +65,8 @@ namespace RottenBamboo {
         descriptorsGBuffer.InitializeDescriptors();
 
         descriptors.InitializeDescriptors();
+
+        descriptorsLighting.InitializeDescriptors();
     }
 
     void RBApplication::InitializeGraphicPipeline()
