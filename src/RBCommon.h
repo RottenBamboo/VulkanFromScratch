@@ -184,12 +184,12 @@ static const int lightPassColorAttachmentCount = 1;
 
 #define TEXTURE_PATHS_COUNT 1
 #define TEXTURE_PATHS_MECH_COUNT 4
-#define TEXTURE_PATHS_MECH_LIGHTING_COUNT 4
+#define TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT 4
 
 extern const std::string MODEL_PATH;
 extern const std::array<std::string, TEXTURE_PATHS_COUNT> TEXTURE_PATH;
 extern const std::array<std::string, TEXTURE_PATHS_MECH_COUNT> TEXTURE_PATHS_MECH;
-extern const std::array<std::string, TEXTURE_PATHS_MECH_LIGHTING_COUNT> TEXTURE_PATHS_LIGHTING_MECH;
+extern const std::array<std::string, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> TEXTURE_PATHS_LIGHTING_MECH;
 
 extern uint32_t mipLevels;
 

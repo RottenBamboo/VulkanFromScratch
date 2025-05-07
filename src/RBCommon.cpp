@@ -18,7 +18,7 @@ const std::array<std::string, TEXTURE_PATHS_MECH_COUNT> TEXTURE_PATHS_MECH = {
     "../textures/Mech_Emission.jpeg"
 };
 
-const std::array<std::string, TEXTURE_PATHS_MECH_LIGHTING_COUNT> TEXTURE_PATHS_LIGHTING_MECH = {
+const std::array<std::string, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> TEXTURE_PATHS_LIGHTING_MECH = {
     "../textures/Mech_BaseMap.jpg",
     "../textures/Mech_Normal.jpg",
     "../textures/Mech_AO.jpeg",

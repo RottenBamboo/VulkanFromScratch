@@ -42,6 +42,30 @@ namespace RottenBamboo {
         std::cout << "RBGBufferPass::createGraphicsPipelines()" << std::endl;
     }
 
+
+    void RBGBufferPass::createFrameBuffers() {
+        std::vector<VkImageView> attachments(rbColorAttachmentCount);
+    
+        gBufferFrameBuffers.resize(rbColorAttachmentCount);
+        
+        for (int i = 0; i < rbColorAttachmentCount; ++i) {
+            attachments[i] = rbColorAttachmentDescriptors.rbImageManager.imageBundles[i].imageView; // GBuffer colorAttachment imageView
+        }
+    
+        VkFramebufferCreateInfo framebufferInfo{};
+        framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        framebufferInfo.renderPass = renderPass; // GBufferPass RenderPass
+        framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+        framebufferInfo.pAttachments = attachments.data();
+        framebufferInfo.width = swapChainExtent.width;
+        framebufferInfo.height = swapChainExtent.height;
+        framebufferInfo.layers = 1;
+    
+        if (vkCreateFramebuffer(rbDevice.device, &framebufferInfo, nullptr, gBufferFrameBuffers.data()) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create GBuffer framebuffer!");
+        }
+    }
+
     void RBGBufferPass::setupAttachments()
     {
         SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);
@@ -94,9 +118,9 @@ namespace RottenBamboo {
         std::cout << "RBGBufferPass::createGraphicsPipeline()" << std::endl;
     }
 
-    RBGBufferPass::RBGBufferPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> &descriptors, const RBPipelineConfig &config)
+    RBGBufferPass::RBGBufferPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> &descriptors, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> &descriptorColorAttachment, const RBPipelineConfig &config)
         : RBPipelineManager(colorAttachmentCount, bResolveAttachment, bDephAttament, device), rbPipelineConfig(config),
-        vertShaderModule(device), fragShaderModule(device), rbDescriptors(descriptors) 
+        vertShaderModule(device), fragShaderModule(device), rbDescriptors(descriptors), rbColorAttachmentDescriptors(descriptorColorAttachment)
     {
         std::cout << "RBGBufferPass::RBGBufferPass()" << std::endl;
     }

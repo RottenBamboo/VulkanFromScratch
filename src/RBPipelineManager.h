@@ -176,6 +176,8 @@ namespace RottenBamboo {
             VkImageLayout initialLayout,
             VkImageLayout finalLayout);
 
+        virtual void createFrameBuffers() = 0;
+        
     public:
 
         VkPipeline graphicsPipeline;
