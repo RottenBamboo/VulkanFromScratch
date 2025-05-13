@@ -149,6 +149,7 @@ namespace RottenBamboo {
     }
 
     void RBApplication::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex) {
+
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = 0;
@@ -156,6 +157,74 @@ namespace RottenBamboo {
         if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
             throw std::runtime_error("failed to begin recording command buffer!");
         }
+
+        // binding index vertex buffer
+        VkBuffer vertexBuffers[] = {mesh.vertexBuffer.buffer};
+        VkDeviceSize offsets[] = {0};
+
+
+
+        // 1. begin gbuffer rendering
+        VkRenderPassBeginInfo gBufferRenderPassInfo{};
+        gBufferRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        gBufferRenderPassInfo.renderPass = gBufferPass.renderPass; // GBufferPass RenderPass
+        gBufferRenderPassInfo.framebuffer = gBufferPass.gBufferFrameBuffer[imageIndex]; // GBufferPass Framebuffer
+        gBufferRenderPassInfo.renderArea.offset = {0, 0};
+        gBufferRenderPassInfo.renderArea.extent = swapChainExtent;
+
+        std::array<VkClearValue, 5> gBufferClearValues{};
+        gBufferClearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}}; // clear positiion texture
+        gBufferClearValues[1].color = {{0.0f, 0.0f, 0.0f, 1.0f}}; // clear normal texture
+        gBufferClearValues[2].color = {{0.0f, 0.0f, 0.0f, 1.0f}}; // clear albedo texture
+        gBufferClearValues[3].color = {{0.0f, 0.0f, 0.0f, 1.0f}}; // clear material texture
+
+        gBufferRenderPassInfo.clearValueCount = static_cast<uint32_t>(gBufferClearValues.size());
+        gBufferRenderPassInfo.pClearValues = gBufferClearValues.data();
+        
+
+        vkCmdBeginRenderPass(commandBuffer, &gBufferRenderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+        vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+
+        vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+
+        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferPass.graphicsPipeline);
+
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferPass.rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptorsGBuffer.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
+
+        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
+
+        vkCmdEndRenderPass(commandBuffer);
+
+        // for (int i = 0; i < gBufferPass.rbColorAttachmentCount; ++i) {
+        //     VkImageMemoryBarrier barrier{};
+        //     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        //     barrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        //     barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        //     barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        //     barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        //     barrier.image = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[i].image;
+        //     barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        //     barrier.subresourceRange.baseMipLevel = 0;
+        //     barrier.subresourceRange.levelCount = 1;
+        //     barrier.subresourceRange.baseArrayLayer = 0;
+        //     barrier.subresourceRange.layerCount = 1;
+        
+        //     barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        //     barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        
+        //     vkCmdPipelineBarrier(
+        //         commandBuffer,
+        //         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        //         VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+        //         0,
+        //         0, nullptr,
+        //         0, nullptr,
+        //         1, &barrier
+        //     );
+        // }
+
+        // descriptorsLighting.descriptorSetManager.updateDescriptorSets(device, descriptorsGBuffer.descriptorSetManager.descriptorWrites);
 
         VkRenderPassBeginInfo renderPassInfo{};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -170,26 +239,16 @@ namespace RottenBamboo {
 
         renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
         renderPassInfo.pClearValues = clearValues.data();
-
-        VkBuffer vertexBuffers[] = {mesh.vertexBuffer.buffer};
-        VkDeviceSize offsets[] = {0};
         
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
+        
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
         vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
 
-        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferPass.graphicsPipeline);
-
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, gBufferPass.rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptorsGBuffer.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
-
-        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
-
-        
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, lightPassManager.graphicsPipeline);
 
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, lightPassManager.rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptors.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, lightPassManager.rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptorsLighting.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
 
         vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
 

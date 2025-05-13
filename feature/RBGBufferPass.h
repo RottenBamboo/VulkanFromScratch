@@ -22,9 +22,6 @@ namespace RottenBamboo {
         //input image
         RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> &rbDescriptors;
 
-        //output image
-        RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> &rbColorAttachmentDescriptors;
-
         void setupShaders() override;
 
         void setupPipelineStates() override;
@@ -34,6 +31,16 @@ namespace RottenBamboo {
         void createFrameBuffers() override;
 
     public:
+        VkImage depthImage;
+        VkDeviceMemory depthImageMemory;
+        //output image
+        RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> &rbColorAttachmentDescriptors;
+    
+        VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
+
+        void createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits  numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+
+        std::vector<VkFramebuffer> gBufferFrameBuffer;
 
         void createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo) override;
 
@@ -79,8 +86,6 @@ namespace RottenBamboo {
         RBShaderModule vertShaderModule;
 
         RBShaderModule fragShaderModule;
-
-        std::vector<VkFramebuffer> gBufferFrameBuffers;
     };
 }
 

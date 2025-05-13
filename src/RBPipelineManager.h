@@ -10,15 +10,11 @@ namespace RottenBamboo {
     class RBPipelineManager {
     protected:
 
-        int rbColorAttachmentCount = 1;
-
         bool isResolveAttachment = false;
 
         bool isDepthAttachment = true;
 
         RBDevice &rbDevice;
-
-        VkRenderPass renderPass;
 
         std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions;
 
@@ -179,6 +175,10 @@ namespace RottenBamboo {
         virtual void createFrameBuffers() = 0;
         
     public:
+
+        int rbColorAttachmentCount = 1;
+
+        VkRenderPass renderPass;
 
         VkPipeline graphicsPipeline;
 
