@@ -16,6 +16,7 @@ namespace RottenBamboo {
     void RBShaderModule::fillCreateInfo(const std::vector<char> &code)
     {
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+        createInfo.flags = 0;
         createInfo.pNext = nullptr;
         createInfo.codeSize = code.size();
         createInfo.pCode = reinterpret_cast<const uint32_t *>(code.data());
