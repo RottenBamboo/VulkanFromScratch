@@ -119,10 +119,14 @@ namespace RottenBamboo {
     }
     void RBLightingPass::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1>& descriptors, RBMesh &mesh) 
     {
+        vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptors.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
 
         vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
+
+        vkCmdEndRenderPass(commandBuffer);
     }
 }

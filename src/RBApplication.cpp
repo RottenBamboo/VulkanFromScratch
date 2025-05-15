@@ -157,34 +157,50 @@ namespace RottenBamboo {
             throw std::runtime_error("failed to begin recording command buffer!");
         }
 
-        VkRenderPassBeginInfo renderPassInfo{};
-        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        renderPassInfo.renderPass = swapChain.renderPass;
-        renderPassInfo.framebuffer = swapChain.swapChainFrameBuffers[imageIndex];
-        renderPassInfo.renderArea.offset = {0, 0};
-        renderPassInfo.renderArea.extent = swapChainExtent;
+        VkRenderPassBeginInfo gbufferRenderPassInfo{};
+        gbufferRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        gbufferRenderPassInfo.renderPass = swapChain.renderPass;
+        gbufferRenderPassInfo.framebuffer = swapChain.swapChainFrameBuffers[imageIndex];
+        gbufferRenderPassInfo.renderArea.offset = {0, 0};
+        gbufferRenderPassInfo.renderArea.extent = swapChainExtent;
 
         std::array<VkClearValue, 2> clearValues{};
         clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
         clearValues[1].depthStencil = {1.0f, 0};
 
-        renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-        renderPassInfo.pClearValues = clearValues.data();
+        gbufferRenderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+        gbufferRenderPassInfo.pClearValues = clearValues.data();
 
-        VkBuffer vertexBuffers[] = {mesh.vertexBuffer.buffer};
-        VkDeviceSize offsets[] = {0};
-        
-        vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+         VkBuffer vertexBuffers[] = {mesh.vertexBuffer.buffer};
+         VkDeviceSize offsets[] = {0};
         
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
         vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
-
-        gBufferPass.recordCommandBuffer(commandBuffer, imageIndex, renderPassInfo, descriptorsGBuffer, mesh);
- 
-        lightPassManager.recordCommandBuffer(commandBuffer, imageIndex, renderPassInfo, descriptorsLighting, mesh);
         
-        vkCmdEndRenderPass(commandBuffer);
+        // gbuffer pass pipeline
+        gBufferPass.recordCommandBuffer(commandBuffer, imageIndex, gbufferRenderPassInfo, descriptorsGBuffer, mesh);
+
+        VkRenderPassBeginInfo lightingRenderPassInfo{};
+        lightingRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        lightingRenderPassInfo.renderPass = swapChain.renderPass;
+        lightingRenderPassInfo.framebuffer = swapChain.swapChainFrameBuffers[imageIndex];
+        lightingRenderPassInfo.renderArea.offset = {0, 0};
+        lightingRenderPassInfo.renderArea.extent = swapChainExtent;
+
+        std::array<VkClearValue, 2> lightingClearValues{};
+        lightingClearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+        lightingClearValues[1].depthStencil = {1.0f, 0};
+
+        lightingRenderPassInfo.clearValueCount = static_cast<uint32_t>(lightingClearValues.size());
+        lightingRenderPassInfo.pClearValues = lightingClearValues.data();
+
+        // VkBuffer lightingVertexBuffers[] = {mesh.vertexBuffer.buffer};
+        // VkDeviceSize lightingOffsets[] = {0};
+
+ 
+        //lighting pass pipeline
+        lightPassManager.recordCommandBuffer(commandBuffer, imageIndex, lightingRenderPassInfo, descriptorsLighting, mesh);
 
         if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
             throw std::runtime_error("failed to record command buffer!");
