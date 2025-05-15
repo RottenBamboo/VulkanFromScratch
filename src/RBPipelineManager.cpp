@@ -307,6 +307,10 @@ namespace RottenBamboo {
         {
             addColorAttachment(colorAttachmentDescription);
             
+        }
+        
+        for(int i = 0; i < rbColorAttachmentCount; i++)
+        {
             if(isResolveAttachment)
             {
                 addColorAttachment(colorResolveAttachmentDescription);
@@ -351,7 +355,7 @@ namespace RottenBamboo {
 
         VkSubpassDescription subpass{};
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-        subpass.colorAttachmentCount = rbColorAttachmentCount * ColorAttachKind;
+        subpass.colorAttachmentCount = rbColorAttachmentCount;
         subpass.pColorAttachments = colorAttachmentRefs.data();
         subpass.pDepthStencilAttachment = isDepthAttachment ? &depthAttachmentRef : nullptr;
         subpass.pResolveAttachments = isResolveAttachment ? colorAttachmentResolveRef.data() : nullptr;
