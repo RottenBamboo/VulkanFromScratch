@@ -27,6 +27,7 @@ const std::array<std::string, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> TEXTURE_P
 
 uint32_t mipLevels;
 
-VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_2_BIT;
+VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
+VkSampleCountFlagBits msaaSamples2 = VK_SAMPLE_COUNT_2_BIT;
 VkExtent2D swapChainExtent;
 uint32_t currentFrame = 0;

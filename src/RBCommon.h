@@ -194,6 +194,7 @@ extern const std::array<std::string, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> TE
 extern uint32_t mipLevels;
 
 extern VkSampleCountFlagBits msaaSamples;
+extern VkSampleCountFlagBits msaaSamples2;
 extern VkExtent2D swapChainExtent;
 extern uint32_t currentFrame;
 

@@ -51,5 +51,6 @@
         "vector": "cpp",
         "complex": "cpp",
         "algorithm": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }
