@@ -51,7 +51,7 @@ namespace RottenBamboo {
         for (int i = 0; i < rbColorAttachmentCount; ++i) {
             attachments[i] = rbColorAttachmentDescriptors.rbImageManager.imageBundles[i].imageView; // GBuffer colorAttachment imageView
         }
-    
+        
         VkFramebufferCreateInfo framebufferInfo{};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         framebufferInfo.renderPass = renderPass; // GBufferPass RenderPass

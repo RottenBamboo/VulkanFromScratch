@@ -50,7 +50,8 @@
         "variant": "cpp",
         "vector": "cpp",
         "complex": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "filesystem": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

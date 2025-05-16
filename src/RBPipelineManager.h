@@ -10,8 +10,6 @@ namespace RottenBamboo {
     class RBPipelineManager {
     protected:
 
-        int rbColorAttachmentCount = 1;
-
         bool isResolveAttachment = false;
 
         bool isDepthAttachment = true;
@@ -179,6 +177,8 @@ namespace RottenBamboo {
         virtual void createFrameBuffers() = 0;
         
     public:
+
+        int rbColorAttachmentCount = 1;
 
         VkPipeline graphicsPipeline;
 

@@ -292,7 +292,11 @@ namespace RottenBamboo {
         if(bPortabilityExtension)
         {
             for (auto criticalExtension: criticalExtensions) {
+#ifdef _WIN32
+
+#else
                 extensions.push_back(criticalExtension);
+#endif
             }
         }
         createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
