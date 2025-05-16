@@ -96,8 +96,13 @@ namespace RottenBamboo{
     
             stbi_image_free(pixels);
 
-            
-            rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
+
+            VkImageUsageFlags usageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+            if(isColorAttachment)
+            {
+                usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+            }
+            rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, usageFlags);
             rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageBundle.image, imageBundle.imageMemory);
 
             VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
@@ -220,11 +225,12 @@ namespace RottenBamboo{
     }
 
     template<int ImageCount, int BufferCount>
-    RBDescriptors<ImageCount, BufferCount>::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers, const std::array<std::string, ImageCount> &texturePaths) : rbDevice(device),
+    RBDescriptors<ImageCount, BufferCount>::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers, const std::array<std::string, ImageCount> &texturePaths, bool isColorAttachment) : rbDevice(device),
     rbCommandBuffer(commandBuffer),
     rbBufferPtr(uniformBuffers),
     descriptorSetManager(device),
     rbImageManager(device),
+    isColorAttachment(isColorAttachment),
     paths{texturePaths}
     {
     }

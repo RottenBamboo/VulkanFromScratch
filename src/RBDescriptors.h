@@ -21,6 +21,9 @@ namespace RottenBamboo {
     template<int ImageCount, int BufferCount>
     class RBDescriptors {
     private:
+
+        bool isColorAttachment;
+        
         const std::array<std::string, ImageCount> paths;
 
         RBDevice &rbDevice;
@@ -51,7 +54,7 @@ namespace RottenBamboo {
 
         RBImageManager<ImageCount> rbImageManager;
 
-        RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferObject> *uniformBuffersonst, const std::array<std::string, ImageCount> &texturePaths);
+        RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferObject> *uniformBuffersonst, const std::array<std::string, ImageCount> &texturePaths, bool isColorAttachment);
 
         ~RBDescriptors();
 

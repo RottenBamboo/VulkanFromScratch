@@ -46,9 +46,9 @@ namespace RottenBamboo {
 
         RBMesh mesh{device, commandBuffer};
         RBPipelineConfig pipelineConfig{};
-        RBDescriptors<TEXTURE_PATHS_COUNT, 1> descriptors{device, commandBuffer, uniformBuffers, TEXTURE_PATH};
-        RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> descriptorsGBuffer{device, commandBuffer, uniformBuffers, TEXTURE_PATHS_MECH};
-        RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> descriptorsLighting{device, commandBuffer, uniformBuffers, TEXTURE_PATHS_LIGHTING_MECH};
+        RBDescriptors<TEXTURE_PATHS_COUNT, 1> descriptors{device, commandBuffer, uniformBuffers, TEXTURE_PATH, false};
+        RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> descriptorsGBuffer{device, commandBuffer, uniformBuffers, TEXTURE_PATHS_MECH, false};
+        RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> descriptorsLighting{device, commandBuffer, uniformBuffers, TEXTURE_PATHS_LIGHTING_MECH, true};
         RBSwapChain swapChain{device, windows, commandBuffer, descriptors};
         RBGBufferPass gBufferPass{gBufferPassColorAttachmentCount, false, false, device, descriptorsGBuffer, descriptorsLighting, pipelineConfig};
         RBLightingPass lightPassManager{lightPassColorAttachmentCount, true, true, device, descriptorsLighting, pipelineConfig};
