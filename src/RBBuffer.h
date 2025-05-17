@@ -147,6 +147,7 @@ namespace RottenBamboo {
 
         uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice& physicalDevice)
         {
+            std::cout << "RBBuffer::findMemoryType()" << std::endl;
             VkPhysicalDeviceMemoryProperties memProperties;
             vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
             for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
@@ -155,8 +156,7 @@ namespace RottenBamboo {
                 }
             }
 
-            //throw std::runtime_error("failed to find suitable memory type!");
-            std::cout << "RBBuffer::findMemoryType()" << std::endl;
+            throw std::runtime_error("failed to find suitable memory type!");
         }
     };
 

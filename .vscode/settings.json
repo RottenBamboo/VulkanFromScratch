@@ -54,7 +54,8 @@
         "filesystem": "cpp",
         "charconv": "cpp",
         "memory": "cpp",
-        "forward_list": "cpp"
+        "forward_list": "cpp",
+        "ostream": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }
