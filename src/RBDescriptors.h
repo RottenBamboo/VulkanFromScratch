@@ -28,8 +28,6 @@ namespace RottenBamboo {
 
         RBDevice &rbDevice;
 
-        RBBuffer<UniformBufferObject> *rbBufferPtr;
-
         RBCommandBuffer &rbCommandBuffer;
 
         void createDescriptorSetLayout();
@@ -49,6 +47,8 @@ namespace RottenBamboo {
         void createTextureSampler();
 
     public:
+
+        RBBuffer<UniformBufferObject> *rbBufferPtr;
 
         RBDescriptorSetManager descriptorSetManager;
 

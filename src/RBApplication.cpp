@@ -167,29 +167,30 @@ namespace RottenBamboo {
             throw std::runtime_error("failed to begin recording command buffer!");
         }
 
-        // VkRenderPassBeginInfo gbufferRenderPassInfo{};
-        // gbufferRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        // gbufferRenderPassInfo.renderPass = swapChain.renderPass;
-        // gbufferRenderPassInfo.framebuffer = swapChain.swapChainFrameBuffers[imageIndex];
-        // gbufferRenderPassInfo.renderArea.offset = {0, 0};
-        // gbufferRenderPassInfo.renderArea.extent = swapChainExtent;
+        std::array<VkClearValue, 4> clearValues{};
+        clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+        clearValues[1].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+        clearValues[2].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+        clearValues[3].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
 
-        // std::array<VkClearValue, 2> clearValues{};
-        // clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
-        // clearValues[1].depthStencil = {1.0f, 0};
+        VkRenderPassBeginInfo gbufferRenderPassInfo{};
+        gbufferRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        gbufferRenderPassInfo.renderPass = gBufferPass.renderPass;
+        gbufferRenderPassInfo.framebuffer = gBufferPass.gBufferFrameBuffers;
+        gbufferRenderPassInfo.renderArea.offset = {0, 0};
+        gbufferRenderPassInfo.renderArea.extent = swapChainExtent;
+        gbufferRenderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+        gbufferRenderPassInfo.pClearValues = clearValues.data();
 
-        // gbufferRenderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-        // gbufferRenderPassInfo.pClearValues = clearValues.data();
-
-          VkBuffer vertexBuffers[] = {mesh.vertexBuffer.buffer};
-          VkDeviceSize offsets[] = {0};
+        VkBuffer vertexBuffers[] = {mesh.vertexBuffer.buffer};
+        VkDeviceSize offsets[] = {0};
         
-         vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+        vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-         vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+        vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
         
-        // // gbuffer pass pipeline
-        // gBufferPass.recordCommandBuffer(commandBuffer, imageIndex, gbufferRenderPassInfo, descriptorsGBuffer, mesh);
+        // gbuffer pass pipeline
+        gBufferPass.recordCommandBuffer(commandBuffer, imageIndex, gbufferRenderPassInfo, descriptorsGBuffer, mesh);
 
         VkRenderPassBeginInfo lightingRenderPassInfo{};
         lightingRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -236,33 +237,38 @@ namespace RottenBamboo {
         //     );
         // }
 
-        //  std::array<VkImageView, 4> gbufferViews = {
-        //     gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[0].imageView,
-        //     gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[1].imageView,
-        //     gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[2].imageView,
-        //     gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[3].imageView
-        // };
         // VkSampler gbufferSampler = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[0].sampler;
 
-        // // 填写 descriptor write
-        // for (uint32_t i = 0; i < 4; ++i) {
-        //     VkDescriptorImageInfo imageInfo{};
-        //     imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        //     imageInfo.imageView = gbufferViews[i];
-        //     imageInfo.sampler = gbufferSampler;
-        
-        //     VkWriteDescriptorSet descriptorWrite{};
-        //     descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        //     descriptorWrite.dstSet = lightPassManager.rbDescriptors.descriptorSetManager.descriptorSets[imageIndex];
-        //     descriptorWrite.dstBinding = i; // shader binding
-        //     descriptorWrite.dstArrayElement = 0;
-        //     descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        //     descriptorWrite.descriptorCount = 1;
-        //     descriptorWrite.pImageInfo = &imageInfo;
-        
-        //     vkUpdateDescriptorSets(device.device, 1, &descriptorWrite, 0, nullptr);
-        // }
+        // std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorsLighting.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout);
+        // std::cout << "gBuffer To Lighting" << layouts.size() << std::endl;
+        // //descriptorsLighting.descriptorSetManager.fillDescriptorSetsAllocateInfo(descriptorsLighting.descriptorSetManager.descriptorPoolManager.descriptorPool, MAX_FRAMES_IN_FLIGHT, layouts.data());
+        // //descriptorsLighting.descriptorSetManager.allocateDescriptorSets(device, MAX_FRAMES_IN_FLIGHT);
 
+        // for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+        // {
+        //     VkDescriptorBufferInfo bufferInfo{};
+        //     bufferInfo.buffer = descriptorsLighting.rbBufferPtr[i].buffer;
+        //     bufferInfo.offset = 0;
+        //     bufferInfo.range = sizeof(UniformBufferObject);
+
+        //     // VkDescriptorImageInfo imageInfo{};
+        //     // imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        //     // imageInfo.imageView = rbImageManager.imageBundles[0].imageView;
+        //     // imageInfo.sampler = rbImageManager.imageBundles[0].sampler;
+        //     descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteBuffer(i, 0, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
+
+        //     for(int j = 0; j < 4; j++)
+        //     {
+        //         descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        //         descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageView = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].imageView;
+        //         descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.sampler = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].sampler;
+        //         descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteImage(i, j + 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].imageInfo);
+        //     }
+
+        //     //descriptorSetManager.fillDescriptotSetsWriteImage(i, 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &imageInfo);
+        //     descriptorsLighting.descriptorSetManager.updateDescriptorSets(device);
+        // }
+        
         //lighting pass pipeline
         lightPassManager.recordCommandBuffer(commandBuffer, imageIndex, lightingRenderPassInfo, descriptorsLighting, mesh);
 

@@ -16,8 +16,6 @@ namespace RottenBamboo {
 
         RBDevice &rbDevice;
 
-        VkRenderPass renderPass;
-
         std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions;
 
         VkVertexInputBindingDescription bindingDescription;
@@ -179,6 +177,8 @@ namespace RottenBamboo {
     public:
 
         int rbColorAttachmentCount = 1;
+        
+        VkRenderPass renderPass;
 
         VkPipeline graphicsPipeline;
 

@@ -32,6 +32,8 @@ namespace RottenBamboo {
         void createFrameBuffers() override;
 
     public:
+
+        VkFramebuffer gBufferFrameBuffers;
     
         //output image
         RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> &rbColorAttachmentDescriptors;
@@ -81,8 +83,6 @@ namespace RottenBamboo {
         RBShaderModule vertShaderModule;
 
         RBShaderModule fragShaderModule;
-
-        std::vector<VkFramebuffer> gBufferFrameBuffers;
     };
 }
 

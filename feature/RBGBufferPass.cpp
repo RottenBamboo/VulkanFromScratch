@@ -45,8 +45,8 @@ namespace RottenBamboo {
 
     void RBGBufferPass::createFrameBuffers() {
         std::vector<VkImageView> attachments(rbColorAttachmentCount);
-    
-        gBufferFrameBuffers.resize(rbColorAttachmentCount);
+        
+        std::cout << "gBufferFrameBuffers.resize(" << MAX_FRAMES_IN_FLIGHT << ")"<< std::endl;
         
         for (int i = 0; i < rbColorAttachmentCount; ++i) {
             attachments[i] = rbColorAttachmentDescriptors.rbImageManager.imageBundles[i].imageView; // GBuffer colorAttachment imageView
@@ -61,7 +61,7 @@ namespace RottenBamboo {
         framebufferInfo.height = swapChainExtent.height;
         framebufferInfo.layers = 1;
     
-        if (vkCreateFramebuffer(rbDevice.device, &framebufferInfo, nullptr, gBufferFrameBuffers.data()) != VK_SUCCESS) {
+        if (vkCreateFramebuffer(rbDevice.device, &framebufferInfo, nullptr, &gBufferFrameBuffers) != VK_SUCCESS) {
             throw std::runtime_error("failed to create GBuffer framebuffer!");
         }
     }
