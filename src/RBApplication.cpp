@@ -190,21 +190,7 @@ namespace RottenBamboo {
         vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
         
         // gbuffer pass pipeline
-        gBufferPass.recordCommandBuffer(commandBuffer, imageIndex, gbufferRenderPassInfo, descriptorsGBuffer, mesh);
-
-        VkRenderPassBeginInfo lightingRenderPassInfo{};
-        lightingRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        lightingRenderPassInfo.renderPass = swapChain.renderPass;
-        lightingRenderPassInfo.framebuffer = swapChain.swapChainFrameBuffers[imageIndex];
-        lightingRenderPassInfo.renderArea.offset = {0, 0};
-        lightingRenderPassInfo.renderArea.extent = swapChainExtent;
-
-        std::array<VkClearValue, 2> lightingClearValues{};
-        lightingClearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
-        lightingClearValues[1].depthStencil = {1.0f, 0};
-
-        lightingRenderPassInfo.clearValueCount = static_cast<uint32_t>(lightingClearValues.size());
-        lightingRenderPassInfo.pClearValues = lightingClearValues.data();
+        //gBufferPass.recordCommandBuffer(commandBuffer, imageIndex, gbufferRenderPassInfo, descriptorsGBuffer, mesh);
 
         // VkBuffer lightingVertexBuffers[] = {mesh.vertexBuffer.buffer};
         // VkDeviceSize lightingOffsets[] = {0};
@@ -268,6 +254,20 @@ namespace RottenBamboo {
         //     //descriptorSetManager.fillDescriptotSetsWriteImage(i, 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &imageInfo);
         //     descriptorsLighting.descriptorSetManager.updateDescriptorSets(device);
         // }
+        
+        VkRenderPassBeginInfo lightingRenderPassInfo{};
+        lightingRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        lightingRenderPassInfo.renderPass = swapChain.renderPass;
+        lightingRenderPassInfo.framebuffer = swapChain.swapChainFrameBuffers[imageIndex];
+        lightingRenderPassInfo.renderArea.offset = {0, 0};
+        lightingRenderPassInfo.renderArea.extent = swapChainExtent;
+
+        std::array<VkClearValue, 2> lightingClearValues{};
+        lightingClearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+        lightingClearValues[1].depthStencil = {1.0f, 0};
+
+        lightingRenderPassInfo.clearValueCount = static_cast<uint32_t>(lightingClearValues.size());
+        lightingRenderPassInfo.pClearValues = lightingClearValues.data();
         
         //lighting pass pipeline
         lightPassManager.recordCommandBuffer(commandBuffer, imageIndex, lightingRenderPassInfo, descriptorsLighting, mesh);
