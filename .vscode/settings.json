@@ -51,7 +51,10 @@
         "vector": "cpp",
         "complex": "cpp",
         "algorithm": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "charconv": "cpp",
+        "memory": "cpp",
+        "forward_list": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

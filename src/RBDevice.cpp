@@ -14,6 +14,7 @@ namespace RottenBamboo {
         } else {
             return VK_ERROR_EXTENSION_NOT_PRESENT;
         }
+        std::cout << "RBDevice::CreateDebugUtilsMessengerEXT()" << std::endl;
     }
 
     void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks *pAllocator) {
@@ -21,6 +22,7 @@ namespace RottenBamboo {
         if (func != nullptr) {
             func(instance, debugMessenger, pAllocator);
         }
+        std::cout << "RBDevice::DestroyDebugUtilsMessengerEXT()" << std::endl;
     }
 
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
@@ -32,6 +34,7 @@ namespace RottenBamboo {
             std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
         }
 
+        std::cout << "RBDevice::debugCallback()" << std::endl;
         return VK_FALSE;
     }
 
@@ -42,6 +45,7 @@ namespace RottenBamboo {
         createSurface(rbWindows);
         pickPhysicalDevice();
         createLogicalDevice();
+        std::cout << "RBDevice::InitializeDevice()" << std::endl;
     }
 
     RBDevice::RBDevice(RBWindows& window) : rbWindows(window)
@@ -56,6 +60,7 @@ namespace RottenBamboo {
         }
         vkDestroySurfaceKHR(instance, surface, nullptr);
         vkDestroyInstance(instance, nullptr);
+        std::cout << "RBDevice::~RBDevice()" << std::endl;
     }
 
     QueueFamilyIndices RBDevice::findQueueFamilies(VkPhysicalDevice device) {
@@ -86,6 +91,7 @@ namespace RottenBamboo {
 
             i++;
         }
+        std::cout << "RBDevice::findQueueFamilies()" << std::endl;
         return indices;
     }
 
@@ -99,6 +105,7 @@ namespace RottenBamboo {
         for (const auto &extension: availableExtensions) {
             requiredExtensions.erase(extension.extensionName);
         }
+        std::cout << "RBDevice::checkDeviceExtensionSupport()" << std::endl;
         return requiredExtensions.empty();
     }
 
@@ -115,6 +122,7 @@ namespace RottenBamboo {
 
         VkPhysicalDeviceFeatures supportFeatures;
         vkGetPhysicalDeviceFeatures(device, &supportFeatures);
+        std::cout << "RBDevice::isDeviceSuitable()" << std::endl;
 
         return indices.graphicsFamily.has_value() && extensionSupported && swapChainAdequate;
     }
@@ -123,6 +131,7 @@ namespace RottenBamboo {
         if (glfwCreateWindowSurface(instance, window.GetWindow(), nullptr, &surface) != VK_SUCCESS) {
             throw std::runtime_error("failed to create window surface!");
         }
+        std::cout << "RBDevice::createSurface()" << std::endl;
     }
 
     void RBDevice::setupDebugMessenger() {
@@ -136,6 +145,7 @@ namespace RottenBamboo {
         if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
             throw std::runtime_error("failed to set up debug messenger!");
         }
+        std::cout << "RBDevice::setupDebugMessenger()" << std::endl;
     }
 
     VkSampleCountFlagBits RBDevice::getMaxUsableSampleCount() {
@@ -149,6 +159,7 @@ namespace RottenBamboo {
         if (counts & VK_SAMPLE_COUNT_4_BIT) { return VK_SAMPLE_COUNT_4_BIT; }
         if (counts & VK_SAMPLE_COUNT_2_BIT) { return VK_SAMPLE_COUNT_2_BIT; }
         return VK_SAMPLE_COUNT_1_BIT;
+        std::cout << "RBDevice::getMaxUsableSampleCount()" << std::endl;
     }
 
     void RBDevice::pickPhysicalDevice() {
@@ -171,6 +182,7 @@ namespace RottenBamboo {
                 throw std::runtime_error("failed to find a suitable GPU!");
             }
         }
+        std::cout << "RBDevice::pickPhysicalDevice()" << std::endl;
     }
 
     void RBDevice::createLogicalDevice() {
@@ -214,6 +226,7 @@ namespace RottenBamboo {
 
         vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
         vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
+        std::cout << "RBDevice::createLogicalDevice()" << std::endl;
     }
 
     void RBDevice::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo) {
@@ -222,6 +235,7 @@ namespace RottenBamboo {
         createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
         createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
         createInfo.pfnUserCallback = debugCallback;
+        std::cout << "RBDevice::populateDebugMessengerCreateInfo()" << std::endl;
     }
 
     std::vector<const char *> RBDevice::getRequiredExtensions() {
@@ -232,6 +246,7 @@ namespace RottenBamboo {
         if (enableValidationLayers) {
             extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
         }
+        std::cout << "RBDevice::getRequiredExtensions()" << std::endl;
 
         return extensions;
     }
@@ -264,6 +279,7 @@ namespace RottenBamboo {
                 std::cout << '\t' << layer.layerName << '\n';
             }
         }
+        std::cout << "RBDevice::checkValidationLayerSupport()" << std::endl;
         return true;
     }
 
@@ -318,5 +334,6 @@ namespace RottenBamboo {
         if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
             throw std::runtime_error("failed to create instance!");
         }
+        std::cout << "RBDevice::createInstance()" << std::endl;
     }
 }

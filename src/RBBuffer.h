@@ -36,6 +36,7 @@ namespace RottenBamboo {
             vkFreeMemory(rbDevice.device, memory, nullptr);
             data.clear();
             bufferMapped = nullptr;
+            std::cout << "RBBuffer::ReleaseBuffer()" << std::endl;
         }
 
         void CreateBuffer()
@@ -56,6 +57,7 @@ namespace RottenBamboo {
 
             vkDestroyBuffer(rbDevice.device, stagingBuffer, nullptr);
             vkFreeMemory(rbDevice.device, stagingBufferMemory, nullptr);
+            std::cout << "RBBuffer::CreateBuffer()" << std::endl;
         }
 
         void CreateBufferNoStageing()
@@ -66,6 +68,7 @@ namespace RottenBamboo {
             createBufferMemory(bufferSize, rbFlagBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer, memory);
 
             vkMapMemory(rbDevice.device, memory, 0, bufferSize, 0, &bufferMapped);
+            std::cout << "RBBuffer::CreateBufferNoStageing()" << std::endl;
         }
 
     private:
@@ -85,6 +88,7 @@ namespace RottenBamboo {
 
             vkBeginCommandBuffer(commandBuffer, &beginInfo);
             return commandBuffer;
+            std::cout << "RBBuffer::beginSingleTimeCommands()" << std::endl;
         }
 
         void endSingleTimeCommands(VkCommandBuffer commandBuffer) {
@@ -99,6 +103,7 @@ namespace RottenBamboo {
             vkQueueWaitIdle(rbDevice.graphicsQueue);
 
             vkFreeCommandBuffers(rbDevice.device, rbCommandBuffer.commandPool, 1, &commandBuffer);
+            std::cout << "RBBuffer::endSingleTimeCommands()" << std::endl;
         }
 
         void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
@@ -110,6 +115,7 @@ namespace RottenBamboo {
             vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
 
             endSingleTimeCommands(commandBuffer);
+            std::cout << "RBBuffer::copyBuffer()" << std::endl;
         }
 
         void createBufferMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
@@ -136,6 +142,7 @@ namespace RottenBamboo {
             }
 
             vkBindBufferMemory(rbDevice.device, buffer, bufferMemory, 0);
+            std::cout << "RBBuffer::createBufferMemory()" << std::endl;
         }
 
         uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, VkPhysicalDevice& physicalDevice)
@@ -148,7 +155,8 @@ namespace RottenBamboo {
                 }
             }
 
-            throw std::runtime_error("failed to find suitable memory type!");
+            //throw std::runtime_error("failed to find suitable memory type!");
+            std::cout << "RBBuffer::findMemoryType()" << std::endl;
         }
     };
 

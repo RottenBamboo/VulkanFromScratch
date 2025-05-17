@@ -21,6 +21,7 @@ namespace RottenBamboo {
         InitializeDescriptors();
         InitializeSwapChain();
         InitializeGraphicPipeline();
+        std::cout << "RBApplication::RBApplication()" << std::endl;
     }
 
     RBApplication::~RBApplication() {
@@ -29,20 +30,24 @@ namespace RottenBamboo {
     void RBApplication::InitializeWindow()
     {
         windows.InitializeWindow();
+        std::cout << "RBApplication::InitializeWindow()" << std::endl;
     }
 
     void RBApplication::InitializeDevice()
     {
         device.InitializeDevice();
+        std::cout << "RBApplication::InitializeDevice()" << std::endl;
     }
     void RBApplication::InitializeCommandBuffer()
     {
         commandBuffer.InitializeCommandBuffer();
+        std::cout << "RBApplication::InitializeCommandBuffer()" << std::endl;
     }
 
     void RBApplication::InitializeSwapChain()
     {
         swapChain.InitializeSwapChain();
+        std::cout << "RBApplication::InitializeSwapChain()" << std::endl;
     }
 
     void RBApplication::InitializeBuffers()
@@ -53,11 +58,13 @@ namespace RottenBamboo {
         }
 
         InitializeMesh();
+        std::cout << "RBApplication::InitializeBuffers()" << std::endl;
     }
 
     void RBApplication::InitializeMesh()
     {
         mesh.InitializeMesh();
+        std::cout << "RBApplication::InitializeMesh()" << std::endl;
     }
 
     void RBApplication::InitializeDescriptors()
@@ -67,6 +74,7 @@ namespace RottenBamboo {
         descriptors.InitializeDescriptors();
 
         descriptorsLighting.InitializeDescriptors();
+        std::cout << "RBApplication::InitializeDescriptors()" << std::endl;
     }
 
     void RBApplication::InitializeGraphicPipeline()
@@ -74,6 +82,7 @@ namespace RottenBamboo {
         gBufferPass.InitializeGraphicPipeline();
 
         lightPassManager.InitializeGraphicPipeline();
+        std::cout << "RBApplication::InitializeGraphicPipeline()" << std::endl;
     };
 
     void RBApplication::loadModel()
@@ -118,6 +127,7 @@ namespace RottenBamboo {
                 mesh.indexBuffer.data.push_back(uniqueVertices[vertex]);
             }
         }
+        std::cout << "RBApplication::loadModel()" << std::endl;
     }
 
     void RBApplication::updateUniformBuffer(uint32_t currentImage)
@@ -157,29 +167,29 @@ namespace RottenBamboo {
             throw std::runtime_error("failed to begin recording command buffer!");
         }
 
-        VkRenderPassBeginInfo gbufferRenderPassInfo{};
-        gbufferRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        gbufferRenderPassInfo.renderPass = swapChain.renderPass;
-        gbufferRenderPassInfo.framebuffer = swapChain.swapChainFrameBuffers[imageIndex];
-        gbufferRenderPassInfo.renderArea.offset = {0, 0};
-        gbufferRenderPassInfo.renderArea.extent = swapChainExtent;
+        // VkRenderPassBeginInfo gbufferRenderPassInfo{};
+        // gbufferRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        // gbufferRenderPassInfo.renderPass = swapChain.renderPass;
+        // gbufferRenderPassInfo.framebuffer = swapChain.swapChainFrameBuffers[imageIndex];
+        // gbufferRenderPassInfo.renderArea.offset = {0, 0};
+        // gbufferRenderPassInfo.renderArea.extent = swapChainExtent;
 
-        std::array<VkClearValue, 2> clearValues{};
-        clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
-        clearValues[1].depthStencil = {1.0f, 0};
+        // std::array<VkClearValue, 2> clearValues{};
+        // clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+        // clearValues[1].depthStencil = {1.0f, 0};
 
-        gbufferRenderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-        gbufferRenderPassInfo.pClearValues = clearValues.data();
+        // gbufferRenderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+        // gbufferRenderPassInfo.pClearValues = clearValues.data();
 
-         VkBuffer vertexBuffers[] = {mesh.vertexBuffer.buffer};
-         VkDeviceSize offsets[] = {0};
+          VkBuffer vertexBuffers[] = {mesh.vertexBuffer.buffer};
+          VkDeviceSize offsets[] = {0};
         
-        vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+         vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-        vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+         vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
         
-        // gbuffer pass pipeline
-        gBufferPass.recordCommandBuffer(commandBuffer, imageIndex, gbufferRenderPassInfo, descriptorsGBuffer, mesh);
+        // // gbuffer pass pipeline
+        // gBufferPass.recordCommandBuffer(commandBuffer, imageIndex, gbufferRenderPassInfo, descriptorsGBuffer, mesh);
 
         VkRenderPassBeginInfo lightingRenderPassInfo{};
         lightingRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -198,40 +208,68 @@ namespace RottenBamboo {
         // VkBuffer lightingVertexBuffers[] = {mesh.vertexBuffer.buffer};
         // VkDeviceSize lightingOffsets[] = {0};
 
-        for (int i = 0; i < gBufferPass.rbColorAttachmentCount; ++i) {
-            VkImageMemoryBarrier barrier{};
-            barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-            barrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-            barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-            barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-            barrier.image = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[i].image;
-            barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            barrier.subresourceRange.baseMipLevel = 0;
-            barrier.subresourceRange.levelCount = 1;
-            barrier.subresourceRange.baseArrayLayer = 0;
-            barrier.subresourceRange.layerCount = 1;
+        // for (int i = 0; i < gBufferPass.rbColorAttachmentCount; ++i) {
+        //     VkImageMemoryBarrier barrier{};
+        //     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        //     barrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        //     barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        //     barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        //     barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        //     barrier.image = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[i].image;
+        //     barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        //     barrier.subresourceRange.baseMipLevel = 0;
+        //     barrier.subresourceRange.levelCount = 1;
+        //     barrier.subresourceRange.baseArrayLayer = 0;
+        //     barrier.subresourceRange.layerCount = 1;
         
-            barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-            barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        //     barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        //     barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
         
-            vkCmdPipelineBarrier(
-                commandBuffer,
-                VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                0,
-                0, nullptr,
-                0, nullptr,
-                1, &barrier
-            );
-        }
- 
+        //     vkCmdPipelineBarrier(
+        //         commandBuffer,
+        //         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        //         VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+        //         0,
+        //         0, nullptr,
+        //         0, nullptr,
+        //         1, &barrier
+        //     );
+        // }
+
+        //  std::array<VkImageView, 4> gbufferViews = {
+        //     gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[0].imageView,
+        //     gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[1].imageView,
+        //     gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[2].imageView,
+        //     gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[3].imageView
+        // };
+        // VkSampler gbufferSampler = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[0].sampler;
+
+        // // 填写 descriptor write
+        // for (uint32_t i = 0; i < 4; ++i) {
+        //     VkDescriptorImageInfo imageInfo{};
+        //     imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        //     imageInfo.imageView = gbufferViews[i];
+        //     imageInfo.sampler = gbufferSampler;
+        
+        //     VkWriteDescriptorSet descriptorWrite{};
+        //     descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        //     descriptorWrite.dstSet = lightPassManager.rbDescriptors.descriptorSetManager.descriptorSets[imageIndex];
+        //     descriptorWrite.dstBinding = i; // shader binding
+        //     descriptorWrite.dstArrayElement = 0;
+        //     descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        //     descriptorWrite.descriptorCount = 1;
+        //     descriptorWrite.pImageInfo = &imageInfo;
+        
+        //     vkUpdateDescriptorSets(device.device, 1, &descriptorWrite, 0, nullptr);
+        // }
+
         //lighting pass pipeline
         lightPassManager.recordCommandBuffer(commandBuffer, imageIndex, lightingRenderPassInfo, descriptorsLighting, mesh);
 
         if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
             throw std::runtime_error("failed to record command buffer!");
         }
+        //std::cout << "RBApplication::recordCommandBuffer()" << std::endl;
     }
 
     void RBApplication::drawFrame()

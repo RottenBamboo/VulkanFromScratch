@@ -20,8 +20,6 @@ namespace RottenBamboo {
 
         RBPipelineConfig rbPipelineConfig;
 
-        RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> &rbDescriptors;
-
         void setupShaders() override;
 
         void setupPipelineStates() override;
@@ -31,6 +29,8 @@ namespace RottenBamboo {
         void createFrameBuffers() override;
 
     public:
+
+        RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> &rbDescriptors;
 
         void createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo) override;
 
