@@ -89,8 +89,18 @@
         "xstddef": "cpp",
         "xstring": "cpp",
         "xtr1common": "cpp",
-        "xtree": "cpp",
-        "xutility": "cpp"
+        "xtree": "cpp",        
+        "xutility": "cpp",
+        "__bits": "cpp",
+        "__config": "cpp",
+        "__debug": "cpp",
+        "__errc": "cpp",
+        "__mutex_base": "cpp",
+        "__nullptr": "cpp",
+        "__string": "cpp",
+        "__threading_support": "cpp",
+        "__tuple": "cpp"
+
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

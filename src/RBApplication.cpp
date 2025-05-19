@@ -225,53 +225,21 @@ namespace RottenBamboo {
                 1, &barrier
             );
         }
-for (int i = 0; i < gBufferPass.rbColorAttachmentCount; ++i) {
-            VkImageMemoryBarrier barrier{};
-            barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-            barrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-            barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-            barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-            barrier.image = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[i].image;
-            barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            barrier.subresourceRange.baseMipLevel = 0;
-            barrier.subresourceRange.levelCount = 1;
-            barrier.subresourceRange.baseArrayLayer = 0;
-            barrier.subresourceRange.layerCount = 1;
-        
-            barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-            barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-        
-            vkCmdPipelineBarrier(
-                commandBuffer,
-                VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-                VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-                0,
-                0, nullptr,
-                0, nullptr,
-                1, &barrier
-            );
-        }
+
         VkSampler gbufferSampler = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[0].sampler;
-
-        //std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorsLighting.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout);
-        //std::cout << "gBuffer To Lighting" << layouts.size() << std::endl;
+        
+        std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorsLighting.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout);
+        std::cout << "gBuffer To Lighting" << layouts.size() << std::endl;
         //descriptorsLighting.descriptorSetManager.fillDescriptorSetsAllocateInfo(descriptorsLighting.descriptorSetManager.descriptorPoolManager.descriptorPool, MAX_FRAMES_IN_FLIGHT, layouts.data());
-        //descriptorsLighting.descriptorSetManager.allocateDescriptorSets(device, MAX_FRAMES_IN_FLIGHT);
+        descriptorsLighting.descriptorSetManager.allocateDescriptorSets(device, MAX_FRAMES_IN_FLIGHT);
 
-        descriptorsLighting.descriptorSetManager.clearDescriptorWrites();
 
-        //for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
         {
             VkDescriptorBufferInfo bufferInfo{};
             bufferInfo.buffer = descriptorsLighting.rbBufferPtr[imageIndex].buffer;
             bufferInfo.offset = 0;
             bufferInfo.range = sizeof(UniformBufferObject);
 
-            // VkDescriptorImageInfo imageInfo{};
-            // imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            // imageInfo.imageView = rbImageManager.imageBundles[0].imageView;
-            // imageInfo.sampler = rbImageManager.imageBundles[0].sampler;
             descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteBuffer(imageIndex, 0, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
 
             for(int j = 0; j < 4; j++)
@@ -282,9 +250,9 @@ for (int i = 0; i < gBufferPass.rbColorAttachmentCount; ++i) {
                 descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteImage(imageIndex, j + 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].imageInfo);
             }
 
-            //descriptorSetManager.fillDescriptotSetsWriteImage(i, 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &imageInfo);
             descriptorsLighting.descriptorSetManager.updateDescriptorSets(device);
         }
+
         
         VkRenderPassBeginInfo lightingRenderPassInfo{};
         lightingRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
