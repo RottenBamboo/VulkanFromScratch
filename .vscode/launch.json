@@ -10,7 +10,7 @@
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "MIMode": "lldb",
-      "miDebuggerPath": "/usr/bin/lldb",
+      //"miDebuggerPath": "/usr/bin/lldb",
       "externalConsole": false,
       "preLaunchTask": "build (macOS)",
       "osx": true
