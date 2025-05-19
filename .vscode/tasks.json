@@ -8,22 +8,25 @@
       "args": [
         "-S", ".",
         "-B", "build",
+        "-DCMAKE_BUILD_TYPE=Debug",
         "&&",
         "cmake", "--build", "build"
       ],
       "group": "build",
-      "osx": true
+      "osx": true,
+      "problemMatcher": ["$gcc"]
     },
     {
       "label": "build (Windows)",
       "type": "shell",
-      "command": "cmd",
+      "command": "cmd.exe",
       "args": [
         "/c",
-        "cmake -S . -B build && cmake --build build"
+        "cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang-cl.exe -DCMAKE_CXX_COMPILER=clang-cl.exe && cmake --build build"
       ],
       "group": "build",
-      "windows": true
+      "windows": true,
+      "problemMatcher": ["$msCompile"]
     }
   ]
 }
