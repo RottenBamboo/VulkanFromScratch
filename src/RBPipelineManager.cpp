@@ -4,8 +4,8 @@
 
 namespace RottenBamboo {
 
-    RBPipelineManager::RBPipelineManager(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device)
-        : rbDevice(device), rbColorAttachmentCount(colorAttachmentCount), isResolveAttachment(bResolveAttachment), isDepthAttachment(bDephAttament) 
+    RBPipelineManager::RBPipelineManager(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, VkImageLayout layout)
+        : rbDevice(device), rbColorAttachmentCount(colorAttachmentCount), isResolveAttachment(bResolveAttachment), isDepthAttachment(bDephAttament), imageLayout(layout)
         {
         }
 
@@ -296,7 +296,7 @@ namespace RottenBamboo {
         std::cout << "RBPipelineManager::addColorAttachment()" << std::endl;
     }
 
-    void RBPipelineManager::fillRenderPass(int attachmentCount = 1)
+    void RBPipelineManager::fillRenderPass(VkImageLayout layout, int attachmentCount = 1)
     {
         int ColorAttachKind = 1 + (isResolveAttachment ? 1 : 0);
         int depthAttachment = isDepthAttachment ? 1 : 0;
@@ -335,7 +335,7 @@ namespace RottenBamboo {
         
         for (int i = 0; i < rbColorAttachmentCount; i++) {
             colorAttachmentRefs[i].attachment = i;
-            colorAttachmentRefs[i].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+            colorAttachmentRefs[i].layout = layout;
         }
 
         std::vector<VkAttachmentReference> colorAttachmentResolveRef(rbColorAttachmentCount);
@@ -345,7 +345,7 @@ namespace RottenBamboo {
             for(int i = 0; i < rbColorAttachmentCount; i++)
             {
                 colorAttachmentResolveRef[i].attachment = i + rbColorAttachmentCount;
-                colorAttachmentResolveRef[i].layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+                colorAttachmentResolveRef[i].layout = layout;
             }
         }
 
@@ -432,7 +432,7 @@ namespace RottenBamboo {
         fillScissor(offset, swapChainExtent);
         fillViewportStateCreateInfo();
         setupAttachments();
-        fillRenderPass(rbColorAttachmentCount);
+        fillRenderPass(imageLayout, rbColorAttachmentCount);
         createFrameBuffers();
         fillRasterizerStateCreateInfo(VK_FALSE, VK_FALSE, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, VK_FRONT_FACE_CLOCKWISE, VK_FALSE, 0.0f, 0.0f, 0.0f, 1.0f);
         fillMultipleSampleStateCreateInfo(0, msaaSamples, VK_TRUE, 0.2f, nullptr, VK_FALSE, VK_FALSE);

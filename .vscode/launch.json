@@ -5,7 +5,7 @@
         "name": "VulkanFromScratch",
         "type": "cppdbg",
         "request": "launch",
-        "program": "${workspaceFolder}/build/Debug/VulkanFromScratch",
+        "program": "${workspaceFolder}/build/VulkanFromScratch",
         "args": [],
         "stopAtEntry": false,
         "cwd": "${workspaceFolder}",
