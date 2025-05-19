@@ -123,6 +123,30 @@ namespace RottenBamboo{
     }
 
     template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::createTextureImageFrameBuffer(VkExtent2D framebufferExtent)
+    {
+        int index = 0;
+        for (auto & imageBundle : rbImageManager.imageBundles)
+        {
+            int texWidth = framebufferExtent.width;
+            int texHeight = framebufferExtent.height;
+            VkDeviceSize imageSize = texWidth * texHeight * 4;
+
+            VkImageUsageFlags usageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+            if(isColorAttachment)
+            {
+                usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+            }
+            rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, usageFlags);
+            rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageBundle.image, imageBundle.imageMemory);
+
+            index++;
+            std::cout << "index = " << index << std::endl;
+            std::cout << "mipLevels = " << mipLevels << std::endl;
+        }
+    }
+
+    template<int ImageCount, int BufferCount>
     void RBDescriptors<ImageCount, BufferCount>::createTextureImageView()
     {
         for (auto & imageBundle : rbImageManager.imageBundles)
@@ -237,6 +261,17 @@ namespace RottenBamboo{
     void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptors()
     {
         createTextureImage();
+        createTextureImageView();
+        createTextureSampler();
+        createDescriptorPool();
+        createDescriptorSetLayout();
+        createDescriptorSets();
+    }
+
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent)
+    {
+        createTextureImageFrameBuffer(framebufferExtent);
         createTextureImageView();
         createTextureSampler();
         createDescriptorPool();

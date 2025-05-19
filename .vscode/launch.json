@@ -16,15 +16,15 @@
       "osx": true
     },
     {
-  "name": "Debug (Windows)",
-  "type": "cppvsdbg",
-  "request": "launch",
-  "program": "${workspaceFolder}\\build\\Debug\\VulkanFromScratch.exe",
-  "args": [],
-  "stopAtEntry": false,
-  "cwd": "${workspaceFolder}",
-  "preLaunchTask": "build (Windows)",
-  "windows": true
-}
+      "name": "Debug (Windows)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}\\build\\Debug\\VulkanFromScratch.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "build (Windows)",
+      "windows": true
+    }
   ]
 }

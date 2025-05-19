@@ -44,6 +44,8 @@ namespace RottenBamboo {
 
         void createTextureImage();
 
+        void createTextureImageFrameBuffer(VkExtent2D framebufferExtent);
+
         void createTextureSampler();
 
     public:
@@ -59,6 +61,8 @@ namespace RottenBamboo {
         ~RBDescriptors();
 
         void InitializeDescriptors();
+        
+        void InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent);
     };
 }
 

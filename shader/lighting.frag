@@ -11,5 +11,9 @@ layout(location = 0) out vec4 outColor;
 void main()
 {
     outColor = texture(gPosition, fragTexCoord);
+    outColor += texture(gNormal, fragTexCoord);
+    outColor += texture(gAlbedo, fragTexCoord);
+    outColor += texture(gMaterial, fragTexCoord);
+    outColor.rgb /= 4.0f;
     outColor.a = 1.0f;
 }
