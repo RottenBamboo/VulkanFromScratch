@@ -137,7 +137,7 @@ namespace RottenBamboo {
 
         virtual VkFormat findDepthFormat();
 
-        virtual void fillRenderPass(int attachmentCount);
+        virtual void fillRenderPass(VkImageLayout layout, int attachmentCount);
 
         virtual void fillDynamicStateCrateInfo();
 
@@ -177,6 +177,8 @@ namespace RottenBamboo {
     public:
 
         int rbColorAttachmentCount = 1;
+
+        VkImageLayout imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         
         VkRenderPass renderPass;
 
@@ -184,7 +186,7 @@ namespace RottenBamboo {
 
         RBPipelineLayoutManager rbPipelineLayoutManager{rbDevice};
 
-        RBPipelineManager(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device);
+        RBPipelineManager(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, VkImageLayout layout);
 
         virtual void createGraphicsPipeline() = 0;
 

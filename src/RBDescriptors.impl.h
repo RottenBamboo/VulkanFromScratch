@@ -61,7 +61,7 @@ namespace RottenBamboo{
 
             for(int j = 0; j < ImageCount; j++)
             {
-                rbImageManager.imageBundles[j].imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                rbImageManager.imageBundles[j].imageInfo.imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
                 rbImageManager.imageBundles[j].imageInfo.imageView = rbImageManager.imageBundles[j].imageView;
                 rbImageManager.imageBundles[j].imageInfo.sampler = rbImageManager.imageBundles[j].sampler;
                 descriptorSetManager.fillDescriptotSetsWriteImage(i, j + 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &rbImageManager.imageBundles[j].imageInfo);
@@ -80,8 +80,8 @@ namespace RottenBamboo{
         {
             int texWidth, texHeight, texChannels;
             stbi_uc* pixels = stbi_load(paths[index].c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-            mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
-            mipLevels = std::min(mipLevels, (uint32_t)8);
+            mipLevels = 1;//static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
+            mipLevels = 1;//std::min(mipLevels, (uint32_t)8);
             VkDeviceSize imageSize = texWidth * texHeight * 4;
     
             if (!pixels) {
@@ -97,7 +97,7 @@ namespace RottenBamboo{
             stbi_image_free(pixels);
 
 
-            VkImageUsageFlags usageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+            VkImageUsageFlags usageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
             if(isColorAttachment)
             {
                 usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
@@ -116,6 +116,30 @@ namespace RottenBamboo{
             //rbCommandBuffer.endSingleTimeCommands(commandBufferEnd);
 
             generateMipmaps(imageBundle.image, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, mipLevels);
+            index++;
+            std::cout << "index = " << index << std::endl;
+            std::cout << "mipLevels = " << mipLevels << std::endl;
+        }
+    }
+
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::createTextureImageFrameBuffer(VkExtent2D framebufferExtent)
+    {
+        int index = 0;
+        for (auto & imageBundle : rbImageManager.imageBundles)
+        {
+            int texWidth = framebufferExtent.width;
+            int texHeight = framebufferExtent.height;
+            VkDeviceSize imageSize = texWidth * texHeight * 4;
+
+            VkImageUsageFlags usageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+            if(isColorAttachment)
+            {
+                usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+            }
+            rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, usageFlags);
+            rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageBundle.image, imageBundle.imageMemory);
+
             index++;
             std::cout << "index = " << index << std::endl;
             std::cout << "mipLevels = " << mipLevels << std::endl;
@@ -194,7 +218,7 @@ namespace RottenBamboo{
             vkCmdBlitImage(commandBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &blit, VK_FILTER_LINEAR);
 
             barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-            barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            barrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
             barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
             barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
@@ -206,7 +230,7 @@ namespace RottenBamboo{
 
         barrier.subresourceRange.baseMipLevel = mipLevels - 1;
         barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-        barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        barrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
         barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
         barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
@@ -237,6 +261,17 @@ namespace RottenBamboo{
     void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptors()
     {
         createTextureImage();
+        createTextureImageView();
+        createTextureSampler();
+        createDescriptorPool();
+        createDescriptorSetLayout();
+        createDescriptorSets();
+    }
+
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent)
+    {
+        createTextureImageFrameBuffer(framebufferExtent);
         createTextureImageView();
         createTextureSampler();
         createDescriptorPool();

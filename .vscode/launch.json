@@ -1,17 +1,30 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "name": "VulkanFromScratch",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceFolder}/build/Debug/VulkanFromScratch",
-        "args": [],
-        "stopAtEntry": false,
-        "cwd": "${workspaceFolder}",
-        "environment": [],
-        "externalConsole": false,
-        "MIMode": "lldb"
-      },
-    ]
-  }
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug (macOS)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/VulkanFromScratch",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "MIMode": "lldb",
+      //"miDebuggerPath": "/usr/bin/lldb",  
+      "externalConsole": false,
+      "preLaunchTask": "build (macOS)",
+      "osx": true
+    },
+    {
+      "name": "Debug (Windows)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}\\build\\Debug\\VulkanFromScratch.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "build (Windows)",
+      "windows": true
+    }
+  ]
+}

@@ -18,8 +18,8 @@ namespace RottenBamboo {
         InitializeCommandBuffer();
         loadModel();
         InitializeBuffers();
-        InitializeDescriptors();
         InitializeSwapChain();
+        InitializeDescriptors();
         InitializeGraphicPipeline();
         std::cout << "RBApplication::RBApplication()" << std::endl;
     }
@@ -73,7 +73,7 @@ namespace RottenBamboo {
 
         descriptors.InitializeDescriptors();
 
-        descriptorsLighting.InitializeDescriptors();
+        descriptorsLighting.InitializeDescriptorsFrameBuffer(swapChainExtent);
         std::cout << "RBApplication::InitializeDescriptors()" << std::endl;
     }
 
@@ -159,6 +159,7 @@ namespace RottenBamboo {
     }
 
     void RBApplication::recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex) {
+        //std::cout << "begin recordCommandBuffer" << std::endl;
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = 0;
@@ -189,8 +190,10 @@ namespace RottenBamboo {
 
         vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
         
+        //std::cout << "before gBufferPass::recordCommandBuffer()" << std::endl;
         // gbuffer pass pipeline
-        //gBufferPass.recordCommandBuffer(commandBuffer, imageIndex, gbufferRenderPassInfo, descriptorsGBuffer, mesh);
+        gBufferPass.recordCommandBuffer(commandBuffer, gbufferRenderPassInfo, descriptorsGBuffer, mesh);
+        //std::cout << "after gBufferPass::recordCommandBuffer()" << std::endl;
 
         // VkBuffer lightingVertexBuffers[] = {mesh.vertexBuffer.buffer};
         // VkDeviceSize lightingOffsets[] = {0};
@@ -202,7 +205,7 @@ namespace RottenBamboo {
         //     barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         //     barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
         //     barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        //     barrier.image = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[i].image;
+        //     barrier.image = descriptorsLighting.rbImageManager.imageBundles[i].image;
         //     barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         //     barrier.subresourceRange.baseMipLevel = 0;
         //     barrier.subresourceRange.levelCount = 1;
@@ -223,37 +226,29 @@ namespace RottenBamboo {
         //     );
         // }
 
-        // VkSampler gbufferSampler = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[0].sampler;
+        VkSampler gbufferSampler = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[0].sampler;
+        
+        descriptorsLighting.descriptorSetManager.clearDescriptorWrites();
 
-        // std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorsLighting.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout);
-        // std::cout << "gBuffer To Lighting" << layouts.size() << std::endl;
-        // //descriptorsLighting.descriptorSetManager.fillDescriptorSetsAllocateInfo(descriptorsLighting.descriptorSetManager.descriptorPoolManager.descriptorPool, MAX_FRAMES_IN_FLIGHT, layouts.data());
-        // //descriptorsLighting.descriptorSetManager.allocateDescriptorSets(device, MAX_FRAMES_IN_FLIGHT);
+        {
+            VkDescriptorBufferInfo bufferInfo{};
+            bufferInfo.buffer = descriptorsLighting.rbBufferPtr[currentFrame].buffer;
+            bufferInfo.offset = 0;
+            bufferInfo.range = sizeof(UniformBufferObject);
 
-        // for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
-        // {
-        //     VkDescriptorBufferInfo bufferInfo{};
-        //     bufferInfo.buffer = descriptorsLighting.rbBufferPtr[i].buffer;
-        //     bufferInfo.offset = 0;
-        //     bufferInfo.range = sizeof(UniformBufferObject);
+            descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteBuffer(currentFrame, 0, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
 
-        //     // VkDescriptorImageInfo imageInfo{};
-        //     // imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        //     // imageInfo.imageView = rbImageManager.imageBundles[0].imageView;
-        //     // imageInfo.sampler = rbImageManager.imageBundles[0].sampler;
-        //     descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteBuffer(i, 0, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
+            for(int j = 0; j < 4; j++)
+            {
+                descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageView = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].imageView;
+                descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.sampler = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].sampler;
+                descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteImage(currentFrame, j + 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].imageInfo);
+            }
 
-        //     for(int j = 0; j < 4; j++)
-        //     {
-        //         descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        //         descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageView = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].imageView;
-        //         descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.sampler = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].sampler;
-        //         descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteImage(i, j + 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].imageInfo);
-        //     }
+            descriptorsLighting.descriptorSetManager.updateDescriptorSets(device);
+        }
 
-        //     //descriptorSetManager.fillDescriptotSetsWriteImage(i, 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &imageInfo);
-        //     descriptorsLighting.descriptorSetManager.updateDescriptorSets(device);
-        // }
         
         VkRenderPassBeginInfo lightingRenderPassInfo{};
         lightingRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -268,11 +263,17 @@ namespace RottenBamboo {
 
         lightingRenderPassInfo.clearValueCount = static_cast<uint32_t>(lightingClearValues.size());
         lightingRenderPassInfo.pClearValues = lightingClearValues.data();
-        
-        //lighting pass pipeline
-        lightPassManager.recordCommandBuffer(commandBuffer, imageIndex, lightingRenderPassInfo, descriptorsLighting, mesh);
 
-        if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
+        //lighting pass pipeline
+        //std::cout << "before lightPassManager::recordCommandBuffer()" << std::endl;
+        //std::cout << "descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout = " << descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout << std::endl;
+        lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh);
+
+        //std::cout << "after lightPassManager::recordCommandBuffer()" << std::endl;
+
+        VkResult result = vkEndCommandBuffer(commandBuffer);
+        if (result != VK_SUCCESS) {
+            std::cerr << "vkEndCommandBuffer failed: " << result << std::endl;
             throw std::runtime_error("failed to record command buffer!");
         }
         //std::cout << "RBApplication::recordCommandBuffer()" << std::endl;
@@ -321,8 +322,10 @@ namespace RottenBamboo {
         VkSemaphore signalSemaphores[] = {swapChain.renderFinishedSemaphores[currentFrame]};
         submitInfo.signalSemaphoreCount = 1;
         submitInfo.pSignalSemaphores = signalSemaphores;
-        if (vkQueueSubmit(device.graphicsQueue, 1, &submitInfo, swapChain.inFlightFences[currentFrame]) != VK_SUCCESS)
+        result = vkQueueSubmit(device.graphicsQueue, 1, &submitInfo, swapChain.inFlightFences[currentFrame]);
+        if (result != VK_SUCCESS)
         {
+            std::cerr << "vkQueueSubmit failed with VkResult: " << result << std::endl;
             throw std::runtime_error("failed to submit draw command buffer!");
         }
 
