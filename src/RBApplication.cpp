@@ -231,7 +231,8 @@ namespace RottenBamboo {
         std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorsLighting.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout);
         std::cout << "gBuffer To Lighting" << layouts.size() << std::endl;
         //descriptorsLighting.descriptorSetManager.fillDescriptorSetsAllocateInfo(descriptorsLighting.descriptorSetManager.descriptorPoolManager.descriptorPool, MAX_FRAMES_IN_FLIGHT, layouts.data());
-        descriptorsLighting.descriptorSetManager.allocateDescriptorSets(device, MAX_FRAMES_IN_FLIGHT);
+        //descriptorsLighting.descriptorSetManager.allocateDescriptorSets(device, MAX_FRAMES_IN_FLIGHT);
+        descriptorsLighting.descriptorSetManager.clearDescriptorSets();
 
 
         {
