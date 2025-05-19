@@ -1,0 +1,29 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build (macOS)",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "-S", ".",
+        "-B", "build",
+        "&&",
+        "cmake", "--build", "build"
+      ],
+      "group": "build",
+      "osx": true
+    },
+    {
+      "label": "build (Windows)",
+      "type": "shell",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "cmake -S . -B build && cmake --build build"
+      ],
+      "group": "build",
+      "windows": true
+    }
+  ]
+}

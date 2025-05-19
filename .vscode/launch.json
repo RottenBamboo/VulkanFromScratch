@@ -1,17 +1,33 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "name": "VulkanFromScratch",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceFolder}/build/VulkanFromScratch",
-        "args": [],
-        "stopAtEntry": false,
-        "cwd": "${workspaceFolder}",
-        "environment": [],
-        "externalConsole": false,
-        "MIMode": "lldb"
-      },
-    ]
-  }
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug (macOS)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/VulkanFromScratch",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "MIMode": "lldb",
+      "miDebuggerPath": "/usr/bin/lldb",
+      "externalConsole": false,
+      "preLaunchTask": "build (macOS)",
+      "osx": true
+    },
+    {
+      "name": "Debug (Windows)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}\\build\\Debug\\VulkanFromScratch.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "MIMode": "gdb",
+      "miDebuggerPath": "C:/msys64\\ucrt64\\bin\\gdb.exe",  // 你可以根据实际路径修改
+      "externalConsole": true,
+      "preLaunchTask": "build (Windows)",
+      "windows": true
+    }
+  ]
+}
