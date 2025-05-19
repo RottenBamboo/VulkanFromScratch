@@ -80,8 +80,8 @@ namespace RottenBamboo{
         {
             int texWidth, texHeight, texChannels;
             stbi_uc* pixels = stbi_load(paths[index].c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-            mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
-            mipLevels = std::min(mipLevels, (uint32_t)8);
+            mipLevels = 1;//static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
+            mipLevels = 1;//std::min(mipLevels, (uint32_t)8);
             VkDeviceSize imageSize = texWidth * texHeight * 4;
     
             if (!pixels) {
