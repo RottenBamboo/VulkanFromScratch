@@ -282,6 +282,16 @@ namespace RottenBamboo{
     }
 
     template<int ImageCount, int BufferCount>
+    RBDescriptors<ImageCount, BufferCount>::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers, bool isColorAttachment) : rbDevice(device),
+    rbCommandBuffer(commandBuffer),
+    rbBufferPtr(uniformBuffers),
+    descriptorSetManager(device),
+    rbImageManager(device),
+    isColorAttachment(isColorAttachment)
+    {
+    }
+
+    template<int ImageCount, int BufferCount>
     void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptors()
     {
         createTextureImage();
@@ -300,7 +310,7 @@ namespace RottenBamboo{
     {
         createTextureImageFrameBuffer(framebufferExtent, imageFormats, imageUsageFlags);
         createTextureImageViewFrameBuffer(imageFormats, imageUsageFlags, imageAspectFlagBits);
-        createTextureSampler();
+        createTextureSamplerFrameBuffer();
         createDescriptorPool();
         createDescriptorSetLayout();
         createDescriptorSets();

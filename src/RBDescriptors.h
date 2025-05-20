@@ -66,6 +66,8 @@ namespace RottenBamboo {
 
         RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferObject> *uniformBuffersonst, const std::array<std::string, ImageCount> &texturePaths, bool isColorAttachment);
 
+        RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferObject> *uniformBuffersonst, bool isColorAttachment);
+
         ~RBDescriptors();
 
         void InitializeDescriptors();

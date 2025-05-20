@@ -300,16 +300,18 @@ namespace RottenBamboo {
     {
         int ColorAttachKind = 1 + (isResolveAttachment ? 1 : 0);
         int depthAttachment = isDepthAttachment ? 1 : 0;
+        float pureColorAttachmentCount = rbColorAttachmentCount - depthAttachment;
         attachmentDescriptions.clear();
-        attachmentDescriptions.reserve(depthAttachment + rbColorAttachmentCount * ColorAttachKind);
+        attachmentDescriptions.reserve(depthAttachment + pureColorAttachmentCount * ColorAttachKind);
 
-        for(int i = 0; i < rbColorAttachmentCount; i++)
+
+        for(int i = 0; i < pureColorAttachmentCount; i++)
         {
             addColorAttachment(colorAttachmentDescription);
             
         }
         
-        for(int i = 0; i < rbColorAttachmentCount; i++)
+        for(int i = 0; i < pureColorAttachmentCount; i++)
         {
             if(isResolveAttachment)
             {
@@ -318,7 +320,7 @@ namespace RottenBamboo {
         }
         std::cout << "isResolveAttachment = " << isResolveAttachment << std::endl;
 
-        std::cout << "rbColorAttachmentCount = " << rbColorAttachmentCount << std::endl;
+        std::cout << "rbColorAttachmentCount = " << pureColorAttachmentCount << std::endl;
         //addColorAttachment(surfaceFormat.format, msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
         if(isDepthAttachment)
@@ -331,31 +333,31 @@ namespace RottenBamboo {
         //colorAttachmentRef.attachment = 0;
         //colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-        std::vector<VkAttachmentReference> colorAttachmentRefs(rbColorAttachmentCount);
+        std::vector<VkAttachmentReference> colorAttachmentRefs(pureColorAttachmentCount);
         
-        for (int i = 0; i < rbColorAttachmentCount; i++) {
+        for (int i = 0; i < pureColorAttachmentCount; i++) {
             colorAttachmentRefs[i].attachment = i;
             colorAttachmentRefs[i].layout = layout;
         }
 
-        std::vector<VkAttachmentReference> colorAttachmentResolveRef(rbColorAttachmentCount);
+        std::vector<VkAttachmentReference> colorAttachmentResolveRef(pureColorAttachmentCount);
 
         if(isResolveAttachment)
         {
-            for(int i = 0; i < rbColorAttachmentCount; i++)
+            for(int i = 0; i < pureColorAttachmentCount; i++)
             {
-                colorAttachmentResolveRef[i].attachment = i + rbColorAttachmentCount;
+                colorAttachmentResolveRef[i].attachment = i + pureColorAttachmentCount;
                 colorAttachmentResolveRef[i].layout = layout;
             }
         }
 
         VkAttachmentReference depthAttachmentRef{};
-        depthAttachmentRef.attachment = rbColorAttachmentCount * ColorAttachKind;
+        depthAttachmentRef.attachment = pureColorAttachmentCount * ColorAttachKind;
         depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
         VkSubpassDescription subpass{};
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-        subpass.colorAttachmentCount = rbColorAttachmentCount;
+        subpass.colorAttachmentCount = pureColorAttachmentCount;
         subpass.pColorAttachments = colorAttachmentRefs.data();
         subpass.pDepthStencilAttachment = isDepthAttachment ? &depthAttachmentRef : nullptr;
         subpass.pResolveAttachments = isResolveAttachment ? colorAttachmentResolveRef.data() : nullptr;

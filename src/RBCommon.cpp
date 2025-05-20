@@ -22,6 +22,7 @@ const std::array<std::string, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> TEXTURE_P
     "../textures/Mech_BaseMap.jpg",
     "../textures/Mech_Normal.jpg",
     "../textures/Mech_AO.jpeg",
+    "../textures/Mech_Emission.jpeg",
     "../textures/Mech_Emission.jpeg"
 };
 

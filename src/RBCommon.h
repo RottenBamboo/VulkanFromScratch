@@ -179,12 +179,15 @@ namespace RottenBamboo {
 //extern const int MAX_FRAMES_IN_FLIGHT;
 static double timeStamp;
 static const float C_intervalTime = 1.0f / 120.0f;
+static const int gBufferPassDepthAttachmentCount = 1;
 static const int gBufferPassColorAttachmentCount = 4;
+static const int gBufferPassAttachmentCount = gBufferPassColorAttachmentCount + gBufferPassDepthAttachmentCount;
 static const int lightPassColorAttachmentCount = 1;
 
+#define DEPTH_ATTACHMENT_COUNT 1
 #define TEXTURE_PATHS_COUNT 1
 #define TEXTURE_PATHS_MECH_COUNT 4
-#define TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT 4
+#define TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT (int)(4 + DEPTH_ATTACHMENT_COUNT)
 
 extern const std::string MODEL_PATH;
 extern const std::array<std::string, TEXTURE_PATHS_COUNT> TEXTURE_PATH;
