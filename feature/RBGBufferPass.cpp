@@ -44,12 +44,17 @@ namespace RottenBamboo {
 
 
     void RBGBufferPass::createFrameBuffers() {
-        std::vector<VkImageView> attachments(rbColorAttachmentCount);
+        std::vector<VkImageView> attachments(rbColorAttachmentCount + isDepthAttachment);
         
         std::cout << "gBufferFrameBuffers.resize(" << MAX_FRAMES_IN_FLIGHT << ")"<< std::endl;
         
         for (int i = 0; i < rbColorAttachmentCount; ++i) {
             attachments[i] = rbColorAttachmentDescriptors.rbImageManager.imageBundles[i].imageView; // GBuffer colorAttachment imageView
+        }
+        
+        if(isDepthAttachment)
+        {
+            attachments[rbColorAttachmentCount] = rbColorAttachmentDescriptors.rbImageManager.imageBundles[rbColorAttachmentCount].imageView; // GBuffer depthAttachment imageView
         }
         
         VkFramebufferCreateInfo framebufferInfo{};

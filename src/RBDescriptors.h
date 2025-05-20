@@ -44,7 +44,7 @@ namespace RottenBamboo {
 
         void createTextureImage();
 
-        void createTextureImageFrameBuffer(VkExtent2D framebufferExtent);
+        void createTextureImageFrameBuffer(VkExtent2D framebufferExtent, std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags);
 
         void createTextureSampler();
 
@@ -62,7 +62,7 @@ namespace RottenBamboo {
 
         void InitializeDescriptors();
         
-        void InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent);
+        void InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags);
     };
 }
 

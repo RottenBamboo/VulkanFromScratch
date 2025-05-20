@@ -17,6 +17,7 @@
 #include <string>
 
 namespace RottenBamboo {
+    #define attachmentUsageFlagBits (VkImageUsageFlagBits)(VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
     class RBApplication {
 
     public:
@@ -46,6 +47,7 @@ namespace RottenBamboo {
 
         RBMesh mesh{device, commandBuffer};
         RBPipelineConfig pipelineConfig{};
+        std::array<VkImageUsageFlagBits, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> lightingImageUsageFlags{attachmentUsageFlagBits, attachmentUsageFlagBits, attachmentUsageFlagBits, attachmentUsageFlagBits};
         RBDescriptors<TEXTURE_PATHS_COUNT, 1> descriptors{device, commandBuffer, uniformBuffers, TEXTURE_PATH, false};
         RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> descriptorsGBuffer{device, commandBuffer, uniformBuffers, TEXTURE_PATHS_MECH, false};
         RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> descriptorsLighting{device, commandBuffer, uniformBuffers, TEXTURE_PATHS_LIGHTING_MECH, true};

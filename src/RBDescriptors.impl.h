@@ -123,7 +123,7 @@ namespace RottenBamboo{
     }
 
     template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::createTextureImageFrameBuffer(VkExtent2D framebufferExtent)
+    void RBDescriptors<ImageCount, BufferCount>::createTextureImageFrameBuffer(VkExtent2D framebufferExtent, std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags)
     {
         int index = 0;
         for (auto & imageBundle : rbImageManager.imageBundles)
@@ -132,12 +132,12 @@ namespace RottenBamboo{
             int texHeight = framebufferExtent.height;
             VkDeviceSize imageSize = texWidth * texHeight * 4;
 
-            VkImageUsageFlags usageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-            if(isColorAttachment)
-            {
-                usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-            }
-            rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, usageFlags);
+            // VkImageUsageFlags usageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+            // if(isColorAttachment)
+            // {
+            //     usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+            // }
+            rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, imageUsageFlags[index]);
             rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageBundle.image, imageBundle.imageMemory);
 
             index++;
@@ -269,9 +269,9 @@ namespace RottenBamboo{
     }
 
     template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent)
+    void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags)
     {
-        createTextureImageFrameBuffer(framebufferExtent);
+        createTextureImageFrameBuffer(framebufferExtent, imageUsageFlags);
         createTextureImageView();
         createTextureSampler();
         createDescriptorPool();
