@@ -7,6 +7,9 @@ namespace RottenBamboo {
     RBPipelineManager::RBPipelineManager(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, VkImageLayout layout)
         : rbDevice(device), rbColorAttachmentCount(colorAttachmentCount), isResolveAttachment(bResolveAttachment), isDepthAttachment(bDephAttament), imageLayout(layout)
         {
+            pureColorAttachmentCount = (rbColorAttachmentCount - isDepthAttachment) ? 1 : 0;
+            depthAttachmentCount = isDepthAttachment ? 1 : 0;
+            ColorAttachKind = 1 + (isResolveAttachment ? 1 : 0);
         }
 
     RBPipelineManager::~RBPipelineManager() 
@@ -298,11 +301,8 @@ namespace RottenBamboo {
 
     void RBPipelineManager::fillRenderPass(VkImageLayout layout, int attachmentCount = 1)
     {
-        int ColorAttachKind = 1 + (isResolveAttachment ? 1 : 0);
-        int depthAttachment = isDepthAttachment ? 1 : 0;
-        float pureColorAttachmentCount = rbColorAttachmentCount - depthAttachment;
         attachmentDescriptions.clear();
-        attachmentDescriptions.reserve(depthAttachment + pureColorAttachmentCount * ColorAttachKind);
+        attachmentDescriptions.reserve(depthAttachmentCount + pureColorAttachmentCount * ColorAttachKind);
 
 
         for(int i = 0; i < pureColorAttachmentCount; i++)
@@ -443,7 +443,7 @@ namespace RottenBamboo {
                                       VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD,
                                       VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT);
         float blendConstants[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-        fillPipelineColorBlendStateCreateInfo(VK_FALSE, VK_LOGIC_OP_AND, rbColorAttachmentCount, colorBlendAttachments.data(), blendConstants);
+        fillPipelineColorBlendStateCreateInfo(VK_FALSE, VK_LOGIC_OP_AND, pureColorAttachmentCount, colorBlendAttachments.data(), blendConstants);
         dynamicStates.push_back(VK_DYNAMIC_STATE_VIEWPORT);
         dynamicStates.push_back(VK_DYNAMIC_STATE_LINE_WIDTH);
         fillDynamicStateCrateInfo();

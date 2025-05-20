@@ -178,6 +178,12 @@ namespace RottenBamboo {
 
         int rbColorAttachmentCount = 1;
 
+        int pureColorAttachmentCount = 1;
+
+        int depthAttachmentCount = 1;
+
+        int ColorAttachKind = 1;
+
         VkImageLayout imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         
         VkRenderPass renderPass;
