@@ -7,7 +7,7 @@ namespace RottenBamboo {
     RBPipelineManager::RBPipelineManager(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, VkImageLayout layout)
         : rbDevice(device), rbColorAttachmentCount(colorAttachmentCount), isResolveAttachment(bResolveAttachment), isDepthAttachment(bDephAttament), imageLayout(layout)
         {
-            pureColorAttachmentCount = (rbColorAttachmentCount - isDepthAttachment) ? 1 : 0;
+            pureColorAttachmentCount = rbColorAttachmentCount - (isDepthAttachment ? 1 : 0);
             depthAttachmentCount = isDepthAttachment ? 1 : 0;
             ColorAttachKind = 1 + (isResolveAttachment ? 1 : 0);
         }
