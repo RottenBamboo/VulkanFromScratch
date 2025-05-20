@@ -73,7 +73,9 @@ namespace RottenBamboo {
 
         descriptors.InitializeDescriptors();
 
-        descriptorsLighting.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageUsageFlags);
+        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageUsageFlags);
+
+        descriptorsLighting.InitializeDescriptors();
         std::cout << "RBApplication::InitializeDescriptors()" << std::endl;
     }
 
@@ -205,7 +207,7 @@ namespace RottenBamboo {
         //     barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         //     barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
         //     barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        //     barrier.image = descriptorsLighting.rbImageManager.imageBundles[i].image;
+        //     barrier.image = descriptorsAttachment.rbImageManager.imageBundles[i].image;
         //     barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         //     barrier.subresourceRange.baseMipLevel = 0;
         //     barrier.subresourceRange.levelCount = 1;
