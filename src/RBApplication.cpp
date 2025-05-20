@@ -73,7 +73,7 @@ namespace RottenBamboo {
 
         descriptors.InitializeDescriptors();
 
-        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageUsageFlags);
+        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits);
 
         descriptorsLighting.InitializeDescriptors();
         std::cout << "RBApplication::InitializeDescriptors()" << std::endl;

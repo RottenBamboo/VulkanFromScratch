@@ -123,9 +123,11 @@ namespace RottenBamboo{
     }
 
     template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::createTextureImageFrameBuffer(VkExtent2D framebufferExtent, std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags)
+    void RBDescriptors<ImageCount, BufferCount>::createTextureImageFrameBuffer(VkExtent2D framebufferExtent, 
+                                                                               std::array<VkFormat, ImageCount> imageFormats,
+                                                                               std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags)
     {
-        int index = 0;
+        int imageIndex = 0;
         for (auto & imageBundle : rbImageManager.imageBundles)
         {
             int texWidth = framebufferExtent.width;
@@ -137,11 +139,11 @@ namespace RottenBamboo{
             // {
             //     usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
             // }
-            rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, imageUsageFlags[index]);
+            rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, imageFormats[imageIndex], VK_IMAGE_TILING_OPTIMAL, imageUsageFlags[imageIndex]);
             rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageBundle.image, imageBundle.imageMemory);
 
-            index++;
-            std::cout << "index = " << index << std::endl;
+            imageIndex++;
+            std::cout << "index = " << imageIndex << std::endl;
             std::cout << "mipLevels = " << mipLevels << std::endl;
         }
     }
@@ -153,6 +155,21 @@ namespace RottenBamboo{
         {
             rbImageManager.fillViewInfo(imageBundle.viewInfo, imageBundle.image, VK_IMAGE_VIEW_TYPE_2D, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
             rbImageManager.createImageView(imageBundle.viewInfo, imageBundle.imageView);
+        }
+
+    }
+
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::createTextureImageViewFrameBuffer(std::array<VkFormat, ImageCount> imageFormats,
+                                                                                   std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags,
+                                                                                   std::array<VkImageAspectFlagBits, ImageCount> imageAspectFlagBits)
+    {
+        int imageViewIndex = 0;
+        for (auto & imageBundle : rbImageManager.imageBundles)
+        {
+            rbImageManager.fillViewInfo(imageBundle.viewInfo, imageBundle.image, VK_IMAGE_VIEW_TYPE_2D, imageFormats[imageViewIndex], imageAspectFlagBits[imageViewIndex], mipLevels);
+            rbImageManager.createImageView(imageBundle.viewInfo, imageBundle.imageView);
+            imageViewIndex++;
         }
 
     }
@@ -247,6 +264,13 @@ namespace RottenBamboo{
     }
 
     template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::createTextureSamplerFrameBuffer()
+    {
+        rbImageManager.fillSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, VK_SAMPLER_MIPMAP_MODE_LINEAR, VK_COMPARE_OP_LESS_OR_EQUAL, mipLevels);
+        rbImageManager.createTextureSampler();
+    }
+
+    template<int ImageCount, int BufferCount>
     RBDescriptors<ImageCount, BufferCount>::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers, const std::array<std::string, ImageCount> &texturePaths, bool isColorAttachment) : rbDevice(device),
     rbCommandBuffer(commandBuffer),
     rbBufferPtr(uniformBuffers),
@@ -269,10 +293,13 @@ namespace RottenBamboo{
     }
 
     template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags)
+    void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, 
+                                                                                  std::array<VkFormat, ImageCount> imageFormats,
+                                                                                  std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags,
+                                                                                  std::array<VkImageAspectFlagBits, ImageCount> imageAspectFlagBits)
     {
-        createTextureImageFrameBuffer(framebufferExtent, imageUsageFlags);
-        createTextureImageView();
+        createTextureImageFrameBuffer(framebufferExtent, imageFormats, imageUsageFlags);
+        createTextureImageViewFrameBuffer(imageFormats, imageUsageFlags, imageAspectFlagBits);
         createTextureSampler();
         createDescriptorPool();
         createDescriptorSetLayout();

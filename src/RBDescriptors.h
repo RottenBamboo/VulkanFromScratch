@@ -38,15 +38,23 @@ namespace RottenBamboo {
 
         void createTextureImageView();
 
+        void createTextureImageViewFrameBuffer(std::array<VkFormat, ImageCount> imageFormats,
+                                               std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags,
+                                               std::array<VkImageAspectFlagBits, ImageCount> imageAspectFlagBits);
+
         void generateMipmaps(VkImage image, VkFormat imageFormat, uint32_t texWidth, uint32_t texHeight, uint32_t mipLevels);
 
         void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
         void createTextureImage();
 
-        void createTextureImageFrameBuffer(VkExtent2D framebufferExtent, std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags);
+        void createTextureImageFrameBuffer(VkExtent2D framebufferExtent, 
+                                          std::array<VkFormat, ImageCount> imageFormats,
+                                          std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags);
 
         void createTextureSampler();
+
+        void createTextureSamplerFrameBuffer();
 
     public:
 
@@ -62,7 +70,10 @@ namespace RottenBamboo {
 
         void InitializeDescriptors();
         
-        void InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags);
+        void InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, 
+                                              std::array<VkFormat, ImageCount> imageFormats,
+                                              std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags,
+                                              std::array<VkImageAspectFlagBits, ImageCount> imageAspectFlagBits);
     };
 }
 
