@@ -43,6 +43,12 @@ namespace RottenBamboo {
     }
 
 
+    void RBGBufferPass::clearFrameBuffers() 
+    {
+        vkDestroyFramebuffer(rbDevice.device, gBufferFrameBuffers, nullptr);
+        gBufferFrameBuffers = VK_NULL_HANDLE;
+        std::cout << "RBGBufferPass::refreFrameBuffers()" << std::endl;
+    }
     void RBGBufferPass::createFrameBuffers() {
         std::vector<VkImageView> attachments(rbColorAttachmentCount);
         
@@ -134,7 +140,9 @@ namespace RottenBamboo {
 
     RBGBufferPass::~RBGBufferPass()
     {
-        vkDestroyDescriptorSetLayout(rbDevice.device, rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout, nullptr);
+        //vkDestroyDescriptorSetLayout(rbDevice.device, rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout, nullptr);
+        //vkDestroyDescriptorSetLayout(rbDevice.device, rbColorAttachmentDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout, nullptr);
+        vkDestroyFramebuffer(rbDevice.device, gBufferFrameBuffers, nullptr);
         std::cout << "RBGBufferPass::~RBGBufferPass()" << std::endl;
     }
 

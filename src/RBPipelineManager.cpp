@@ -444,6 +444,9 @@ namespace RottenBamboo {
                                       VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT);
         float blendConstants[4] = {0.0f, 0.0f, 0.0f, 0.0f};
         fillPipelineColorBlendStateCreateInfo(VK_FALSE, VK_LOGIC_OP_AND, pureColorAttachmentCount, colorBlendAttachments.data(), blendConstants);
+        
+        dynamicStates.clear();
+        dynamicStates.reserve(0);
         dynamicStates.push_back(VK_DYNAMIC_STATE_VIEWPORT);
         dynamicStates.push_back(VK_DYNAMIC_STATE_LINE_WIDTH);
         fillDynamicStateCrateInfo();

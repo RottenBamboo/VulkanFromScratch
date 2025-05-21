@@ -32,6 +32,8 @@ namespace RottenBamboo {
         void createFrameBuffers() override;
 
     public:
+    
+        void clearFrameBuffers();
 
         VkFramebuffer gBufferFrameBuffers;
     
