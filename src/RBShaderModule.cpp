@@ -9,10 +9,16 @@ namespace RottenBamboo {
 
     RBShaderModule::~RBShaderModule() 
     {
-        vkDestroyShaderModule(device.device, module, nullptr);
+        Destroy();
         std::cout << "RBShaderModule::~RBShaderModule()" << std::endl;
     }
 
+    void RBShaderModule::Destroy()
+    {
+        vkDestroyShaderModule(device.device, module, nullptr);
+        module = VK_NULL_HANDLE;;
+        std::cout << "RBShaderModule::Destroy()" << std::endl;
+    }
     void RBShaderModule::fillCreateInfo(const std::vector<char> &code)
     {
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;

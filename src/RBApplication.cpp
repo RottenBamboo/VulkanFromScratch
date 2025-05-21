@@ -347,7 +347,8 @@ namespace RottenBamboo {
         {
             windows.framebufferResized = false;
             swapChain.recreateSwapChain();
-
+            
+            descriptorsAttachment.ReleaseAllResource();
             descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits);
 
             gBufferPass.clearFrameBuffers();

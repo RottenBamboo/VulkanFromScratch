@@ -31,6 +31,8 @@ namespace RottenBamboo {
     void RBDescriptorSetLayoutManager::Destroy()
     {
         vkDestroyDescriptorSetLayout(rbDevice.device, descriptorSetLayout, nullptr);
+        descriptorSetLayout = VK_NULL_HANDLE;
+        bindings.clear();
         std::cout << "RBDescriptorSetLayoutManager::Destroy()" << std::endl;
     }
 

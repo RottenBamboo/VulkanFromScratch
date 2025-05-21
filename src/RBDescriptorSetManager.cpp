@@ -19,6 +19,10 @@ namespace RottenBamboo{
     {
         clearDescriptorSets();
         clearDescriptorWrites();
+        descriptorPoolManager.Destroy();
+        descriptorSetLayoutManager.Destroy();
+        descriptorSets.clear();
+        descriptorWrites.clear();
         std::cout << "RBDescriptorSetManager::Destroy()" << std::endl;
     }
 
@@ -43,7 +47,7 @@ namespace RottenBamboo{
         descriptorWrite.descriptorType = descriptorType;
         descriptorWrite.pBufferInfo = pBufferInfo;
         this->descriptorWrites.push_back(descriptorWrite);
-        std::cout << "RBDescriptorSetManager::fillDescriptotSetsWriteBuffer()" << std::endl;
+        //std::cout << "RBDescriptorSetManager::fillDescriptotSetsWriteBuffer()" << std::endl;
     }
 
     void RBDescriptorSetManager::fillDescriptotSetsWriteImage(uint32_t dstSetIndex, uint32_t dstBinding, uint32_t dstArrayElement, uint32_t descriptorCount, VkDescriptorType descriptorType, const VkDescriptorImageInfo* pImageInfo)
@@ -57,7 +61,7 @@ namespace RottenBamboo{
         descriptorWrite.descriptorType = descriptorType;
         descriptorWrite.pImageInfo = pImageInfo;
         this->descriptorWrites.push_back(descriptorWrite);
-        std::cout << "RBDescriptorSetManager::fillDescriptotSetsWriteImage()" << std::endl;
+        //std::cout << "RBDescriptorSetManager::fillDescriptotSetsWriteImage()" << std::endl;
     }
 
     void RBDescriptorSetManager::allocateDescriptorSets(RBDevice &device, int size)
@@ -74,20 +78,20 @@ namespace RottenBamboo{
     {
         vkUpdateDescriptorSets(device.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
         clearDescriptorWrites();
-        std::cout << "RBDescriptorSetManager::updateDescriptorSets()" << std::endl;
+        //std::cout << "RBDescriptorSetManager::updateDescriptorSets()" << std::endl;
     }
 
     void RBDescriptorSetManager::updateDescriptorSets(RBDevice &device, std::vector<VkWriteDescriptorSet> descriptorWrites)
     {
         vkUpdateDescriptorSets(device.device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
-        std::cout << "RBDescriptorSetManager::updateDescriptorSets(RBDevice &device, std::vector<VkWriteDescriptorSet> descriptorWrites)" << std::endl;
+        //std::cout << "RBDescriptorSetManager::updateDescriptorSets(RBDevice &device, std::vector<VkWriteDescriptorSet> descriptorWrites)" << std::endl;
     }
 
     void RBDescriptorSetManager::clearDescriptorWrites()
     {
         descriptorWrites.clear();
         descriptorWrites.reserve(0);
-        std::cout << "RBDescriptorSetManager::clearDescriptorWrites() " << "descriptorWrites size: " << descriptorWrites.size() << std::endl;
+        //std::cout << "RBDescriptorSetManager::clearDescriptorWrites() " << "descriptorWrites size: " << descriptorWrites.size() << std::endl;
     }
 
     void RBDescriptorSetManager::clearDescriptorSets()
