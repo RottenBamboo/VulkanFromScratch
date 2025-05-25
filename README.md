@@ -13,7 +13,8 @@ git submodule init
 
 git submodule update
 
-find and execute external/build_assimp.sh
+find and execute chmod +x external/buildAssimp.sh cd external ./buildAssimp.sh
+find and execute chmod +x external/buildZlib.sh cd external ./buildZlib.sh
 
 windows platform:
     
