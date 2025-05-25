@@ -13,12 +13,24 @@ git submodule init
 
 git submodule update
 
-find and execute chmod +x external/buildAssimp.sh cd external ./buildAssimp.sh
-find and execute chmod +x external/buildZlib.sh cd external ./buildZlib.sh
+
+chmod +x external/buildZlib.sh
+
+chmod +x external/buildAssimp.sh 
+
+
+cd external 
+
+./buildZlib.sh
+
+./buildAssimp.sh
+
 
 windows platform:
     
-    find and execute shader/compile.bat
+    cd shader
+
+    .\compile.bat
     
     cmake -G "Visual Studio 17 2022" -S . -B build -DCMAKE_BUILD_TYPE=Debug
 
@@ -31,8 +43,10 @@ windows platform:
     .\VulkanFromScratch.exe
 
 MacOS platform:
+    
+    cd shader
 
-    find and execute shader/compile.sh
+    ./compile.sh
 
     cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 
