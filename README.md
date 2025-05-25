@@ -13,8 +13,30 @@ git submodule init
 
 git submodule update
 
-cmake -S . -B build
+find and execute external/build_assimp.sh
 
-cd build
+windows platform:
+    
+    find and execute shader/compile.bat
+    
+    cmake -G "Visual Studio 17 2022" -S . -B build -DCMAKE_BUILD_TYPE=Debug
 
-cmake --build .
+    cd build
+
+    cmake --build .
+
+    cd .\Debug\
+
+    .\VulkanFromScratch.exe
+
+MacOS platform:
+
+    find and execute shader/compile.sh
+
+    cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+
+    cd build
+
+    cmake --build .
+
+    ./VulkanFromScratch

@@ -16,7 +16,7 @@ namespace RottenBamboo {
         InitializeWindow();
         InitializeDevice();
         InitializeCommandBuffer();
-        loadModel();
+        loadModelAssimp();
         InitializeBuffers();
         InitializeSwapChain();
         InitializeDescriptors();
@@ -86,6 +86,70 @@ namespace RottenBamboo {
         lightPassManager.InitializeGraphicPipeline();
         std::cout << "RBApplication::InitializeGraphicPipeline()" << std::endl;
     };
+
+    
+    void RBApplication::loadModelAssimp() 
+    {
+        Assimp::Importer importer;
+        const aiScene* scene = importer.ReadFile(MODEL_PATH.c_str(),
+            aiProcess_Triangulate | 
+            aiProcess_FlipUVs | 
+            aiProcess_GenNormals |
+            aiProcess_CalcTangentSpace);
+
+        if (!scene) 
+        {
+            std::cerr << "Assimp import failed: " << importer.GetErrorString() << std::endl;
+        } 
+        else 
+        {
+            std::cout << "Assimp import succeeded!" << std::endl;
+        }
+
+        if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
+        {
+            throw std::runtime_error("Assimp failed to load model: " + std::string(importer.GetErrorString()));
+        }
+        std::cout << "Root node name: " << scene->mRootNode->mName.C_Str() << "\n";
+        std::cout << "Mesh count in root node: " << scene->mRootNode->mNumMeshes << "\n";
+        std::cout << "Child count in root node: " << scene->mRootNode->mNumChildren << "\n";
+        
+        std::unordered_map<Vertex, uint32_t> uniqueVertices{};
+            mesh.vertexBuffer.data.clear();
+            mesh.indexBuffer.data.clear();
+
+        aiMesh* meshPtr = scene->mMeshes[0];
+
+        // 填充顶点
+        mesh.vertexBuffer.data.resize(meshPtr->mNumVertices);
+        for (unsigned int v = 0; v < meshPtr->mNumVertices; ++v) {
+            mesh.vertexBuffer.data[v].pos = {
+                meshPtr->mVertices[v].x,
+                meshPtr->mVertices[v].y,
+                meshPtr->mVertices[v].z
+            };
+            mesh.vertexBuffer.data[v].color = {1.0f, 1.0f, 1.0f};
+            if (meshPtr->HasTextureCoords(0)) {
+                mesh.vertexBuffer.data[v].texCoord = {
+                    meshPtr->mTextureCoords[0][v].x,
+                    meshPtr->mTextureCoords[0][v].y
+                };
+            } else {
+                mesh.vertexBuffer.data[v].texCoord = {0.0f, 0.0f};
+            }
+        }
+        
+        // 填充索引
+        for (unsigned int f = 0; f < meshPtr->mNumFaces; ++f) {
+            aiFace& face = meshPtr->mFaces[f];
+            if (face.mNumIndices != 3) continue;
+            for (unsigned int i = 0; i < 3; ++i) {
+                mesh.indexBuffer.data.push_back(face.mIndices[i]);
+            }
+        }
+
+        std::cout << "RBApplication::loadModel() - model loaded using Assimp" << std::endl;
+    }
 
     void RBApplication::loadModel()
     {

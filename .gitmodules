@@ -4,3 +4,6 @@
 [submodule "external/tinyobjloader"]
 	path = external/tinyobjloader
 	url = git@github.com:tinyobjloader/tinyobjloader.git
+[submodule "external/assimp"]
+	path = external/assimp
+	url = git@github.com:assimp/assimp.git

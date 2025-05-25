@@ -7,3 +7,7 @@ output/*
 .DS_Store
 cmake-build-debug
 shader/bin/*
+thirdparty
+
+#external 
+/external/assimp/build/*
