@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+OS_NAME="$(uname)"
 
 # set the installation directory
 INSTALL_DIR="$(pwd)/../thirdparty/zlib/lib"
@@ -10,10 +11,17 @@ FROM_DIR="$(pwd)/zlib"
 cd "$(dirname "$0")/zlib"
 
 # configure the build
-mkdir build
+
+if [ -d "build" ]; then
+    :
+else
+    mkdir -p build
+fi
+
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
-make
+cmake .. -DBUILD_SHARED_LIBS=OFF
+cmake --build .
+cd ../..
 
 #remove dest directory
 if [ -d "$INSTALL_DIR" ]; then
@@ -24,6 +32,13 @@ fi
 
 #rm -rf "$INSTALL_DIR"/*
 
-cp -rf "$FROM_DIR"/build/libz.a "$INSTALL_DIR"/
+
+if [[ "$OS_NAME" == "Darwin" ]]; then
+    echo "macOS"
+    cp -rf "$FROM_DIR"/build/libz.a "$INSTALL_DIR"/
+elif [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then
+    echo "Windows（Git Bash / WSL）"
+    cp -rf "$FROM_DIR"/build/Debug/zsd.lib "$INSTALL_DIR"/
+fi
 #cp -rf "$FROM_DIR"/build/include "$INSTALL_DIR"/include
 #cp -rf "$ZLIB_DIR" "$INSTALL_DIR"/lib
