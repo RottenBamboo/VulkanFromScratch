@@ -24,5 +24,5 @@ glslc "gBuffer.frag" -o "bin/gBufferFrag.spv"
 glslc "lighting.vert" -o "bin/lightingVert.spv"
 glslc "lighting.frag" -o "bin/lightingFrag.spv"
 
-echo Shaders 编译完成!
+echo Shaders compile finished!
 pause
