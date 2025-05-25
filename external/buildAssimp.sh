@@ -37,7 +37,7 @@ fi
 #rm -rf "$INSTALL_DIR"/*
 
 if [[ "$OS_NAME" == "Darwin" ]]; then
-    cp -rf "$FROM_DIR" "$INSTALL_DIR"
+    cp -rf "$FROM_DIR"/libassimp.a "$INSTALL_DIR"/
 elif [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then
     cp -rf "$FROM_DIR"/assimp-vc143-mtd.lib "$INSTALL_DIR"/
 fi
