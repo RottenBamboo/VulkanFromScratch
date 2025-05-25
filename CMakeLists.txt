@@ -6,6 +6,22 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# assimp
+# set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
+# set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+# set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+# set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
+# set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "" FORCE)
+# set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE BOOL "" FORCE)
+# set(ASSIMP_BUILD_FBX_IMPORTER ON CACHE BOOL "" FORCE)
+# set(ASSIMP_NO_EXPORT ON CACHE BOOL "" FORCE)
+# set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+# set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
+# set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
+# set(ASSIMP_BUILD_EXTRA_POSTPROCESSING OFF CACHE BOOL "" FORCE)
+
+# add_subdirectory(external/assimp)
+
 # Debug symbols
 if (MSVC)
     # MSVC (Visual Studio / clang-cl)
@@ -27,14 +43,20 @@ include_directories(${FEATURE_PATH})
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(GLFW_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/MacOS/glfw-3.3.8.bin.MACOS/include")
     set(GLFW_BIN_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/MacOS/glfw-3.3.8.bin.MACOS/lib-arm64")
+    set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
+    set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(GLFW_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/Windows/glfw-3.3.8.bin.WIN64/include")
     set(GLFW_BIN_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/Windows/glfw-3.3.8.bin.WIN64/lib-vc2022")
+    set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
+    set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
 endif()
 
 # set STB and tinyobjloader path
 set(STB_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/stb")
 set(TINYOBJLOADER_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/tinyobjloader")
+set(ASSIMP_THIRDPARTY_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/include")
+set(ASSIMP_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/assimp/include")
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # add executable file
@@ -62,6 +84,13 @@ add_executable(${PROJECT_NAME}
         feature/RBGBufferPass.cpp feature/RBGBufferPass.h
         feature/RBLightingPass.cpp feature/RBLightingPass.h)
 
+# add Assimp header path
+target_include_directories(${PROJECT_NAME} PUBLIC ${ASSIMP_THIRDPARTY_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PUBLIC ${ASSIMP_INCLUDE_DIRS})
+
+# link Assimp library
+# target_link_libraries(${PROJECT_NAME} assimp)
+
 # find Vulkan SDK
 find_package(Vulkan REQUIRED)
 
@@ -79,8 +108,12 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${GLFW_INCLUDE_DIRS})
 if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     find_library(GLFW_LIBRARY NAMES glfw PATHS ${GLFW_BIN_DIRS} REQUIRED)
     target_link_libraries(${PROJECT_NAME} ${GLFW_LIBRARY})
+    target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
+    target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.a)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_link_libraries(${PROJECT_NAME} ${GLFW_BIN_DIRS}/glfw3.lib)
+    target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/zsd.lib)
+    target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/assimp-vc143-mtd.lib)
 endif()
 
 # add STB and tinyobjloader

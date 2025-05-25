@@ -24,6 +24,10 @@ namespace RottenBamboo {
             vkDestroySampler(rbDevice.device, imageBundles[i].sampler, nullptr);
             vkDestroyImage(rbDevice.device, imageBundles[i].image, nullptr);
             vkFreeMemory(rbDevice.device, imageBundles[i].imageMemory, nullptr);
+            imageBundles[i].imageView = VK_NULL_HANDLE;
+            imageBundles[i].sampler = VK_NULL_HANDLE;
+            imageBundles[i].image = VK_NULL_HANDLE;
+            imageBundles[i].imageMemory = VK_NULL_HANDLE;
         }
         std::cout << "RBImageManager::~RBImageManager()" << std::endl;
     }

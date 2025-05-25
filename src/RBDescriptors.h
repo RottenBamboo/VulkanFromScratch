@@ -76,6 +76,8 @@ namespace RottenBamboo {
                                               std::array<VkFormat, ImageCount> imageFormats,
                                               std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags,
                                               std::array<VkImageAspectFlagBits, ImageCount> imageAspectFlagBits);
+
+        void ReleaseAllResource();
     };
 }
 

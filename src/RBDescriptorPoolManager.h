@@ -22,6 +22,7 @@ namespace RottenBamboo {
         void fillDescriptorPoolSize(VkDescriptorType type,uint32_t descriptorCount);
         void fillDescriptorPoolCreateInfo(VkStructureType type, uint32_t maxSets);
         void CreateDescriptorPool();
+        void Destroy();
         RBDescriptorPoolManager(const RBDescriptorPoolManager &) = delete;
         RBDescriptorPoolManager(RBDescriptorPoolManager &&) = default;
 
