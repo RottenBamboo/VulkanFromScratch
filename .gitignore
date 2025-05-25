@@ -10,4 +10,6 @@ shader/bin/*
 thirdparty
 
 #external 
-/external/assimp/build/*
+/external/assimp/*
+/external/zlib/*
+

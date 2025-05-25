@@ -4,8 +4,8 @@ set -e
 OS_NAME="$(uname)"
 
 # set the installation directory
-INSTALL_DIR="$(pwd)/../thirdparty/zlib/lib"
-FROM_DIR="$(pwd)/zlib"
+INSTALL_DIR="$(dirname "$0")/../thirdparty/zlib/lib"
+FROM_DIR="$(dirname "$0")/zlib"
 # enter the script directory
 
 cd "$(dirname "$0")/zlib"
