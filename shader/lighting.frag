@@ -18,7 +18,7 @@ void main()
     vec3 ambientLight = vec3(0.2);
     ambientLight *= AOIntensity;
     outColor.xyz =baseColor.rgb;
-    outColor.xyz += texture(gMaterial, fragTexCoord).xyz;
+    //outColor.xyz += texture(gMaterial, fragTexCoord).xyz;
 
     float positionIsExist = dot(positionInput.xyz, vec3(1, 1, 1));
     outColor.xyz += ambientLight * (positionIsExist > 0 ? 1 : 0);

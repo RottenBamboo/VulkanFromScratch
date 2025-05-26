@@ -45,8 +45,19 @@ namespace RottenBamboo {
 
         void InitializeSwapChain();
 
-        void processNode(aiNode* node, const aiScene* scene);
-        
+        void transformModelVertex(aiMesh* meshPtr, 
+                                          std::vector<Vertex>& vertexBuffer, 
+                                          int& vertexWriteIndex, 
+                                          const aiMatrix4x4& transform);
+
+        void processModelNode(const aiNode* node,
+                         const aiScene* scene,
+                         std::vector<Vertex>& vertexBuffer,
+                         std::vector<uint32_t>& indexBuffer,
+                         int& vertexWriteIndex,
+                         int& vertexStartOffset,
+                         const aiMatrix4x4& parentTransform);
+
         void loadModelAssimp();
 
         void loadModel();

@@ -87,6 +87,73 @@ namespace RottenBamboo {
         std::cout << "RBApplication::InitializeGraphicPipeline()" << std::endl;
     };
 
+    void RBApplication::transformModelVertex(
+    aiMesh* meshPtr, 
+    std::vector<Vertex>& vertexBuffer, 
+    int& vertexWriteIndex, 
+    const aiMatrix4x4& transform)
+{
+    for (unsigned int v = 0; v < meshPtr->mNumVertices; ++v) 
+    {
+        aiVector3D vertex = meshPtr->mVertices[v];
+        vertex *= transform;  //transform the vertex position
+
+        vertexBuffer[vertexWriteIndex].pos = { vertex.x, vertex.y, vertex.z };
+        vertexBuffer[vertexWriteIndex].color = {1.0f, 1.0f, 1.0f};
+
+        if (meshPtr->HasTextureCoords(0)) {
+            vertexBuffer[vertexWriteIndex].texCoord = {
+                meshPtr->mTextureCoords[0][v].x,
+                meshPtr->mTextureCoords[0][v].y
+            };
+        } else {
+            vertexBuffer[vertexWriteIndex].texCoord = {0.0f, 0.0f};
+        }
+
+        vertexWriteIndex++;
+    }
+}
+
+void RBApplication::processModelNode(
+    const aiNode* node,
+    const aiScene* scene,
+    std::vector<Vertex>& vertexBuffer,
+    std::vector<uint32_t>& indexBuffer,
+    int& vertexWriteIndex,
+    int& vertexStartOffset,
+    const aiMatrix4x4& parentTransform)
+{
+    aiMatrix4x4 currentTransform = parentTransform * node->mTransformation;
+
+    for (unsigned int i = 0; i < node->mNumMeshes; ++i)
+    {
+        aiMesh* meshPtr = scene->mMeshes[node->mMeshes[i]];
+
+        // vertex push back
+        transformModelVertex(meshPtr, vertexBuffer, vertexWriteIndex, currentTransform);
+
+        // index push back
+        for (unsigned int f = 0; f < meshPtr->mNumFaces; ++f) 
+        {
+            aiFace& face = meshPtr->mFaces[f];
+            if (face.mNumIndices != 3) continue;
+
+            for (unsigned int idx = 0; idx < 3; ++idx) 
+            {
+                indexBuffer.push_back(face.mIndices[idx] + vertexStartOffset);
+            }
+        }
+
+        vertexStartOffset += meshPtr->mNumVertices;
+    }
+    
+    //recursively process children nodes
+    for (unsigned int c = 0; c < node->mNumChildren; ++c)
+    {
+        processModelNode(node->mChildren[c], scene, vertexBuffer, indexBuffer, vertexWriteIndex, vertexStartOffset, currentTransform);
+    }
+}
+
     
     void RBApplication::loadModelAssimp() 
     {
@@ -115,39 +182,22 @@ namespace RottenBamboo {
         std::cout << "Child count in root node: " << scene->mRootNode->mNumChildren << "\n";
         
         std::unordered_map<Vertex, uint32_t> uniqueVertices{};
-            mesh.vertexBuffer.data.clear();
-            mesh.indexBuffer.data.clear();
+        mesh.vertexBuffer.data.clear();
+        mesh.indexBuffer.data.clear();
 
-        aiMesh* meshPtr = scene->mMeshes[0];
-
-        // 填充顶点
-        mesh.vertexBuffer.data.resize(meshPtr->mNumVertices);
-        for (unsigned int v = 0; v < meshPtr->mNumVertices; ++v) {
-            mesh.vertexBuffer.data[v].pos = {
-                meshPtr->mVertices[v].x,
-                meshPtr->mVertices[v].y,
-                meshPtr->mVertices[v].z
-            };
-            mesh.vertexBuffer.data[v].color = {1.0f, 1.0f, 1.0f};
-            if (meshPtr->HasTextureCoords(0)) {
-                mesh.vertexBuffer.data[v].texCoord = {
-                    meshPtr->mTextureCoords[0][v].x,
-                    meshPtr->mTextureCoords[0][v].y
-                };
-            } else {
-                mesh.vertexBuffer.data[v].texCoord = {0.0f, 0.0f};
-            }
+        int numTotalVertices = 0;
+        for(unsigned int meshItr = 0; meshItr < scene->mNumMeshes; meshItr++)
+        {
+            numTotalVertices += scene->mMeshes[meshItr]->mNumVertices;
         }
+        mesh.vertexBuffer.data.resize(numTotalVertices);
         
-        // 填充索引
-        for (unsigned int f = 0; f < meshPtr->mNumFaces; ++f) {
-            aiFace& face = meshPtr->mFaces[f];
-            if (face.mNumIndices != 3) continue;
-            for (unsigned int i = 0; i < 3; ++i) {
-                mesh.indexBuffer.data.push_back(face.mIndices[i]);
-            }
-        }
+        int vertexWriteIndex = 0; 
+        int vertexStartOffset = 0; 
+        processModelNode(scene->mRootNode, scene, mesh.vertexBuffer.data, mesh.indexBuffer.data, vertexWriteIndex, vertexStartOffset, aiMatrix4x4());
 
+        std::cout << "Mesh vertex count: " << mesh.vertexBuffer.data.size() << std::endl;
+        std::cout << "Mesh index count: " << mesh.indexBuffer.data.size() << std::endl;
         std::cout << "RBApplication::loadModel() - model loaded using Assimp" << std::endl;
     }
 
@@ -203,9 +253,9 @@ namespace RottenBamboo {
         float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
         UniformBufferObject ubo{};
-        ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ubo.model = glm::scale(ubo.model, glm::vec3(0.1f, 0.1f, 0.1f));
-        ubo.view = glm::lookAt(glm::vec3(3.0f, 3.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ubo.model = glm::scale(ubo.model, glm::vec3(0.25f, 0.25f, 0.25f));
+        ubo.view = glm::lookAt(glm::vec3(3.0f, 3.0f, 3.0f), glm::vec3(0.0f, 1.3f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float) swapChainExtent.height, 0.1f, 10.0f);
         ubo.proj[1][1] *= -1;
 
