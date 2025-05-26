@@ -93,6 +93,9 @@ namespace RottenBamboo {
     int& vertexWriteIndex, 
     const aiMatrix4x4& transform)
 {
+    aiMatrix3x3 normalMatrix = aiMatrix3x3(transform);
+    normalMatrix.Inverse().Transpose();
+
     for (unsigned int v = 0; v < meshPtr->mNumVertices; ++v) 
     {
         aiVector3D vertex = meshPtr->mVertices[v];
@@ -101,12 +104,38 @@ namespace RottenBamboo {
         vertexBuffer[vertexWriteIndex].pos = { vertex.x, vertex.y, vertex.z };
         vertexBuffer[vertexWriteIndex].color = {1.0f, 1.0f, 1.0f};
 
-        if (meshPtr->HasTextureCoords(0)) {
-            vertexBuffer[vertexWriteIndex].texCoord = {
+        if (meshPtr->HasTangentsAndBitangents()) 
+        {
+            aiVector3D tangent = meshPtr->mTangents[v];
+            tangent = normalMatrix * tangent;
+            vertexBuffer[vertexWriteIndex].tangent = glm::vec3(tangent.x, tangent.y, tangent.z);
+        }
+        else 
+        {
+            vertexBuffer[vertexWriteIndex].tangent = {0.0f, 0.0f, 0.0f};
+        }
+
+        if (meshPtr->HasNormals()) 
+        {
+            aiVector3D normal = meshPtr->mNormals[v];
+            normal = normalMatrix * normal;
+            vertexBuffer[vertexWriteIndex].normal = glm::vec3(normal.x, normal.y, normal.z);
+        }
+        else 
+        {
+            vertexBuffer[vertexWriteIndex].normal = {0.0f, 0.0f, 0.0f};
+        }
+        
+        if (meshPtr->HasTextureCoords(0)) 
+        {
+            vertexBuffer[vertexWriteIndex].texCoord = 
+            {
                 meshPtr->mTextureCoords[0][v].x,
                 meshPtr->mTextureCoords[0][v].y
             };
-        } else {
+        } 
+        else 
+        {
             vertexBuffer[vertexWriteIndex].texCoord = {0.0f, 0.0f};
         }
 

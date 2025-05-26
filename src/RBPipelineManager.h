@@ -16,7 +16,7 @@ namespace RottenBamboo {
 
         RBDevice &rbDevice;
 
-        std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions;
+        std::array<VkVertexInputAttributeDescription, 5> attributeDescriptions;
 
         VkVertexInputBindingDescription bindingDescription;
 

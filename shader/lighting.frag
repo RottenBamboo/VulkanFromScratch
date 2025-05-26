@@ -8,20 +8,35 @@ layout(location = 0) in vec3 fragColor;
 layout(location = 1) in vec2 fragTexCoord;
 
 layout(location = 0) out vec4 outColor;
+
 void main()
 {
     vec4 baseColor = texture(gAlbedo, fragTexCoord);
     vec4 positionInput = texture(gPosition, fragTexCoord);
     vec4 normalWS = texture(gNormal, fragTexCoord);
+    
     vec3 positionWS = positionInput.xyz;
     float AOIntensity = positionInput.a;
-    vec3 ambientLight = vec3(0.2);
-    ambientLight *= AOIntensity;
-    outColor.xyz =baseColor.rgb;
-    //outColor.xyz += texture(gMaterial, fragTexCoord).xyz;
+    
+    // reserve the normal in world space
+    vec3 normal = normalize(normalWS.xyz * 2.0 - 1.0);
+
+    vec3 ambientLight = vec3(0.2) * AOIntensity;
+
+    // light properties
+    vec3 lightPos = vec3(10.0, 10.0, 10.0);
+    vec3 lightColor = vec3(1.0);
+
+    vec3 lightDir = normalize(lightPos - positionWS);
+    float diff = max(dot(normal, lightDir), 0.0);
+
+    vec3 diffuse = diff * lightColor * baseColor.rgb;
+    vec3 color = diffuse;
 
     float positionIsExist = dot(positionInput.xyz, vec3(1, 1, 1));
-    outColor.xyz += ambientLight * (positionIsExist > 0 ? 1 : 0);
-    //outColor.xyz += normalWS.xyz;
-    outColor.a = 1.0f;
+    color.xyz += ambientLight * (positionIsExist > 0 ? 1 : 0);
+
+    //vec3 color = ambientLight + diffuse;
+
+    outColor = vec4(color, 1.0);
 }
