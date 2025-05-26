@@ -21,7 +21,7 @@ void main()
     // reserve the normal in world space
     vec3 normal = normalize(normalWS.xyz * 2.0 - 1.0);
 
-    vec3 ambientLight = vec3(0.2) * AOIntensity;
+    vec3 ambientLight = vec3(0.3) * AOIntensity;
 
     // light properties
     vec3 lightPos = vec3(10.0, 10.0, 10.0);
