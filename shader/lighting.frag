@@ -2,7 +2,7 @@
 layout(binding = 1) uniform sampler2D gPosition;
 layout(binding = 2) uniform sampler2D gNormal;
 layout(binding = 3) uniform sampler2D gAlbedo;
-layout(binding = 4) uniform sampler2D gMaterial;
+layout(binding = 4) uniform sampler2D gMetallicRoughnessAO;
 
 layout(location = 0) in vec3 fragColor;
 layout(location = 1) in vec2 fragTexCoord;
@@ -16,7 +16,8 @@ void main()
     vec4 normalWS = texture(gNormal, fragTexCoord);
     
     vec3 positionWS = positionInput.xyz;
-    float AOIntensity = positionInput.a;
+    vec3 metallicRoughnessAO = texture(gMetallicRoughnessAO, fragTexCoord).rgb;
+    float AOIntensity = metallicRoughnessAO.r;
     
     // reserve the normal in world space
     vec3 normal = normalize(normalWS.xyz * 2.0 - 1.0);
