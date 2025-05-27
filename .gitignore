@@ -13,3 +13,5 @@ thirdparty
 /external/assimp/*
 /external/zlib/*
 
+/external/imgui/*
+!/external/imgui/.git

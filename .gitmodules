@@ -10,3 +10,9 @@
 [submodule "external/zlib"]
 	path = external/zlib
 	url = git@github.com:madler/zlib.git
+[submodule "external/imgui"]
+	path = external/imgui
+	url = git@github.com:ocornut/imgui.git
+[submodule "external/SDL"]
+	path = external/SDL
+	url = git@github.com:libsdl-org/SDL.git
