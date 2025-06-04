@@ -335,11 +335,17 @@ namespace RottenBamboo{
     void RBSwapChain::recreateSwapChain()
     {
         int width = 0, height = 0;
-        glfwGetFramebufferSize(refWindow.window, &width, &height);
+
+        SDL_GetWindowSizeInPixels(refWindow.window, &width, &height);
         while (width == 0 || height == 0) {
-            glfwGetFramebufferSize(refWindow.window, &width, &height);
-            glfwWaitEvents();
+            SDL_Event event;
+            SDL_WaitEvent(&event);  // 阻塞直到窗口恢复大小
+
+            if (event.type == SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED) {
+                SDL_GetWindowSizeInPixels(refWindow.window, &width, &height);
+            }
         }
+
         vkDeviceWaitIdle(refDevice.device);
         cleanupSwapChain();
 

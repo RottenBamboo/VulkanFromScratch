@@ -127,9 +127,15 @@ namespace RottenBamboo {
         return indices.graphicsFamily.has_value() && extensionSupported && swapChainAdequate;
     }
 
+    // void RBDevice::createSurface(RBWindows& window) {
+    //     if (glfwCreateWindowSurface(instance, window.GetWindow(), nullptr, &surface) != VK_SUCCESS) {
+    //         throw std::runtime_error("failed to create window surface!");
+    //     }
+    //     std::cout << "RBDevice::createSurface()" << std::endl;
+    // }
     void RBDevice::createSurface(RBWindows& window) {
-        if (glfwCreateWindowSurface(instance, window.GetWindow(), nullptr, &surface) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create window surface!");
+        if (!SDL_Vulkan_CreateSurface(window.GetWindow(), instance, nullptr, &surface)) {
+            throw std::runtime_error("failed to create Vulkan window surface with SDL!");
         }
         std::cout << "RBDevice::createSurface()" << std::endl;
     }
@@ -240,8 +246,9 @@ namespace RottenBamboo {
 
     std::vector<const char *> RBDevice::getRequiredExtensions() {
         uint32_t glfwExtensionCount = 0;
-        const char **glfwExtensions;
-        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+        const char* const* glfwExtensions;
+        glfwExtensions = SDL_Vulkan_GetInstanceExtensions(&glfwExtensionCount);
+        //glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
         std::vector<const char *> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
         if (enableValidationLayers) {
             extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);

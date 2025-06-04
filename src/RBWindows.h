@@ -2,34 +2,32 @@
 // Created by rottenbamboo on 2023/5/18.
 //
 #pragma once
-#define GLFW_INCLUDE_VULKAN
 
-#include <glm/glm.hpp>
-#include <GLFW/glfw3.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_vulkan.h>
 #include <string>
 
 namespace RottenBamboo {
+
     class RBWindows {
     public:
-        GLFWwindow *window;
+        SDL_Window *window = nullptr;
         bool framebufferResized = false;
+
     private:
         const uint32_t width;
         const uint32_t height;
-        std::string windowName = "window";
-
+        std::string windowName;
+        bool shouldCloseFlag = false;
 
     public:
-        GLFWwindow* GetWindow() { return window; }
-
-        static void framebufferResizeCallback(GLFWwindow *window, int width, int height);
-
         RBWindows(uint32_t width, uint32_t height, std::string name);
-
         ~RBWindows();
 
-        void InitializeWindow();
+        SDL_Window* GetWindow() { return window; }
 
-        bool shouldClose() { return glfwWindowShouldClose(window); }
+        void InitializeWindow();
+        void PollEvents();
+        bool shouldClose() const;
     };
 }

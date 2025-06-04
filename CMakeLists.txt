@@ -45,11 +45,13 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(GLFW_BIN_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/MacOS/glfw-3.3.8.bin.MACOS/lib-arm64")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
+    set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/external/SDL/build/")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(GLFW_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/Windows/glfw-3.3.8.bin.WIN64/include")
     set(GLFW_BIN_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/Windows/glfw-3.3.8.bin.WIN64/lib-vc2022")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
+    set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/external/SDL/build/")
 endif()
 
 # set STB and tinyobjloader path
@@ -57,6 +59,7 @@ set(STB_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/stb")
 set(TINYOBJLOADER_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/tinyobjloader")
 set(ASSIMP_THIRDPARTY_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/include")
 set(ASSIMP_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/assimp/include")
+set(SDL_INCLUDE_DIRS "/usr/local/include/SDL3")
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # add executable file
@@ -88,6 +91,7 @@ add_executable(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME} PUBLIC ${ASSIMP_THIRDPARTY_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${ASSIMP_INCLUDE_DIRS})
 
+target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_INCLUDE_DIRS})
 # link Assimp library
 # target_link_libraries(${PROJECT_NAME} assimp)
 
@@ -110,6 +114,8 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     target_link_libraries(${PROJECT_NAME} ${GLFW_LIBRARY})
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.a)
+    target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/libSDL3.dylib)
+
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_link_libraries(${PROJECT_NAME} ${GLFW_BIN_DIRS}/glfw3.lib)
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/zsd.lib)
@@ -119,3 +125,5 @@ endif()
 # add STB and tinyobjloader
 target_include_directories(${PROJECT_NAME} PUBLIC ${STB_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${TINYOBJLOADER_INCLUDE_DIRS})
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_INCLUDE_DIRS})
