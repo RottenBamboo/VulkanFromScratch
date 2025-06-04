@@ -293,12 +293,13 @@ void RBApplication::processModelNode(
 
     void RBApplication::run() {
         while (!windows.shouldClose()) {
-            glfwPollEvents();
+            //glfwPollEvents();
+            windows.PollEvents();
             drawFrame();
-            float interval = C_intervalTime - (glfwGetTime() - timeStamp);
+            //float interval = C_intervalTime - (glfwGetTime() - timeStamp);
             //int intervalMiliseconds = int(interval * 1000);
             //std::this_thread::sleep_for(std::chrono::milliseconds(intervalMiliseconds));
-            timeStamp = glfwGetTime();
+            //timeStamp = glfwGetTime();
         }
         vkDeviceWaitIdle(device.device);
     }

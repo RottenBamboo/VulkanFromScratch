@@ -15,8 +15,8 @@ namespace RottenBamboo {
         bool framebufferResized = false;
 
     private:
-        const uint32_t width;
-        const uint32_t height;
+        uint32_t width;
+        uint32_t height;
         std::string windowName;
         bool shouldCloseFlag = false;
 

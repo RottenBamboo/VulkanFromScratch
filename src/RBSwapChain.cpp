@@ -339,7 +339,7 @@ namespace RottenBamboo{
         SDL_GetWindowSizeInPixels(refWindow.window, &width, &height);
         while (width == 0 || height == 0) {
             SDL_Event event;
-            SDL_WaitEvent(&event);  // 阻塞直到窗口恢复大小
+            SDL_WaitEvent(&event);  // Wait for an event to ensure the window size is updated
 
             if (event.type == SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED) {
                 SDL_GetWindowSizeInPixels(refWindow.window, &width, &height);

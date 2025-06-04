@@ -17,8 +17,9 @@ namespace RottenBamboo {
         SDL_Quit();
     }
 
-    void RBWindows::InitializeWindow() {
-    
+    void RBWindows::InitializeWindow() 
+    {
+
     int driverCount = SDL_GetNumVideoDrivers();
     for (int i = 0; i < driverCount; ++i) 
     {
@@ -37,7 +38,7 @@ namespace RottenBamboo {
             windowName.c_str(),
             width,
             height,
-            SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE
+            SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_BORDERLESS
         );
 
         if (!window) {
