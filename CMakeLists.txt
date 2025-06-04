@@ -120,6 +120,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_link_libraries(${PROJECT_NAME} ${GLFW_BIN_DIRS}/glfw3.lib)
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/zsd.lib)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/assimp-vc143-mtd.lib)
+    target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/SDL3.dll)
 endif()
 
 # add STB and tinyobjloader
