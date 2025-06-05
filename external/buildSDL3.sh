@@ -28,6 +28,7 @@ if [[ "$OS_NAME" == "Darwin" ]]; then
     cp -vf "$BUILD_DIR"/libSDL3.dylib "$INSTALL_DIR"/libSDL3.0.dylib
 elif [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then
     cp -vf "$BUILD_DIR"/Debug/SDL3.dll "$INSTALL_DIR"/
+    cp -vf "$BUILD_DIR"/Debug/SDL3.lib "$INSTALL_DIR"/
 else
     cp -vf "$BUILD_DIR"/libSDL3.dylib "$INSTALL_DIR"/libSDL3.0.dylib
 fi

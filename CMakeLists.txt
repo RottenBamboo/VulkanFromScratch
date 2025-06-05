@@ -45,13 +45,13 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(GLFW_BIN_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/MacOS/glfw-3.3.8.bin.MACOS/lib-arm64")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
-    set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/SDL3/lib")
+    set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/sdl3/lib")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(GLFW_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/Windows/glfw-3.3.8.bin.WIN64/include")
     set(GLFW_BIN_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/Windows/glfw-3.3.8.bin.WIN64/lib-vc2022")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
-    set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/SDL3/lib")
+    set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/sdl3/lib")
 endif()
 
 # set STB and tinyobjloader path
@@ -120,7 +120,12 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_link_libraries(${PROJECT_NAME} ${GLFW_BIN_DIRS}/glfw3.lib)
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/zsd.lib)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/assimp-vc143-mtd.lib)
-    target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/SDL3.dll)
+    target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/SDL3.lib)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "Executable built at: $<TARGET_FILE:${PROJECT_NAME}>"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${SDL_LIB_DIRS}/SDL3.dll
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 endif()
 
 # add STB and tinyobjloader
