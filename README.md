@@ -18,12 +18,16 @@ chmod +x external/buildZlib.sh
 
 chmod +x external/buildAssimp.sh 
 
+chmod +x external/buildSDL3.sh 
+
 
 cd external 
 
 ./buildZlib.sh
 
 ./buildAssimp.sh
+
+./buildSDL3.sh
 
 
 windows platform:

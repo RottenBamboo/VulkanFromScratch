@@ -134,7 +134,7 @@ namespace RottenBamboo {
     {
         for(const auto& availableFormat : availableFormats)
         {
-            if(availableFormat.format == VK_FORMAT_R8G8B8A8_UNORM && availableFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
+            if(availableFormat.format == VK_FORMAT_B8G8R8A8_UNORM && availableFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
             {
                 return availableFormat;
             }
@@ -154,7 +154,7 @@ namespace RottenBamboo {
         return VK_PRESENT_MODE_FIFO_KHR;
     }
 
-    inline VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabalities, GLFWwindow* window)
+    inline VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabalities, SDL_Window* window)
     {
         if(capabalities.currentExtent.width != UINT32_MAX)
         {
@@ -162,7 +162,7 @@ namespace RottenBamboo {
         } else
         {
             int width, height;
-            glfwGetFramebufferSize(window, &width, &height);
+            SDL_GetWindowSizeInPixels(window, &width, &height);
             VkExtent2D actualExtent =
                     {
                             static_cast<uint32_t>(width),
