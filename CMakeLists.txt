@@ -46,12 +46,14 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
     set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/sdl3/lib")
+    set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(GLFW_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/Windows/glfw-3.3.8.bin.WIN64/include")
     set(GLFW_BIN_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/Windows/glfw-3.3.8.bin.WIN64/lib-vc2022")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
     set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/sdl3/lib")
+    set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui")
 endif()
 
 # set STB and tinyobjloader path
@@ -85,13 +87,24 @@ add_executable(${PROJECT_NAME}
         src/RBImageManager.impl.h src/RBImageManager.h
         src/RBBufferManager.cpp src/RBBufferManager.h
         feature/RBGBufferPass.cpp feature/RBGBufferPass.h
-        feature/RBLightingPass.cpp feature/RBLightingPass.h)
+        feature/RBLightingPass.cpp feature/RBLightingPass.h
+
+        ${IMGUI_DIR}/imgui.cpp
+        ${IMGUI_DIR}/imgui_draw.cpp
+        ${IMGUI_DIR}/imgui_widgets.cpp
+        ${IMGUI_DIR}/imgui_tables.cpp
+        ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
+        ${IMGUI_DIR}/backends/imgui_impl_vulkan.cpp)
 
 # add Assimp header path
+
 target_include_directories(${PROJECT_NAME} PUBLIC ${ASSIMP_THIRDPARTY_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${ASSIMP_INCLUDE_DIRS})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_INCLUDE_DIRS})
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR}/backends)
 # link Assimp library
 # target_link_libraries(${PROJECT_NAME} assimp)
 

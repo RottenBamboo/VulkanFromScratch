@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <SDL3/SDL_init.h>
+#include <imgui.h>
 
 namespace RottenBamboo {
 
@@ -46,6 +47,12 @@ namespace RottenBamboo {
         }
 
         SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+
+        // IMGUI_CHECKVERSION();
+        // ImGui::CreateContext();
+        // ImGuiIO& io = ImGui::GetIO();
+        // ImGui::StyleColorsDark();
+
     }
 
     void RBWindows::PollEvents() {
