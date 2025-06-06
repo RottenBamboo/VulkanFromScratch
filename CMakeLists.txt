@@ -85,6 +85,7 @@ add_executable(${PROJECT_NAME}
         src/RBDescriptorSetLayoutManager.cpp src/RBDescriptorSetLayoutManager.h
         src/RBPipelineLayoutManager.cpp src/RBPipelineLayoutManager.h
         src/RBImageManager.impl.h src/RBImageManager.h
+        src/RBGUI.cpp src/RBGUI.h
         src/RBBufferManager.cpp src/RBBufferManager.h
         feature/RBGBufferPass.cpp feature/RBGBufferPass.h
         feature/RBLightingPass.cpp feature/RBLightingPass.h
