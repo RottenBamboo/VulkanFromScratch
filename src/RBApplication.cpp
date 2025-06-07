@@ -21,6 +21,7 @@ namespace RottenBamboo {
         InitializeSwapChain();
         InitializeDescriptors();
         InitializeGraphicPipeline();
+        InitializeGUI();
         std::cout << "RBApplication::RBApplication()" << std::endl;
     }
 
@@ -85,6 +86,12 @@ namespace RottenBamboo {
 
         lightPassManager.InitializeGraphicPipeline();
         std::cout << "RBApplication::InitializeGraphicPipeline()" << std::endl;
+    };
+
+    void RBApplication::InitializeGUI()
+    {
+        gui.Initialize(windows.GetWindow(), device, swapChain.renderPass);
+        std::cout << "RBApplication::InitializeGUI()" << std::endl;
     };
 
     void RBApplication::transformModelVertex(
@@ -414,7 +421,7 @@ void RBApplication::processModelNode(
         //lighting pass pipeline
         //std::cout << "before lightPassManager::recordCommandBuffer()" << std::endl;
         //std::cout << "descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout = " << descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout << std::endl;
-        lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh);
+        lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh, gui);
 
         //std::cout << "after lightPassManager::recordCommandBuffer()" << std::endl;
 

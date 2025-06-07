@@ -70,6 +70,10 @@ namespace RottenBamboo {
 
         void InitializeGraphicPipeline();
 
+        void InitializeGUI();
+
+        RBGUI gui;
+
         RBWindows windows{WIDTH, HEIGHT, "Vulkan"};
 
         RBDevice device{windows};

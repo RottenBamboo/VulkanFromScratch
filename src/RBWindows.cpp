@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <SDL3/SDL_init.h>
+#include <imgui_impl_sdl3.h>
 
 namespace RottenBamboo {
 
@@ -38,7 +39,7 @@ namespace RottenBamboo {
             windowName.c_str(),
             width,
             height,
-            SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_BORDERLESS
+            SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_FULLSCREEN
         );
 
         if (!window) {
@@ -50,7 +51,11 @@ namespace RottenBamboo {
 
     void RBWindows::PollEvents() {
         SDL_Event event;
+        
         while (SDL_PollEvent(&event)) {
+            
+        ImGui_ImplSDL3_ProcessEvent(&event);
+        
             switch (event.type) {
                 case SDL_EVENT_QUIT:
                     shouldCloseFlag = true;
