@@ -32,3 +32,5 @@ VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
 VkSampleCountFlagBits msaaSamples2 = VK_SAMPLE_COUNT_2_BIT;
 VkExtent2D swapChainExtent;
 uint32_t currentFrame = 0;
+
+ bool checkbox = false;

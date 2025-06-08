@@ -3,13 +3,71 @@
 //
 
 #include "RBGUI.h"
-#include <iostream>
-#include <imgui.h>
-#include <imgui_impl_sdl3.h>
-#include <imgui_impl_vulkan.h>
-
+#include <glm/gtc/type_ptr.hpp>
 namespace RottenBamboo 
 {
+void RBGUI::RenderGizmo(UniformBufferObject& uniformMatrix)
+{
+    ImGuiIO& io = ImGui::GetIO();
+
+
+    ImGuizmo::SetOrthographic(false);
+    ImGuizmo::SetDrawlist(ImGui::GetBackgroundDrawList());
+    ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+
+    static ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
+    static ImGuizmo::MODE mode = ImGuizmo::WORLD;
+
+    ImGui::Begin("Gizmo Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
+
+    ImGui::Text("WantCaptureMouse: %d", io.WantCaptureMouse);
+    
+    if (ImGui::RadioButton("World", mode == ImGuizmo::WORLD)) 
+    mode = ImGuizmo::WORLD;
+
+    ImGui::SameLine();
+
+    if (ImGui::RadioButton("Local", mode == ImGuizmo::LOCAL)) 
+    mode = ImGuizmo::LOCAL;
+
+    if (ImGui::RadioButton("Translate", operation == ImGuizmo::TRANSLATE)) 
+    operation = ImGuizmo::TRANSLATE;
+
+    ImGui::SameLine();
+
+    if (ImGui::RadioButton("Rotate", operation == ImGuizmo::ROTATE)) 
+    operation = ImGuizmo::ROTATE;
+
+    ImGui::SameLine();
+
+    if (ImGui::RadioButton("Scale", operation == ImGuizmo::SCALE)) 
+    operation = ImGuizmo::SCALE;
+
+    ImGui::End();
+
+    glm::mat4 tempModel = uniformMatrix.model;
+
+    ImGuizmo::Manipulate(glm::value_ptr(uniformMatrix.view),
+                         glm::value_ptr(uniformMatrix.proj),
+                         operation, mode,
+                         glm::value_ptr(tempModel));
+
+    //if (ImGuizmo::IsUsing()) 
+    {
+    std::cout << "Gizmo Model Matrix:\n";
+    for (int i = 0; i < 4; ++i)
+        std::cout << tempModel[i][0] << " " << tempModel[i][1] << " " << tempModel[i][2] << " " << tempModel[i][3] << "\n";
+        
+        uniformMatrix.model = tempModel;
+    }
+
+    if (ImGuizmo::IsOver()) {
+        ImGui::Begin("Gizmo Info", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
+        ImGui::Text("Gizmo is hovered!");
+        ImGui::End();
+    }
+
+}
     RBGUI::RBGUI() 
     {
         checkbox = false;
@@ -78,18 +136,19 @@ namespace RottenBamboo
         ImGui_ImplVulkan_Init(&init_info);
     }
 
-    void RBGUI::Render(VkCommandBuffer& commandBuffer)
+    void RBGUI::Render(VkCommandBuffer& commandBuffer, UniformBufferObject& uniformMatirx)
     {
         ImGui_ImplVulkan_NewFrame();
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
         ImGui::SetNextWindowSizeConstraints(ImVec2(200, 100), ImVec2(600, 1000));
-        ImGui::Begin("Example Window", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
         //ImGui::Begin("Example Window");
-        ImGui::Checkbox("Checkbox!", &checkbox);
-        ImGui::Text("IMGUI Test");
-        ImGui::End();
+        //ImGui::Begin("Example Window");
+        //ImGui::Checkbox("Checkbox!", &checkbox);
+        //ImGui::Text("IMGUI Test");
+        //ImGui::End();
 
+        RenderGizmo(uniformMatirx);
         ImGui::Render();
         ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
     }

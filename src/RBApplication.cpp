@@ -22,6 +22,7 @@ namespace RottenBamboo {
         InitializeDescriptors();
         InitializeGraphicPipeline();
         InitializeGUI();
+        InitializeMatrix();
         std::cout << "RBApplication::RBApplication()" << std::endl;
     }
 
@@ -282,20 +283,23 @@ void RBApplication::processModelNode(
         std::cout << "RBApplication::loadModel()" << std::endl;
     }
 
+    void RBApplication::InitializeMatrix()
+{
+    uniformMatrix.view = glm::lookAt(glm::vec3(3, 3, 3),
+                                     glm::vec3(0, 1.3, 0),
+                                     glm::vec3(0, 1, 0));
+    uniformMatrix.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 100.0f);
+    uniformMatrix.proj[1][1] *= -1;
+    uniformMatrix.model = glm::scale(glm::mat4(1.0f), glm::vec3(0.25f));
+}
+
     void RBApplication::updateUniformBuffer(uint32_t currentImage)
     {
         static auto startTime = std::chrono::high_resolution_clock::now();
         auto currentTime = std::chrono::high_resolution_clock::now();
         float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
-        UniformBufferObject ubo{};
-        ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ubo.model = glm::scale(ubo.model, glm::vec3(0.25f, 0.25f, 0.25f));
-        ubo.view = glm::lookAt(glm::vec3(3.0f, 3.0f, 3.0f), glm::vec3(0.0f, 1.3f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float) swapChainExtent.height, 0.1f, 10.0f);
-        ubo.proj[1][1] *= -1;
-
-        memcpy(uniformBuffers[currentImage].bufferMapped, &ubo, sizeof(ubo));
+        
+        memcpy(uniformBuffers[currentImage].bufferMapped, &uniformMatrix, sizeof(UniformBufferObject));
     }
 
     void RBApplication::run() {
@@ -421,7 +425,7 @@ void RBApplication::processModelNode(
         //lighting pass pipeline
         //std::cout << "before lightPassManager::recordCommandBuffer()" << std::endl;
         //std::cout << "descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout = " << descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout << std::endl;
-        lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh, gui);
+        lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh, gui, uniformMatrix);
 
         //std::cout << "after lightPassManager::recordCommandBuffer()" << std::endl;
 

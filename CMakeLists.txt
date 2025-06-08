@@ -47,6 +47,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
     set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/sdl3/lib")
     set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui")
+    set(IMGUIZMO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(GLFW_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/Windows/glfw-3.3.8.bin.WIN64/include")
     set(GLFW_BIN_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/Windows/glfw-3.3.8.bin.WIN64/lib-vc2022")
@@ -54,6 +55,7 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
     set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/sdl3/lib")
     set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui")
+    set(IMGUIZMO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo")
 endif()
 
 # set STB and tinyobjloader path
@@ -95,7 +97,9 @@ add_executable(${PROJECT_NAME}
         ${IMGUI_DIR}/imgui_widgets.cpp
         ${IMGUI_DIR}/imgui_tables.cpp
         ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
-        ${IMGUI_DIR}/backends/imgui_impl_vulkan.cpp)
+        ${IMGUI_DIR}/backends/imgui_impl_vulkan.cpp
+        ${IMGUIZMO_DIR}/ImGuizmo.h ${IMGUIZMO_DIR}/ImGuizmo.cpp
+        )
 
 # add Assimp header path
 
@@ -106,6 +110,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_INCLUDE_DIRS})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR}/backends)
+target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUIZMO_DIR})
 # link Assimp library
 # target_link_libraries(${PROJECT_NAME} assimp)
 

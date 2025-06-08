@@ -117,7 +117,7 @@ namespace RottenBamboo {
         vkDestroyDescriptorSetLayout(rbDevice.device, rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout, nullptr);
         std::cout << "RBLightingPass::~RBLightingPass()" << std::endl;
     }
-    void RBLightingPass::recordCommandBuffer(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1>& descriptors, RBMesh &mesh, RBGUI& gui) 
+    void RBLightingPass::recordCommandBuffer(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1>& descriptors, RBMesh &mesh, RBGUI& gui, UniformBufferObject& uniformMatirx) 
     {
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
@@ -127,7 +127,7 @@ namespace RottenBamboo {
 
         vkCmdDraw(commandBuffer, 3, 1, 0, 0);
 
-        gui.Render(commandBuffer);
+        gui.Render(commandBuffer, uniformMatirx);
 
         vkCmdEndRenderPass(commandBuffer);
     }
