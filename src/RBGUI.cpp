@@ -18,9 +18,9 @@ void RBGUI::RenderGizmo(UniformBufferObject& uniformMatrix)
     static ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
     static ImGuizmo::MODE mode = ImGuizmo::WORLD;
 
-    ImGui::Begin("Gizmo Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
+    //ImGui::Begin("Gizmo Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
 
-    ImGui::Text("WantCaptureMouse: %d", io.WantCaptureMouse);
+    //ImGui::Text("WantCaptureMouse: %d", io.WantCaptureMouse);
     
     if (ImGui::RadioButton("World", mode == ImGuizmo::WORLD)) 
     mode = ImGuizmo::WORLD;
@@ -61,11 +61,11 @@ void RBGUI::RenderGizmo(UniformBufferObject& uniformMatrix)
         uniformMatrix.model = tempModel;
     }
 
-    if (ImGuizmo::IsOver()) {
-        ImGui::Begin("Gizmo Info", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
-        ImGui::Text("Gizmo is hovered!");
-        ImGui::End();
-    }
+    // if (ImGuizmo::IsOver()) {
+    //     ImGui::Begin("Gizmo Info", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
+    //     ImGui::Text("Gizmo is hovered!");
+    //     //ImGui::End();
+    // }
 
 }
     RBGUI::RBGUI() 
@@ -142,7 +142,7 @@ void RBGUI::RenderGizmo(UniformBufferObject& uniformMatrix)
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
         ImGui::SetNextWindowSizeConstraints(ImVec2(200, 100), ImVec2(600, 1000));
-        //ImGui::Begin("Example Window");
+        ImGui::Begin("Example Window");
         //ImGui::Begin("Example Window");
         //ImGui::Checkbox("Checkbox!", &checkbox);
         //ImGui::Text("IMGUI Test");
