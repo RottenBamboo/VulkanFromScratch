@@ -10,63 +10,57 @@ void RBGUI::RenderGizmo(UniformBufferObject& uniformMatrix)
 {
     ImGuiIO& io = ImGui::GetIO();
 
-
+    // 设置 gizmo 画布
     ImGuizmo::SetOrthographic(false);
-    ImGuizmo::SetDrawlist(ImGui::GetBackgroundDrawList());
+    ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList());  // ✅ 绝对不要传 background drawlist
     ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 
+    // 控制模式
     static ImGuizmo::OPERATION operation = ImGuizmo::TRANSLATE;
     static ImGuizmo::MODE mode = ImGuizmo::WORLD;
 
-    //ImGui::Begin("Gizmo Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
+    // ✅ Vulkan 风格投影需翻转 Y
+    glm::mat4 proj = uniformMatrix.proj;
+    //proj[1][1] *= -1.0f;
 
-    //ImGui::Text("WantCaptureMouse: %d", io.WantCaptureMouse);
-    
-    if (ImGui::RadioButton("World", mode == ImGuizmo::WORLD)) 
-    mode = ImGuizmo::WORLD;
+    glm::mat4 model = uniformMatrix.model;
+    model = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+    glm::mat4 view = uniformMatrix.view;
 
+    // 调用 Gizmo
+    ImGuizmo::Manipulate(glm::value_ptr(view),
+                         glm::value_ptr(proj),
+                         operation,
+                         mode,
+                         glm::value_ptr(model));
+
+if (ImGuizmo::IsOver() && ImGuizmo::IsUsing()) {
+    std::cout << "✅ 用户正在拖动 Gizmo！" << std::endl;
+}
+    // 控制 UI 放在单独窗口
+    ImGui::Begin("Gizmo Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::RadioButton("Translate", (int*)&operation, ImGuizmo::TRANSLATE);
     ImGui::SameLine();
-
-    if (ImGui::RadioButton("Local", mode == ImGuizmo::LOCAL)) 
-    mode = ImGuizmo::LOCAL;
-
-    if (ImGui::RadioButton("Translate", operation == ImGuizmo::TRANSLATE)) 
-    operation = ImGuizmo::TRANSLATE;
-
+    ImGui::RadioButton("Rotate", (int*)&operation, ImGuizmo::ROTATE);
     ImGui::SameLine();
+    ImGui::RadioButton("Scale", (int*)&operation, ImGuizmo::SCALE);
 
-    if (ImGui::RadioButton("Rotate", operation == ImGuizmo::ROTATE)) 
-    operation = ImGuizmo::ROTATE;
-
+    ImGui::RadioButton("World", (int*)&mode, ImGuizmo::WORLD);
     ImGui::SameLine();
-
-    if (ImGui::RadioButton("Scale", operation == ImGuizmo::SCALE)) 
-    operation = ImGuizmo::SCALE;
-
+    ImGui::RadioButton("Local", (int*)&mode, ImGuizmo::LOCAL);
     ImGui::End();
-
-    glm::mat4 tempModel = uniformMatrix.model;
-
-    ImGuizmo::Manipulate(glm::value_ptr(uniformMatrix.view),
-                         glm::value_ptr(uniformMatrix.proj),
-                         operation, mode,
-                         glm::value_ptr(tempModel));
-
-    //if (ImGuizmo::IsUsing()) 
+    if (ImGuizmo::IsOver()) 
     {
-    std::cout << "Gizmo Model Matrix:\n";
-    for (int i = 0; i < 4; ++i)
-        std::cout << tempModel[i][0] << " " << tempModel[i][1] << " " << tempModel[i][2] << " " << tempModel[i][3] << "\n";
-        
-        uniformMatrix.model = tempModel;
+        ImGui::Begin("DEBUG");
+
+        uniformMatrix.model = model;
+        ImGui::Text("Mouse is over Gizmo!");
+        ImGui::End();
+        if (ImGuizmo::IsUsing()) 
+        {
+            ImGui::Text("✅ Gizmo 正在被拖动！");
+        }
     }
-
-    // if (ImGuizmo::IsOver()) {
-    //     ImGui::Begin("Gizmo Info", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
-    //     ImGui::Text("Gizmo is hovered!");
-    //     //ImGui::End();
-    // }
-
 }
     RBGUI::RBGUI() 
     {
@@ -135,22 +129,29 @@ void RBGUI::RenderGizmo(UniformBufferObject& uniformMatrix)
 
         ImGui_ImplVulkan_Init(&init_info);
     }
+void RBGUI::Render(VkCommandBuffer& commandBuffer, UniformBufferObject& uniformMatrix)
+{
+    ImGui_ImplVulkan_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
+    
+    ImGui::ShowMetricsWindow();
+ImVec2 mousePos = ImGui::GetMousePos();
+bool isUsing = ImGuizmo::IsUsing();
+bool isOver = ImGuizmo::IsOver();
+bool mouseDown = ImGui::IsMouseDown(0); // 左键
 
-    void RBGUI::Render(VkCommandBuffer& commandBuffer, UniformBufferObject& uniformMatirx)
-    {
-        ImGui_ImplVulkan_NewFrame();
-        ImGui_ImplSDL3_NewFrame();
-        ImGui::NewFrame();
-        ImGui::SetNextWindowSizeConstraints(ImVec2(200, 100), ImVec2(600, 1000));
-        ImGui::Begin("Example Window");
-        //ImGui::Begin("Example Window");
-        //ImGui::Checkbox("Checkbox!", &checkbox);
-        //ImGui::Text("IMGUI Test");
-        //ImGui::End();
+ImGui::Begin("Input Debug");
+ImGui::Text("MousePos: %.1f, %.1f", mousePos.x, mousePos.y);
+ImGui::Text("ImGuizmo::IsOver: %s", isOver ? "true" : "false");
+ImGui::Text("ImGuizmo::IsUsing: %s", isUsing ? "true" : "false");
+ImGui::Text("MouseDown[0]: %s", mouseDown ? "true" : "false");
+ImGui::End();
+    // ❗ 不要有 ImGui::Begin() 包裹整个渲染区域
+    RenderGizmo(uniformMatrix);
 
-        RenderGizmo(uniformMatirx);
-        ImGui::Render();
-        ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
-    }
+    ImGui::Render();
+    ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
+}
 }
 // ...existing code...
