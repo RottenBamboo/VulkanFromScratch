@@ -72,11 +72,13 @@ namespace RottenBamboo {
 
         void InitializeGUI();
 
-        RBGUI gui;
+        void InitializeMatrix();
 
         RBWindows windows{WIDTH, HEIGHT, "Vulkan"};
 
         RBDevice device{windows};
+
+        RBGUI gui{device};
 
         RBCommandBuffer commandBuffer{device};
 
@@ -105,6 +107,8 @@ namespace RottenBamboo {
         RBLightingPass lightPassManager{lightPassColorAttachmentCount, true, false, device, descriptorsLighting, pipelineConfig, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
 
         RBBuffer<UniformBufferObject> uniformBuffers[MAX_FRAMES_IN_FLIGHT]{{device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}, {device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}};
+
+        UniformBufferObject uniformMatrix{};
 
     private:
 

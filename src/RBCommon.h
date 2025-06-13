@@ -212,4 +212,5 @@ extern VkSampleCountFlagBits msaaSamples;
 extern VkSampleCountFlagBits msaaSamples2;
 extern VkExtent2D swapChainExtent;
 extern uint32_t currentFrame;
+extern bool checkbox;
 
