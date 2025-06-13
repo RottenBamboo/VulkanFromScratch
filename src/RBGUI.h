@@ -17,25 +17,25 @@ namespace RottenBamboo
     
     public:
 
-
         VkDescriptorPool imguiDescriptorPool;    
 
-        RBGUI();
+        RBGUI(RBDevice &device);
 
         ~RBGUI();
 
-        void Initialize(SDL_Window* window, RBDevice& device, VkRenderPass renderPass);
+        void Initialize(SDL_Window* window, VkRenderPass renderPass);
 
-        void Reinitialize(SDL_Window* window, RBDevice& device, VkRenderPass renderPass);
+        //void Reinitialize(SDL_Window* window, VkRenderPass renderPass);
 
         void Render(VkCommandBuffer& commandBuffer, UniformBufferObject& uniformMatrix);
 
-        void createDescriptorPool(RBDevice& device);
+        void createDescriptorPool();
 
     public:
         void RenderGizmo(UniformBufferObject& uniformMatrix);
 
     private:
+        RBDevice &rbDevice;
         bool gizmoActive = true;
         ImGuizmo::OPERATION currentOperation = ImGuizmo::TRANSLATE;
         ImGuizmo::MODE currentMode = ImGuizmo::WORLD;

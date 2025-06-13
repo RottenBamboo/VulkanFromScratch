@@ -74,11 +74,11 @@ namespace RottenBamboo {
 
         void InitializeMatrix();
 
-        RBGUI gui;
-
         RBWindows windows{WIDTH, HEIGHT, "Vulkan"};
 
         RBDevice device{windows};
+
+        RBGUI gui{device};
 
         RBCommandBuffer commandBuffer{device};
 

@@ -91,7 +91,7 @@ namespace RottenBamboo {
 
     void RBApplication::InitializeGUI()
     {
-        gui.Initialize(windows.GetWindow(), device, swapChain.renderPass);
+        gui.Initialize(windows.GetWindow(), swapChain.renderPass);
         std::cout << "RBApplication::InitializeGUI()" << std::endl;
     };
 

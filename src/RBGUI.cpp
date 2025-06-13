@@ -47,7 +47,7 @@ namespace RottenBamboo
         ImGui::RadioButton("Local", (int *)&mode, ImGuizmo::LOCAL);
         ImGui::End();
     }
-    RBGUI::RBGUI()
+    RBGUI::RBGUI(RBDevice &device) : rbDevice(device)
     {
         checkbox = false;
         std::cout << "RBGUI::RBGUI()" << std::endl;
@@ -64,14 +64,20 @@ namespace RottenBamboo
         ImGui_ImplVulkan_Shutdown();
         ImGui_ImplSDL3_Shutdown();
         ImGui::DestroyContext();
+        
+        if (imguiDescriptorPool != VK_NULL_HANDLE)
+        {
+            vkDestroyDescriptorPool(rbDevice.device, imguiDescriptorPool, nullptr);
+            imguiDescriptorPool = VK_NULL_HANDLE;
+        }
         std::cout << "RBGUI::~RBGUI()" << std::endl;
     }
 
-    void RBGUI::createDescriptorPool(RBDevice &device)
+    void RBGUI::createDescriptorPool()
     {
         if (imguiDescriptorPool != VK_NULL_HANDLE)
         {
-            vkDestroyDescriptorPool(device.device, imguiDescriptorPool, nullptr);
+            vkDestroyDescriptorPool(rbDevice.device, imguiDescriptorPool, nullptr);
             imguiDescriptorPool = VK_NULL_HANDLE;
         }
         VkDescriptorPoolSize poolSizes[] =
@@ -90,21 +96,21 @@ namespace RottenBamboo
         poolInfo.poolSizeCount = static_cast<uint32_t>(std::size(poolSizes));
         poolInfo.pPoolSizes = poolSizes;
 
-        vkCreateDescriptorPool(device.device, &poolInfo, nullptr, &imguiDescriptorPool);
+        vkCreateDescriptorPool(rbDevice.device, &poolInfo, nullptr, &imguiDescriptorPool);
     }
 
-    void RBGUI::Initialize(SDL_Window *window, RBDevice &device, VkRenderPass renderPass)
+    void RBGUI::Initialize(SDL_Window *window, VkRenderPass renderPass)
     {
-        createDescriptorPool(device);
+        createDescriptorPool();
 
         ImGui_ImplSDL3_InitForVulkan(window);
 
         ImGui_ImplVulkan_InitInfo init_info = {};
-        init_info.Instance = device.instance;
-        init_info.PhysicalDevice = device.physicalDevice;
-        init_info.Device = device.device;
-        init_info.QueueFamily = device.findQueueFamilies(device.physicalDevice).graphicsFamily.value();
-        init_info.Queue = device.graphicsQueue;
+        init_info.Instance = rbDevice.instance;
+        init_info.PhysicalDevice = rbDevice.physicalDevice;
+        init_info.Device = rbDevice.device;
+        init_info.QueueFamily = rbDevice.findQueueFamilies(rbDevice.physicalDevice).graphicsFamily.value();
+        init_info.Queue = rbDevice.graphicsQueue;
         init_info.PipelineCache = VK_NULL_HANDLE;
         init_info.DescriptorPool = imguiDescriptorPool;
         init_info.MinImageCount = MAX_FRAMES_IN_FLIGHT;
