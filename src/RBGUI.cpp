@@ -12,6 +12,8 @@ namespace RottenBamboo
 
         ImGuizmo::SetOrthographic(false);
         ImGuizmo::BeginFrame();
+        ImVec2 mouse = ImGui::GetMousePos();
+        ImGui::GetForegroundDrawList()->AddCircle(mouse, 5.0f, IM_COL32(255, 0, 0, 255), 32, 2.0f);
         ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList());
         ImGuiIO &io = ImGui::GetIO();
         ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
@@ -47,7 +49,7 @@ namespace RottenBamboo
         ImGui::RadioButton("Local", (int *)&mode, ImGuizmo::LOCAL);
         ImGui::End();
     }
-    RBGUI::RBGUI(RBDevice &device) : rbDevice(device)
+    RBGUI::RBGUI(RBDevice &device, RBWindows &window) : rbDevice(device), rbWindows(window)
     {
         checkbox = false;
         std::cout << "RBGUI::RBGUI()" << std::endl;
@@ -99,11 +101,11 @@ namespace RottenBamboo
         vkCreateDescriptorPool(rbDevice.device, &poolInfo, nullptr, &imguiDescriptorPool);
     }
 
-    void RBGUI::Initialize(SDL_Window *window, VkRenderPass renderPass)
+    void RBGUI::Initialize(VkRenderPass renderPass)
     {
         createDescriptorPool();
 
-        ImGui_ImplSDL3_InitForVulkan(window);
+        ImGui_ImplSDL3_InitForVulkan(rbWindows.window);
 
         ImGui_ImplVulkan_InitInfo init_info = {};
         init_info.Instance = rbDevice.instance;

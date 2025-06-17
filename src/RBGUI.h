@@ -19,11 +19,11 @@ namespace RottenBamboo
 
         VkDescriptorPool imguiDescriptorPool;    
 
-        RBGUI(RBDevice &device);
+        RBGUI(RBDevice &device, RBWindows &windows);
 
         ~RBGUI();
 
-        void Initialize(SDL_Window* window, VkRenderPass renderPass);
+        void Initialize(VkRenderPass renderPass);
 
         //void Reinitialize(SDL_Window* window, VkRenderPass renderPass);
 
@@ -36,6 +36,7 @@ namespace RottenBamboo
 
     private:
         RBDevice &rbDevice;
+        RBWindows &rbWindows;
         bool gizmoActive = true;
         ImGuizmo::OPERATION currentOperation = ImGuizmo::TRANSLATE;
         ImGuizmo::MODE currentMode = ImGuizmo::WORLD;

@@ -79,7 +79,7 @@ namespace RottenBamboo {
 
         RBDevice device{windows};
 
-        RBGUI gui{device};
+        RBGUI gui{device, windows};
 
         RBCommandBuffer commandBuffer{device};
 
