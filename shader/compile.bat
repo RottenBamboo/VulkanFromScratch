@@ -23,6 +23,9 @@ glslc "gBuffer.vert" -o "bin/gBufferVert.spv"
 glslc "gBuffer.frag" -o "bin/gBufferFrag.spv"
 glslc "lighting.vert" -o "bin/lightingVert.spv"
 glslc "lighting.frag" -o "bin/lightingFrag.spv"
+glslc "gBuffer.frag" -o "bin/gBufferFrag.spv"
+glslc "sky.vert" -o "bin/skyVert.spv"
+glslc "sky.frag" -o "bin/skyFrag.spv"
 
 echo Shaders compile finished!
 pause

@@ -19,5 +19,8 @@ glslc "gBuffer.vert" -o "$OUTPUT_DIR/gBufferVert.spv"
 glslc "gBuffer.frag" -o "$OUTPUT_DIR/gBufferFrag.spv"
 glslc "lighting.vert" -o "$OUTPUT_DIR/lightingVert.spv"
 glslc "lighting.frag" -o "$OUTPUT_DIR/lightingFrag.spv"
+glslc "gBuffer.frag" -o "$OUTPUT_DIR/gBufferFrag.spv"
+glslc "sky.vert" -o "$OUTPUT_DIR/skyVert.spv"
+glslc "sky.frag" -o "$OUTPUT_DIR/skyFrag.spv"
 
 echo "Shaders compiled successfully!"

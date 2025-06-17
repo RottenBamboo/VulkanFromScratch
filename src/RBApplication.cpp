@@ -86,6 +86,8 @@ namespace RottenBamboo {
         gBufferPass.InitializeGraphicPipeline();
 
         lightPassManager.InitializeGraphicPipeline();
+
+        skyPassManager.InitializeGraphicPipeline();
         std::cout << "RBApplication::InitializeGraphicPipeline()" << std::endl;
     };
 
@@ -425,6 +427,8 @@ void RBApplication::processModelNode(
         //lighting pass pipeline
         //std::cout << "before lightPassManager::recordCommandBuffer()" << std::endl;
         //std::cout << "descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout = " << descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout << std::endl;
+        skyPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh);
+        
         lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh, gui, uniformMatrix);
 
         //std::cout << "after lightPassManager::recordCommandBuffer()" << std::endl;

@@ -9,6 +9,7 @@
 #include "RBCommandBuffer.h"
 #include "RBSwapChain.h"
 #include "RBGBufferPass.h"
+#include "RBSkyPass.h"
 #include "RBLightingPass.h"
 #include "RBBuffer.h"
 #include "RBMesh.h"
@@ -103,7 +104,9 @@ namespace RottenBamboo {
         RBSwapChain swapChain{device, windows, commandBuffer, descriptors};
         
         RBGBufferPass gBufferPass{gBufferPassAttachmentCount, false, true, device, descriptorsGBuffer, descriptorsAttachment, pipelineConfig, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
-        
+
+        RBSkyPass skyPassManager{lightPassColorAttachmentCount, true, false, device, descriptorsLighting, pipelineConfig, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
+
         RBLightingPass lightPassManager{lightPassColorAttachmentCount, true, false, device, descriptorsLighting, pipelineConfig, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
 
         RBBuffer<UniformBufferObject> uniformBuffers[MAX_FRAMES_IN_FLIGHT]{{device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}, {device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}};

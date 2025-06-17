@@ -91,6 +91,7 @@ add_executable(${PROJECT_NAME}
         src/RBBufferManager.cpp src/RBBufferManager.h
         feature/RBGBufferPass.cpp feature/RBGBufferPass.h
         feature/RBLightingPass.cpp feature/RBLightingPass.h
+        feature/RBSkyPass.cpp feature/RBSkyPass.h
 
         ${IMGUI_DIR}/imgui.cpp
         ${IMGUI_DIR}/imgui_draw.cpp
