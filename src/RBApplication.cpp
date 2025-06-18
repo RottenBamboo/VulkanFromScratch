@@ -513,6 +513,8 @@ void RBApplication::processModelNode(
             gBufferPass.clearFrameBuffers();
             gBufferPass.createGraphicsPipeline();
 
+            skyPassManager.createGraphicsPipeline();
+
             lightPassManager.createGraphicsPipeline();
         }
         else if (result != VK_SUCCESS) {

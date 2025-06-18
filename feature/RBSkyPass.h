@@ -21,8 +21,6 @@ namespace RottenBamboo {
 
         RBPipelineConfig rbPipelineConfig;
 
-        VkPipelineDepthStencilStateCreateInfo depthStencilState;
-
         void setupShaders() override;
 
         void setupPipelineStates() override;

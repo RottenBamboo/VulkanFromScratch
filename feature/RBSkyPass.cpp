@@ -117,14 +117,14 @@ namespace RottenBamboo {
         depthStencil.flags = 0;
         depthStencil.depthTestEnable = VK_FALSE;
         depthStencil.depthWriteEnable = VK_FALSE;
-        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
         depthStencil.depthBoundsTestEnable = VK_FALSE;
         depthStencil.stencilTestEnable = VK_FALSE;
         depthStencil.front = {};
         depthStencil.back = {};
         depthStencil.minDepthBounds = 0.0f;
         depthStencil.maxDepthBounds = 1.0f;
-        std::cout << "RBLightingPass::fillDepthStencilStateCreateInfo()" << std::endl;
+        std::cout << "RBSkyPass::fillDepthStencilStateCreateInfo()" << std::endl;
     }
 
     RBSkyPass::~RBSkyPass()
