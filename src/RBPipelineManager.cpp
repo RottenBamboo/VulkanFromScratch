@@ -139,15 +139,15 @@ namespace RottenBamboo {
     {
         depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
         depthStencil.flags = flags;
-        depthStencil.depthTestEnable = VK_TRUE;
-        depthStencil.depthWriteEnable = VK_TRUE;
-        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-        depthStencil.depthBoundsTestEnable = VK_FALSE;
-        depthStencil.stencilTestEnable = VK_FALSE;
+        depthStencil.depthTestEnable = depthTestEnable;
+        depthStencil.depthWriteEnable = depthWriteEnable;
+        depthStencil.depthCompareOp = depthCompareOp;
+        depthStencil.depthBoundsTestEnable = depthBoundsTestEnable;
+        depthStencil.stencilTestEnable = stencilTestEnable;
         depthStencil.front = front;
         depthStencil.back = back;
-        depthStencil.minDepthBounds = 0.0f;
-        depthStencil.maxDepthBounds = 1.0f;
+        depthStencil.minDepthBounds = minDepthBounds;
+        depthStencil.maxDepthBounds = maxDepthBounds;
         std::cout << "RBPipelineManager::fillDepthStencilStateCreateInfo()" << std::endl;
     }
 
