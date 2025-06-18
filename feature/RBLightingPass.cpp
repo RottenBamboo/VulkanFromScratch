@@ -111,6 +111,21 @@ namespace RottenBamboo {
         createGraphicsPipeline();
         std::cout << "RBLightingPass::InitializeGraphicPipeline()" << std::endl;
     }
+    void RBLightingPass::fillDepthStencilStateCreateInfo()
+    {
+        depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+        depthStencil.flags = 0;
+        depthStencil.depthTestEnable = VK_TRUE;
+        depthStencil.depthWriteEnable = VK_TRUE;
+        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+        depthStencil.depthBoundsTestEnable = VK_FALSE;
+        depthStencil.stencilTestEnable = VK_FALSE;
+        depthStencil.front = {};
+        depthStencil.back = {};
+        depthStencil.minDepthBounds = 0.0f;
+        depthStencil.maxDepthBounds = 1.0f;
+        std::cout << "RBLightingPass::fillDepthStencilStateCreateInfo()" << std::endl;
+    }
 
     RBLightingPass::~RBLightingPass()
     {

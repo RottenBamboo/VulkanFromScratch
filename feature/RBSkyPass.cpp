@@ -81,7 +81,7 @@ namespace RottenBamboo {
         RBPipelineManager::fillGraphicsPipelineCreateInfo(stageCount, pStages, pVertexInputState, pInputAssemblyState, pTessellationState, pViewportState, pRasterizationState, pMultisampleState, pDepthStencilState, pColorBlendState, pDynamicState, layout, subpass, basePipelineHandle, basePipelineIndex);
         std::cout << "RBSkyPass::fillGraphicsPipelineCreateInfo()" << std::endl;
     }
-
+    
     void RBSkyPass::createGraphicsPipeline()
     {
         setupShaders();
@@ -110,6 +110,21 @@ namespace RottenBamboo {
     {
         createGraphicsPipeline();
         std::cout << "RBSkyPass::InitializeGraphicPipeline()" << std::endl;
+    }
+    void RBSkyPass::fillDepthStencilStateCreateInfo()
+    {
+        depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+        depthStencil.flags = 0;
+        depthStencil.depthTestEnable = VK_FALSE;
+        depthStencil.depthWriteEnable = VK_FALSE;
+        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+        depthStencil.depthBoundsTestEnable = VK_FALSE;
+        depthStencil.stencilTestEnable = VK_FALSE;
+        depthStencil.front = {};
+        depthStencil.back = {};
+        depthStencil.minDepthBounds = 0.0f;
+        depthStencil.maxDepthBounds = 1.0f;
+        std::cout << "RBLightingPass::fillDepthStencilStateCreateInfo()" << std::endl;
     }
 
     RBSkyPass::~RBSkyPass()

@@ -67,15 +67,7 @@ namespace RottenBamboo {
                                             int32_t basePipelineIndex
         ) override;
 
-        // void fillColorBlendAttachmentState(VkBool32 blendEnable,
-        //                                     VkBlendFactor srcColorBlendFactor,
-        //                                     VkBlendFactor dstColorBlendFactor,
-        //                                     VkBlendOp colorBlendOp,
-        //                                     VkBlendFactor srcAlphaBlendFactor,
-        //                                     VkBlendFactor dstAlphaBlendFactor,
-        //                                     VkBlendOp alphaBlendOp,
-        //                                     VkColorComponentFlags colorWriteMask
-        // ) override;
+        void fillDepthStencilStateCreateInfo() override;
 
         virtual void fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName, RBShaderModule &shaderModule);
 

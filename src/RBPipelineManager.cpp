@@ -126,31 +126,6 @@ namespace RottenBamboo {
         std::cout << "RBPipelineManager::fillMultipleSampleStateCreateInfo()" << std::endl;
     }
 
-    void RBPipelineManager::fillDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateFlags flags,
-                                                                   VkBool32 depthTestEnable,
-                                                                   VkBool32 depthWriteEnable,
-                                                                   VkCompareOp depthCompareOp,
-                                                                   VkBool32 depthBoundsTestEnable,
-                                                                   VkBool32 stencilTestEnable,
-                                                                   VkStencilOpState front,
-                                                                   VkStencilOpState back,
-                                                                   float minDepthBounds,
-                                                                   float maxDepthBounds)
-    {
-        depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-        depthStencil.flags = flags;
-        depthStencil.depthTestEnable = depthTestEnable;
-        depthStencil.depthWriteEnable = depthWriteEnable;
-        depthStencil.depthCompareOp = depthCompareOp;
-        depthStencil.depthBoundsTestEnable = depthBoundsTestEnable;
-        depthStencil.stencilTestEnable = stencilTestEnable;
-        depthStencil.front = front;
-        depthStencil.back = back;
-        depthStencil.minDepthBounds = minDepthBounds;
-        depthStencil.maxDepthBounds = maxDepthBounds;
-        std::cout << "RBPipelineManager::fillDepthStencilStateCreateInfo()" << std::endl;
-    }
-
     void RBPipelineManager::fillColorBlendAttachmentState(VkBool32 blendEnable,
                                                                  VkBlendFactor srcColorBlendFactor,
                                                                  VkBlendFactor dstColorBlendFactor,
@@ -438,7 +413,8 @@ namespace RottenBamboo {
         createFrameBuffers();
         fillRasterizerStateCreateInfo(VK_FALSE, VK_FALSE, VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, VK_FRONT_FACE_CLOCKWISE, VK_FALSE, 0.0f, 0.0f, 0.0f, 1.0f);
         fillMultipleSampleStateCreateInfo(0, msaaSamples, VK_TRUE, 0.2f, nullptr, VK_FALSE, VK_FALSE);
-        fillDepthStencilStateCreateInfo(0, VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS, VK_FALSE, VK_FALSE, {}, {}, 0.0f, 1.0f);
+        //fillDepthStencilStateCreateInfo(0, VK_TRUE, VK_TRUE, VK_COMPARE_OP_LESS, VK_FALSE, VK_FALSE, {}, {}, 0.0f, 1.0f);
+        fillDepthStencilStateCreateInfo();
         fillColorBlendAttachmentState(VK_TRUE, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD,
                                       VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO, VK_BLEND_OP_ADD,
                                       VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT);

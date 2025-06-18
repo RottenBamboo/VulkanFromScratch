@@ -60,6 +60,8 @@ namespace RottenBamboo {
                                             int32_t basePipelineIndex
         ) override;
 
+        void fillDepthStencilStateCreateInfo() override;
+
         virtual void fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName, RBShaderModule &shaderModule);
 
         virtual void recordCommandBuffer(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1>& descriptors, RBMesh &mesh, RBGUI& gui, UniformBufferObject& uniformMatirx);

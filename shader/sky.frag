@@ -39,5 +39,5 @@ void main()
 
     //vec3 color = ambientLight + diffuse;
 
-    outColor = vec4(color, 1.0);
+    vec4(0.1, 0.3, 0.6, 1.0);
 }

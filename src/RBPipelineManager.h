@@ -91,16 +91,7 @@ namespace RottenBamboo {
                                                        VkBool32 alphaToCoverageEnable,
                                                        VkBool32 alphaToOneEnable);
 
-        virtual void fillDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateFlags flags,
-                                                     VkBool32 depthTestEnable,
-                                                     VkBool32 depthWriteEnable,
-                                                     VkCompareOp depthCompareOp,
-                                                     VkBool32 depthBoundsTestEnable,
-                                                     VkBool32 stencilTestEnable,
-                                                     VkStencilOpState front,
-                                                     VkStencilOpState back,
-                                                     float minDepthBounds,
-                                                     float maxDepthBounds);
+        virtual void fillDepthStencilStateCreateInfo() = 0;
 
         virtual void fillColorBlendAttachmentState(VkBool32 blendEnable,
                                                    VkBlendFactor srcColorBlendFactor,
