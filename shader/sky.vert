@@ -27,7 +27,6 @@ void main()
     fragColor = inColor;
     //fragTexCoord = inTexCoord;
     vec2 pos = positions[gl_VertexIndex];
-    //gl_Position = vec4(pos, 1.0, 1.0);
     gl_Position = vec4(pos, 1.0, 1.0);
 
     // NDC [-1,1] -> UV [0,1]

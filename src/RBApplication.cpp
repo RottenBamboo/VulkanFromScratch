@@ -410,32 +410,12 @@ void RBApplication::processModelNode(
         }
 
         
-        VkRenderPassBeginInfo skyBoxgRenderPassInfo{};
-        skyBoxgRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        skyBoxgRenderPassInfo.renderPass = swapChain.renderPass;
-        skyBoxgRenderPassInfo.framebuffer = swapChain.swapChainFrameBuffers[imageIndex];
-        skyBoxgRenderPassInfo.renderArea.offset = {0, 0};
-        skyBoxgRenderPassInfo.renderArea.extent = swapChainExtent;
-
-        std::array<VkClearValue, 2> skyBoxClearValues{};
-        skyBoxClearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
-        skyBoxClearValues[1].depthStencil = {1.0f, 0};
-
-        skyBoxgRenderPassInfo.clearValueCount = static_cast<uint32_t>(skyBoxClearValues.size());
-        skyBoxgRenderPassInfo.pClearValues = skyBoxClearValues.data();
-
-        //lighting pass pipeline
-        //std::cout << "before lightPassManager::recordCommandBuffer()" << std::endl;
-        //std::cout << "descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout = " << descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout << std::endl;
-        //skyPassManager.recordCommandBuffer(commandBuffer, skyBoxgRenderPassInfo, descriptorsLighting, mesh);
-        
         VkRenderPassBeginInfo lightingRenderPassInfo{};
         lightingRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         lightingRenderPassInfo.renderPass = swapChain.renderPass;
         lightingRenderPassInfo.framebuffer = swapChain.swapChainFrameBuffers[imageIndex];
         lightingRenderPassInfo.renderArea.offset = {0, 0};
         lightingRenderPassInfo.renderArea.extent = swapChainExtent;
-
 
         std::array<VkClearValue, 2> lightingClearValues{};
         lightingClearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
@@ -444,6 +424,11 @@ void RBApplication::processModelNode(
         lightingRenderPassInfo.clearValueCount = static_cast<uint32_t>(lightingClearValues.size());
         lightingRenderPassInfo.pClearValues = lightingClearValues.data();
 
+        //lighting pass pipeline
+        //std::cout << "before lightPassManager::recordCommandBuffer()" << std::endl;
+        //std::cout << "descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout = " << descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout << std::endl;
+        skyPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh);
+        
         lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh, gui, uniformMatrix);
 
         //std::cout << "after lightPassManager::recordCommandBuffer()" << std::endl;
