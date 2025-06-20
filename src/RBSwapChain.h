@@ -28,6 +28,7 @@ namespace RottenBamboo {
         std::vector<VkSemaphore> renderFinishedSemaphores;
         std::vector<VkFence> inFlightFences;
         VkSwapchainKHR swapChain;
+        VkImageView depthImageView;
     private:
 
         std::vector<VkImageView> swapChainImageViews;
@@ -37,7 +38,6 @@ namespace RottenBamboo {
 
         VkImage depthImage;
         VkDeviceMemory depthImageMemory;
-        VkImageView depthImageView;
 
         VkFormat findSupportedFormat(const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
@@ -64,9 +64,13 @@ namespace RottenBamboo {
 
     public:
 
+        void createFrameBuffers(VkImageView& depthImageViewGBuffer);
+
         void InitializeSwapChain();
 
-        void recreateSwapChain();
+        void InitializeSwapChain(VkImageView& depthImageViewGBuffer);
+
+        void recreateSwapChain(VkImageView& depthImageViewGBuffer);
 
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice &device, VkSurfaceKHR *surface);
 
