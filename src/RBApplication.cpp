@@ -71,7 +71,7 @@ namespace RottenBamboo {
 
     void RBApplication::InitializeDescriptors()
     {
-        swapChain.CreateSwapChain(swapChain.refDevice, swapChain.refWindow);
+        swapChain.SetSwapChainExtent();
         descriptorsGBuffer.InitializeDescriptors();
 
         descriptors.InitializeDescriptors();
@@ -365,7 +365,7 @@ void RBApplication::processModelNode(
         depthBarrier.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
         depthBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
         depthBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        depthBarrier.image = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[4].image;
+        depthBarrier.image = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles.back().image;
         depthBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
         depthBarrier.subresourceRange.baseMipLevel = 0;
         depthBarrier.subresourceRange.levelCount = 1;
@@ -406,6 +406,7 @@ void RBApplication::processModelNode(
 
             descriptorsLighting.descriptorSetManager.updateDescriptorSets(device);
         }
+
 
         VkRenderPassBeginInfo lightingRenderPassInfo{};
         lightingRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -501,18 +502,30 @@ void RBApplication::processModelNode(
         result = vkQueuePresentKHR(device.presentQueue, &presentInfo);
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || windows.framebufferResized)
         {
-            descriptorsAttachment.ReleaseAllResource();
-            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits);
+            std::cout << "Swap chain recreation triggered due to framebuffer resize or suboptimal presentation." << std::endl;
             windows.framebufferResized = false;
-            swapChain.recreateSwapChain(gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles.back().imageView);
-            
 
+            descriptorsAttachment.ReleaseAllResource();
+            swapChain.SetSwapChainExtent();
+            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits);
+            
             gBufferPass.clearFrameBuffers();
+
+            std::cout << "after clearFrameBuffers" << std::endl;
             gBufferPass.createGraphicsPipeline();
+
+            std::cout << "before skyPassManager" << std::endl;
 
             skyPassManager.createGraphicsPipeline();
 
+            std::cout << "before lightPassManager" << std::endl;
+
             lightPassManager.createGraphicsPipeline();
+
+            std::cout << "before recreateSwapChain" << std::endl;
+            
+            swapChain.recreateSwapChain(gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles.back().imageView);
+
         }
         else if (result != VK_SUCCESS) {
             throw std::runtime_error("failed to present swap chain image!");

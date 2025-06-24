@@ -63,6 +63,7 @@ namespace RottenBamboo {
         void cleanupSwapChain();
 
     public:
+        void SetSwapChainExtent();
 
         void createFrameBuffers(VkImageView& depthImageViewGBuffer);
 
@@ -80,7 +81,7 @@ namespace RottenBamboo {
 
         RBSwapChain(const RBSwapChain &) = delete;
 
-        void CreateSwapChain(RBDevice &device, RBWindows &window);
+        void CreateSwapChain();
 
         ~RBSwapChain();
     };
