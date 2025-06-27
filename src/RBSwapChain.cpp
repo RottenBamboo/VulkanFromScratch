@@ -39,11 +39,6 @@ namespace RottenBamboo{
         return indices;
     }
 
-    void RBSwapChain::SetDepthView(VkImageView* depthView)
-    {
-        //depthImageView = depthView;
-    }
-
     void RBSwapChain::createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits  numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
         VkImageCreateInfo imageInfo{};
         imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -152,8 +147,7 @@ namespace RottenBamboo{
         depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
         depthAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-        depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
+        depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 
         VkAttachmentDescription colorAttachment{};
         colorAttachment.format = swapChainImageFormat;
@@ -165,18 +159,15 @@ namespace RottenBamboo{
         colorAttachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
         colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-
-
         VkAttachmentDescription colorAttachmentResolve{};
         colorAttachmentResolve.format = swapChainImageFormat;
-        colorAttachmentResolve.samples = VK_SAMPLE_COUNT_1_BIT;
+        colorAttachmentResolve.samples = msaaSamples;
         colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
         colorAttachmentResolve.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
         colorAttachmentResolve.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         colorAttachmentResolve.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        colorAttachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
+        colorAttachmentResolve.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        colorAttachmentResolve.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
         VkAttachmentReference colorAttachmentResolveRef{};
         colorAttachmentResolveRef.attachment = 2;
@@ -278,18 +269,17 @@ namespace RottenBamboo{
         }
     }
 
-    void RBSwapChain::SetSwapChainExtent(RBDevice& rbDevice, RBWindows& window)
+    void RBSwapChain::SetSwapChainExtent()
     {
-        SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);
-
+        SwapChainSupportDetails swapChainSupport = querySwapChainSupport(refDevice.physicalDevice, refDevice.surface);
+        
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
-        VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities, window.window);
-        swapChainExtent = extent;
+        VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities, refWindow.window);
     }
-
-    void RBSwapChain::CreateSwapChain(RBDevice& rbDevice, RBWindows& window) {
-        SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);
+    
+    void RBSwapChain::CreateSwapChain() {
+        SwapChainSupportDetails swapChainSupport = querySwapChainSupport(refDevice.physicalDevice, refDevice.surface);
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
@@ -376,7 +366,17 @@ namespace RottenBamboo{
         createSyncObjects();
     }
 
-    void RBSwapChain::recreateSwapChain(VkImageView* depthView)
+    void RBSwapChain::InitializeSwapChain(VkImageView& depthImageViewGBuffer)
+    {
+        CreateSwapChain();
+        createImageView();
+        createColorResources();
+        //createDepthResources();
+        createRenderPass();
+        createFrameBuffers(depthImageViewGBuffer);
+        createSyncObjects();
+    }
+    void RBSwapChain::recreateSwapChain(VkImageView& depthImageViewGBuffer)
     {
         int width = 0, height = 0;
 
@@ -392,8 +392,8 @@ namespace RottenBamboo{
 
         vkDeviceWaitIdle(refDevice.device);
         cleanupSwapChain();
-        //depthImageView = depthView;
-        CreateSwapChain(refDevice, refWindow);
+
+        CreateSwapChain();
         createImageView();
         createColorResources();
         //createDepthResources();
@@ -415,7 +415,7 @@ namespace RottenBamboo{
         vkDestroyImage(refDevice.device, colorImage, nullptr);
         colorImage = VK_NULL_HANDLE;
         vkFreeMemory(refDevice.device, colorImageMemory, nullptr);
-        depthImageView = nullptr;
+        colorImageMemory = VK_NULL_HANDLE;
 
         for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
         {
@@ -436,9 +436,16 @@ namespace RottenBamboo{
             }
         }
 
-        vkDestroySwapchainKHR(refDevice.device, swapChain, nullptr);
-
-        vkDestroyRenderPass(refDevice.device, renderPass, nullptr);
+        for(auto frameBuffer : swapChainFrameBuffers)
+        {
+            if(frameBuffer != VK_NULL_HANDLE)
+            {
+                vkDestroyFramebuffer(refDevice.device, frameBuffer, nullptr);
+                frameBuffer = VK_NULL_HANDLE;
+            }
+        }
+        //swapChainFrameBuffers.resize(0);
+        
         for(auto imageView : swapChainImageViews)
         {
             if(imageView != VK_NULL_HANDLE)
@@ -462,8 +469,7 @@ namespace RottenBamboo{
         }
     }
 
-    RBSwapChain::~RBSwapChain() 
-    {
+    RBSwapChain::~RBSwapChain() {
         cleanupSwapChain();
 
     }

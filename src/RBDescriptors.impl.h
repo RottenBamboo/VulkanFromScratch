@@ -319,7 +319,7 @@ namespace RottenBamboo{
     template<int ImageCount, int BufferCount>
     void RBDescriptors<ImageCount, BufferCount>::ReleaseAllResource()
     {
-        rbImageManager.ReleaseAllResource();
+        rbImageManager.~RBImageManager();
         descriptorSetManager.Destroy();
     }
 

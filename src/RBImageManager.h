@@ -79,8 +79,6 @@ namespace RottenBamboo {
         std::array<RBImageBundle, ImageCount> imageBundles{};
 
         VkSamplerCreateInfo samplerInfo{};
-        
-        void ReleaseAllResource();
 
     private:
 
