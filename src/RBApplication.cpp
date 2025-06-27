@@ -48,7 +48,8 @@ namespace RottenBamboo {
 
     void RBApplication::InitializeSwapChain()
     {
-        swapChain.InitializeSwapChain(gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles.back().imageView);
+        swapChain.SetDepthView(&(descriptorsAttachment.rbImageManager.imageBundles[TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT - 1].imageView));
+        swapChain.InitializeSwapChain();
         std::cout << "RBApplication::InitializeSwapChain()" << std::endl;
     }
 
@@ -75,6 +76,8 @@ namespace RottenBamboo {
         descriptorsGBuffer.InitializeDescriptors();
 
         descriptors.InitializeDescriptors();
+
+        RBSwapChain::SetSwapChainExtent(device, windows);
 
         descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits);
 
@@ -448,7 +451,8 @@ void RBApplication::processModelNode(
 
         if (result == VK_ERROR_OUT_OF_DATE_KHR)
         {
-            swapChain.recreateSwapChain(gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles.back().imageView);
+            //swapChain.SetDepthView(&(descriptorsAttachment.rbImageManager.imageBundles[TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT - 1].imageView));
+            swapChain.recreateSwapChain(&(descriptorsAttachment.rbImageManager.imageBundles[TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT - 1].imageView));
             return;
         }
         else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
@@ -506,7 +510,7 @@ void RBApplication::processModelNode(
             windows.framebufferResized = false;
 
             descriptorsAttachment.ReleaseAllResource();
-            swapChain.SetSwapChainExtent();
+            RBSwapChain::SetSwapChainExtent(device, windows);
             descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits);
             
             gBufferPass.clearFrameBuffers();
@@ -521,11 +525,9 @@ void RBApplication::processModelNode(
             std::cout << "before lightPassManager" << std::endl;
 
             lightPassManager.createGraphicsPipeline();
-
-            std::cout << "before recreateSwapChain" << std::endl;
-            
-            swapChain.recreateSwapChain(gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles.back().imageView);
-
+          
+            //swapChain.SetDepthView(&(descriptorsAttachment.rbImageManager.imageBundles[TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT - 1].imageView));
+            swapChain.recreateSwapChain(&(descriptorsAttachment.rbImageManager.imageBundles[TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT - 1].imageView));
         }
         else if (result != VK_SUCCESS) {
             throw std::runtime_error("failed to present swap chain image!");
