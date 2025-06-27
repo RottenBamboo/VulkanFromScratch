@@ -106,8 +106,7 @@
         "numeric": "cpp",
         "random": "cpp",
         "regex": "cpp",
-        "unordered_set": "cpp",
-        "coroutine": "cpp"
+        "unordered_set": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

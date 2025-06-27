@@ -34,14 +34,10 @@ void main()
     vec3 diffuse = diff * lightColor * baseColor.rgb;
     vec3 color = diffuse;
 
-    bool positionIsExist = all(lessThan(abs(positionWS), vec3(1e-6)));
+    float positionIsExist = dot(positionInput.xyz, vec3(1, 1, 1));
+    color.xyz += ambientLight * (positionIsExist > 0 ? 1 : 0);
 
-    if (positionIsExist) {
-        discard;
-    }
-    else
-    {
-        color.xyz += ambientLight;
-    }
+    //vec3 color = ambientLight + diffuse;
+
     outColor = vec4(color, 1.0);
 }
