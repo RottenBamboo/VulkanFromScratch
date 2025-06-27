@@ -72,6 +72,7 @@ namespace RottenBamboo {
 
     void RBApplication::InitializeDescriptors()
     {
+        swapChain.SetSwapChainExtent();
         descriptorsGBuffer.InitializeDescriptors();
 
         descriptors.InitializeDescriptors();
@@ -361,33 +362,30 @@ void RBApplication::processModelNode(
         // VkBuffer lightingVertexBuffers[] = {mesh.vertexBuffer.buffer};
         // VkDeviceSize lightingOffsets[] = {0};
 
-        // for (int i = 0; i < gBufferPass.rbColorAttachmentCount; ++i) {
-        //     VkImageMemoryBarrier barrier{};
-        //     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-        //     barrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-        //     barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        //     barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        //     barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        //     barrier.image = descriptorsAttachment.rbImageManager.imageBundles[i].image;
-        //     barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        //     barrier.subresourceRange.baseMipLevel = 0;
-        //     barrier.subresourceRange.levelCount = 1;
-        //     barrier.subresourceRange.baseArrayLayer = 0;
-        //     barrier.subresourceRange.layerCount = 1;
-        
-        //     barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-        //     barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-        
-        //     vkCmdPipelineBarrier(
-        //         commandBuffer,
-        //         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
-        //         VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
-        //         0,
-        //         0, nullptr,
-        //         0, nullptr,
-        //         1, &barrier
-        //     );
-        // }
+        VkImageMemoryBarrier depthBarrier{};
+        depthBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        depthBarrier.oldLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        depthBarrier.newLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+        depthBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        depthBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        depthBarrier.image = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles.back().image;
+        depthBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+        depthBarrier.subresourceRange.baseMipLevel = 0;
+        depthBarrier.subresourceRange.levelCount = 1;
+        depthBarrier.subresourceRange.baseArrayLayer = 0;
+        depthBarrier.subresourceRange.layerCount = 1;
+        depthBarrier.srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+        depthBarrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+            
+        vkCmdPipelineBarrier(
+            commandBuffer,
+            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            0,
+            0, nullptr,
+            0, nullptr,
+            1, &depthBarrier
+        );
 
         VkSampler gbufferSampler = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[0].sampler;
         
@@ -412,7 +410,7 @@ void RBApplication::processModelNode(
             descriptorsLighting.descriptorSetManager.updateDescriptorSets(device);
         }
 
-        
+
         VkRenderPassBeginInfo lightingRenderPassInfo{};
         lightingRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         lightingRenderPassInfo.renderPass = swapChain.renderPass;
@@ -508,18 +506,26 @@ void RBApplication::processModelNode(
         result = vkQueuePresentKHR(device.presentQueue, &presentInfo);
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || windows.framebufferResized)
         {
+            std::cout << "Swap chain recreation triggered due to framebuffer resize or suboptimal presentation." << std::endl;
             windows.framebufferResized = false;
 
             descriptorsAttachment.ReleaseAllResource();
             RBSwapChain::SetSwapChainExtent(device, windows);
             descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits);
-
+            
             gBufferPass.clearFrameBuffers();
+
+            std::cout << "after clearFrameBuffers" << std::endl;
             gBufferPass.createGraphicsPipeline();
+
+            std::cout << "before skyPassManager" << std::endl;
 
             skyPassManager.createGraphicsPipeline();
 
+            std::cout << "before lightPassManager" << std::endl;
+
             lightPassManager.createGraphicsPipeline();
+          
             //swapChain.SetDepthView(&(descriptorsAttachment.rbImageManager.imageBundles[TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT - 1].imageView));
             swapChain.recreateSwapChain(&(descriptorsAttachment.rbImageManager.imageBundles[TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT - 1].imageView));
         }

@@ -223,6 +223,29 @@ namespace RottenBamboo{
         }
     }
 
+    void RBSwapChain::createFrameBuffers(VkImageView& depthImageViewGBuffer)
+    {
+        swapChainFrameBuffers.resize(swapChainImageViews.size());
+        for(size_t i = 0; i < swapChainImageViews.size(); i++)
+        {
+            std::array<VkImageView, 3> attachments = {swapChainImageViews[i], depthImageViewGBuffer, colorImageView};
+
+            VkFramebufferCreateInfo framebufferInfo{};
+            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            framebufferInfo.renderPass = renderPass;
+            framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+            framebufferInfo.pAttachments = attachments.data();
+            framebufferInfo.width = swapChainExtent.width;
+            framebufferInfo.height = swapChainExtent.height;
+            framebufferInfo.layers = 1;
+
+            if(vkCreateFramebuffer(refDevice.device, &framebufferInfo, nullptr, &swapChainFrameBuffers[i]) != VK_SUCCESS)
+            {
+                throw::std::runtime_error("failed to create framebuffer");
+            }
+        }
+    }
+    
     void RBSwapChain::createFrameBuffers()
     {
         swapChainFrameBuffers.resize(swapChainImageViews.size());
@@ -270,7 +293,7 @@ namespace RottenBamboo{
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
-        VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities, window.window);
+        VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities, refWindow.window);
 
         uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
         if(swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount)
@@ -279,7 +302,7 @@ namespace RottenBamboo{
         }
         VkSwapchainCreateInfoKHR createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-        createInfo.surface = rbDevice.surface;
+        createInfo.surface = refDevice.surface;
         createInfo.minImageCount = imageCount;
         createInfo.imageFormat = surfaceFormat.format;
         createInfo.imageColorSpace = surfaceFormat.colorSpace;
@@ -287,7 +310,7 @@ namespace RottenBamboo{
         createInfo.imageArrayLayers = 1;
         createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-        QueueFamilyIndices indices = findQueueFamilies(rbDevice.physicalDevice, &rbDevice.surface);
+        QueueFamilyIndices indices = findQueueFamilies(refDevice.physicalDevice, &refDevice.surface);
         uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
         if(indices.graphicsFamily != indices.presentFamily){
             createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
@@ -304,9 +327,10 @@ namespace RottenBamboo{
         createInfo.clipped = VK_TRUE;
         createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-        if(vkCreateSwapchainKHR(refDevice.device, &createInfo, nullptr, &swapChain) != VK_SUCCESS)
+        VkResult result = vkCreateSwapchainKHR(refDevice.device, &createInfo, nullptr, &swapChain);
+        if(result!= VK_SUCCESS)
         {
-            throw std::runtime_error("failed to create swap chain!");
+            //throw std::runtime_error("failed to create swap chain!");
             vkGetSwapchainImagesKHR(refDevice.device, swapChain, &imageCount, nullptr);
             swapChainImages.resize(imageCount);
         }
@@ -343,10 +367,10 @@ namespace RottenBamboo{
 
     void RBSwapChain::InitializeSwapChain()
     {
-        CreateSwapChain(refDevice, refWindow);
+        CreateSwapChain();
         createImageView();
         createColorResources();
-        createDepthResources();
+        //createDepthResources();
         createRenderPass();
         createFrameBuffers();
         createSyncObjects();
@@ -372,10 +396,11 @@ namespace RottenBamboo{
         CreateSwapChain(refDevice, refWindow);
         createImageView();
         createColorResources();
-        createDepthResources();
+        //createDepthResources();
         createRenderPass();
         //createGraphicsPipeline();
-        createFrameBuffers();
+        createFrameBuffers(depthImageViewGBuffer);
+        createSyncObjects();
     }
 
     RBSwapChain::RBSwapChain(RBDevice& device, RBWindows& window, RBCommandBuffer& commandBuffer, RBDescriptors<1, 1> & descriptors) : refDevice(device), refWindow(window), refCommandBuffer(commandBuffer), refDescriptors(descriptors)
@@ -386,35 +411,60 @@ namespace RottenBamboo{
     void RBSwapChain::cleanupSwapChain()
     {
         vkDestroyImageView(refDevice.device, colorImageView, nullptr);
+        colorImageView = VK_NULL_HANDLE;
         vkDestroyImage(refDevice.device, colorImage, nullptr);
+        colorImage = VK_NULL_HANDLE;
         vkFreeMemory(refDevice.device, colorImageMemory, nullptr);
         depthImageView = nullptr;
 
-        for(auto frameBuffer : swapChainFrameBuffers)
+        for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
         {
-            vkDestroyFramebuffer(refDevice.device, frameBuffer, nullptr);
+            if(renderFinishedSemaphores[i] != VK_NULL_HANDLE)
+            {
+                vkDestroySemaphore(refDevice.device, renderFinishedSemaphores[i], nullptr);
+                renderFinishedSemaphores[i] = VK_NULL_HANDLE;
+            }
+            if(imageAvailableSemaphores[i] != VK_NULL_HANDLE)
+            {
+                vkDestroySemaphore(refDevice.device, imageAvailableSemaphores[i], nullptr);
+                imageAvailableSemaphores[i] = VK_NULL_HANDLE;
+            }
+            if(inFlightFences[i] != VK_NULL_HANDLE)
+            {
+                vkDestroyFence(refDevice.device, inFlightFences[i], nullptr);
+                inFlightFences[i] = VK_NULL_HANDLE;
+            }
         }
 
         vkDestroySwapchainKHR(refDevice.device, swapChain, nullptr);
 
         vkDestroyRenderPass(refDevice.device, renderPass, nullptr);
-
         for(auto imageView : swapChainImageViews)
         {
-            vkDestroyImageView(refDevice.device, imageView, nullptr);
+            if(imageView != VK_NULL_HANDLE)
+            {
+                vkDestroyImageView(refDevice.device, imageView, nullptr);
+                imageView = VK_NULL_HANDLE;
+            }
         }
-        vkDestroySwapchainKHR(refDevice.device, swapChain, nullptr);
+        swapChainImageViews.resize(0);
+
+        if(renderPass != VK_NULL_HANDLE)
+        {
+            vkDestroyRenderPass(refDevice.device, renderPass, nullptr);
+            renderPass = VK_NULL_HANDLE;
+        }
+
+        if(swapChain != VK_NULL_HANDLE)
+        {
+            vkDestroySwapchainKHR(refDevice.device, swapChain, nullptr);
+            swapChain = VK_NULL_HANDLE;
+        }
     }
 
     RBSwapChain::~RBSwapChain() 
     {
         cleanupSwapChain();
 
-        for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
-        {
-            vkDestroySemaphore(refDevice.device, renderFinishedSemaphores[i], nullptr);
-            vkDestroySemaphore(refDevice.device, imageAvailableSemaphores[i], nullptr);
-            vkDestroyFence(refDevice.device, inFlightFences[i], nullptr);
-        }
     }
 }
