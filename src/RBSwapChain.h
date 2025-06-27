@@ -36,7 +36,6 @@ namespace RottenBamboo {
         VkDeviceMemory colorImageMemory;
         VkImageView colorImageView;
 
-        //depth reuse gbuffer's depth resouce
         VkImage depthImage;
         VkDeviceMemory depthImageMemory;
 
@@ -69,10 +68,10 @@ namespace RottenBamboo {
         void createFrameBuffers(VkImageView& depthImageViewGBuffer);
 
         void InitializeSwapChain();
-      
-        void recreateSwapChain(VkImageView* depthView);
 
-        static void SetSwapChainExtent(RBDevice& rbDevice, RBWindows& window);
+        void InitializeSwapChain(VkImageView& depthImageViewGBuffer);
+
+        void recreateSwapChain(VkImageView& depthImageViewGBuffer);
 
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice &device, VkSurfaceKHR *surface);
 
@@ -83,8 +82,6 @@ namespace RottenBamboo {
         RBSwapChain(const RBSwapChain &) = delete;
 
         void CreateSwapChain();
-
-        void SetDepthView(VkImageView* depthView);
 
         ~RBSwapChain();
     };

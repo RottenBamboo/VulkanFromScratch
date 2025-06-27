@@ -18,13 +18,6 @@ namespace RottenBamboo {
     template<int ImageCount>
     RBImageManager<ImageCount>::~RBImageManager() 
     {
-        ReleaseAllResource();
-        std::cout << "RBImageManager::~RBImageManager()" << std::endl;
-    }
-
-    template<int ImageCount>
-    void RBImageManager<ImageCount>::ReleaseAllResource() 
-    {
         for (int i = 0; i < ImageCount; i++)
         {
             vkDestroyImageView(rbDevice.device, imageBundles[i].imageView, nullptr);
@@ -36,7 +29,7 @@ namespace RottenBamboo {
             imageBundles[i].image = VK_NULL_HANDLE;
             imageBundles[i].imageMemory = VK_NULL_HANDLE;
         }
-        std::cout << "RBImageManager::ReleaseAllResource()" << std::endl;
+        std::cout << "RBImageManager::~RBImageManager()" << std::endl;
     }
 
     template<int ImageCount>
