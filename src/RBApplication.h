@@ -101,11 +101,13 @@ namespace RottenBamboo {
 
         RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> descriptorsLighting{device, commandBuffer, uniformBuffers, TEXTURE_PATHS_LIGHTING_MECH, true};
 
+        RBDescriptors<TEXTURE_CUBEMAP_COUNT, 1> descriptorsSkyBox{device, commandBuffer, uniformBuffers, TEXTURE_PATH_CUBEMAP, true};
+
         RBSwapChain swapChain{device, windows, commandBuffer, descriptors};
         
         RBGBufferPass gBufferPass{gBufferPassAttachmentCount, false, true, device, descriptorsGBuffer, descriptorsAttachment, pipelineConfig, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
 
-        RBSkyPass skyPassManager{lightPassColorAttachmentCount, false, false, device, descriptorsLighting, pipelineConfig, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
+        RBSkyPass skyPassManager{skyBoxPassColorAttachmentCount, false, false, device, descriptorsSkyBox, pipelineConfig, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
 
         RBLightingPass lightPassManager{lightPassColorAttachmentCount, true, false, device, descriptorsLighting, pipelineConfig, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
 

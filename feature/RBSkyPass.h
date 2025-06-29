@@ -31,7 +31,7 @@ namespace RottenBamboo {
 
     public:
 
-        RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> &rbDescriptors;
+        RBDescriptors<TEXTURE_CUBEMAP_COUNT, 1> &rbDescriptors;
 
         void createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo) override;
 
@@ -41,7 +41,7 @@ namespace RottenBamboo {
 
         void InitializeGraphicPipeline() override;
 
-        RBSkyPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> &descriptors, const RBPipelineConfig &config, VkImageLayout layout);
+        RBSkyPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<TEXTURE_CUBEMAP_COUNT, 1> &descriptors, const RBPipelineConfig &config, VkImageLayout layout);
 
         void fillGraphicsPipelineCreateInfo(uint32_t stageCount,
                                             const VkPipelineShaderStageCreateInfo* pStages,
@@ -64,7 +64,7 @@ namespace RottenBamboo {
 
         virtual void fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName, RBShaderModule &shaderModule);
 
-        virtual void recordCommandBuffer(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1>& descriptors, RBMesh &mesh);
+        virtual void recordCommandBuffer(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_CUBEMAP_COUNT, 1>& descriptors, RBMesh &mesh);
 
     private:
 

@@ -26,6 +26,14 @@ const std::array<std::string, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> TEXTURE_P
     "../textures/Mech_Emission.jpeg"
 };
 
+const std::array<std::string, TEXTURE_CUBEMAP_COUNT> TEXTURE_PATH_CUBEMAP = {
+    "../textures/Mech_BaseMap.jpg",
+    "../textures/Mech_Normal.jpg",
+    "../textures/Mech_AO.jpeg",
+    "../textures/Mech_Emission.jpeg",
+    "../textures/Mech_Emission.jpeg"
+};
+
 uint32_t mipLevels;
 
 VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
