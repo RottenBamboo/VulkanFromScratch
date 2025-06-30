@@ -34,7 +34,7 @@ void main()
     vec3 diffuse = diff * lightColor * baseColor.rgb;
     vec3 color = diffuse;
 
-    bool positionIsExist = all(lessThan(abs(positionWS), vec3(1e-6)));
+    bool positionIsExist = dot(normalWS.xyz, vec3(1.0)) <= 0.0f;
 
     if (positionIsExist) {
         discard;

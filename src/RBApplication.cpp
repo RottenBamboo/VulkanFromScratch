@@ -511,11 +511,11 @@ void RBApplication::processModelNode(
         {
             windows.framebufferResized = false;
 
+            gBufferPass.clearFrameBuffers();
             descriptorsAttachment.ReleaseAllResource();
             RBSwapChain::SetSwapChainExtent(device, windows);
             descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits, attahmentLayouts);
 
-            gBufferPass.clearFrameBuffers();
             gBufferPass.createGraphicsPipeline();
 
             skyPassManager.createGraphicsPipeline();
