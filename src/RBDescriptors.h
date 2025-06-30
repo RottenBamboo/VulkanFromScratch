@@ -36,6 +36,8 @@ namespace RottenBamboo {
 
         void createDescriptorSets();
 
+        void createDescriptorSetsFrameBuffer(std::array<VkImageLayout, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> lightingImageLayouts);
+
         void createTextureImageView();
 
         void createTextureImageViewFrameBuffer(std::array<VkFormat, ImageCount> imageFormats,
@@ -75,7 +77,8 @@ namespace RottenBamboo {
         void InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, 
                                               std::array<VkFormat, ImageCount> imageFormats,
                                               std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags,
-                                              std::array<VkImageAspectFlagBits, ImageCount> imageAspectFlagBits);
+                                              std::array<VkImageAspectFlagBits, ImageCount> imageAspectFlagBits,
+                                              std::array<VkImageLayout, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> lightingImageLayouts);
 
         void ReleaseAllResource();
     };

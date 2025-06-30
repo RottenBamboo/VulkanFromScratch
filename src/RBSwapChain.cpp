@@ -41,7 +41,7 @@ namespace RottenBamboo{
 
     void RBSwapChain::SetDepthView(VkImageView* depthView)
     {
-        //depthImageView = depthView;
+        depthImageView = depthView;
     }
 
     void RBSwapChain::createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits  numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
@@ -135,12 +135,12 @@ namespace RottenBamboo{
         return findSupportedFormat({VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT}, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
     }
 
-    void RBSwapChain::createDepthResources()
-    {
-        VkFormat depthFormat = findDepthFormat();
-        createImage(swapChainExtent.width, swapChainExtent.height, 1, msaaSamples, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
-        depthImageView = createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
-    }
+    // void RBSwapChain::createDepthResources()
+    // {
+    //     VkFormat depthFormat = findDepthFormat();
+    //     createImage(swapChainExtent.width, swapChainExtent.height, 1, msaaSamples, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
+    //     depthImageView = createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
+    // }
 
     void RBSwapChain::createRenderPass()
     {
@@ -148,9 +148,9 @@ namespace RottenBamboo{
         depthAttachment.format = findDepthFormat();
         depthAttachment.samples = msaaSamples;
         depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-        depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_NONE;
-        depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+        depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+        depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+        depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
         depthAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
         depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
@@ -228,7 +228,7 @@ namespace RottenBamboo{
         swapChainFrameBuffers.resize(swapChainImageViews.size());
         for(size_t i = 0; i < swapChainImageViews.size(); i++)
         {
-            std::array<VkImageView, 3> attachments = {swapChainImageViews[i], depthImageView, colorImageView};
+            std::array<VkImageView, 3> attachments = {swapChainImageViews[i], *depthImageView, colorImageView};
 
             VkFramebufferCreateInfo framebufferInfo{};
             framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -346,7 +346,7 @@ namespace RottenBamboo{
         CreateSwapChain(refDevice, refWindow);
         createImageView();
         createColorResources();
-        createDepthResources();
+        //createDepthResources();
         createRenderPass();
         createFrameBuffers();
         createSyncObjects();
@@ -368,11 +368,11 @@ namespace RottenBamboo{
 
         vkDeviceWaitIdle(refDevice.device);
         cleanupSwapChain();
-        //depthImageView = depthView;
+        depthImageView = depthView;
         CreateSwapChain(refDevice, refWindow);
         createImageView();
         createColorResources();
-        createDepthResources();
+        //createDepthResources();
         createRenderPass();
         //createGraphicsPipeline();
         createFrameBuffers();
@@ -395,7 +395,7 @@ namespace RottenBamboo{
             vkDestroyFramebuffer(refDevice.device, frameBuffer, nullptr);
         }
 
-        vkDestroySwapchainKHR(refDevice.device, swapChain, nullptr);
+        //vkDestroySwapchainKHR(refDevice.device, swapChain, nullptr);
 
         vkDestroyRenderPass(refDevice.device, renderPass, nullptr);
 
