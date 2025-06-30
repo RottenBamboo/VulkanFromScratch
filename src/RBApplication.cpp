@@ -78,7 +78,7 @@ namespace RottenBamboo {
 
         RBSwapChain::SetSwapChainExtent(device, windows);
 
-        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits);
+        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits, attahmentLayouts);
 
         descriptorsLighting.InitializeDescriptors();
         std::cout << "RBApplication::InitializeDescriptors()" << std::endl;
@@ -403,7 +403,7 @@ void RBApplication::processModelNode(
 
             for(int j = 0; j < 4; j++)
             {
-                descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageLayout = attahmentLayouts[j];
                 descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageView = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].imageView;
                 descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.sampler = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].sampler;
                 descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteImage(currentFrame, j + 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].imageInfo);
@@ -430,6 +430,7 @@ void RBApplication::processModelNode(
         //lighting pass pipeline
         //std::cout << "before lightPassManager::recordCommandBuffer()" << std::endl;
         //std::cout << "descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout = " << descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout << std::endl;
+        
         skyPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh);
         
         lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh, gui, uniformMatrix);
@@ -512,7 +513,7 @@ void RBApplication::processModelNode(
 
             descriptorsAttachment.ReleaseAllResource();
             RBSwapChain::SetSwapChainExtent(device, windows);
-            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits);
+            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits, attahmentLayouts);
 
             gBufferPass.clearFrameBuffers();
             gBufferPass.createGraphicsPipeline();
