@@ -80,6 +80,8 @@ namespace RottenBamboo {
 
         descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits, attahmentLayouts);
 
+        descriptorsSkyBox.InitializeDescriptors();
+
         descriptorsLighting.InitializeDescriptors();
         std::cout << "RBApplication::InitializeDescriptors()" << std::endl;
     }
@@ -430,9 +432,9 @@ void RBApplication::processModelNode(
         //lighting pass pipeline
         //std::cout << "before lightPassManager::recordCommandBuffer()" << std::endl;
         //std::cout << "descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout = " << descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout << std::endl;
-        
-        skyPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh);
-        
+
+        skyPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsSkyBox, mesh);
+
         lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh, gui, uniformMatrix);
 
         //std::cout << "after lightPassManager::recordCommandBuffer()" << std::endl;
