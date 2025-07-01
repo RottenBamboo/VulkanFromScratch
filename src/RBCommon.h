@@ -195,16 +195,19 @@ static const int gBufferPassDepthAttachmentCount = 1;
 static const int gBufferPassColorAttachmentCount = 4;
 static const int gBufferPassAttachmentCount = gBufferPassColorAttachmentCount + gBufferPassDepthAttachmentCount;
 static const int lightPassColorAttachmentCount = 1;
+static const int skyBoxPassColorAttachmentCount = 1;
 
 #define DEPTH_ATTACHMENT_COUNT 1
 #define TEXTURE_PATHS_COUNT 1
 #define TEXTURE_PATHS_MECH_COUNT 4
 #define TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT (int)(4 + DEPTH_ATTACHMENT_COUNT)
+#define TEXTURE_PATHS_SKYBOX_COUNT 1
 
 extern const std::string MODEL_PATH;
 extern const std::array<std::string, TEXTURE_PATHS_COUNT> TEXTURE_PATH;
 extern const std::array<std::string, TEXTURE_PATHS_MECH_COUNT> TEXTURE_PATHS_MECH;
 extern const std::array<std::string, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> TEXTURE_PATHS_LIGHTING_MECH;
+extern const std::array<std::string, TEXTURE_PATHS_SKYBOX_COUNT> TEXTURE_PATHS_SKYBOX;
 
 extern uint32_t mipLevels;
 

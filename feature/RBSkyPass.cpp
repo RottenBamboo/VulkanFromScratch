@@ -98,7 +98,7 @@ namespace RottenBamboo {
         std::cout << "RBSkyPass::createGraphicsPipeline()" << std::endl;
     }
 
-    RBSkyPass::RBSkyPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> &descriptors, const RBPipelineConfig &config, VkImageLayout layout)
+    RBSkyPass::RBSkyPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<TEXTURE_PATHS_SKYBOX_COUNT, 1> &descriptors, const RBPipelineConfig &config, VkImageLayout layout)
     : RBPipelineManager(colorAttachmentCount, bResolveAttachment, bDephAttament, device, layout), rbPipelineConfig(config),
       vertShaderModule(device), fragShaderModule(device), rbDescriptors(descriptors)
     {
@@ -132,7 +132,7 @@ namespace RottenBamboo {
         vkDestroyDescriptorSetLayout(rbDevice.device, rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout, nullptr);
         std::cout << "RBSkyPass::~RBSkyPass()" << std::endl;
     }
-    void RBSkyPass::recordCommandBuffer(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1>& descriptors, RBMesh &mesh) 
+    void RBSkyPass::recordCommandBuffer(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_SKYBOX_COUNT, 1>& descriptors, RBMesh &mesh) 
     {
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 

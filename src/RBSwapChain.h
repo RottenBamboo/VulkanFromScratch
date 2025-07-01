@@ -36,9 +36,9 @@ namespace RottenBamboo {
         VkImageView colorImageView;
 
         //depth reuse gbuffer's depth resouce
-        //VkImage depthImage;
-        //VkDeviceMemory depthImageMemory;
-        VkImageView* depthImageView;
+        VkImage depthImage;
+        VkDeviceMemory depthImageMemory;
+        VkImageView depthImageView;
 
         VkFormat findSupportedFormat(const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
@@ -51,7 +51,7 @@ namespace RottenBamboo {
 
         void createImageView();
 
-        //void createDepthResources();
+        void createDepthResources();
 
         void createColorResources();
 
