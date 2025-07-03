@@ -27,7 +27,7 @@ const std::array<std::string, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> TEXTURE_P
 };
 
 const std::array<std::string, TEXTURE_PATHS_SKYBOX_COUNT> TEXTURE_PATHS_SKYBOX = {
-    "../textures/texture.jpg"
+    "../textures/cape_hill_4k.hdr"
 };
 
 uint32_t mipLevels;
