@@ -9,10 +9,12 @@ layout(location = 4) in vec3 inTangent;
 layout(location = 0) out vec3 fragColor;
 layout(location = 1) out vec2 fragTexCoord;
 
-layout(binding = 0) uniform UniformBufferObject {
+layout(binding = 0) uniform UniformBufferShaderVariables {
     mat4 model;
     mat4 view;
     mat4 proj;
+    vec4 screenSize;
+    vec3 cameraPos;
 } ubo;
 
 const vec2 positions[3] = vec2[](

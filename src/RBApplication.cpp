@@ -291,23 +291,29 @@ void RBApplication::processModelNode(
     }
 
     void RBApplication::InitializeMatrix()
-{
-    uniformMatrix.view = glm::lookAt(glm::vec3(3, 3, 3),
-                                     glm::vec3(0, 1.3, 0),
-                                     glm::vec3(0, 1, 0));
-    uniformMatrix.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 100.0f);
-    uniformMatrix.proj[1][1] *= -1;
-    uniformMatrix.model = glm::scale(glm::mat4(1.0f), glm::vec3(0.25f));
-}
+    {
+        uniformShaderVariables.view = glm::lookAt(glm::vec3(3, 3, 3),
+                                        glm::vec3(0, 1.3, 0),
+                                        glm::vec3(0, 1, 0));
+        uniformShaderVariables.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 100.0f);
+        uniformShaderVariables.proj[1][1] *= -1;
+        uniformShaderVariables.model = glm::scale(glm::mat4(1.0f), glm::vec3(0.25f));
+
+        uniformShaderVariables.screenSize = glm::vec4(swapChainExtent.width, swapChainExtent.height, 1.0f / swapChainExtent.width, 1.0f / swapChainExtent.height);
+        uniformShaderVariables.cameraPos = glm::vec3(0.0f, 1.3f, 0.0f);
+    }
 
     void RBApplication::updateUniformBuffer(uint32_t currentImage)
     {
-        static auto startTime = std::chrono::high_resolution_clock::now();
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+        // static auto startTime = std::chrono::high_resolution_clock::now();
+        // auto currentTime = std::chrono::high_resolution_clock::now();
+        // float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
         
-        memcpy(uniformBuffers[currentImage].bufferMapped, &uniformMatrix, sizeof(UniformBufferObject));
+        uniformShaderVariables.screenSize = glm::vec4(swapChainExtent.width, swapChainExtent.height, 1.0f / swapChainExtent.width, 1.0f / swapChainExtent.height);
+        uniformShaderVariables.cameraPos = glm::vec3(0.0f, 1.3f, 0.0f);
+        memcpy(uniformBuffers[currentImage].bufferMapped, &uniformShaderVariables, sizeof(UniformBufferShaderVariables));
     }
+
 
     void RBApplication::run() {
         while (!windows.shouldClose()) {
@@ -399,7 +405,7 @@ void RBApplication::processModelNode(
             VkDescriptorBufferInfo bufferInfo{};
             bufferInfo.buffer = descriptorsLighting.rbBufferPtr[currentFrame].buffer;
             bufferInfo.offset = 0;
-            bufferInfo.range = sizeof(UniformBufferObject);
+            bufferInfo.range = sizeof(UniformBufferShaderVariables);
 
             descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteBuffer(currentFrame, 0, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
 
@@ -435,7 +441,7 @@ void RBApplication::processModelNode(
 
         skyPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsSkyBox, mesh);
 
-        lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh, gui, uniformMatrix);
+        lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh, gui, uniformShaderVariables);
 
         //std::cout << "after lightPassManager::recordCommandBuffer()" << std::endl;
 

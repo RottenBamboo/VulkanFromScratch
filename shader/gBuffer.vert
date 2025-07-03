@@ -13,10 +13,12 @@ layout(location = 3) out vec3 fragNormal;
 layout(location = 4) out vec3 fragTangent;
 layout(location = 5) out vec3 fragBitangent;
 
-layout(binding = 0) uniform UniformBufferObject {
+layout(binding = 0) uniform UniformBufferShaderVariables {
     mat4 model;
     mat4 view;
     mat4 proj;
+    vec4 screenSize;
+    vec3 cameraPos;
 } ubo;
 
 void main()

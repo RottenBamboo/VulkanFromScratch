@@ -14,7 +14,7 @@ namespace RottenBamboo{
     template<int ImageCount, int BufferCount>
     void RBDescriptors<ImageCount, BufferCount>::createDescriptorSetLayout()
     {
-        descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT, nullptr);
+        descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, nullptr);
 
         for(int i = 0; i < ImageCount; i++)
         {
@@ -51,7 +51,7 @@ namespace RottenBamboo{
             VkDescriptorBufferInfo bufferInfo{};
             bufferInfo.buffer = rbBufferPtr[i].buffer;
             bufferInfo.offset = 0;
-            bufferInfo.range = sizeof(UniformBufferObject);
+            bufferInfo.range = sizeof(UniformBufferShaderVariables);
 
             // VkDescriptorImageInfo imageInfo{};
             // imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -84,7 +84,7 @@ namespace RottenBamboo{
             VkDescriptorBufferInfo bufferInfo{};
             bufferInfo.buffer = rbBufferPtr[i].buffer;
             bufferInfo.offset = 0;
-            bufferInfo.range = sizeof(UniformBufferObject);
+            bufferInfo.range = sizeof(UniformBufferShaderVariables);
 
             // VkDescriptorImageInfo imageInfo{};
             // imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -304,7 +304,7 @@ namespace RottenBamboo{
     }
 
     template<int ImageCount, int BufferCount>
-    RBDescriptors<ImageCount, BufferCount>::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers, const std::array<std::string, ImageCount> &texturePaths, bool isColorAttachment) : rbDevice(device),
+    RBDescriptors<ImageCount, BufferCount>::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffers, const std::array<std::string, ImageCount> &texturePaths, bool isColorAttachment) : rbDevice(device),
     rbCommandBuffer(commandBuffer),
     rbBufferPtr(uniformBuffers),
     descriptorSetManager(device),
@@ -315,7 +315,7 @@ namespace RottenBamboo{
     }
 
     template<int ImageCount, int BufferCount>
-    RBDescriptors<ImageCount, BufferCount>::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferObject> *uniformBuffers, bool isColorAttachment) : rbDevice(device),
+    RBDescriptors<ImageCount, BufferCount>::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffers, bool isColorAttachment) : rbDevice(device),
     rbCommandBuffer(commandBuffer),
     rbBufferPtr(uniformBuffers),
     descriptorSetManager(device),
