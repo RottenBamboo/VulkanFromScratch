@@ -5,7 +5,7 @@
 #include "RBWindows.h"
 #include <stdexcept>
 #include <iostream>
-#include <SDL3/SDL_init.h>
+#include <SDL_init.h>
 #include <imgui_impl_sdl3.h>
 
 namespace RottenBamboo {
@@ -49,14 +49,25 @@ namespace RottenBamboo {
         SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     }
 
+    void RBWindows::SetEventCallback(std::function<void(const SDL_Event&)> callback) {
+        eventCallback = callback;
+    }
+
     void RBWindows::PollEvents() {
         SDL_Event event;
         
-        while (SDL_PollEvent(&event)) {
+        while (SDL_PollEvent(&event)) 
+        {
             
-        ImGui_ImplSDL3_ProcessEvent(&event);
-        
-            switch (event.type) {
+            ImGui_ImplSDL3_ProcessEvent(&event);
+
+            if (eventCallback) 
+            {
+                eventCallback(event);
+            }
+
+            switch (event.type) 
+            {
                 case SDL_EVENT_QUIT:
                     shouldCloseFlag = true;
                     break;

@@ -13,7 +13,10 @@
 namespace RottenBamboo {
 
     RBApplication::RBApplication() {
+        lastFrameTime = std::chrono::high_resolution_clock::now();
+        cameraManager = std::make_unique<RBRuntimeCameraManager>();
         InitializeWindow();
+        InitializeCamera();
         InitializeDevice();
         InitializeCommandBuffer();
         loadModelAssimp();
@@ -35,6 +38,15 @@ namespace RottenBamboo {
         std::cout << "RBApplication::InitializeWindow()" << std::endl;
     }
 
+    void RBApplication::InitializeCamera()
+    {
+        windows.SetEventCallback([this](const SDL_Event& e) {
+            if (cameraManager) {
+                cameraManager->OnEvent(e);
+            }
+        });
+        std::cout << "RBApplication::InitializeCamera()" << std::endl;
+    }
     void RBApplication::InitializeDevice()
     {
         device.InitializeDevice();
@@ -292,49 +304,48 @@ void RBApplication::processModelNode(
 
     void RBApplication::InitializeMatrix()
     {
-        uniformShaderVariables.view = glm::lookAt(glm::vec3(3, 3, 3),
-                                        glm::vec3(0, 1.3, 0),
-                                        glm::vec3(0, 1, 0));
-        uniformShaderVariables.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 100.0f);
-        uniformShaderVariables.proj[1][1] *= -1;
-        uniformShaderVariables.model = glm::scale(glm::mat4(1.0f), glm::vec3(0.25f));
+        // uniformShaderVariables.view = glm::lookAt(glm::vec3(3, 3, 3),
+        //                                 glm::vec3(0, 1.3, 0),
+        //                                 glm::vec3(0, 1, 0));
+        //uniformShaderVariables.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 100.0f);
+        //uniformShaderVariables.proj[1][1] *= -1;
+        uniformShaderVariables.model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
 
+        uniformShaderVariables.view = mainCamera.GetViewMatrix();
+        float aspectRatio = static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
+        uniformShaderVariables.proj = mainCamera.GetProjectionMatrix(aspectRatio);
         uniformShaderVariables.screenSize = glm::vec4(swapChainExtent.width, swapChainExtent.height, 1.0f / swapChainExtent.width, 1.0f / swapChainExtent.height);
-        uniformShaderVariables.cameraPos = glm::vec3(0.0f, 1.3f, 0.0f);
+        uniformShaderVariables.cameraPos = mainCamera.position;
     }
 
     void RBApplication::updateUniformBuffer(uint32_t currentImage)
     {
-        static auto startTime = std::chrono::high_resolution_clock::now();
-        auto currentTime = std::chrono::high_resolution_clock::now();
-        float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-        float radius = sqrt(3.0 * 3.0 * 2);  // 半径
+        
+        //uniformShaderVariables.model = glm::scale(glm::mat4(1.0f), glm::vec3(0.25f));
 
-        float theta = time * glm::radians(45.0f); // 每秒旋转 45 度
-
-        glm::vec3 center = glm::vec3(0.0f, 1.3f, 0.0f);
-
-        // 计算相机位置：Y = 3.0，高度固定
-        glm::vec3 eye = center + glm::vec3(sin(theta) * radius, 1.5f - center.y, cos(theta) * radius);
-
-        // 构造视图矩阵
-        uniformShaderVariables.view = glm::lookAt(eye, center, glm::vec3(0.0f, 1.0f, 0.0f));
-
+        uniformShaderVariables.view = mainCamera.GetViewMatrix();
+        float aspectRatio = static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
+        uniformShaderVariables.proj = mainCamera.GetProjectionMatrix(aspectRatio);
         uniformShaderVariables.screenSize = glm::vec4(swapChainExtent.width, swapChainExtent.height, 1.0f / swapChainExtent.width, 1.0f / swapChainExtent.height);
-        uniformShaderVariables.cameraPos = eye;
+        uniformShaderVariables.cameraPos = mainCamera.position;
         memcpy(uniformBuffers[currentImage].bufferMapped, &uniformShaderVariables, sizeof(UniformBufferShaderVariables));
     }
 
 
     void RBApplication::run() {
         while (!windows.shouldClose()) {
-            //glfwPollEvents();
+
+            auto now = std::chrono::high_resolution_clock::now();
+            float deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(now - lastFrameTime).count();
+            lastFrameTime = now;
+
             windows.PollEvents();
+
+            auto currentTime = std::chrono::high_resolution_clock::now();
+            if (cameraManager) {
+                cameraManager->Update(mainCamera, deltaTime);
+            }
             drawFrame();
-            //float interval = C_intervalTime - (glfwGetTime() - timeStamp);
-            //int intervalMiliseconds = int(interval * 1000);
-            //std::this_thread::sleep_for(std::chrono::milliseconds(intervalMiliseconds));
-            //timeStamp = glfwGetTime();
         }
         vkDeviceWaitIdle(device.device);
     }
