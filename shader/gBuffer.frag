@@ -16,6 +16,14 @@ layout(location = 1) out vec4 gNormal;
 layout(location = 2) out vec4 gAlbedo;
 layout(location = 3) out vec4 gmetallicRoughnessAO;
 
+layout(binding = 0) uniform UniformBufferShaderVariables {
+    mat4 model;
+    mat4 view;
+    mat4 proj;
+    vec4 screenSize;
+    vec3 cameraPos;
+} ubo;
+
 void main()
 {
     //vec2 metallicRoughnessAO = texture(metallicRoughnessMap, fragTexCoord).rgb;

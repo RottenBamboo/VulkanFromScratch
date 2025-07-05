@@ -13,6 +13,8 @@
 #include "RBLightingPass.h"
 #include "RBBuffer.h"
 #include "RBMesh.h"
+#include "RBRuntimeCameraManager.h"
+#include "RBEditorCameraManager.h"
 #include <stdexcept>
 #include <iostream>
 #include <string>
@@ -39,6 +41,8 @@ namespace RottenBamboo {
         ~RBApplication();
 
         void InitializeWindow();
+
+        void InitializeCamera();
 
         void InitializeDevice();
 
@@ -75,7 +79,13 @@ namespace RottenBamboo {
 
         void InitializeMatrix();
 
+        std::chrono::high_resolution_clock::time_point lastFrameTime;
+
         RBWindows windows{WIDTH, HEIGHT, "Vulkan"};
+
+        RBCamera mainCamera;
+
+        std::unique_ptr<RBCameraManager> cameraManager;
 
         RBDevice device{windows};
 
@@ -115,9 +125,9 @@ namespace RottenBamboo {
 
         RBLightingPass lightPassManager{lightPassColorAttachmentCount, true, false, device, descriptorsLighting, pipelineConfig, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
 
-        RBBuffer<UniformBufferObject> uniformBuffers[MAX_FRAMES_IN_FLIGHT]{{device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}, {device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}};
+        RBBuffer<UniformBufferShaderVariables> uniformBuffers[MAX_FRAMES_IN_FLIGHT]{{device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}, {device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}};
 
-        UniformBufferObject uniformMatrix{};
+        UniformBufferShaderVariables uniformShaderVariables{};
 
     private:
 

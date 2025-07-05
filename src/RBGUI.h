@@ -27,12 +27,12 @@ namespace RottenBamboo
 
         //void Reinitialize(SDL_Window* window, VkRenderPass renderPass);
 
-        void Render(VkCommandBuffer& commandBuffer, UniformBufferObject& uniformMatrix);
+        void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix);
 
         void createDescriptorPool();
 
     public:
-        void RenderGizmo(UniformBufferObject& uniformMatrix);
+        void RenderGizmo(UniformBufferShaderVariables& uniformMatrix);
 
     private:
         RBDevice &rbDevice;

@@ -3,9 +3,10 @@
 //
 #pragma once
 
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_vulkan.h>
+#include <SDL.h>
+#include <SDL_vulkan.h>
 #include <string>
+#include <functional>
 
 namespace RottenBamboo {
 
@@ -27,7 +28,11 @@ namespace RottenBamboo {
         SDL_Window* GetWindow() { return window; }
 
         void InitializeWindow();
+        void SetEventCallback(std::function<void(const SDL_Event&)> callback);
         void PollEvents();
         bool shouldClose() const;
+        
+    private:
+        std::function<void(const SDL_Event&)> eventCallback = nullptr;
     };
 }

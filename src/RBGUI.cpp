@@ -6,7 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 namespace RottenBamboo
 {
-    void RBGUI::RenderGizmo(UniformBufferObject &uniformMatrix)
+    void RBGUI::RenderGizmo(UniformBufferShaderVariables &uniformMatrix)
     {
         ImGuizmo::Enable(true);
 
@@ -123,7 +123,7 @@ namespace RottenBamboo
 
         ImGui_ImplVulkan_Init(&init_info);
     }
-    void RBGUI::Render(VkCommandBuffer &commandBuffer, UniformBufferObject &uniformMatrix)
+    void RBGUI::Render(VkCommandBuffer &commandBuffer, UniformBufferShaderVariables &uniformMatrix)
     {
         ImGui_ImplVulkan_NewFrame();
         ImGui_ImplSDL3_NewFrame();

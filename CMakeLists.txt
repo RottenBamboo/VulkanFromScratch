@@ -63,7 +63,7 @@ set(STB_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/stb")
 set(TINYOBJLOADER_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/tinyobjloader")
 set(ASSIMP_THIRDPARTY_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/include")
 set(ASSIMP_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/assimp/include")
-set(SDL_INCLUDE_DIRS "external/SDL/include")
+set(SDL_INCLUDE_DIRS "external/SDL/include/SDL3")
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # add executable file
@@ -89,6 +89,9 @@ add_executable(${PROJECT_NAME}
         src/RBImageManager.impl.h src/RBImageManager.h
         src/RBGUI.cpp src/RBGUI.h
         src/RBBufferManager.cpp src/RBBufferManager.h
+        src/RBCamera.h src/RBCameraManager.h
+        src/RBRuntimeCameraManager.cpp src/RBRuntimeCameraManager.h
+        src/RBEditorCameraManager.cpp src/RBEditorCameraManager.h
         feature/RBGBufferPass.cpp feature/RBGBufferPass.h
         feature/RBLightingPass.cpp feature/RBLightingPass.h
         feature/RBSkyPass.cpp feature/RBSkyPass.h
@@ -107,7 +110,8 @@ add_executable(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME} PUBLIC ${ASSIMP_THIRDPARTY_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${ASSIMP_INCLUDE_DIRS})
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_INCLUDE_DIRS})
+#target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} BEFORE PUBLIC ${SDL_INCLUDE_DIRS})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR}/backends)
@@ -152,4 +156,4 @@ endif()
 target_include_directories(${PROJECT_NAME} PUBLIC ${STB_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${TINYOBJLOADER_INCLUDE_DIRS})
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_INCLUDE_DIRS})
+#target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_INCLUDE_DIRS})

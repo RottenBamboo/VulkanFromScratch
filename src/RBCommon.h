@@ -77,16 +77,20 @@ namespace std {
     };
 }
 
-struct UniformBufferObject {
+struct UniformBufferShaderVariables {
     glm::mat4 model;
     glm::mat4 view;
     glm::mat4 proj;
+    glm::vec4 screenSize;
+    glm::vec3 cameraPos;
 public:
-    UniformBufferObject()
+    UniformBufferShaderVariables()
     {
         model = glm::mat4();
         view = glm::mat4();
         proj = glm::mat4();
+        screenSize = glm::vec4();
+        cameraPos = glm::vec3();
     }
 };
 
