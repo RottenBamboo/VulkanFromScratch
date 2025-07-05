@@ -1,5 +1,5 @@
 #pragma once
-#include <SDL_scancode.h>
+#include <SDL3/SDL_scancode.h>
 #include "RBCameraManager.h"
 
 class RBRuntimeCameraManager : public RBCameraManager {
