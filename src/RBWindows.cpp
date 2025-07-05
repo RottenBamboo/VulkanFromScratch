@@ -5,7 +5,7 @@
 #include "RBWindows.h"
 #include <stdexcept>
 #include <iostream>
-#include <SDL_init.h>
+#include <SDL3/SDL_init.h>
 #include <imgui_impl_sdl3.h>
 
 namespace RottenBamboo {
