@@ -305,12 +305,23 @@ void RBApplication::processModelNode(
 
     void RBApplication::updateUniformBuffer(uint32_t currentImage)
     {
-        // static auto startTime = std::chrono::high_resolution_clock::now();
-        // auto currentTime = std::chrono::high_resolution_clock::now();
-        // float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-        
+        static auto startTime = std::chrono::high_resolution_clock::now();
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+        float radius = sqrt(3.0 * 3.0 * 2);  // 半径
+
+        float theta = time * glm::radians(45.0f); // 每秒旋转 45 度
+
+        glm::vec3 center = glm::vec3(0.0f, 1.3f, 0.0f);
+
+        // 计算相机位置：Y = 3.0，高度固定
+        glm::vec3 eye = center + glm::vec3(sin(theta) * radius, 1.5f - center.y, cos(theta) * radius);
+
+        // 构造视图矩阵
+        uniformShaderVariables.view = glm::lookAt(eye, center, glm::vec3(0.0f, 1.0f, 0.0f));
+
         uniformShaderVariables.screenSize = glm::vec4(swapChainExtent.width, swapChainExtent.height, 1.0f / swapChainExtent.width, 1.0f / swapChainExtent.height);
-        uniformShaderVariables.cameraPos = glm::vec3(0.0f, 1.3f, 0.0f);
+        uniformShaderVariables.cameraPos = eye;
         memcpy(uniformBuffers[currentImage].bufferMapped, &uniformShaderVariables, sizeof(UniformBufferShaderVariables));
     }
 
