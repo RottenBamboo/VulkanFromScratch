@@ -259,7 +259,9 @@ namespace RottenBamboo{
     {
         SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);
 
-        VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
+        VkSurfaceFormatKHR surfaceFormat;// = chooseSwapSurfaceFormat(swapChainSupport.formats);
+        surfaceFormat.colorSpace = VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT;
+        surfaceFormat.format = VK_FORMAT_R16G16B16A16_SFLOAT;
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
         VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities, window.window);
         swapChainExtent = extent;
@@ -268,7 +270,9 @@ namespace RottenBamboo{
     void RBSwapChain::CreateSwapChain(RBDevice& rbDevice, RBWindows& window) {
         SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);
 
-        VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
+        VkSurfaceFormatKHR surfaceFormat;// = chooseSwapSurfaceFormat(swapChainSupport.formats);
+        surfaceFormat.colorSpace = VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT;
+        surfaceFormat.format = VK_FORMAT_R16G16B16A16_SFLOAT;
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
         VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities, window.window);
 

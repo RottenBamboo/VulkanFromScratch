@@ -77,7 +77,7 @@ namespace RottenBamboo
         BindBufferMemory();
     }
 
-    void RBBufferManager::copyMemory(VkDeviceSize size, void *dstData, unsigned char *data)
+    void RBBufferManager::copyMemory(VkDeviceSize size, void *dstData, float *data)
     {
         vkMapMemory(rbDevice.device, bufferMemory, 0, size, 0, &dstData);
         memcpy(dstData, data, size);

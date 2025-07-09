@@ -45,7 +45,26 @@ vec2 dirToEquirectUV(vec3 dir)
 
     return vec2(u, v);
 }
+float ST2084_encode_scalar(float L)
+{
+    float m1 = 0.1593017578125;
+    float m2 = 78.84375;
+    float c1 = 0.8359375;
+    float c2 = 18.8515625;
+    float c3 = 18.6875;
 
+    float Lm1 = pow(L, m1);
+    return pow((c1 + c2 * Lm1) / (1.0 + c3 * Lm1), m2);
+}
+
+vec3 ST2084_encode(vec3 color)
+{
+    return vec3(
+        ST2084_encode_scalar(color.r),
+        ST2084_encode_scalar(color.g),
+        ST2084_encode_scalar(color.b)
+    );
+}
 void main()
 {
     vec2 uv = (gl_FragCoord.xy / ubo.screenSize.xy) * 2.0 - 1.0;
@@ -59,7 +78,15 @@ void main()
     //outColor = GetColorWithRotation(worldDirWS, 1.0, 1.0, vec2(1.0));
     //outColor = vec4(worldDirWS.xyz, 1);
     //outColor = vec4(worldDirWS, 1);
-    outColor.xyz = texture(albedoMap, envUV).xyz;
-    outColor.a = 1.0f;
+    vec3 hdrColor = texture(albedoMap, envUV).xyz;
+    // ✅ 1. Tone Mapping（例如 Reinhard/ACES）
+    vec3 mappedColor = hdrColor / (hdrColor + vec3(1.0)); // Reinhard
+
+    // ✅ 2. Gamma Correction（因为是 UNORM 输出）
+    vec3 finalColor = pow(mappedColor, vec3(1.0 / 2.2));
+
+    mappedColor = ST2084_encode(mappedColor); // custom function
+    // 输出到 SDR framebuffer
+    outColor = vec4(hdrColor, 1.0);
     //outColor = skyColor;
 }
