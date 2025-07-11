@@ -80,12 +80,12 @@ void main()
     //outColor = vec4(worldDirWS, 1);
     vec3 hdrColor = texture(albedoMap, envUV).xyz;
     // ✅ 1. Tone Mapping（例如 Reinhard/ACES）
-    vec3 mappedColor = hdrColor / (hdrColor + vec3(1.0)); // Reinhard
+    //vec3 mappedColor = hdrColor / (hdrColor + vec3(1.0)); // Reinhard
 
     // ✅ 2. Gamma Correction（因为是 UNORM 输出）
-    vec3 finalColor = pow(mappedColor, vec3(1.0 / 2.2));
+    //vec3 finalColor = pow(mappedColor, vec3(1.0 / 2.2));
 
-    mappedColor = ST2084_encode(mappedColor); // custom function
+    //mappedColor = ST2084_encode(mappedColor); // custom function
     // 输出到 SDR framebuffer
     outColor = vec4(hdrColor, 1.0);
     //outColor = skyColor;

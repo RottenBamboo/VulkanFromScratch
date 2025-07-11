@@ -261,7 +261,7 @@ namespace RottenBamboo{
 
         VkSurfaceFormatKHR surfaceFormat;// = chooseSwapSurfaceFormat(swapChainSupport.formats);
         surfaceFormat.colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-        surfaceFormat.format = VK_FORMAT_R16G16B16A16_SFLOAT;
+        surfaceFormat.format = VK_FORMAT_B8G8R8A8_UNORM;
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
         VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities, window.window);
         swapChainExtent = extent;
@@ -272,7 +272,7 @@ namespace RottenBamboo{
 
         VkSurfaceFormatKHR surfaceFormat;// = chooseSwapSurfaceFormat(swapChainSupport.formats);
         surfaceFormat.colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-        surfaceFormat.format = VK_FORMAT_R16G16B16A16_SFLOAT;
+        surfaceFormat.format = VK_FORMAT_B8G8R8A8_UNORM;
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
         VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities, window.window);
 

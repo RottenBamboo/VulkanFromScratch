@@ -6,6 +6,7 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <unordered_map>
+#include <stb_image.h>
 #include "RBDevice.h"
 
 namespace RottenBamboo {
@@ -29,7 +30,7 @@ namespace RottenBamboo {
         void allocateMemory();
         void BindBufferMemory();
         void CreateBufferAllocBindMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkSharingMode sharingMode, VkMemoryPropertyFlags properties);
-        void copyMemory(VkDeviceSize size, void *dstData, unsigned char* data);
+        void copyMemory(VkDeviceSize size, void *dstData, stbi_uc* data);
         void copyMemory(VkDeviceSize size, void *dstData, float* data);
     };
 }
