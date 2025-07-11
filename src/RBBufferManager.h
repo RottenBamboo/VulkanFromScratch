@@ -29,6 +29,7 @@ namespace RottenBamboo {
         void allocateMemory();
         void BindBufferMemory();
         void CreateBufferAllocBindMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkSharingMode sharingMode, VkMemoryPropertyFlags properties);
-        void copyMemory(VkDeviceSize size, void *dstData, float*data);
+        void copyMemory(VkDeviceSize size, void *dstData, unsigned char* data);
+        void copyMemory(VkDeviceSize size, void *dstData, float* data);
     };
 }
