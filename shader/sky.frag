@@ -45,26 +45,34 @@ vec2 dirToEquirectUV(vec3 dir)
 
     return vec2(u, v);
 }
-float ST2084_encode_scalar(float L)
-{
-    float m1 = 0.1593017578125;
-    float m2 = 78.84375;
-    float c1 = 0.8359375;
-    float c2 = 18.8515625;
-    float c3 = 18.6875;
 
-    float Lm1 = pow(L, m1);
-    return pow((c1 + c2 * Lm1) / (1.0 + c3 * Lm1), m2);
+const float m1 = 0.1593017578125;
+const float m2 = 78.84375;
+const float c1 = 0.8359375;
+const float c2 = 18.8515625;
+const float c3 = 18.6875;
+
+// Reinhard tone mapping
+vec3 ToneMapReinhard(vec3 x) {
+    return x / (x + vec3(1.0));
 }
 
-vec3 ST2084_encode(vec3 color)
+// Convert to PQ-encoded value
+float LinearToPQ(float L)
+{
+    float Lp = pow(L / 1000.0, m1); // Assume target display max 1000 nits
+    return pow((c1 + c2 * Lp) / (1.0 + c3 * Lp), m2);
+}
+
+vec3 EncodePQ(vec3 colorNits)
 {
     return vec3(
-        ST2084_encode_scalar(color.r),
-        ST2084_encode_scalar(color.g),
-        ST2084_encode_scalar(color.b)
+        LinearToPQ(colorNits.r),
+        LinearToPQ(colorNits.g),
+        LinearToPQ(colorNits.b)
     );
 }
+
 void main()
 {
     vec2 uv = (gl_FragCoord.xy / ubo.screenSize.xy) * 2.0 - 1.0;
@@ -75,18 +83,16 @@ void main()
     vec3 worldDirWS = -normalize(viewDirWS4.xyz);
 
     vec2 envUV = dirToEquirectUV(worldDirWS);
-    //outColor = GetColorWithRotation(worldDirWS, 1.0, 1.0, vec2(1.0));
-    //outColor = vec4(worldDirWS.xyz, 1);
-    //outColor = vec4(worldDirWS, 1);
     vec3 hdrColor = texture(albedoMap, envUV).xyz;
-    // ✅ 1. Tone Mapping（例如 Reinhard/ACES）
-    //vec3 mappedColor = hdrColor / (hdrColor + vec3(1.0)); // Reinhard
 
-    // ✅ 2. Gamma Correction（因为是 UNORM 输出）
-    //vec3 finalColor = pow(mappedColor, vec3(1.0 / 2.2));
+    // vec3 toneMapped = hdrColor / (hdrColor + vec3(1.0));
 
-    //mappedColor = ST2084_encode(mappedColor); // custom function
-    // 输出到 SDR framebuffer
+    // // 2. Map to nits (1000 nits target)
+    // vec3 nits = toneMapped * 1000.0;
+
+    // // 3. Encode PQ
+    // vec3 pqEncoded = EncodePQ(nits);
+
     outColor = vec4(hdrColor, 1.0);
     //outColor = skyColor;
 }
