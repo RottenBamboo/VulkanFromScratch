@@ -38,3 +38,5 @@ VkExtent2D swapChainExtent;
 uint32_t currentFrame = 0;
 
  bool checkbox = false;
+ bool isDeviceSupportHDR = false;
+ bool isDesiredHDR = true;

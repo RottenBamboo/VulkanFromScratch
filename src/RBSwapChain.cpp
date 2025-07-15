@@ -258,38 +258,18 @@ namespace RottenBamboo{
     void RBSwapChain::SetSwapChainExtent(RBDevice& rbDevice, RBWindows& window)
     {
         SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);
-        VkSurfaceFormatKHR chosenFormat = swapChainSupport.formats[0];
-        for (const auto& availableFormat : swapChainSupport.formats) 
-        {
-            if (availableFormat.format == VK_FORMAT_R16G16B16A16_SFLOAT &&
-                availableFormat.colorSpace == VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT) 
-            {
-                chosenFormat = availableFormat;
-                break;
-            }
-        }
-        VkSurfaceFormatKHR surfaceFormat;// = chooseSwapSurfaceFormat(swapChainSupport.formats);
-        surfaceFormat = chosenFormat;
+
+        VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
         VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities, window.window);
         swapChainExtent = extent;
     }
 
-    void RBSwapChain::CreateSwapChain(RBDevice& rbDevice, RBWindows& window) {
+    void RBSwapChain::CreateSwapChain(RBDevice& rbDevice, RBWindows& window) 
+    {
         SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);
 
-        VkSurfaceFormatKHR chosenFormat = swapChainSupport.formats[0];
-        for (const auto& availableFormat : swapChainSupport.formats) 
-        {
-            if (availableFormat.format == VK_FORMAT_R16G16B16A16_SFLOAT &&
-                availableFormat.colorSpace == VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT) 
-            {
-                chosenFormat = availableFormat;
-                break;
-            }
-        }
-        VkSurfaceFormatKHR surfaceFormat;// = chooseSwapSurfaceFormat(swapChainSupport.formats);
-        surfaceFormat = chosenFormat;
+        VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
         VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities, window.window);
 
