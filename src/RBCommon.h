@@ -33,6 +33,7 @@ static const int skyBoxPassColorAttachmentCount = 1;
 #define TEXTURE_PATHS_SKYBOX_COUNT 1
 
 extern const std::string MODEL_PATH;
+extern const std::array<ImageInfo, TEXTURE_PATHS_MECH_COUNT> imageInfoLighting;
 extern const std::array<std::string, TEXTURE_PATHS_COUNT> TEXTURE_PATH;
 extern const std::array<std::string, TEXTURE_PATHS_MECH_COUNT> TEXTURE_PATHS_MECH;
 extern const std::array<std::string, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> TEXTURE_PATHS_LIGHTING_MECH;
@@ -47,6 +48,29 @@ extern uint32_t currentFrame;
 extern bool checkbox;
 extern bool isDeviceSupportHDR;
 extern bool isDesiredHDR;
+
+struct ImageInfo
+{
+    VkFormat format;
+    bool isHDR;
+    std::string path;
+
+    ImageInfo() : format(VK_FORMAT_UNDEFINED), isHDR(false), path(""){}
+
+    // 添加这个构造函数！
+    ImageInfo(VkFormat f, bool hdr, const std::string& p) : format(f), isHDR(hdr), path(p) {}
+};
+
+struct FrameBufferInfo
+{
+    VkFormat format;
+    bool isHDR;
+
+    FrameBufferInfo() : format(VK_FORMAT_UNDEFINED), isHDR(false) {}
+
+    // 添加这个构造函数！
+    FrameBufferInfo(VkFormat f, bool hdr) : format(f), isHDR(hdr) {}
+};
 
 struct Vertex {
     glm::vec3 pos;

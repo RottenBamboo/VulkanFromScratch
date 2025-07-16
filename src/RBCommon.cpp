@@ -18,6 +18,15 @@ const std::array<std::string, TEXTURE_PATHS_MECH_COUNT> TEXTURE_PATHS_MECH = {
     "../textures/Mech_Emission.jpeg"
 };
 
+const std::array<ImageInfo, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> inputImageInfoLighting = 
+{
+    ImageInfo{VK_FORMAT_R8G8B8A8_UNORM, false, "../textures/Mech_BaseMap.jpg"}, // BaseMap
+    ImageInfo{VK_FORMAT_R8G8B8A8_UNORM, false, "../textures/Mech_Normal.jpg"}, // Normal
+    ImageInfo{VK_FORMAT_R8G8B8A8_UNORM, false, "../textures/Mech_AO.jpeg"}, // AO
+    ImageInfo{VK_FORMAT_R8G8B8A8_UNORM, false, "../textures/Mech_Emission.jpeg"},  // Emission
+    ImageInfo{VK_FORMAT_R8G8B8A8_UNORM, false, "../textures/Mech_Emission.jpeg"},  // Emission
+};
+
 const std::array<std::string, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> TEXTURE_PATHS_LIGHTING_MECH = {
     "../textures/Mech_BaseMap.jpg",
     "../textures/Mech_Normal.jpg",
