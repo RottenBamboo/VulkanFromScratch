@@ -257,26 +257,22 @@ namespace RottenBamboo{
 
     void RBSwapChain::SetSwapChainExtent(RBDevice& rbDevice, RBWindows& window)
     {
-        SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);
-
-        VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
-        VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
-        VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities, window.window);
+        VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(rbDevice.deviceSwapChainSupport.formats);
+        VkPresentModeKHR presentMode = chooseSwapPresentMode(rbDevice.deviceSwapChainSupport.presentModes);
+        VkExtent2D extent = chooseSwapExtent(rbDevice.deviceSwapChainSupport.capabilities, window.window);
         swapChainExtent = extent;
     }
 
     void RBSwapChain::CreateSwapChain(RBDevice& rbDevice, RBWindows& window) 
     {
-        SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);
+        VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(rbDevice.deviceSwapChainSupport.formats);
+        VkPresentModeKHR presentMode = chooseSwapPresentMode(rbDevice.deviceSwapChainSupport.presentModes);
+        VkExtent2D extent = chooseSwapExtent(rbDevice.deviceSwapChainSupport.capabilities, window.window);
 
-        VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
-        VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
-        VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities, window.window);
-
-        uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
-        if(swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount)
+        uint32_t imageCount = rbDevice.deviceSwapChainSupport.capabilities.minImageCount + 1;
+        if(rbDevice.deviceSwapChainSupport.capabilities.maxImageCount > 0 && imageCount > rbDevice.deviceSwapChainSupport.capabilities.maxImageCount)
         {
-            imageCount = swapChainSupport.capabilities.maxImageCount;
+            imageCount = rbDevice.deviceSwapChainSupport.capabilities.maxImageCount;
         }
         VkSwapchainCreateInfoKHR createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -299,7 +295,7 @@ namespace RottenBamboo{
             createInfo.queueFamilyIndexCount = 0;
             createInfo.pQueueFamilyIndices = nullptr;
         }
-        createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
+        createInfo.preTransform = rbDevice.deviceSwapChainSupport.capabilities.currentTransform;
         createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
         createInfo.presentMode = presentMode;
         createInfo.clipped = VK_TRUE;

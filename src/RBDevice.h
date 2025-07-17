@@ -48,6 +48,8 @@ namespace RottenBamboo {
         VkQueue graphicsQueue;
         VkQueue presentQueue;
 
+        SwapChainSupportDetails deviceSwapChainSupport;
+
     private:
 
         VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;

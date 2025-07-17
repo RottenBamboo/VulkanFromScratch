@@ -9,8 +9,8 @@ namespace RottenBamboo {
 
     void RBLightingPass::setupShaders()
     {
-        fillShaderModule("../shader/bin/lightingVert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main", vertShaderModule);
-        fillShaderModule("../shader/bin/lightingFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main", fragShaderModule);
+        fillShaderModule(GET_PROJECT_ROOT_DIR + "shader/bin/lightingVert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main", vertShaderModule);
+        fillShaderModule(GET_PROJECT_ROOT_DIR + "shader/bin/lightingFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main", fragShaderModule);
     }
 
     void RBLightingPass::fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName, RBShaderModule &shaderModule)
@@ -48,9 +48,7 @@ namespace RottenBamboo {
 
     void RBLightingPass::setupAttachments()
     {
-        SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);
-
-        VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
+        VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(rbDevice.deviceSwapChainSupport.formats);
 
         fillColorAttachment(surfaceFormat.format, msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 

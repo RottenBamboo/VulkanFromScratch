@@ -17,6 +17,7 @@
 #include <iostream>
 #include "RBWindows.h"
 
+#define GET_PROJECT_ROOT_DIR RottenBamboo::GetProjectRootPath()
 struct TexturesInfo
 {
     VkFormat format;
@@ -50,6 +51,7 @@ static const int skyBoxPassColorAttachmentCount = 1;
 #define TEXTURE_PATHS_SKYBOX_COUNT 1
 
 extern const std::string MODEL_PATH;
+extern const TexturesInfo fallBackFormat;
 extern const std::array<TexturesInfo, TEXTURE_PATHS_COUNT> inputImagesInfo;
 extern const std::array<TexturesInfo, TEXTURE_PATHS_MECH_COUNT> inputImageInfoMech;
 extern const std::array<TexturesInfo, TEXTURE_PATHS_SKYBOX_COUNT> inputImageInfoSkyBox;
@@ -160,6 +162,23 @@ namespace RottenBamboo
         std::vector<VkPresentModeKHR> presentModes;
     };
 
+    inline std::string EnsureTrailingSlash(const std::string& path) 
+    {
+        if (!path.empty() && path.back() != '/')
+        {
+            return path + "/";
+        }
+        return path;
+    }
+    
+    inline std::string GetProjectRootPath() {
+    #ifdef PROJECT_ROOT_DIR
+        return EnsureTrailingSlash(PROJECT_ROOT_DIR);
+    #else
+        const char* fallback = std::getenv("PROJECT_ROOT_FALLBACK");
+        return EnsureTrailingSlash(fallback ? std::string(fallback) : "./");
+    #endif
+    }
     inline SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice& device, VkSurfaceKHR& surface)
     {
         SwapChainSupportDetails details;
@@ -182,6 +201,17 @@ namespace RottenBamboo
         return details;
     }
 
+    inline bool checkFormatSupported(const std::vector<VkSurfaceFormatKHR>& availableFormats, VkFormat formatTheOne)
+    {
+        for(const auto& availableFormat : availableFormats)
+        {
+            if (availableFormat.format == formatTheOne)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     inline VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
     {

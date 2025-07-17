@@ -24,7 +24,7 @@ namespace RottenBamboo {
 
         bool isColorAttachment;
 
-        const std::array<TexturesInfo, ImageCount> imagesInfo;
+        std::array<TexturesInfo, ImageCount> imagesInfo;
 
         RBDevice &rbDevice;
 
@@ -73,6 +73,8 @@ namespace RottenBamboo {
         RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, bool isColorAttachment);
 
         ~RBDescriptors();
+
+        void checkImagesInfo();
 
         void InitializeDescriptors();
         
