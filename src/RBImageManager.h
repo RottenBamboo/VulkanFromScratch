@@ -17,6 +17,8 @@ namespace RottenBamboo {
         VkDeviceMemory imageMemory;
         VkImageView imageView;
         VkSampler sampler;
+        VkFormat format;
+        bool isHDR;
     };
 
     template<int ImageCount>

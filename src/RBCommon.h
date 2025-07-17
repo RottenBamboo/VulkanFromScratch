@@ -14,7 +14,58 @@
 #include <string>
 #include <algorithm>
 #include <stdexcept>
+#include <iostream>
 #include "RBWindows.h"
+
+#define GET_PROJECT_ROOT_DIR RottenBamboo::GetProjectRootPath()
+struct TexturesInfo
+{
+    VkFormat format;
+    bool isHDR;
+    std::string path;
+    TexturesInfo() : format(VK_FORMAT_UNDEFINED), isHDR(false), path(""){}
+    TexturesInfo(VkFormat f, bool hdr, const std::string& p) : format(f), isHDR(hdr), path(p) {}
+};
+
+struct FrameBuffersInfo
+{
+    VkFormat format;
+    bool isHDR;
+    FrameBuffersInfo() : format(VK_FORMAT_UNDEFINED), isHDR(false) {}
+    FrameBuffersInfo(VkFormat f, bool hdr) : format(f), isHDR(hdr) {}
+};
+
+//extern const int MAX_FRAMES_IN_FLIGHT;
+static double timeStamp;
+static const float C_intervalTime = 1.0f / 120.0f;
+static const int gBufferPassDepthAttachmentCount = 1;
+static const int gBufferPassColorAttachmentCount = 4;
+static const int gBufferPassAttachmentCount = gBufferPassColorAttachmentCount + gBufferPassDepthAttachmentCount;
+static const int lightPassColorAttachmentCount = 1;
+static const int skyBoxPassColorAttachmentCount = 1;
+
+#define DEPTH_ATTACHMENT_COUNT 1
+#define TEXTURE_PATHS_COUNT 1
+#define TEXTURE_PATHS_MECH_COUNT 4
+#define TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT (int)(4 + DEPTH_ATTACHMENT_COUNT)
+#define TEXTURE_PATHS_SKYBOX_COUNT 1
+
+extern const std::string MODEL_PATH;
+extern const TexturesInfo fallBackFormat;
+extern const std::array<TexturesInfo, TEXTURE_PATHS_COUNT> inputImagesInfo;
+extern const std::array<TexturesInfo, TEXTURE_PATHS_MECH_COUNT> inputImageInfoMech;
+extern const std::array<TexturesInfo, TEXTURE_PATHS_SKYBOX_COUNT> inputImageInfoSkyBox;
+extern const std::array<TexturesInfo, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> inputImageInfoLighting;
+
+extern uint32_t mipLevels;
+
+extern VkSampleCountFlagBits msaaSamples;
+extern VkSampleCountFlagBits msaaSamples2;
+extern VkExtent2D swapChainExtent;
+extern uint32_t currentFrame;
+extern bool checkbox;
+extern bool isDeviceSupportHDR;
+extern bool isDesiredHDR;
 
 struct Vertex {
     glm::vec3 pos;
@@ -103,14 +154,31 @@ struct QueueFamilyIndices {
     }
 };
 
-namespace RottenBamboo {
-
+namespace RottenBamboo 
+{
     struct SwapChainSupportDetails {
         VkSurfaceCapabilitiesKHR capabilities{};
         std::vector<VkSurfaceFormatKHR> formats;
         std::vector<VkPresentModeKHR> presentModes;
     };
 
+    inline std::string EnsureTrailingSlash(const std::string& path) 
+    {
+        if (!path.empty() && path.back() != '/')
+        {
+            return path + "/";
+        }
+        return path;
+    }
+    
+    inline std::string GetProjectRootPath() {
+    #ifdef PROJECT_ROOT_DIR
+        return EnsureTrailingSlash(PROJECT_ROOT_DIR);
+    #else
+        const char* fallback = std::getenv("PROJECT_ROOT_FALLBACK");
+        return EnsureTrailingSlash(fallback ? std::string(fallback) : "./");
+    #endif
+    }
     inline SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice& device, VkSurfaceKHR& surface)
     {
         SwapChainSupportDetails details;
@@ -133,14 +201,60 @@ namespace RottenBamboo {
         return details;
     }
 
+    inline bool checkFormatSupported(const std::vector<VkSurfaceFormatKHR>& availableFormats, VkFormat formatTheOne)
+    {
+        for(const auto& availableFormat : availableFormats)
+        {
+            if (availableFormat.format == formatTheOne)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     inline VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
     {
         for(const auto& availableFormat : availableFormats)
         {
-            if(availableFormat.format == VK_FORMAT_R8G8B8A8_UNORM && availableFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
+            if(isDesiredHDR)
             {
-                return availableFormat;
+#ifdef _WIN32
+                if(availableFormat.format == VK_FORMAT_R16G16B16A16_SFLOAT && availableFormat.colorSpace == VK_COLOR_SPACE_HDR10_ST2084_EXT)
+                {
+                    isDeviceSupportHDR = true;
+                    std::cout << "Device support HDR" << std::endl;
+                    std::cout << "availableFormat.format == VK_FORMAT_R16G16B16A16_SFLOAT " << "availableFormat.colorSpace == VK_COLOR_SPACE_HDR10_ST2084_EXT" << std::endl;
+                    return availableFormat;
+                }
+#else
+                
+                if (availableFormat.format == VK_FORMAT_R16G16B16A16_SFLOAT && availableFormat.colorSpace == VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT) 
+                {
+                    isDeviceSupportHDR = true;
+                    std::cout << "Device support HDR" << std::endl;
+                    std::cout << "availableFormat.format == VK_FORMAT_R16G16B16A16_SFLOAT " << "availableFormat.colorSpace == VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT" << std::endl;
+                    return availableFormat;
+                }
+#endif
+                else
+                {
+                    if(availableFormat.format == VK_FORMAT_R8G8B8A8_SRGB && availableFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
+                    {
+                        isDeviceSupportHDR = false;
+                        std::cout << "Device does not support HDR, fallback to sRGB" << std::endl;
+                        return availableFormat;
+                    }
+                }
+            }
+            else
+            {
+                if(availableFormat.format == VK_FORMAT_R8G8B8A8_SRGB && availableFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
+                {
+                    isDeviceSupportHDR = false;
+                    std::cout << "Device does not support HDR" << std::endl;
+                    return availableFormat;
+                }
             }
         }
         return availableFormats[0];
@@ -191,33 +305,3 @@ namespace RottenBamboo {
         throw std::runtime_error("failed to find suitable memory type!");
     }
 }
-
-//extern const int MAX_FRAMES_IN_FLIGHT;
-static double timeStamp;
-static const float C_intervalTime = 1.0f / 120.0f;
-static const int gBufferPassDepthAttachmentCount = 1;
-static const int gBufferPassColorAttachmentCount = 4;
-static const int gBufferPassAttachmentCount = gBufferPassColorAttachmentCount + gBufferPassDepthAttachmentCount;
-static const int lightPassColorAttachmentCount = 1;
-static const int skyBoxPassColorAttachmentCount = 1;
-
-#define DEPTH_ATTACHMENT_COUNT 1
-#define TEXTURE_PATHS_COUNT 1
-#define TEXTURE_PATHS_MECH_COUNT 4
-#define TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT (int)(4 + DEPTH_ATTACHMENT_COUNT)
-#define TEXTURE_PATHS_SKYBOX_COUNT 1
-
-extern const std::string MODEL_PATH;
-extern const std::array<std::string, TEXTURE_PATHS_COUNT> TEXTURE_PATH;
-extern const std::array<std::string, TEXTURE_PATHS_MECH_COUNT> TEXTURE_PATHS_MECH;
-extern const std::array<std::string, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> TEXTURE_PATHS_LIGHTING_MECH;
-extern const std::array<std::string, TEXTURE_PATHS_SKYBOX_COUNT> TEXTURE_PATHS_SKYBOX;
-
-extern uint32_t mipLevels;
-
-extern VkSampleCountFlagBits msaaSamples;
-extern VkSampleCountFlagBits msaaSamples2;
-extern VkExtent2D swapChainExtent;
-extern uint32_t currentFrame;
-extern bool checkbox;
-

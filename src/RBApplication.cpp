@@ -8,6 +8,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 #include <thread>
+#include <filesystem>
 
 namespace RottenBamboo {
 
@@ -209,9 +210,15 @@ void RBApplication::processModelNode(
     }
 }
 
-    
+    void printCurrentWorkingDirectory()
+{
+    std::filesystem::path cwd = std::filesystem::current_path();
+    std::cout << "Current working directory: " << cwd.string() << std::endl;
+}
     void RBApplication::loadModelAssimp() 
     {
+
+        printCurrentWorkingDirectory();
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFile(MODEL_PATH.c_str(),
             aiProcess_Triangulate | 
@@ -221,6 +228,8 @@ void RBApplication::processModelNode(
 
         if (!scene) 
         {
+            std::cout << MODEL_PATH.c_str() << std::endl;
+
             std::cerr << "Assimp import failed: " << importer.GetErrorString() << std::endl;
         } 
         else 
