@@ -17,6 +17,23 @@
 #include <iostream>
 #include "RBWindows.h"
 
+struct TexturesInfo
+{
+    VkFormat format;
+    bool isHDR;
+    std::string path;
+    TexturesInfo() : format(VK_FORMAT_UNDEFINED), isHDR(false), path(""){}
+    TexturesInfo(VkFormat f, bool hdr, const std::string& p) : format(f), isHDR(hdr), path(p) {}
+};
+
+struct FrameBuffersInfo
+{
+    VkFormat format;
+    bool isHDR;
+    FrameBuffersInfo() : format(VK_FORMAT_UNDEFINED), isHDR(false) {}
+    FrameBuffersInfo(VkFormat f, bool hdr) : format(f), isHDR(hdr) {}
+};
+
 //extern const int MAX_FRAMES_IN_FLIGHT;
 static double timeStamp;
 static const float C_intervalTime = 1.0f / 120.0f;
@@ -33,10 +50,10 @@ static const int skyBoxPassColorAttachmentCount = 1;
 #define TEXTURE_PATHS_SKYBOX_COUNT 1
 
 extern const std::string MODEL_PATH;
-extern const std::array<std::string, TEXTURE_PATHS_COUNT> TEXTURE_PATH;
-extern const std::array<std::string, TEXTURE_PATHS_MECH_COUNT> TEXTURE_PATHS_MECH;
-extern const std::array<std::string, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> TEXTURE_PATHS_LIGHTING_MECH;
-extern const std::array<std::string, TEXTURE_PATHS_SKYBOX_COUNT> TEXTURE_PATHS_SKYBOX;
+extern const std::array<TexturesInfo, TEXTURE_PATHS_COUNT> inputImagesInfo;
+extern const std::array<TexturesInfo, TEXTURE_PATHS_MECH_COUNT> inputImageInfoMech;
+extern const std::array<TexturesInfo, TEXTURE_PATHS_SKYBOX_COUNT> inputImageInfoSkyBox;
+extern const std::array<TexturesInfo, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> inputImageInfoLighting;
 
 extern uint32_t mipLevels;
 
@@ -204,6 +221,8 @@ namespace RottenBamboo
             {
                 if(availableFormat.format == VK_FORMAT_R8G8B8A8_UNORM && availableFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
                 {
+                    isDeviceSupportHDR = false;
+                    std::cout << "Device does not support HDR" << std::endl;
                     return availableFormat;
                 }
             }

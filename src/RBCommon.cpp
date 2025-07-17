@@ -6,28 +6,30 @@
 
 
 const std::string MODEL_PATH = "../models/scene.gltf";
-//const std::string TEXTURE_PATH = "../textures/Mech_BaseMap.jpg";
-const std::array<std::string, TEXTURE_PATHS_COUNT> TEXTURE_PATH = {
-    "../textures/Mech_BaseMap.jpg"
+
+const std::array<TexturesInfo, TEXTURE_PATHS_COUNT> inputImagesInfo = {
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, "../textures/Mech_BaseMap.jpg"}
 };
 
-const std::array<std::string, TEXTURE_PATHS_MECH_COUNT> TEXTURE_PATHS_MECH = {
-    "../textures/Substance_texture_baseColor.jpeg",
-    "../textures/Substance_texture_normal.jpeg",
-    "../textures/Substance_texture_metallicRoughness.png",
-    "../textures/Mech_Emission.jpeg"
+const std::array<TexturesInfo, TEXTURE_PATHS_MECH_COUNT> inputImageInfoMech = 
+{
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, "../textures/Substance_texture_baseColor.jpeg"},
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, "../textures/Substance_texture_normal.jpeg"},
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, "../textures/Substance_texture_metallicRoughness.png"},
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, "../textures/Mech_Emission.jpeg"}
 };
 
-const std::array<std::string, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> TEXTURE_PATHS_LIGHTING_MECH = {
-    "../textures/Mech_BaseMap.jpg",
-    "../textures/Mech_Normal.jpg",
-    "../textures/Mech_AO.jpeg",
-    "../textures/Mech_Emission.jpeg",
-    "../textures/Mech_Emission.jpeg"
+const std::array<TexturesInfo, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> inputImageInfoLighting = 
+{
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, "../textures/Mech_BaseMap.jpg"}, // BaseMap
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, "../textures/Mech_Normal.jpg"}, // Normal
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, "../textures/Mech_AO.jpeg"}, // AO
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, "../textures/Mech_Emission.jpeg"},  // Emission
+    TexturesInfo{VK_FORMAT_D32_SFLOAT, false, "../textures/Mech_Emission.jpeg"}  // Emission
 };
 
-const std::array<std::string, TEXTURE_PATHS_SKYBOX_COUNT> TEXTURE_PATHS_SKYBOX = {
-    "../textures/cape_hill_4k.hdr"
+const std::array<TexturesInfo, TEXTURE_PATHS_SKYBOX_COUNT> inputImageInfoSkyBox = {
+    TexturesInfo{VK_FORMAT_R32G32B32A32_SFLOAT, true, "../textures/cape_hill_4k.hdr"}
 };
 
 uint32_t mipLevels;

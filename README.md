@@ -59,3 +59,5 @@ MacOS platform:
     cmake --build .
 
     ./VulkanFromScratch
+
+    ##To generate XCode project add -G Xcode into cmake instruction
