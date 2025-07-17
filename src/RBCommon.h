@@ -209,7 +209,7 @@ namespace RottenBamboo
 #endif
                 else
                 {
-                    if(availableFormat.format == VK_FORMAT_R8G8B8A8_UNORM && availableFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
+                    if(availableFormat.format == VK_FORMAT_R8G8B8A8_SRGB && availableFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
                     {
                         isDeviceSupportHDR = false;
                         std::cout << "Device does not support HDR, fallback to sRGB" << std::endl;
@@ -219,7 +219,7 @@ namespace RottenBamboo
             }
             else
             {
-                if(availableFormat.format == VK_FORMAT_R8G8B8A8_UNORM && availableFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
+                if(availableFormat.format == VK_FORMAT_R8G8B8A8_SRGB && availableFormat.colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR)
                 {
                     isDeviceSupportHDR = false;
                     std::cout << "Device does not support HDR" << std::endl;

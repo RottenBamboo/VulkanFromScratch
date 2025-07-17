@@ -7,6 +7,10 @@
 
 const std::string MODEL_PATH = "../models/scene.gltf";
 
+const std::array<TexturesInfo, TEXTURE_PATHS_COUNT> fallBackFormat = {
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, ""}
+};
+
 const std::array<TexturesInfo, TEXTURE_PATHS_COUNT> inputImagesInfo = {
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, "../textures/Mech_BaseMap.jpg"}
 };
@@ -14,8 +18,8 @@ const std::array<TexturesInfo, TEXTURE_PATHS_COUNT> inputImagesInfo = {
 const std::array<TexturesInfo, TEXTURE_PATHS_MECH_COUNT> inputImageInfoMech = 
 {
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, "../textures/Substance_texture_baseColor.jpeg"},
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, "../textures/Substance_texture_normal.jpeg"},
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, "../textures/Substance_texture_metallicRoughness.png"},
+    TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, false, "../textures/Substance_texture_normal.jpeg"},
+    TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, false, "../textures/Substance_texture_metallicRoughness.png"},
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, "../textures/Mech_Emission.jpeg"}
 };
 
