@@ -60,8 +60,12 @@ MacOS platform:
 
     ./VulkanFromScratch
 
-    ##To generate XCode project add -G Xcode into cmake instruction
+    ## To generate XCode project remove build file and add -G Xcode into cmake instruction
 
-    ##If first time run xcode, please execute instruction blew to set command tool path
-    udo xcode-select --switch /Applications/Xcode.app/Contents/Developer
-    xcodebuild -runFirstLaunch
+    ## rm -rf build 
+
+    ## cmake -S . -B build -G Xcode -DCMAKE_BUILD_TYPE=Debug
+
+    ## If first time run xcode, please execute instruction blew to set command tool path
+    ## udo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+    ## xcodebuild -runFirstLaunch
