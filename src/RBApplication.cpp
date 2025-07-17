@@ -8,8 +8,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 #include <thread>
-#include <unistd.h>
-#include <limits.h>
+#include <filesystem>
 
 namespace RottenBamboo {
 
@@ -213,15 +212,8 @@ void RBApplication::processModelNode(
 
     void printCurrentWorkingDirectory()
 {
-    char cwd[PATH_MAX];
-    if (getcwd(cwd, sizeof(cwd)) != nullptr)
-    {
-        std::cout << "[INFO] Current working directory: " << cwd << std::endl;
-    }
-    else
-    {
-        perror("getcwd() error");
-    }
+    std::filesystem::path cwd = std::filesystem::current_path();
+    std::cout << "Current working directory: " << cwd.string() << std::endl;
 }
     void RBApplication::loadModelAssimp() 
     {
