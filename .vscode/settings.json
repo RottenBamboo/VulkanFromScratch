@@ -107,9 +107,7 @@
         "random": "cpp",
         "regex": "cpp",
         "unordered_set": "cpp",
-        "coroutine": "cpp",
-        "version": "cpp",
-        "__assert": "cpp"
+        "coroutine": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

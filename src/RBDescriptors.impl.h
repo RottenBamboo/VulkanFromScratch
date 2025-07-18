@@ -360,18 +360,18 @@ namespace RottenBamboo{
     template<int ImageCount, int BufferCount>
     void RBDescriptors<ImageCount, BufferCount>::checkImagesInfo()
     {
-        if(imagesInfo.size() != ImageCount)
-        {
-            throw std::runtime_error("imagesInfo size does not match ImageCount!");
-        }
-        for(int i = 0; i < imagesInfo.size(); i++)
-        { 
-            if(!checkFormatSupported(rbDevice.deviceSwapChainSupport.formats, imagesInfo[i].format))
-            {
-                imagesInfo[i].format = fallBackFormat.format;
-                imagesInfo[i].isHDR = fallBackFormat.isHDR;
-            }
-        }
+        // if(imagesInfo.size() != ImageCount)
+        // {
+        //     throw std::runtime_error("imagesInfo size does not match ImageCount!");
+        // }
+        // for(int i = 0; i < imagesInfo.size(); i++)
+        // { 
+        //     if(!checkFormatSupported(rbDevice.deviceSwapChainSupport.formats, imagesInfo[i].format))
+        //     {
+        //         imagesInfo[i].format = fallBackFormat.format;
+        //         imagesInfo[i].isHDR = fallBackFormat.isHDR;
+        //     }
+        // }
     }
 
     template<int ImageCount, int BufferCount>

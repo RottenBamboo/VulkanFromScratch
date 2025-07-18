@@ -26,7 +26,7 @@ const std::array<TexturesInfo, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> inputIma
     TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Normal.jpg"}, // Normal
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_AO.jpeg"}, // AO
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.jpeg"},  // Emission
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.jpeg"}  // Emission
+    TexturesInfo{VK_FORMAT_D32_SFLOAT, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.jpeg"}  // Emission
 };
 
 const std::array<TexturesInfo, TEXTURE_PATHS_SKYBOX_COUNT> inputImageInfoSkyBox = {

@@ -116,8 +116,8 @@ namespace RottenBamboo {
 
         bool swapChainAdequate = false;
         if (extensionSupported) {
-            deviceSwapChainSupport = querySwapChainSupport(device, surface);
-            swapChainAdequate = !deviceSwapChainSupport.formats.empty() && !deviceSwapChainSupport.presentModes.empty();
+            SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device, surface);
+            swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
         }
 
         VkPhysicalDeviceFeatures supportFeatures;
