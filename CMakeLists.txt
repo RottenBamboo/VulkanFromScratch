@@ -92,6 +92,7 @@ add_executable(${PROJECT_NAME}
         src/RBCamera.h src/RBCameraManager.h
         src/RBRuntimeCameraManager.cpp src/RBRuntimeCameraManager.h
         src/RBEditorCameraManager.cpp src/RBEditorCameraManager.h
+        src/RBRenderer.cpp src/RBRenderer.h
         feature/RBGBufferPass.cpp feature/RBGBufferPass.h
         feature/RBLightingPass.cpp feature/RBLightingPass.h
         feature/RBSkyPass.cpp feature/RBSkyPass.h
