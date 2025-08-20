@@ -64,7 +64,7 @@ MacOS platform:
 
     ## rm -rf build 
 
-    ## cmake -S . -B build -G Xcode -DCMAKE_BUILD_TYPE=Debug
+    ## cmake -S . -B buildMac -G Xcode -DCMAKE_BUILD_TYPE=Debug
 
     ## If first time run xcode, please execute instruction blew to set command tool path
     ## udo xcode-select --switch /Applications/Xcode.app/Contents/Developer
