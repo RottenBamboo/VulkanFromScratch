@@ -35,6 +35,8 @@ windows platform:
     cd shader
 
     .\compile.bat
+
+    cd ..
     
     cmake -G "Visual Studio 17 2022" -S . -B build -DCMAKE_BUILD_TYPE=Debug
 
@@ -52,6 +54,8 @@ MacOS platform:
 
     ./compile.sh
 
+    cd ..
+
     cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 
     cd build
@@ -67,5 +71,5 @@ MacOS platform:
     ## cmake -S . -B buildMac -G Xcode -DCMAKE_BUILD_TYPE=Debug
 
     ## If first time run xcode, please execute instruction blew to set command tool path
-    ## udo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+    ## sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
     ## xcodebuild -runFirstLaunch
