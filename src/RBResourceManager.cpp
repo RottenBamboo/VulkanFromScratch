@@ -1,6 +1,8 @@
-#pragma once
+//
+// Created by rottenbamboo on 2025/9/30.
+//
+
 #include "RBResourceManager.h"
-#include <memory>
 
 namespace RottenBamboo {
     ResourceManager::ResourceManager(RBDevice& device, RBCommandBuffer& commandBuffer)
@@ -19,6 +21,6 @@ namespace RottenBamboo {
     }
 
     void ResourceManager::Clear() {
-        models.clear(); // shared_ptr 自动释放
+        models.clear();
     }
 }
