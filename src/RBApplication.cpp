@@ -8,7 +8,6 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 #include <thread>
-#include <filesystem>
 
 namespace RottenBamboo {
 
@@ -20,6 +19,7 @@ namespace RottenBamboo {
         InitializeDevice();
         InitializeCommandBuffer();
         loadModelAssimp();
+        //resourceManager.LoadModels(MODEL_PATH);
         InitializeBuffers();
         InitializeDescriptors();
         InitializeSwapChain();
@@ -178,43 +178,38 @@ void RBApplication::processModelNode(
     int& vertexWriteIndex,
     int& vertexStartOffset,
     const aiMatrix4x4& parentTransform)
-{
-    aiMatrix4x4 currentTransform = parentTransform * node->mTransformation;
-
-    for (unsigned int i = 0; i < node->mNumMeshes; ++i)
     {
-        aiMesh* meshPtr = scene->mMeshes[node->mMeshes[i]];
+        aiMatrix4x4 currentTransform = parentTransform * node->mTransformation;
 
-        // vertex push back
-        transformModelVertex(meshPtr, vertexBuffer, vertexWriteIndex, currentTransform);
-
-        // index push back
-        for (unsigned int f = 0; f < meshPtr->mNumFaces; ++f) 
+        for (unsigned int i = 0; i < node->mNumMeshes; ++i)
         {
-            aiFace& face = meshPtr->mFaces[f];
-            if (face.mNumIndices != 3) continue;
+            aiMesh* meshPtr = scene->mMeshes[node->mMeshes[i]];
 
-            for (unsigned int idx = 0; idx < 3; ++idx) 
+            // vertex push back
+            transformModelVertex(meshPtr, vertexBuffer, vertexWriteIndex, currentTransform);
+
+            // index push back
+            for (unsigned int f = 0; f < meshPtr->mNumFaces; ++f) 
             {
-                indexBuffer.push_back(face.mIndices[idx] + vertexStartOffset);
+                aiFace& face = meshPtr->mFaces[f];
+                if (face.mNumIndices != 3) continue;
+
+                for (unsigned int idx = 0; idx < 3; ++idx) 
+                {
+                    indexBuffer.push_back(face.mIndices[idx] + vertexStartOffset);
+                }
             }
+
+            vertexStartOffset += meshPtr->mNumVertices;
         }
 
-        vertexStartOffset += meshPtr->mNumVertices;
+        //recursively process children nodes
+        for (unsigned int c = 0; c < node->mNumChildren; ++c)
+        {
+            processModelNode(node->mChildren[c], scene, vertexBuffer, indexBuffer, vertexWriteIndex, vertexStartOffset, currentTransform);
+        }
     }
-    
-    //recursively process children nodes
-    for (unsigned int c = 0; c < node->mNumChildren; ++c)
-    {
-        processModelNode(node->mChildren[c], scene, vertexBuffer, indexBuffer, vertexWriteIndex, vertexStartOffset, currentTransform);
-    }
-}
 
-    void printCurrentWorkingDirectory()
-{
-    std::filesystem::path cwd = std::filesystem::current_path();
-    std::cout << "Current working directory: " << cwd.string() << std::endl;
-}
     void RBApplication::loadModelAssimp() 
     {
 

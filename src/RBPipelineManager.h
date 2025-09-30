@@ -1,6 +1,5 @@
 #pragma once
 
-#include "RBCommon.h"
 #include "RBDevice.h"
 #include "RBSwapChain.h"
 #include "RBPipelineLayoutManager.h"

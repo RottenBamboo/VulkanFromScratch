@@ -12,7 +12,7 @@ namespace RottenBamboo {
     public:
         ResourceManager(RBDevice& device, RBCommandBuffer& commandBuffer);
 
-        std::shared_ptr<RBModel> LoadModel(const std::string& path);
+        std::shared_ptr<RBModel> LoadModels(const std::string& path);
 
         void Clear();
 

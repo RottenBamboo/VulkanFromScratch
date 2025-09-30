@@ -12,7 +12,7 @@
 #include "RBSkyPass.h"
 #include "RBLightingPass.h"
 #include "RBBuffer.h"
-#include "RBMesh.h"
+#include "RBResourceManager.h"
 #include "RBRuntimeCameraManager.h"
 #include "RBEditorCameraManager.h"
 #include <stdexcept>
@@ -95,6 +95,8 @@ namespace RottenBamboo {
         RBCommandBuffer commandBuffer{device};
 
         RBMesh mesh{device, commandBuffer};
+
+        ResourceManager resourceManager{device, commandBuffer};
 
         RBPipelineConfig pipelineConfig{};
         
