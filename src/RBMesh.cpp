@@ -12,11 +12,13 @@ namespace RottenBamboo {
     {
         vertexBuffer.ReleaseBuffer();
         indexBuffer.ReleaseBuffer();
+        indexCount = 0;
     }
 
     void RBMesh::InitializeMesh()
     {
         vertexBuffer.CreateBuffer();
         indexBuffer.CreateBuffer();
+        indexCount = static_cast<uint32_t>(indexBuffer.data.size());
     }
 }
