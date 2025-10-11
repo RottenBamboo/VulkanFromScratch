@@ -22,6 +22,15 @@ namespace RottenBamboo {
         return model;
     }
 
+    std::shared_ptr<RBModel> ResourceManager::GetModel(const std::string& path) {
+        std::cout << "ResourceManager::GetModel() Begin" << std::endl;
+        auto it = models.find(path);
+        if (it != models.end()) {
+            return it->second;
+        }      
+        return nullptr;  
+    }
+
     void ResourceManager::Clear() {
         models.clear();
     }

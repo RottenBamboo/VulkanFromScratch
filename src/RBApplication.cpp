@@ -379,16 +379,18 @@ void RBApplication::processModelNode(
         gbufferRenderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
         gbufferRenderPassInfo.pClearValues = clearValues.data();
 
-        VkBuffer vertexBuffers[] = {mesh.vertexBuffer.buffer};
+        std::shared_ptr<RBModel> shared_ptr_model = resourceManager.GetModel(MODEL_PATH);
+        auto& mesh = shared_ptr_model->getMeshes(0);
+        VkBuffer vertexBuffers[] = {(*mesh).vertexBuffer.buffer};
         VkDeviceSize offsets[] = {0};
         
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
-        vkCmdBindIndexBuffer(commandBuffer, mesh.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+        vkCmdBindIndexBuffer(commandBuffer, (*mesh).indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
         
         //std::cout << "before gBufferPass::recordCommandBuffer()" << std::endl;
         // gbuffer pass pipeline
-        gBufferPass.recordCommandBuffer(commandBuffer, gbufferRenderPassInfo, descriptorsGBuffer, mesh);
+        gBufferPass.recordCommandBuffer(commandBuffer, gbufferRenderPassInfo, descriptorsGBuffer, *mesh);
         //std::cout << "after gBufferPass::recordCommandBuffer()" << std::endl;
 
         // VkBuffer lightingVertexBuffers[] = {mesh.vertexBuffer.buffer};
@@ -464,9 +466,9 @@ void RBApplication::processModelNode(
         //std::cout << "before lightPassManager::recordCommandBuffer()" << std::endl;
         //std::cout << "descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout = " << descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout << std::endl;
 
-        skyPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsSkyBox, mesh);
+        skyPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsSkyBox, *mesh);
 
-        lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, mesh, gui, uniformShaderVariables);
+        lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, *mesh, gui, uniformShaderVariables);
 
         //std::cout << "after lightPassManager::recordCommandBuffer()" << std::endl;
 

@@ -17,56 +17,56 @@ namespace RottenBamboo {
     std::vector<Vertex>& vertexBuffer, 
     int& vertexWriteIndex, 
     const aiMatrix4x4& transform)
-{
-    aiMatrix3x3 normalMatrix = aiMatrix3x3(transform);
-    normalMatrix.Inverse().Transpose();
-
-    for (unsigned int v = 0; v < meshPtr->mNumVertices; ++v) 
     {
-        aiVector3D vertex = meshPtr->mVertices[v];
-        vertex *= transform;  //transform the vertex position
+        aiMatrix3x3 normalMatrix = aiMatrix3x3(transform);
+        normalMatrix.Inverse().Transpose();
 
-        vertexBuffer[vertexWriteIndex].pos = { vertex.x, vertex.y, vertex.z };
-        vertexBuffer[vertexWriteIndex].color = {1.0f, 1.0f, 1.0f};
+        for (unsigned int v = 0; v < meshPtr->mNumVertices; ++v) 
+        {
+            aiVector3D vertex = meshPtr->mVertices[v];
+            vertex *= transform;  //transform the vertex position
 
-        if (meshPtr->HasTangentsAndBitangents()) 
-        {
-            aiVector3D tangent = meshPtr->mTangents[v];
-            tangent = normalMatrix * tangent;
-            vertexBuffer[vertexWriteIndex].tangent = glm::vec3(tangent.x, tangent.y, tangent.z);
-        }
-        else 
-        {
-            vertexBuffer[vertexWriteIndex].tangent = {0.0f, 0.0f, 0.0f};
-        }
+            vertexBuffer[vertexWriteIndex].pos = { vertex.x, vertex.y, vertex.z };
+            vertexBuffer[vertexWriteIndex].color = {1.0f, 1.0f, 1.0f};
 
-        if (meshPtr->HasNormals()) 
-        {
-            aiVector3D normal = meshPtr->mNormals[v];
-            normal = normalMatrix * normal;
-            vertexBuffer[vertexWriteIndex].normal = glm::vec3(normal.x, normal.y, normal.z);
-        }
-        else 
-        {
-            vertexBuffer[vertexWriteIndex].normal = {0.0f, 0.0f, 0.0f};
-        }
-        
-        if (meshPtr->HasTextureCoords(0)) 
-        {
-            vertexBuffer[vertexWriteIndex].texCoord = 
+            if (meshPtr->HasTangentsAndBitangents()) 
             {
-                meshPtr->mTextureCoords[0][v].x,
-                meshPtr->mTextureCoords[0][v].y
-            };
-        } 
-        else 
-        {
-            vertexBuffer[vertexWriteIndex].texCoord = {0.0f, 0.0f};
-        }
+                aiVector3D tangent = meshPtr->mTangents[v];
+                tangent = normalMatrix * tangent;
+                vertexBuffer[vertexWriteIndex].tangent = glm::vec3(tangent.x, tangent.y, tangent.z);
+            }
+            else 
+            {
+                vertexBuffer[vertexWriteIndex].tangent = {0.0f, 0.0f, 0.0f};
+            }
 
-        vertexWriteIndex++;
+            if (meshPtr->HasNormals()) 
+            {
+                aiVector3D normal = meshPtr->mNormals[v];
+                normal = normalMatrix * normal;
+                vertexBuffer[vertexWriteIndex].normal = glm::vec3(normal.x, normal.y, normal.z);
+            }
+            else 
+            {
+                vertexBuffer[vertexWriteIndex].normal = {0.0f, 0.0f, 0.0f};
+            }
+
+            if (meshPtr->HasTextureCoords(0)) 
+            {
+                vertexBuffer[vertexWriteIndex].texCoord = 
+                {
+                    meshPtr->mTextureCoords[0][v].x,
+                    meshPtr->mTextureCoords[0][v].y
+                };
+            } 
+            else 
+            {
+                vertexBuffer[vertexWriteIndex].texCoord = {0.0f, 0.0f};
+            }
+
+            vertexWriteIndex++;
+        }
     }
-}
 
     void RBModel::processModelNode(
     const aiNode* node,
@@ -106,6 +106,14 @@ namespace RottenBamboo {
         {
             processModelNode(node->mChildren[c], scene, vertexBuffer, indexBuffer, vertexWriteIndex, vertexStartOffset, currentTransform);
         }
+    }
+
+    std::unique_ptr<RBMesh>& RBModel::getMeshes(int index) 
+    {
+        if(index < 0 || index >= meshes.size()) {
+            throw std::out_of_range("Index out of range in RBModel::getMeshes");
+        }
+        return meshes[index];
     }
     
     void RBModel::loadModelFromFile(const std::string& path) 
@@ -153,6 +161,9 @@ namespace RottenBamboo {
         int vertexWriteIndex = 0; 
         int vertexStartOffset = 0; 
         processModelNode(scene->mRootNode, scene, mesh->vertexBuffer.data, mesh->indexBuffer.data, vertexWriteIndex, vertexStartOffset, aiMatrix4x4());
+
+        //create mesh vertex and index buffer
+        mesh->InitializeMesh();
 
         std::cout << "RBModel::loadModelFromFile() Before push_back()!" << std::endl;
         meshes.push_back(std::move(mesh));

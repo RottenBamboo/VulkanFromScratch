@@ -28,14 +28,15 @@ namespace RottenBamboo {
                          int& vertexStartOffset,
                          const aiMatrix4x4& parentTransform);
 
+        std::unique_ptr<RBMesh>& getMeshes(int index);
+
     private:
         RBDevice &device;
         RBCommandBuffer &commandBuffer;
         std::vector<std::unique_ptr<RBMesh>> meshes;
 
-    public:
-        
 
+    public:
         RBModel(RBDevice &device, RBCommandBuffer &commandBuffer);
         ~RBModel() = default;
     };

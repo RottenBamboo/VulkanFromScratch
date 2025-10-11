@@ -14,6 +14,8 @@ namespace RottenBamboo {
 
         std::shared_ptr<RBModel> LoadModels(const std::string& path);
 
+        std::shared_ptr<RBModel> GetModel(const std::string& path);
+
         void Clear();
 
     private:
