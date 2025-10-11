@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <iostream>
+#include <filesystem>
 #include "RBWindows.h"
 
 #define GET_PROJECT_ROOT_DIR RottenBamboo::GetProjectRootPath()
@@ -171,6 +172,12 @@ namespace RottenBamboo
         return path;
     }
     
+    inline void printCurrentWorkingDirectory()
+    {
+        std::filesystem::path cwd = std::filesystem::current_path();
+        std::cout << "Current working directory: " << cwd.string() << std::endl;
+    }
+
     inline std::string GetProjectRootPath() {
     #ifdef PROJECT_ROOT_DIR
         return EnsureTrailingSlash(PROJECT_ROOT_DIR);

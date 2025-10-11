@@ -1,0 +1,26 @@
+//
+// Created by rottenbamboo on 2025/9/30.
+//
+
+#pragma once
+#include "RBModel.h"
+#include <unordered_map>
+
+namespace RottenBamboo {
+
+    class ResourceManager {
+    public:
+        ResourceManager(RBDevice& device, RBCommandBuffer& commandBuffer);
+
+        std::shared_ptr<RBModel> LoadModels(const std::string& path);
+
+        std::shared_ptr<RBModel> GetModel(const std::string& path);
+
+        void Clear();
+
+    private:
+        RBDevice& device;
+        RBCommandBuffer& commandBuffer;
+        std::unordered_map<std::string, std::shared_ptr<RBModel>> models;
+    };
+}

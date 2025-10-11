@@ -12,7 +12,7 @@
 #include "RBSkyPass.h"
 #include "RBLightingPass.h"
 #include "RBBuffer.h"
-#include "RBMesh.h"
+#include "RBResourceManager.h"
 #include "RBRuntimeCameraManager.h"
 #include "RBEditorCameraManager.h"
 #include <stdexcept>
@@ -64,13 +64,7 @@ namespace RottenBamboo {
                          int& vertexStartOffset,
                          const aiMatrix4x4& parentTransform);
 
-        void loadModelAssimp();
-
-        void loadModel();
-
         void InitializeBuffers();
-
-        void InitializeMesh();
 
         void InitializeDescriptors();
 
@@ -94,7 +88,7 @@ namespace RottenBamboo {
 
         RBCommandBuffer commandBuffer{device};
 
-        RBMesh mesh{device, commandBuffer};
+        ResourceManager resourceManager{device, commandBuffer};
 
         RBPipelineConfig pipelineConfig{};
         

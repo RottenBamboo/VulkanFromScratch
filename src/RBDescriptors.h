@@ -9,7 +9,6 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <unordered_map>
-#include "RBCommon.h"
 #include "RBDevice.h"
 #include "RBCommandBuffer.h"
 #include "RBBuffer.h"

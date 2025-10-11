@@ -5,7 +5,6 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
-#include "RBCommon.h"
 #include "RBDevice.h"
 
 namespace RottenBamboo {

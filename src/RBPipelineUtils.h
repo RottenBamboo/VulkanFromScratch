@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "RBCommon.h"
 #include "RBDevice.h"
 
 namespace RottenBamboo {

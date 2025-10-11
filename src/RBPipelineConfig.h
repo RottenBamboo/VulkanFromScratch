@@ -9,5 +9,4 @@ struct RBPipelineConfig {
     VkPolygonMode polygonMode;
     VkCullModeFlags cullMode;
     VkFrontFace frontFace;
-    // 其他配置...
 };

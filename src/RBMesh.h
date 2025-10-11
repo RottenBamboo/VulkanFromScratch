@@ -18,11 +18,13 @@ namespace RottenBamboo {
     public:
         RBBuffer<Vertex> vertexBuffer{device, commandBuffer, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT};
         RBBuffer<uint32_t> indexBuffer{device, commandBuffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT};
-        //RBBuffer<UniformBufferShaderVariables> uniformBuffers[MAX_FRAMES_IN_FLIGHT]{{device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}, {device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}};
+        uint32_t indexCount{0};
 
         RBMesh(RBDevice &device, RBCommandBuffer &commandBuffer);
-        ~RBMesh();
+        //~RBMesh() = default;
         void InitializeMesh();
+        void InitializeMeshBuffer();
+        void AddMeshData(const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
     };
 
 } // Rottenbamboo
