@@ -19,7 +19,7 @@ namespace RottenBamboo {
         InitializeDevice();
         InitializeCommandBuffer();
         loadModelAssimp();
-        //resourceManager.LoadModels(MODEL_PATH);
+        resourceManager.LoadModels(MODEL_PATH);
         InitializeBuffers();
         InitializeDescriptors();
         InitializeSwapChain();

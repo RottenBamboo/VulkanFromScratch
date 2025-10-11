@@ -37,6 +37,6 @@ namespace RottenBamboo {
         
 
         RBModel(RBDevice &device, RBCommandBuffer &commandBuffer);
-        ~RBModel();
+        ~RBModel() = default;
     };
 } // Rottenbamboo

@@ -11,11 +11,6 @@ namespace RottenBamboo {
     {
 
     }
-
-    RBModel::~RBModel()
-    {
-
-    }
     
     void RBModel::transformModelVertex(
     aiMesh* meshPtr, 
@@ -162,8 +157,8 @@ namespace RottenBamboo {
         std::cout << "RBModel::loadModelFromFile() Before push_back()!" << std::endl;
         meshes.push_back(std::move(mesh));
 
-        std::cout << "Mesh vertex count: " << mesh->vertexBuffer.data.size() << std::endl;
-        std::cout << "Mesh index count: " << mesh->indexBuffer.data.size() << std::endl;
+        //std::cout << "Mesh vertex count: " << mesh->vertexBuffer.data.size() << std::endl;
+        //std::cout << "Mesh index count: " << mesh->indexBuffer.data.size() << std::endl;
         std::cout << "RBModel::loadModel() - model loaded using Assimp" << std::endl;
         std::cout << "RBModel::loadModelFromFile() End" << std::endl;
     }

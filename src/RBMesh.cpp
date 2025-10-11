@@ -8,12 +8,12 @@ namespace RottenBamboo {
     RBMesh::RBMesh(RBDevice &device, RBCommandBuffer &commandBuffer) : device(device), commandBuffer(commandBuffer)
     {
     }
-    RBMesh::~RBMesh()
-    {
-        vertexBuffer.ReleaseBuffer();
-        indexBuffer.ReleaseBuffer();
-        indexCount = 0;
-    }
+    // RBMesh::~RBMesh()
+    // {
+    //     vertexBuffer.ReleaseBuffer();
+    //     indexBuffer.ReleaseBuffer();
+    //     indexCount = 0;
+    // }
 
     void RBMesh::InitializeMesh()
     {
