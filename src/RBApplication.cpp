@@ -18,7 +18,7 @@ namespace RottenBamboo {
         InitializeCamera();
         InitializeDevice();
         InitializeCommandBuffer();
-        loadModelAssimp();
+        //loadModelAssimp();
         resourceManager.LoadModels(MODEL_PATH);
         InitializeBuffers();
         InitializeDescriptors();
@@ -72,14 +72,7 @@ namespace RottenBamboo {
             uniformBuffers[i].CreateBufferNoStageing();
         }
 
-        InitializeMesh();
         std::cout << "RBApplication::InitializeBuffers()" << std::endl;
-    }
-
-    void RBApplication::InitializeMesh()
-    {
-        mesh.InitializeMesh();
-        std::cout << "RBApplication::InitializeMesh()" << std::endl;
     }
 
     void RBApplication::InitializeDescriptors()
@@ -208,101 +201,6 @@ void RBApplication::processModelNode(
         {
             processModelNode(node->mChildren[c], scene, vertexBuffer, indexBuffer, vertexWriteIndex, vertexStartOffset, currentTransform);
         }
-    }
-
-    void RBApplication::loadModelAssimp() 
-    {
-
-        printCurrentWorkingDirectory();
-        Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(MODEL_PATH.c_str(),
-            aiProcess_Triangulate | 
-            aiProcess_FlipUVs | 
-            aiProcess_GenNormals |
-            aiProcess_CalcTangentSpace);
-
-        if (!scene) 
-        {
-            std::cout << MODEL_PATH.c_str() << std::endl;
-
-            std::cerr << "Assimp import failed: " << importer.GetErrorString() << std::endl;
-        } 
-        else 
-        {
-            std::cout << "Assimp import succeeded!" << std::endl;
-        }
-
-        if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
-        {
-            throw std::runtime_error("Assimp failed to load model: " + std::string(importer.GetErrorString()));
-        }
-        std::cout << "Root node name: " << scene->mRootNode->mName.C_Str() << "\n";
-        std::cout << "Mesh count in root node: " << scene->mRootNode->mNumMeshes << "\n";
-        std::cout << "Child count in root node: " << scene->mRootNode->mNumChildren << "\n";
-        
-        std::unordered_map<Vertex, uint32_t> uniqueVertices{};
-        mesh.vertexBuffer.data.clear();
-        mesh.indexBuffer.data.clear();
-
-        int numTotalVertices = 0;
-        for(unsigned int meshItr = 0; meshItr < scene->mNumMeshes; meshItr++)
-        {
-            numTotalVertices += scene->mMeshes[meshItr]->mNumVertices;
-        }
-        mesh.vertexBuffer.data.resize(numTotalVertices);
-        
-        int vertexWriteIndex = 0; 
-        int vertexStartOffset = 0; 
-        processModelNode(scene->mRootNode, scene, mesh.vertexBuffer.data, mesh.indexBuffer.data, vertexWriteIndex, vertexStartOffset, aiMatrix4x4());
-
-        std::cout << "Mesh vertex count: " << mesh.vertexBuffer.data.size() << std::endl;
-        std::cout << "Mesh index count: " << mesh.indexBuffer.data.size() << std::endl;
-        std::cout << "RBApplication::loadModel() - model loaded using Assimp" << std::endl;
-    }
-
-    void RBApplication::loadModel()
-    {
-        tinyobj::attrib_t attrib;
-        std::vector<tinyobj::shape_t> shapes;
-        std::vector<tinyobj::material_t> materials;
-        std::string warn, err;
-
-        if(!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, MODEL_PATH.c_str()))
-        {
-            throw std::runtime_error(warn + err);
-        }
-
-        std::unordered_map<Vertex, uint32_t> uniqueVertices{};
-
-        for(const auto& shape : shapes)
-        {
-            for(const auto& index : shape.mesh.indices)
-            {
-                Vertex vertex{};
-
-                vertex.pos = {
-                        attrib.vertices[3 * index.vertex_index + 0],
-                        attrib.vertices[3 * index.vertex_index + 1],
-                        attrib.vertices[3 * index.vertex_index + 2]
-                };
-
-                vertex.texCoord = {
-                        attrib.texcoords[2 * index.texcoord_index + 0],
-                        1.0f - attrib.texcoords[2 * index.texcoord_index + 1]
-                };
-
-                vertex.color = {1.0f, 1.0f, 1.0f};
-
-                if(uniqueVertices.count(vertex) == 0)
-                {
-                    uniqueVertices[vertex] = static_cast<uint32_t>(mesh.vertexBuffer.data.size());
-                    mesh.vertexBuffer.data.push_back(vertex);
-                }
-
-                mesh.indexBuffer.data.push_back(uniqueVertices[vertex]);
-            }
-        }
-        std::cout << "RBApplication::loadModel()" << std::endl;
     }
 
     void RBApplication::InitializeMatrix()

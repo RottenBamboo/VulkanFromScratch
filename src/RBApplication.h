@@ -64,13 +64,7 @@ namespace RottenBamboo {
                          int& vertexStartOffset,
                          const aiMatrix4x4& parentTransform);
 
-        void loadModelAssimp();
-
-        void loadModel();
-
         void InitializeBuffers();
-
-        void InitializeMesh();
 
         void InitializeDescriptors();
 
@@ -93,8 +87,6 @@ namespace RottenBamboo {
         RBGUI gui{device, windows};
 
         RBCommandBuffer commandBuffer{device};
-
-        RBMesh mesh{device, commandBuffer};
 
         ResourceManager resourceManager{device, commandBuffer};
 
