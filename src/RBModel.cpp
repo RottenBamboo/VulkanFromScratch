@@ -6,10 +6,9 @@
 
 namespace RottenBamboo {
 
-    RBModel::RBModel(RBDevice &device, RBCommandBuffer &commandBuffer)
-        : device(device), commandBuffer(commandBuffer)
+    RBModel::RBModel(const std::string &path, RBDevice &device, RBCommandBuffer &commandBuffer) 
+    : RBResource(path), device(device), commandBuffer(commandBuffer)
     {
-
     }
     
     void RBModel::transformModelVertex(
@@ -148,7 +147,7 @@ namespace RottenBamboo {
         
         std::unordered_map<Vertex, uint32_t> uniqueVertices{};
 
-        auto mesh = std::make_unique<RBMesh>(device, commandBuffer);
+        auto mesh = std::make_unique<RBMesh>(path, device, commandBuffer);
         mesh->indexBuffer.data.clear();
 
         int numTotalVertices = 0;

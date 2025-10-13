@@ -18,7 +18,8 @@ namespace RottenBamboo {
         InitializeCamera();
         InitializeDevice();
         InitializeCommandBuffer();
-        resourceManager.LoadModels(MODEL_PATH);
+        resourceManager.Load<RBModel>(MODEL_PATH);
+        //resourceManager.LoadModels(MODEL_PATH);
         InitializeBuffers();
         InitializeDescriptors();
         InitializeSwapChain();
@@ -276,7 +277,7 @@ void RBApplication::processModelNode(
         gbufferRenderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
         gbufferRenderPassInfo.pClearValues = clearValues.data();
 
-        std::shared_ptr<RBModel> shared_ptr_model = resourceManager.GetModel(MODEL_PATH);
+        auto shared_ptr_model = resourceManager.Get<RBModel>(MODEL_PATH);
         auto& mesh = shared_ptr_model->getMeshes(0);
         VkBuffer vertexBuffers[] = {(*mesh).vertexBuffer.buffer};
         VkDeviceSize offsets[] = {0};

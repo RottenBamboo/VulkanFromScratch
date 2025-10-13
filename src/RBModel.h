@@ -37,7 +37,8 @@ namespace RottenBamboo {
 
 
     public:
-        RBModel(RBDevice &device, RBCommandBuffer &commandBuffer);
+    
+        RBModel(const std::string &path, RBDevice &device, RBCommandBuffer &commandBuffer);
         ~RBModel() = default;
     };
 } // Rottenbamboo

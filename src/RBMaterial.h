@@ -20,7 +20,7 @@ namespace RottenBamboo {
         RBCommandBuffer &commandBuffer;
 
     public:
-        RBMaterial(RBDevice &device, RBCommandBuffer &commandBuffer);
+        RBMaterial(const std::string& path, RBDevice &device, RBCommandBuffer &commandBuffer);
     };
 
 } // Rottenbamboo

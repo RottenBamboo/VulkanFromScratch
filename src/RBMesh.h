@@ -23,7 +23,7 @@ namespace RottenBamboo {
         RBBuffer<uint32_t> indexBuffer{device, commandBuffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT};
         uint32_t indexCount{0};
 
-        RBMesh(RBDevice &device, RBCommandBuffer &commandBuffer);
+        RBMesh(const std::string& path, RBDevice &device, RBCommandBuffer &commandBuffer);
         //~RBMesh() = default;
         void InitializeMesh();
         void InitializeMeshBuffer();

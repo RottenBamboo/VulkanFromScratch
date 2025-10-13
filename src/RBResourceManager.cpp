@@ -15,7 +15,7 @@ namespace RottenBamboo {
             return it->second;
         }
 
-        auto model = std::make_shared<RBModel>(device, commandBuffer);
+        auto model = std::make_shared<RBModel>(path, device, commandBuffer);
         model->Load(path);
         models[path] = model;
         std::cout << "ResourceManager::LoadModels() End" << std::endl;
@@ -33,5 +33,6 @@ namespace RottenBamboo {
 
     void ResourceManager::Clear() {
         models.clear();
+        resources.clear();
     }
 }
