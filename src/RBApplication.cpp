@@ -18,7 +18,6 @@ namespace RottenBamboo {
         InitializeCamera();
         InitializeDevice();
         InitializeCommandBuffer();
-        //loadModelAssimp();
         resourceManager.LoadModels(MODEL_PATH);
         InitializeBuffers();
         InitializeDescriptors();
