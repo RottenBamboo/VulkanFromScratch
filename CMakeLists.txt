@@ -96,6 +96,7 @@ add_executable(${PROJECT_NAME}
         src/RBMesh.cpp src/RBMesh.h
         src/RBMaterial.cpp src/RBMaterial.h
         src/RBModel.cpp src/RBModel.h
+        src/RBResource.h
         src/RBResourceManager.cpp src/RBResourceManager.h
         feature/RBGBufferPass.cpp feature/RBGBufferPass.h
         feature/RBLightingPass.cpp feature/RBLightingPass.h

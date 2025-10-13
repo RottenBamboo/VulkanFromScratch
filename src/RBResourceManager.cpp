@@ -16,7 +16,7 @@ namespace RottenBamboo {
         }
 
         auto model = std::make_shared<RBModel>(device, commandBuffer);
-        model->loadModelFromFile(path);
+        model->Load(path);
         models[path] = model;
         std::cout << "ResourceManager::LoadModels() End" << std::endl;
         return model;

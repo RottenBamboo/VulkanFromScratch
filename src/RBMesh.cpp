@@ -34,4 +34,8 @@ namespace RottenBamboo {
         indexBuffer.data = indices;
         indexCount = static_cast<uint32_t>(indices.size());
     }
+
+    void RBMesh::Load(const std::string& path) 
+    {
+    }
 } // Rottenbamboo
