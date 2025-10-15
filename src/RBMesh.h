@@ -4,13 +4,16 @@
 
 #pragma once
 
+#include "RBResource.h"
 #include "RBDevice.h"
 #include "RBBuffer.h"
 
 namespace RottenBamboo {
 
-    class RBMesh {
-
+    class RBMesh : public RBResource{
+    public:
+        void Load(const std::string& path) override;
+        
     private:
         RBDevice &device;
         RBCommandBuffer &commandBuffer;
@@ -20,7 +23,7 @@ namespace RottenBamboo {
         RBBuffer<uint32_t> indexBuffer{device, commandBuffer, VK_BUFFER_USAGE_INDEX_BUFFER_BIT};
         uint32_t indexCount{0};
 
-        RBMesh(RBDevice &device, RBCommandBuffer &commandBuffer);
+        RBMesh(const std::string& path, RBDevice &device, RBCommandBuffer &commandBuffer);
         //~RBMesh() = default;
         void InitializeMesh();
         void InitializeMeshBuffer();

@@ -5,7 +5,8 @@
 #include "RBMesh.h"
 
 namespace RottenBamboo {
-    RBMesh::RBMesh(RBDevice &device, RBCommandBuffer &commandBuffer) : device(device), commandBuffer(commandBuffer)
+    RBMesh::RBMesh(const std::string& path, RBDevice &device, RBCommandBuffer &commandBuffer) 
+    : RBResource(path), device(device), commandBuffer(commandBuffer)
     {
     }
     // RBMesh::~RBMesh()
@@ -33,5 +34,9 @@ namespace RottenBamboo {
         vertexBuffer.data = vertices;
         indexBuffer.data = indices;
         indexCount = static_cast<uint32_t>(indices.size());
+    }
+
+    void RBMesh::Load(const std::string& path) 
+    {
     }
 } // Rottenbamboo

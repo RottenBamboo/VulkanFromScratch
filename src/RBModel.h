@@ -11,9 +11,9 @@
 
 namespace RottenBamboo {
     
-    class RBModel {
+    class RBModel : public RBResource {
     public:
-        void loadModelFromFile(const std::string& path);
+        void Load(const std::string& path) override;
 
         void transformModelVertex(aiMesh* meshPtr, 
                                           std::vector<Vertex>& vertexBuffer, 
@@ -37,7 +37,8 @@ namespace RottenBamboo {
 
 
     public:
-        RBModel(RBDevice &device, RBCommandBuffer &commandBuffer);
+    
+        RBModel(const std::string &path, RBDevice &device, RBCommandBuffer &commandBuffer);
         ~RBModel() = default;
     };
 } // Rottenbamboo

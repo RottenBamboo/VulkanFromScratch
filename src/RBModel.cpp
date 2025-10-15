@@ -6,10 +6,9 @@
 
 namespace RottenBamboo {
 
-    RBModel::RBModel(RBDevice &device, RBCommandBuffer &commandBuffer)
-        : device(device), commandBuffer(commandBuffer)
+    RBModel::RBModel(const std::string &path, RBDevice &device, RBCommandBuffer &commandBuffer) 
+    : RBResource(path), device(device), commandBuffer(commandBuffer)
     {
-
     }
     
     void RBModel::transformModelVertex(
@@ -115,10 +114,10 @@ namespace RottenBamboo {
         }
         return meshes[index];
     }
-    
-    void RBModel::loadModelFromFile(const std::string& path) 
+
+    void RBModel::Load(const std::string& path) 
     {
-        std::cout << "RBModel::loadModelFromFile() Begin" << std::endl;
+        std::cout << "RBModel::Load() Begin" << std::endl;
         printCurrentWorkingDirectory();
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFile(path.c_str(),
@@ -148,7 +147,7 @@ namespace RottenBamboo {
         
         std::unordered_map<Vertex, uint32_t> uniqueVertices{};
 
-        auto mesh = std::make_unique<RBMesh>(device, commandBuffer);
+        auto mesh = std::make_unique<RBMesh>(path, device, commandBuffer);
         mesh->indexBuffer.data.clear();
 
         int numTotalVertices = 0;
@@ -165,12 +164,12 @@ namespace RottenBamboo {
         //create mesh vertex and index buffer
         mesh->InitializeMesh();
 
-        std::cout << "RBModel::loadModelFromFile() Before push_back()!" << std::endl;
+        std::cout << "RBModel::Load() Before push_back()!" << std::endl;
         meshes.push_back(std::move(mesh));
 
         //std::cout << "Mesh vertex count: " << mesh->vertexBuffer.data.size() << std::endl;
         //std::cout << "Mesh index count: " << mesh->indexBuffer.data.size() << std::endl;
         std::cout << "RBModel::loadModel() - model loaded using Assimp" << std::endl;
-        std::cout << "RBModel::loadModelFromFile() End" << std::endl;
+        std::cout << "RBModel::Load() End" << std::endl;
     }
 } // Rottenbamboo
