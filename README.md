@@ -73,3 +73,18 @@ MacOS platform:
     ## If first time run xcode, please execute instruction blew to set command tool path
     ## sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
     ## xcodebuild -runFirstLaunch
+
+MacOS platform Android Build
+    
+    cd shader
+
+    ./compile.sh
+
+    cd ..
+
+    cmake -B build-android -S . \
+    -DCMAKE_BUILD_TYPE=Release \  
+    -DANDROID_ABI=arm64-v8a \    
+    -DANDROID_PLATFORM=android-29
+
+    cmake --build build-android

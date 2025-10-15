@@ -1,3 +1,21 @@
+if(ANDROID)
+    if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+        set(ANDROID_NDK "/opt/homebrew/Caskroom/android-ndk/27/AndroidNDK12077973.app/Contents/NDK" CACHE PATH "Android NDK Path")
+        set(CMAKE_TOOLCHAIN_FILE "${ANDROID_NDK}/build/cmake/android.toolchain.cmake" CACHE FILEPATH "Android toolchain file")
+        set(ANDROID_ABI "arm64-v8a")
+        set(ANDROID_PLATFORM "android-29")
+
+        message(STATUS "Using ANDROID_NDK: ${ANDROID_NDK}")
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        set(ANDROID_NDK "C:/Users/Administrator/AppData/Local/Android/Sdk/ndk/27.2.10564734" CACHE PATH "Android NDK Path")
+        set(CMAKE_TOOLCHAIN_FILE "${ANDROID_NDK}/build/cmake/android.toolchain.cmake" CACHE FILEPATH "Android toolchain file")
+        set(ANDROID_ABI "arm64-v8a")
+        set(ANDROID_PLATFORM "android-29")
+
+        message(STATUS "Using ANDROID_NDK: ${ANDROID_NDK}")
+    endif()
+endif()
+
 cmake_minimum_required(VERSION 3.23.2)
 
 project(VulkanFromScratch)
