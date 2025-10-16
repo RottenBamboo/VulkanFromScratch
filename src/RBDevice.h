@@ -5,7 +5,7 @@
 #define VK_USE_PLATFORM_MACOS_MVK
 #define GLFW_INCLUDE_VULKAN
 
-#include <GLFW/glfw3.h>
+//#include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
 #include <iostream>
 #include <string>

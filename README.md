@@ -30,6 +30,15 @@ cd external
 ./buildSDL3.sh
 
 
+MacOS platform Android Build
+
+./buildZlib.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
+
+./buildAssimp.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
+
+./buildSDL3.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
+
+
 windows platform:
     
     cd shader
@@ -83,8 +92,12 @@ MacOS platform Android Build
     cd ..
 
     cmake -B build-android -S . \
-    -DCMAKE_BUILD_TYPE=Release \  
-    -DANDROID_ABI=arm64-v8a \    
+    -DCMAKE_CXX_STANDARD=17 \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_TOOLCHAIN_FILE=${CMAKE_ANDROID_TOOL_CHAIN}/build/cmake/android.toolchain.cmake \
+    -DANDROID_ABI=arm64-v8a \
     -DANDROID_PLATFORM=android-29
 
-    cmake --build build-android
+    cd build-android
+
+    cmake --build .

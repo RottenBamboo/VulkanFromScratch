@@ -5,7 +5,7 @@
 #define GLFW_INCLUDE_VULKAN
 
 #include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
+//#include <GLFW/glfw3.h>
 #include "RBDevice.h"
 #include "RBWindows.h"
 #include "RBDescriptors.h"
