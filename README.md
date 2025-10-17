@@ -91,13 +91,13 @@ MacOS platform Android Build
 
     cd ..
 
-    cmake -B build-android -S . \
+    cmake -B buildAndroid -S . \
     -DCMAKE_CXX_STANDARD=17 \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_TOOLCHAIN_FILE=${CMAKE_ANDROID_TOOL_CHAIN}/build/cmake/android.toolchain.cmake \
+    -DCMAKE_TOOLCHAIN_FILE=${HOME}/Library/Android/sdk/ndk/29.0.14206865/build/cmake/android.toolchain.cmake \
     -DANDROID_ABI=arm64-v8a \
     -DANDROID_PLATFORM=android-29
 
-    cd build-android
+    cd buildAndroid
 
     cmake --build .
