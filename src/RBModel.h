@@ -9,6 +9,10 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#ifdef __ANDROID__
+#include <SDL3/SDL_iostream.h>
+#endif
+
 namespace RottenBamboo {
     
     class RBModel : public RBResource {
@@ -40,5 +44,22 @@ namespace RottenBamboo {
     
         RBModel(const std::string &path, RBDevice &device, RBCommandBuffer &commandBuffer);
         ~RBModel() = default;
+
+    private:
+    // file extension check
+    std::string GetFileExtension(const std::string& filename) {
+        size_t dotPos = filename.find_last_of(".");
+        if (dotPos != std::string::npos && dotPos < filename.length() - 1) {
+            return filename.substr(dotPos + 1);
+        }
+        return "";
+    }
+
+#ifdef __ANDROID__
+    std::string Base64Encode(const std::vector<uint8_t>& data);
+    void ProcessScene(const aiScene* scene, const std::string& filepath);   
+    bool TryLoadGLTFWithManualBin(const std::string& gltfPath);
+#endif
+
     };
 } // Rottenbamboo

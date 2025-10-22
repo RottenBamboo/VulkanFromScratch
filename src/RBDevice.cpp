@@ -141,6 +141,12 @@ namespace RottenBamboo {
     }
 
     void RBDevice::setupDebugMessenger() {
+#ifdef __ANDROID__
+        // Android: 完全跳过调试消息设置
+        LOG_INFO("Skipping debug messenger setup on Android");
+        return;
+#else
+        // 桌面端原有代码
         if (!enableValidationLayers) {
             return;
         }
@@ -151,6 +157,7 @@ namespace RottenBamboo {
         if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
             throw std::runtime_error("failed to set up debug messenger!");
         }
+#endif
         std::cout << "RBDevice::setupDebugMessenger()" << std::endl;
     }
 
@@ -245,6 +252,20 @@ namespace RottenBamboo {
     }
 
     std::vector<const char *> RBDevice::getRequiredExtensions() {
+#ifdef __ANDROID__
+        // Android: 返回基本的扩展
+        std::vector<const char*> extensions;
+        extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+        extensions.push_back(VK_KHR_ANDROID_SURFACE_EXTENSION_NAME);
+    
+        // 可选：添加调试扩展
+        if (enableValidationLayers) {
+            extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        }
+    
+        return extensions;
+#else
+        // 桌面端原有代码
         uint32_t glfwExtensionCount = 0;
         const char* const* glfwExtensions;
         glfwExtensions = SDL_Vulkan_GetInstanceExtensions(&glfwExtensionCount);
@@ -256,9 +277,15 @@ namespace RottenBamboo {
         std::cout << "RBDevice::getRequiredExtensions()" << std::endl;
 
         return extensions;
+#endif
     }
 
     bool RBDevice::checkValidationLayerSupport() {
+#ifdef __ANDROID__
+        // Android: android disable check layer validation, so always return false
+        LOG_INFO("Validation layers not supported on Android");
+        return false;
+#else
         uint32_t layerCount;
         vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
         std::vector<VkLayerProperties> avaliableLayers(layerCount);
@@ -288,9 +315,51 @@ namespace RottenBamboo {
         }
         std::cout << "RBDevice::checkValidationLayerSupport()" << std::endl;
         return true;
+#endif
     }
 
     void RBDevice::createInstance() {
+#ifdef __ANDROID__
+        LOG_INFO("Creating Vulkan instance on Android");
+
+        // On Android, validation layers are generally not supported
+        //enableValidationLayers = false;
+
+        VkApplicationInfo appInfo{};
+        appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+        appInfo.pApplicationName = "VulkanApp";
+        appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+        appInfo.pEngineName = "No Engine";
+        appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+        appInfo.apiVersion = VK_API_VERSION_1_1;  // Android usually supports Vulkan 1.1 and above
+
+        // Android specific extensions
+        std::vector<const char*> extensions;
+        extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+        extensions.push_back(VK_KHR_ANDROID_SURFACE_EXTENSION_NAME);
+
+        // Try to add debug extension if available
+        if (enableValidationLayers && checkValidationLayerSupport()) {
+            extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        }
+
+        VkInstanceCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+        createInfo.pApplicationInfo = &appInfo;
+        createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+        createInfo.ppEnabledExtensionNames = extensions.data();
+        createInfo.enabledLayerCount = 0;  // Android usually does not support validation layers
+
+        VkResult result = vkCreateInstance(&createInfo, nullptr, &instance);
+        if (result != VK_SUCCESS) {
+            LOG_ERROR("Failed to create Vulkan instance: %d", result);
+            // On Android, do not throw exceptions, just return
+            return;
+        }
+
+        LOG_INFO("Vulkan instance created successfully");
+#else
+        // desktop code
         if (enableValidationLayers && !checkValidationLayerSupport()) {
             throw std::runtime_error("validation layers requested, but not available!");
         }
@@ -342,5 +411,6 @@ namespace RottenBamboo {
             throw std::runtime_error("failed to create instance!");
         }
         std::cout << "RBDevice::createInstance()" << std::endl;
+#endif
     }
 }

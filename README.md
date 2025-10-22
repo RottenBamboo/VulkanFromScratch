@@ -87,7 +87,7 @@ MacOS platform Android Build
     
     cd shader
 
-    ./compile.sh
+    ./compile.sh android
 
     cd ..
 

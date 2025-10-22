@@ -16,6 +16,10 @@
 #include "RBImageManager.h"
 #include "RBBufferManager.h"
 
+#ifdef __ANDROID__
+#include <SDL3/SDL_iostream.h>
+#endif
+
 namespace RottenBamboo {
     template<int ImageCount, int BufferCount>
     class RBDescriptors {
@@ -49,6 +53,9 @@ namespace RottenBamboo {
 
         void createTextureImage();
 
+#ifdef __ANDROID__
+        bool LoadFromMemoryAndroid(const std::string& filePath, bool isHDR, std::vector<uint8_t>& buffer);
+#endif
         void createTextureImageFrameBuffer(VkExtent2D framebufferExtent, 
                                           std::array<VkFormat, ImageCount> imageFormats,
                                           std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags);

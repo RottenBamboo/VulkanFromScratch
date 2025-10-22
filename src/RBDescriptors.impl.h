@@ -107,6 +107,39 @@ namespace RottenBamboo{
         }
     }
 
+#ifdef __ANDROID__
+    template <int ImageCount, int BufferCount>
+    bool RBDescriptors<ImageCount, BufferCount>:: LoadFromMemoryAndroid(const std::string& filePath, bool isHDR, std::vector<uint8_t>& buffer) {
+    
+    SDL_IOStream* file = SDL_IOFromFile(filePath.c_str(), "rb");
+    if (!file) {
+        __android_log_print(ANDROID_LOG_ERROR, "RottenBamboo", 
+                       "Failed to open texture file: %s, error: %s", 
+                       filePath.c_str(), SDL_GetError());
+        return false;
+    }
+    
+    Sint64 fileSize = SDL_GetIOSize(file);
+    if (fileSize <= 0) {
+        __android_log_print(ANDROID_LOG_ERROR, "RottenBamboo", 
+                       "Invalid file size: %s", filePath.c_str());
+        return false;
+    }
+    
+    buffer.resize(fileSize);
+    size_t bytesRead = SDL_ReadIO(file, buffer.data(), fileSize);
+
+    SDL_CloseIO(file);
+
+    if (bytesRead != static_cast<size_t>(fileSize)) {
+        __android_log_print(ANDROID_LOG_ERROR, "RottenBamboo", 
+                       "Failed to read texture file: %s", filePath.c_str());
+        buffer.clear();
+        return false;
+    }
+    return true;
+}
+#endif
     template <int ImageCount, int BufferCount>
     void RBDescriptors<ImageCount, BufferCount>::createTextureImage()
     {
@@ -115,6 +148,21 @@ namespace RottenBamboo{
         {
             int texWidth, texHeight, texChannels, typeSize;
             void* pixels = nullptr;
+#ifdef __ANDROID__
+            std::vector<uint8_t> buffer;
+            LoadFromMemoryAndroid(imagesInfo[index].path, imagesInfo[index].isHDR, buffer);
+            // 从内存加载纹理
+            if(imagesInfo[index].isHDR)
+            {
+                pixels = (float*)stbi_loadf_from_memory(buffer.data(), buffer.size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+                typeSize = sizeof(float);
+            }
+            else
+            {
+                pixels = (stbi_uc*)stbi_load_from_memory(buffer.data(), buffer.size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+                typeSize = sizeof(stbi_uc);
+            }
+#else
             if(imagesInfo[index].isHDR)
             {
                 pixels = (float*)stbi_loadf(imagesInfo[index].path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
@@ -126,6 +174,7 @@ namespace RottenBamboo{
                 typeSize = sizeof(stbi_uc);
             }
 
+#endif
             mipLevels = 1;//static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
             mipLevels = 1;//std::min(mipLevels, (uint32_t)8);
             VkDeviceSize imageSize = texWidth * texHeight * 4 * typeSize;
@@ -167,7 +216,24 @@ namespace RottenBamboo{
             //rbImageManager.transitionImageLayout(commandBufferEnd, imageBundle.image, imagesInfo[index].format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
             //rbCommandBuffer.endSingleTimeCommands(commandBufferEnd);
 
+        VkFormatProperties formatProperties;
+        vkGetPhysicalDeviceFormatProperties(rbDevice.physicalDevice, imagesInfo[index].format, &formatProperties);
+        
+        bool supportsLinearBlitting = (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT) != 0;
+        bool supportsBlit = (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT) != 0 && 
+                           (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT) != 0;
+
+        if (supportsLinearBlitting && supportsBlit && mipLevels > 1) 
+        {
             generateMipmaps(imageBundle.image, imagesInfo[index].format, texWidth, texHeight, mipLevels);
+        } 
+        else 
+        {
+            // transition to final layout directly
+            VkCommandBuffer layoutCmdBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+            rbImageManager.transitionImageLayout(layoutCmdBuffer, imageBundle.image, imagesInfo[index].format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
+            rbCommandBuffer.endSingleTimeCommands(layoutCmdBuffer);
+        }
             index++;
             std::cout << "index = " << index << std::endl;
             std::cout << "mipLevels = " << mipLevels << std::endl;
@@ -240,6 +306,7 @@ namespace RottenBamboo{
     template<int ImageCount, int BufferCount>
     void RBDescriptors<ImageCount, BufferCount>::generateMipmaps(VkImage image, VkFormat imageFormat, uint32_t texWidth, uint32_t texHeight, uint32_t mipLevels)
     {
+        // check linear blitting compatibility
         VkFormatProperties formatProperties;
         vkGetPhysicalDeviceFormatProperties(rbDevice.physicalDevice, imageFormat, &formatProperties);
 
@@ -248,8 +315,43 @@ namespace RottenBamboo{
             throw std::runtime_error("texture image format does not support linear blitting!");
         }
 
-        VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+        bool supportsLinearBlitting = (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT) != 0;
+        bool supportsBlit = (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT) != 0 && 
+                           (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT) != 0;
 
+        if (!supportsLinearBlitting || !supportsBlit) {
+        
+            // transition to final layout directly
+        VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+            
+            VkImageMemoryBarrier barrier{};
+            barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+            barrier.image = image;
+            barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+            barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+            barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            barrier.subresourceRange.baseMipLevel = 0;
+            barrier.subresourceRange.levelCount = mipLevels;
+            barrier.subresourceRange.baseArrayLayer = 0;
+            barrier.subresourceRange.layerCount = 1;
+            
+            barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+            barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+            barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+            vkCmdPipelineBarrier(commandBuffer, 
+                                VK_PIPELINE_STAGE_TRANSFER_BIT, 
+                                VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 
+                                0, 0, nullptr, 0, nullptr, 1, &barrier);
+            
+            rbCommandBuffer.endSingleTimeCommands(commandBuffer);
+            
+            throw std::runtime_error("texture image format does not support linear blitting!");
+        }
+
+        // desktop code for generating mipmaps
+        VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+    
         VkImageMemoryBarrier barrier{};
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         barrier.image = image;

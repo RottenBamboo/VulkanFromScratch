@@ -2,7 +2,6 @@
 // Created by rottenbamboo on 2023/5/26.
 //
 #pragma once
-#define GLFW_INCLUDE_VULKAN
 
 #include <vulkan/vulkan.h>
 //#include <GLFW/glfw3.h>

@@ -1,4 +1,5 @@
-#if(ANDROID)
+if(CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "android.toolchain.cmake")
+
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     set(ANDROID_ABI "arm64-v8a")
     set(ANDROID_PLATFORM "android-29")
@@ -8,7 +9,10 @@ elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     set(ANDROID_PLATFORM "android-29")
     #message(STATUS "Using ANDROID_NDK_HOME: ${ANDROID_NDK_HOME}")
 endif()
-#endif()
+
+else()
+
+endif()
 
 cmake_minimum_required(VERSION 3.23.2)
 
@@ -81,7 +85,54 @@ set(SDL_INCLUDE_DIRS "external/SDL/include")
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # add executable file
+if(ANDROID)
 add_library(${PROJECT_NAME} SHARED
+        src/RBPipelineUtils.cpp src/RBPipelineUtils.h
+        src/RBShaderModule.cpp src/RBShaderModule.h
+        src/RBApplication.cpp src/RBApplication.h
+        src/RBPipelineConfig.h
+        src/RBWindows.h src/RBWindows.cpp
+        src/AppMain.cpp
+        src/AppMainAndroid.cpp
+        src/RBPipelineManager.cpp src/RBPipelineManager.h
+        src/RBDevice.cpp src/RBDevice.h
+        src/RBSwapChain.cpp src/RBSwapChain.h
+        src/RBCommon.cpp src/RBCommon.h
+        src/RBCommandBuffer.cpp src/RBCommandBuffer.h
+        src/RBDescriptors.impl.h src/RBDescriptors.h
+        src/RBBuffer.cpp src/RBBuffer.h
+        src/RBMesh.cpp src/RBMesh.h
+        src/RBDescriptorPoolManager.cpp src/RBDescriptorPoolManager.h
+        src/RBDescriptorSetManager.cpp src/RBDescriptorSetManager.h
+        src/RBDescriptorSetLayoutManager.cpp src/RBDescriptorSetLayoutManager.h
+        src/RBPipelineLayoutManager.cpp src/RBPipelineLayoutManager.h
+        src/RBImageManager.impl.h src/RBImageManager.h
+        src/RBGUI.cpp src/RBGUI.h
+        src/RBBufferManager.cpp src/RBBufferManager.h
+        src/RBCamera.h src/RBCameraManager.h
+        src/RBRuntimeCameraManager.cpp src/RBRuntimeCameraManager.h
+        src/RBEditorCameraManager.cpp src/RBEditorCameraManager.h
+        src/RBRenderer.cpp src/RBRenderer.h
+        src/RBMesh.cpp src/RBMesh.h
+        src/RBMaterial.cpp src/RBMaterial.h
+        src/RBModel.cpp src/RBModel.h
+        src/RBResource.h
+        src/RBShader.cpp src/RBShader.h
+        src/RBResourceManager.cpp src/RBResourceManager.h
+        feature/RBGBufferPass.cpp feature/RBGBufferPass.h
+        feature/RBLightingPass.cpp feature/RBLightingPass.h
+        feature/RBSkyPass.cpp feature/RBSkyPass.h
+
+        ${IMGUI_DIR}/imgui.cpp
+        ${IMGUI_DIR}/imgui_draw.cpp
+        ${IMGUI_DIR}/imgui_widgets.cpp
+        ${IMGUI_DIR}/imgui_tables.cpp
+        ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
+        ${IMGUI_DIR}/backends/imgui_impl_vulkan.cpp
+        ${IMGUIZMO_DIR}/ImGuizmo.h ${IMGUIZMO_DIR}/ImGuizmo.cpp
+        )
+else()
+add_executable(${PROJECT_NAME} SHARED
         src/RBPipelineUtils.cpp src/RBPipelineUtils.h
         src/RBShaderModule.cpp src/RBShaderModule.h
         src/RBApplication.cpp src/RBApplication.h
@@ -125,6 +176,16 @@ add_library(${PROJECT_NAME} SHARED
         ${IMGUI_DIR}/backends/imgui_impl_vulkan.cpp
         ${IMGUIZMO_DIR}/ImGuizmo.h ${IMGUIZMO_DIR}/ImGuizmo.cpp
         )
+endif()
+
+if(CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "android.toolchain.cmake")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE __ANDROID__=1)
+    #target_link_libraries(${PROJECT_NAME} SDL3 vulkan android log)
+    target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
+    target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.a)
+    target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/libSDL3.0.so)
+    target_link_libraries(${PROJECT_NAME} log)
+endif()
 
 # add Assimp header path
 target_compile_definitions(${PROJECT_NAME} PUBLIC PROJECT_ROOT_DIR=\"${CMAKE_SOURCE_DIR}\")
