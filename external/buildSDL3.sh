@@ -44,7 +44,8 @@ if [ "$BUILD_ANDROID" = true ]; then
     cmake -S . -B build \
         -DCMAKE_TOOLCHAIN_FILE="$CMAKE_ANDROID_TOOL_CHAIN/build/cmake/android.toolchain.cmake" \
         -DANDROID_ABI="$ANDROID_ABI" \
-        -DANDROID_PLATFORM="$ANDROID_PLATFORM"
+        -DANDROID_PLATFORM="$ANDROID_PLATFORM" \
+        -G "Unix Makefiles"
 
     cmake --build build
 

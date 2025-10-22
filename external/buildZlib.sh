@@ -44,7 +44,16 @@ else
     mkdir -p build
 fi
 
+
 cd build
+
+
+if [ -f "CMakeCache.txt" ]; then
+    rm -f CMakeCache.txt
+fi
+if [ -d "CMakeFiles" ]; then
+    rm -rf CMakeFiles
+fi
 if [ "$BUILD_ANDROID" = true ]; then
     echo "=== 构建 Android 平台的 Zlib 静态库 ==="
     echo "ABI=$ANDROID_ABI, API_LEVEL=$API_LEVEL"
@@ -53,6 +62,7 @@ if [ "$BUILD_ANDROID" = true ]; then
         -DCMAKE_TOOLCHAIN_FILE="$CMAKE_ANDROID_TOOL_CHAIN/build/cmake/android.toolchain.cmake" \
         -DANDROID_ABI="$ANDROID_ABI" \
         -DANDROID_PLATFORM="$ANDROID_PLATFORM" \
+        -G "Unix Makefiles" \
         -DBUILD_SHARED_LIBS=OFF
 else        
 cmake .. -DBUILD_SHARED_LIBS=OFF
@@ -69,8 +79,9 @@ fi
 
 #rm -rf "$INSTALL_DIR"/*
 
-
-if [[ "$OS_NAME" == "Darwin" ]]; then
+if [ "$BUILD_ANDROID" = true ]; then
+    cp -rf "$FROM_DIR"/build/libz.a "$INSTALL_DIR"/
+elif [[ "$OS_NAME" == "Darwin" ]]; then
     echo "macOS"
     cp -rf "$FROM_DIR"/build/libz.a "$INSTALL_DIR"/
 elif [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then

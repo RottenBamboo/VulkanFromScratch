@@ -39,6 +39,14 @@ MacOS platform Android Build
 ./buildSDL3.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 
 
+Windows platform Android Build
+
+./buildZlib.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
+
+./buildAssimp.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
+
+./buildSDL3.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
+
 windows platform:
     
     cd shader
@@ -97,6 +105,26 @@ MacOS platform Android Build
     -DCMAKE_TOOLCHAIN_FILE=${HOME}/Library/Android/sdk/ndk/29.0.14206865/build/cmake/android.toolchain.cmake \
     -DANDROID_ABI=arm64-v8a \
     -DANDROID_PLATFORM=android-29
+
+    cd buildAndroid
+
+    cmake --build .
+
+Windows platform Android Build
+
+    cd shader
+
+    .\compile.bat android
+
+    cd ..
+
+    cmake -B buildAndroid -S . \
+    -DCMAKE_CXX_STANDARD=17 \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_TOOLCHAIN_FILE=${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865\\build\\cmake\\android.toolchain.cmake \
+    -DANDROID_ABI=arm64-v8a \
+    -DANDROID_PLATFORM=android-29 \
+    -G "Unix Makefiles"
 
     cd buildAndroid
 

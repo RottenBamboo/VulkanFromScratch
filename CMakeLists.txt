@@ -178,14 +178,6 @@ add_executable(${PROJECT_NAME} SHARED
         )
 endif()
 
-if(CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "android.toolchain.cmake")
-    target_compile_definitions(${PROJECT_NAME} PRIVATE __ANDROID__=1)
-    #target_link_libraries(${PROJECT_NAME} SDL3 vulkan android log)
-    target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
-    target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.a)
-    target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/libSDL3.0.so)
-    target_link_libraries(${PROJECT_NAME} log)
-endif()
 
 # add Assimp header path
 target_compile_definitions(${PROJECT_NAME} PUBLIC PROJECT_ROOT_DIR=\"${CMAKE_SOURCE_DIR}\")
@@ -216,7 +208,14 @@ endif()
 # add GLFW
 #target_include_directories(${PROJECT_NAME} PUBLIC ${GLFW_INCLUDE_DIRS})
 
-if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+if(CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "android.toolchain.cmake")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE __ANDROID__=1)
+    #target_link_libraries(${PROJECT_NAME} SDL3 vulkan android log)
+    target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
+    target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.a)
+    target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/libSDL3.0.so)
+    target_link_libraries(${PROJECT_NAME} log)
+elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     #find_library(GLFW_LIBRARY NAMES glfw PATHS ${GLFW_BIN_DIRS} REQUIRED)
     target_link_libraries(${PROJECT_NAME} ${GLFW_LIBRARY})
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
