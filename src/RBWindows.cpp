@@ -15,7 +15,9 @@ namespace RottenBamboo {
 
     RBWindows::~RBWindows() {
         if (window) SDL_DestroyWindow(window);
+#ifndef __ANDROID__
         SDL_Quit();
+#endif
     }
 
     void RBWindows::InitializeWindow() 

@@ -2,7 +2,6 @@
 // Created by rottenbamboo on 2023/5/27.
 //
 #pragma once
-#define GLFW_INCLUDE_VULKAN
 #define MAX_FRAMES_IN_FLIGHT 2
 #define GLM_ENABLE_EXPERIMENTAL
 
@@ -155,6 +154,10 @@ struct QueueFamilyIndices {
     }
 };
 
+#ifdef __ANDROID__
+#define VK_KHR_ANDROID_SURFACE_EXTENSION_NAME "VK_KHR_android_surface"
+#endif
+
 namespace RottenBamboo 
 {
     struct SwapChainSupportDetails {
@@ -179,12 +182,16 @@ namespace RottenBamboo
     }
 
     inline std::string GetProjectRootPath() {
+#ifdef __ANDROID__    
+    return "";  // Android return empty
+#else
     #ifdef PROJECT_ROOT_DIR
         return EnsureTrailingSlash(PROJECT_ROOT_DIR);
     #else
         const char* fallback = std::getenv("PROJECT_ROOT_FALLBACK");
         return EnsureTrailingSlash(fallback ? std::string(fallback) : "./");
     #endif
+#endif
     }
     inline SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice& device, VkSurfaceKHR& surface)
     {
@@ -271,6 +278,11 @@ namespace RottenBamboo
     {
         for(const auto& availablePresentMode : availablePresentModes)
         {
+
+#if __ANDROID__
+            return VK_PRESENT_MODE_FIFO_KHR;
+#endif
+
             if(availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
             {
                 return availablePresentMode;

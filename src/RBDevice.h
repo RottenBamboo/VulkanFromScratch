@@ -2,10 +2,13 @@
 // Created by rottenbamboo on 2023/5/24.
 //
 #pragma once
-#define VK_USE_PLATFORM_MACOS_MVK
-#define GLFW_INCLUDE_VULKAN
 
-#include <GLFW/glfw3.h>
+#ifdef __ANDROID__
+#define VK_USE_PLATFORM_ANDROID_KHR
+#else
+#define VK_USE_PLATFORM_MACOS_MVK
+#endif
+
 #include <vulkan/vulkan.h>
 #include <iostream>
 #include <string>

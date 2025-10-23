@@ -1,6 +1,7 @@
 assets/scenes
 build
 buildMac
+buildAndroid
 .vs
 #.vscode
 .idea

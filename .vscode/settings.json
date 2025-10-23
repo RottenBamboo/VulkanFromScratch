@@ -108,7 +108,21 @@
         "regex": "cpp",
         "unordered_set": "cpp",
         "coroutine": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "*.inc": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
+
+    ,
+    "terminal.integrated.env.osx":{
+        "ANDROID_HOME": "${env:HOME}/Library/Android/sdk",
+        "ANDROID_NDK_HOME": "${env:HOME}/Library/Android/sdk/ndk/29.0.14206865",
+        "CMAKE_ANDROID_TOOL_CHAIN": "${env:HOME}/Library/Android/sdk/ndk/29.0.14206865",
+    },
+    
+    "terminal.integrated.env.windows": {
+        "ANDROID_HOME": "${env:USERPROFILE}\\AppData\\Local\\Android\\Sdk",
+        "ANDROID_NDK_HOME": "${env:USERPROFILE}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865",
+        "CMAKE_ANDROID_TOOL_CHAIN": "${env:USERPROFILE}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865"
+    }
 }

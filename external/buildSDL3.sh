@@ -1,17 +1,58 @@
 #!/bin/bash
 
 set -e
+
+BUILD_ANDROID=false
+
+ANDROID_ABI="arm64-v8a"
+ANDROID_PLATFORM="android-29"
+API_LEVEL=29
+CMAKE_ANDROID_TOOL_CHAIN=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -android)
+            BUILD_ANDROID=true
+            shift
+            ;;
+            -ndk)
+            CMAKE_ANDROID_TOOL_CHAIN=$2
+            shift 2
+            ;;
+        *)
+            echo "unknown parameter: $1"
+            echo "Usage: ./buildSDL3.sh [-android] [-ndk PATH]"
+            exit 1
+            ;;
+    esac
+done
+
 OS_NAME="$(uname)"
 
 INSTALL_DIR="$(pwd)/../thirdparty/sdl3/lib"
 SDL_DIR="$(pwd)/SDL"
 BUILD_DIR="$SDL_DIR/build"
 
-#mkdir -p "$BUILD_DIR"
-#cd "$BUILD_DIR"
+if [ -d "$BUILD_DIR" ]; then
+    echo "=== Clean Build ==="
+    rm -rf "$BUILD_DIR"
+fi
+
 cd "$SDL_DIR"
 
-if [[ "$OS_NAME" == "Darwin" ]]; then
+if [ "$BUILD_ANDROID" = true ]; then
+    echo "=== build android platform SDL3 static library ==="
+    echo "ABI=$ANDROID_ABI, API_LEVEL=$API_LEVEL"
+
+    cmake -S . -B build \
+        -DCMAKE_TOOLCHAIN_FILE="$CMAKE_ANDROID_TOOL_CHAIN/build/cmake/android.toolchain.cmake" \
+        -DANDROID_ABI="$ANDROID_ABI" \
+        -DANDROID_PLATFORM="$ANDROID_PLATFORM" \
+        -G "Unix Makefiles"
+
+    cmake --build build
+
+elif [[ "$OS_NAME" == "Darwin" ]]; then
     cmake -S . -B build
     cmake --build build
 elif [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then
@@ -24,7 +65,9 @@ fi
 
 mkdir -p "$INSTALL_DIR"
 
-if [[ "$OS_NAME" == "Darwin" ]]; then
+if [ "$BUILD_ANDROID" = true ]; then
+    cp -vf "$BUILD_DIR"/libSDL3.so "$INSTALL_DIR"/libSDL3.0.so
+elif [[ "$OS_NAME" == "Darwin" ]]; then
     cp -vf "$BUILD_DIR"/libSDL3.dylib "$INSTALL_DIR"/libSDL3.0.dylib
 elif [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then
     cp -vf "$BUILD_DIR"/Debug/SDL3.dll "$INSTALL_DIR"/
