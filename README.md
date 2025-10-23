@@ -1,23 +1,38 @@
 # VulkanFromScratch
 VulkanFromScratch
 
-MacOS Windows Platform Request
+#MacOS Windows Platform Request
 
-CMake 3.23.2(or more recent)
+#CMake 3.23.2(or more recent)
 
-Vulkan 1.2 (or more recent)
-
-
-Android Build Request
-ndk: 29.0.14206865
+#Vulkan 1.2 (or more recent)
 
 
-Submodule Clone
+#Android Build Request
+#ndk: 29.0.14206865
+
+
+#Submodule Clone
 
 git submodule init
 
 git submodule update
 
+    #if clone submodule failed because of url protocol. you can change submodule url protocol to https by these instruction #below
+    #try these
+        git config --file .gitmodules submodule.external/SDL.url https://github.com/libsdl-org/SDL.git
+        git config --file .gitmodules submodule.external/assimp.url https://github.com/assimp/assimp.git
+        git config --file .gitmodules submodule.external/imgui.url https://github.com/ocornut/imgui.git
+        git config --file .gitmodules submodule.external/stb.url https://github.com/nothings/stb.git
+        git config --file .gitmodules submodule.external/tinyobjloader.url https://github.com/tinyobjloader/tinyobjloader.git
+        git config --file .gitmodules submodule.external/zlib.url https://github.com/madler/zlib.git
+        git config --file .gitmodules submodule.external/ImGuizmo.url https://github.com/CedricGuillemet/ImGuizmo.git
+        git submodule sync
+    #then clone all submodule one more time
+        git submodule init
+
+        git submodule update
+    
 
 chmod +x external/buildZlib.sh
 
@@ -26,7 +41,7 @@ chmod +x external/buildAssimp.sh
 chmod +x external/buildSDL3.sh 
 
 
-MacOS Windows Platform Build Library
+#MacOS Windows Platform Build Library
 
 cd external 
 
@@ -37,7 +52,7 @@ cd external
 ./buildSDL3.sh
 
 
-MacOS Platform Android Build Library
+#MacOS Platform Android Build Library
 
 ./buildZlib.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 
@@ -46,7 +61,7 @@ MacOS Platform Android Build Library
 ./buildSDL3.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 
 
-Windows Platform Android Build Library
+#Windows Platform Android Build Library
 
 ./buildZlib.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 
@@ -55,7 +70,7 @@ Windows Platform Android Build Library
 ./buildSDL3.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 
 
-Windows Platform Build:
+#Windows Platform Build:
     
     cd shader
 
@@ -74,7 +89,7 @@ Windows Platform Build:
     .\VulkanFromScratch.exe
 
 
-MacOS Platform Build:
+#MacOS Platform Build:
     
     cd shader
 
@@ -100,7 +115,7 @@ MacOS Platform Build:
     ## sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
     ## xcodebuild -runFirstLaunch
 
-MacOS Platform Android Build
+#MacOS Platform Android Build
     
     cd shader
 
@@ -119,7 +134,7 @@ MacOS Platform Android Build
 
     cmake --build .
 
-Windows Platform Android Build
+#Windows Platform Android Build
 
     cd shader
 
