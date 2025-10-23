@@ -47,6 +47,7 @@ Windows platform Android Build
 
 ./buildSDL3.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 
+
 windows platform:
     
     cd shader
@@ -64,6 +65,7 @@ windows platform:
     cd .\Debug\
 
     .\VulkanFromScratch.exe
+
 
 MacOS platform:
     

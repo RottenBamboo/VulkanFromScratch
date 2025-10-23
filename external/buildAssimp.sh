@@ -50,7 +50,7 @@ fi
 
 # configure the build
 if [ "$BUILD_ANDROID" = true ]; then
-    echo "=== 构建 Android 平台的 Assimp 静态库 ==="
+    echo "=== Build android platform assimp static library ==="
     echo "ABI=$ANDROID_ABI, API_LEVEL=$API_LEVEL"
 
     cmake CMakeLists.txt \

@@ -33,8 +33,11 @@ INSTALL_DIR="$(pwd)/../thirdparty/sdl3/lib"
 SDL_DIR="$(pwd)/SDL"
 BUILD_DIR="$SDL_DIR/build"
 
-#mkdir -p "$BUILD_DIR"
-#cd "$BUILD_DIR"
+if [ -d "$BUILD_DIR" ]; then
+    echo "=== Clean Build ==="
+    rm -rf "$BUILD_DIR"
+fi
+
 cd "$SDL_DIR"
 
 if [ "$BUILD_ANDROID" = true ]; then

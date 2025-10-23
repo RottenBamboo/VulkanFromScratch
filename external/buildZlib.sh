@@ -38,6 +38,19 @@ cd "$(dirname "$0")/zlib"
 
 # configure the build
 
+
+if [ -f "CMakeCache.txt" ]; then
+    rm -f CMakeCache.txt
+fi
+if [ -d "CMakeFiles" ]; then
+    rm -rf CMakeFiles
+fi
+
+if [ -d "$BUILD_DIR" ]; then
+    echo "=== Clean Build ==="
+    rm -rf "$BUILD_DIR"
+fi
+
 if [ -d "build" ]; then
     :
 else
@@ -48,14 +61,8 @@ fi
 cd build
 
 
-if [ -f "CMakeCache.txt" ]; then
-    rm -f CMakeCache.txt
-fi
-if [ -d "CMakeFiles" ]; then
-    rm -rf CMakeFiles
-fi
 if [ "$BUILD_ANDROID" = true ]; then
-    echo "=== 构建 Android 平台的 Zlib 静态库 ==="
+    echo "=== Build android platform zlib static library ==="
     echo "ABI=$ANDROID_ABI, API_LEVEL=$API_LEVEL"
 
     cmake .. \

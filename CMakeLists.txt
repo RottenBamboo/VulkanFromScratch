@@ -132,7 +132,7 @@ add_library(${PROJECT_NAME} SHARED
         ${IMGUIZMO_DIR}/ImGuizmo.h ${IMGUIZMO_DIR}/ImGuizmo.cpp
         )
 else()
-add_executable(${PROJECT_NAME} SHARED
+add_executable(${PROJECT_NAME}
         src/RBPipelineUtils.cpp src/RBPipelineUtils.h
         src/RBShaderModule.cpp src/RBShaderModule.h
         src/RBApplication.cpp src/RBApplication.h
@@ -220,7 +220,7 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     target_link_libraries(${PROJECT_NAME} ${GLFW_LIBRARY})
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.a)
-    target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/libSDL3.0.so)
+    target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/libSDL3.0.dylib)
 
 elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     #target_link_libraries(${PROJECT_NAME} ${GLFW_BIN_DIRS}/glfw3.lib)
