@@ -27,6 +27,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Debug symbols
 if (MSVC)
     # MSVC (Visual Studio / clang-cl)
+    add_compile_options(/utf-8)
     set(CMAKE_CXX_FLAGS_DEBUG "/Zi /Od /MDd")
 else()
     # GCC / Clang

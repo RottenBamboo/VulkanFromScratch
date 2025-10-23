@@ -59,7 +59,7 @@ Windows Platform Build:
     
     cd shader
 
-    .\compile.bat
+    ./compile.sh
 
     cd ..
     
@@ -123,7 +123,7 @@ Windows Platform Android Build
 
     cd shader
 
-    .\compile.bat android
+    ./compile.sh android
 
     cd ..
 

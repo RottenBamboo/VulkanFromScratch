@@ -92,7 +92,7 @@ elif [[ "$OS_NAME" == "Darwin" ]]; then
     echo "macOS"
     cp -rf "$FROM_DIR"/build/libz.a "$INSTALL_DIR"/
 elif [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then
-    echo "Windows（Git Bash / WSL）"
+    echo "Windows(Git Bash / WSL)"
     cp -rf "$FROM_DIR"/build/Debug/zsd.lib "$INSTALL_DIR"/
 fi
 #cp -rf "$FROM_DIR"/build/include "$INSTALL_DIR"/include
