@@ -20,8 +20,8 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         *)
-            echo "未知参数: $1"
-            echo "用法: ./build_assimp.sh [-android] [-ndk PATH]"
+            echo "unknown parameter: $1"
+            echo "Usage: ./buildAssimp.sh [-android] [-ndk PATH]"
             exit 1
             ;;
     esac
@@ -74,7 +74,7 @@ elif [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN
 fi
 
 cmake --build .
-echo "=== 开始构建 ==="
+echo "=== start building ==="
 
 cd ..
 #remove dest directory

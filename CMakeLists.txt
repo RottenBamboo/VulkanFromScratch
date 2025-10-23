@@ -24,22 +24,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# assimp
-# set(ASSIMP_BUILD_SAMPLES OFF CACHE BOOL "" FORCE)
-# set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-# set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-# set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "" FORCE)
-# set(ASSIMP_BUILD_OBJ_IMPORTER ON CACHE BOOL "" FORCE)
-# set(ASSIMP_BUILD_GLTF_IMPORTER ON CACHE BOOL "" FORCE)
-# set(ASSIMP_BUILD_FBX_IMPORTER ON CACHE BOOL "" FORCE)
-# set(ASSIMP_NO_EXPORT ON CACHE BOOL "" FORCE)
-# set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-# set(ASSIMP_BUILD_ASSIMP_TOOLS OFF CACHE BOOL "" FORCE)
-# set(ASSIMP_BUILD_ZLIB ON CACHE BOOL "" FORCE)
-# set(ASSIMP_BUILD_EXTRA_POSTPROCESSING OFF CACHE BOOL "" FORCE)
-
-# add_subdirectory(external/assimp)
-
 # Debug symbols
 if (MSVC)
     # MSVC (Visual Studio / clang-cl)
@@ -59,16 +43,12 @@ include_directories(${FEATURE_PATH})
 
 # set GLFW path
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-    #set(GLFW_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/MacOS/glfw-3.3.8.bin.MACOS/include")
-    #set(GLFW_BIN_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/MacOS/glfw-3.3.8.bin.MACOS/lib-arm64")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
     set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/sdl3/lib")
     set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui")
     set(IMGUIZMO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo")
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-    #set(GLFW_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/Windows/glfw-3.3.8.bin.WIN64/include")
-    #set(GLFW_BIN_DIRS "${CMAKE_SOURCE_DIR}/external/glfw/Windows/glfw-3.3.8.bin.WIN64/lib-vc2022")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
     set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/sdl3/lib")
@@ -191,8 +171,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR}/backends)
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUIZMO_DIR})
-# link Assimp library
-# target_link_libraries(${PROJECT_NAME} assimp)
 
 # find Vulkan SDK
 find_package(Vulkan REQUIRED)
@@ -205,25 +183,18 @@ else()
     message(FATAL_ERROR "Vulkan SDK not found! Please set VULKAN_SDK.")
 endif()
 
-# add GLFW
-#target_include_directories(${PROJECT_NAME} PUBLIC ${GLFW_INCLUDE_DIRS})
-
 if(CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "android.toolchain.cmake")
     target_compile_definitions(${PROJECT_NAME} PRIVATE __ANDROID__=1)
-    #target_link_libraries(${PROJECT_NAME} SDL3 vulkan android log)
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.a)
     target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/libSDL3.0.so)
     target_link_libraries(${PROJECT_NAME} log)
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-    #find_library(GLFW_LIBRARY NAMES glfw PATHS ${GLFW_BIN_DIRS} REQUIRED)
-    target_link_libraries(${PROJECT_NAME} ${GLFW_LIBRARY})
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.a)
     target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/libSDL3.0.dylib)
 
 elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-    #target_link_libraries(${PROJECT_NAME} ${GLFW_BIN_DIRS}/glfw3.lib)
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/zsd.lib)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/assimp-vc143-mtd.lib)
     target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/SDL3.lib)
@@ -235,10 +206,9 @@ elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
 endif()
 target_compile_definitions(${PROJECT_NAME} PUBLIC GLM_LANG_STL11_FORCED=1)
 
-# 确保 target 使用 C++17（更稳妥）
+# make sure to use C++17
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+
 # add STB and tinyobjloader
 target_include_directories(${PROJECT_NAME} PUBLIC ${STB_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${TINYOBJLOADER_INCLUDE_DIRS})
-
-#target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_INCLUDE_DIRS})

@@ -20,8 +20,8 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         *)
-            echo "未知参数: $1"
-            echo "用法: ./build_assimp.sh [-android] [-ndk PATH]"
+            echo "unknown parameter: $1"
+            echo "Usage: ./buildZlib.sh [-android] [-ndk PATH]"
             exit 1
             ;;
     esac

@@ -20,8 +20,8 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         *)
-            echo "未知参数: $1"
-            echo "用法: ./build_assimp.sh [-android] [-ndk PATH]"
+            echo "unknown parameter: $1"
+            echo "Usage: ./buildSDL3.sh [-android] [-ndk PATH]"
             exit 1
             ;;
     esac
@@ -41,7 +41,7 @@ fi
 cd "$SDL_DIR"
 
 if [ "$BUILD_ANDROID" = true ]; then
-    echo "=== 构建 Android 平台的 SDL3 静态库 ==="
+    echo "=== build android platform SDL3 static library ==="
     echo "ABI=$ANDROID_ABI, API_LEVEL=$API_LEVEL"
 
     cmake -S . -B build \

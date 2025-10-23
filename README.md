@@ -1,13 +1,18 @@
 # VulkanFromScratch
 VulkanFromScratch
 
-Platform MacOS Windows
-
+MacOS Windows Platform Request
 
 CMake 3.23.2(or more recent)
 
 Vulkan 1.2 (or more recent)
 
+
+Android Build Request
+ndk: 29.0.14206865
+
+
+Submodule Clone
 
 git submodule init
 
@@ -21,6 +26,8 @@ chmod +x external/buildAssimp.sh
 chmod +x external/buildSDL3.sh 
 
 
+MacOS Windows Platform Build Library
+
 cd external 
 
 ./buildZlib.sh
@@ -30,7 +37,7 @@ cd external
 ./buildSDL3.sh
 
 
-MacOS platform Android Build
+MacOS Platform Android Build Library
 
 ./buildZlib.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 
@@ -39,7 +46,7 @@ MacOS platform Android Build
 ./buildSDL3.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 
 
-Windows platform Android Build
+Windows Platform Android Build Library
 
 ./buildZlib.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 
@@ -48,7 +55,7 @@ Windows platform Android Build
 ./buildSDL3.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 
 
-windows platform:
+Windows Platform Build:
     
     cd shader
 
@@ -67,7 +74,7 @@ windows platform:
     .\VulkanFromScratch.exe
 
 
-MacOS platform:
+MacOS Platform Build:
     
     cd shader
 
@@ -93,7 +100,7 @@ MacOS platform:
     ## sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
     ## xcodebuild -runFirstLaunch
 
-MacOS platform Android Build
+MacOS Platform Android Build
     
     cd shader
 
@@ -112,7 +119,7 @@ MacOS platform Android Build
 
     cmake --build .
 
-Windows platform Android Build
+Windows Platform Android Build
 
     cd shader
 
