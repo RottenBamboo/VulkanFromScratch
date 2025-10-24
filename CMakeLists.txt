@@ -42,7 +42,7 @@ include_directories(${GLM_PATH})
 set(FEATURE_PATH "${CMAKE_SOURCE_DIR}/feature")
 include_directories(${FEATURE_PATH})
 
-# set GLFW path
+# set lib path
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
