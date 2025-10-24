@@ -21,7 +21,6 @@ git submodule update
     #if clone submodule failed because of ssh url protocol. you can change submodule url protocol to https by these instruction #below
     #try these
         git config --file .gitmodules submodule.external/stb.url https://github.com/nothings/stb.git
-        git config --file .gitmodules submodule.external/tinyobjloader.url https://github.com/tinyobjloader/tinyobjloader.git
         git config --file .gitmodules submodule.external/assimp.url https://github.com/assimp/assimp.git
         git config --file .gitmodules submodule.external/zlib.url https://github.com/madler/zlib.git
         git config --file .gitmodules submodule.external/imgui.url https://github.com/ocornut/imgui.git
