@@ -57,9 +57,8 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     set(IMGUIZMO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo")
 endif()
 
-# set STB and tinyobjloader path
+# set third party include path
 set(STB_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/stb")
-set(TINYOBJLOADER_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/tinyobjloader")
 set(ASSIMP_THIRDPARTY_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/include")
 set(ASSIMP_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/assimp/include")
 set(SDL_INCLUDE_DIRS "external/SDL/include")
@@ -210,6 +209,5 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC GLM_LANG_STL11_FORCED=1)
 # make sure to use C++17
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
-# add STB and tinyobjloader
+# add STB
 target_include_directories(${PROJECT_NAME} PUBLIC ${STB_INCLUDE_DIRS})
-target_include_directories(${PROJECT_NAME} PUBLIC ${TINYOBJLOADER_INCLUDE_DIRS})
