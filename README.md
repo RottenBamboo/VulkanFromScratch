@@ -3,7 +3,7 @@ VulkanFromScratch
 
 ## MacOS Windows Platform Request
 
-### CMake 3.23.2(or more recent)
+CMake 3.23.2(or more recent)
 
 Vulkan 1.2 (or more recent)
 
