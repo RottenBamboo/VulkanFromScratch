@@ -11,7 +11,6 @@ elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 else()
-
 endif()
 
 cmake_minimum_required(VERSION 3.23.2)
@@ -95,6 +94,7 @@ add_library(${PROJECT_NAME} SHARED
         src/RBRenderer.cpp src/RBRenderer.h
         src/RBMesh.cpp src/RBMesh.h
         src/RBMaterial.cpp src/RBMaterial.h
+        src/RBMaterialUtils.h
         src/RBModel.cpp src/RBModel.h
         src/RBResource.h
         src/RBShader.cpp src/RBShader.h
@@ -140,6 +140,7 @@ add_executable(${PROJECT_NAME}
         src/RBRenderer.cpp src/RBRenderer.h
         src/RBMesh.cpp src/RBMesh.h
         src/RBMaterial.cpp src/RBMaterial.h
+        src/RBMaterialUtils.h
         src/RBModel.cpp src/RBModel.h
         src/RBResource.h
         src/RBShader.cpp src/RBShader.h
@@ -184,17 +185,20 @@ else()
 endif()
 
 if(CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "android.toolchain.cmake")
+    #macro definition
     target_compile_definitions(${PROJECT_NAME} PRIVATE __ANDROID__=1)
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.a)
     target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/libSDL3.0.so)
     target_link_libraries(${PROJECT_NAME} log)
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SPIRV_REFLECT_USE_SYSTEM_SPIRV_H)
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.a)
     target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/libSDL3.0.dylib)
 
 elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SPIRV_REFLECT_USE_SYSTEM_SPIRV_H)
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/zsd.lib)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/assimp-vc143-mtd.lib)
     target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/SDL3.lib)
