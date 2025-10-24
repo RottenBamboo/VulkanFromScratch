@@ -26,6 +26,7 @@ git submodule update
         git config --file .gitmodules submodule.external/imgui.url https://github.com/ocornut/imgui.git
         git config --file .gitmodules submodule.external/SDL.url https://github.com/libsdl-org/SDL.git
         git config --file .gitmodules submodule.external/ImGuizmo.url https://github.com/CedricGuillemet/ImGuizmo.git
+        git config --file .gitmodules submodule.external/SPIRV-Reflect.url https://github.com/KhronosGroup/SPIRV-Reflect.git
         git submodule sync
     #then clone all submodule one more time
         git submodule init
