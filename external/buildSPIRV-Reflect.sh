@@ -77,7 +77,7 @@ if [ "$BUILD_ANDROID" = true ]; then
 elif [[ "$OS_NAME" == "Darwin" ]]; then
     cp -vf "$BUILD_DIR"/libspirv-reflect-static.a "$INSTALL_DIR"/libspirv-reflect-static.a
 elif [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then
-    cp -vf "$BUILD_DIR"/Debug/libspirv-reflect-static.lib "$INSTALL_DIR"/libspirv-reflect-static.a
+    cp -vf "$BUILD_DIR"/Debug/spirv-reflect-static.lib "$INSTALL_DIR"/libspirv-reflect-static.lib
 else
     cp -vf "$BUILD_DIR"/libspirv-reflect-static.a "$INSTALL_DIR"/libspirv-reflect-static.a
 fi

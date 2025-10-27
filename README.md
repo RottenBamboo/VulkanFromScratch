@@ -95,8 +95,8 @@ cd ..
 cmake -G "Visual Studio 17 2022" -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cd build
 cmake --build .
-cd .\Debug\
-.\VulkanFromScratch.exe
+cd Debug
+./VulkanFromScratch.exe
 ```
 
 ## MacOS Platform Build:
@@ -135,6 +135,8 @@ cmake -B buildAndroid -S . \
 -DANDROID_PLATFORM=android-29
 cd buildAndroid
 cmake --build .
+cd Debug
+./VulkanFromScratch
 ```
 
 ## Windows Platform Android Build
@@ -152,4 +154,6 @@ cmake -B buildAndroid -S . \
 -G "Unix Makefiles"
 cd buildAndroid
 cmake --build .
+cd Debug
+./VulkanFromScratch.exe
 ```

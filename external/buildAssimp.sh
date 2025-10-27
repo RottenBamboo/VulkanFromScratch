@@ -91,7 +91,7 @@ if [ "$BUILD_ANDROID" = true ]; then
 elif [[ "$OS_NAME" == "Darwin" ]]; then
     cp -rf "$FROM_DIR"/libassimp.a "$INSTALL_DIR"/
 elif [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then
-    cp -rf "$FROM_DIR"/assimp-vc143-mtd.lib "$INSTALL_DIR"/
+    cp -rf "$FROM_DIR"/assimp-vc143-mtd.lib "$INSTALL_DIR"/libassimp.lib
 fi
 #cp -rf "$FROM_DIR"/build/include "$INSTALL_DIR"/include
 #cp -rf "$ZLIB_DIR" "$INSTALL_DIR"/lib
