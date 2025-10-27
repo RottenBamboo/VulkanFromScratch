@@ -48,12 +48,14 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/sdl3/lib")
     set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui")
     set(IMGUIZMO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo")
+    set(SPIRV_REFLECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/SPIRV-Reflect/lib")
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
     set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/sdl3/lib")
     set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui")
     set(IMGUIZMO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo")
+    set(SPIRV_REFLECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/SPIRV-Reflect/lib")
 endif()
 
 # set third party include path
@@ -61,6 +63,7 @@ set(STB_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/stb")
 set(ASSIMP_THIRDPARTY_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/include")
 set(ASSIMP_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/assimp/include")
 set(SDL_INCLUDE_DIRS "external/SDL/include")
+set(SDL_SPIRV_REFLECT_INCLUDE_DIRS "external/SPIRV-Reflect")
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # add executable file
@@ -172,6 +175,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR}/backends)
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUIZMO_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_SPIRV_REFLECT_INCLUDE_DIRS})
 
 # find Vulkan SDK
 find_package(Vulkan REQUIRED)
@@ -187,14 +191,17 @@ endif()
 if(CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "android.toolchain.cmake")
     #macro definition
     target_compile_definitions(${PROJECT_NAME} PRIVATE __ANDROID__=1)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SPIRV_REFLECT_USE_SYSTEM_SPIRV_H)
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.a)
     target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/libSDL3.0.so)
+    target_link_libraries(${PROJECT_NAME} ${SPIRV_REFLECT_DIR}/libspirv-reflect-static.a)
     target_link_libraries(${PROJECT_NAME} log)
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     target_compile_definitions(${PROJECT_NAME} PUBLIC SPIRV_REFLECT_USE_SYSTEM_SPIRV_H)
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.a)
+    target_link_libraries(${PROJECT_NAME} ${SPIRV_REFLECT_DIR}/libspirv-reflect-static.a)
     target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/libSDL3.0.dylib)
 
 elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
@@ -202,6 +209,7 @@ elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/zsd.lib)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/assimp-vc143-mtd.lib)
     target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/SDL3.lib)
+    target_link_libraries(${PROJECT_NAME} ${SPIRV_REFLECT_DIR}/libspirv-reflect-static.lib)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E echo "Executable built at: $<TARGET_FILE:${PROJECT_NAME}>"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different

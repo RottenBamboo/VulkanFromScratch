@@ -44,6 +44,7 @@ git submodule update
 chmod +x external/buildZlib.sh
 chmod +x external/buildAssimp.sh 
 chmod +x external/buildSDL3.sh 
+chmod +x external/buildSPIRV-Reflect.sh 
 ```
 
 ## MacOS Windows Platform Build Library
@@ -53,6 +54,7 @@ cd external
 ./buildZlib.sh
 ./buildAssimp.sh
 ./buildSDL3.sh
+./buildSPIRV-Reflect.sh
 ```
 
 ## MacOS Platform Android Build Library
@@ -61,6 +63,7 @@ cd external
 ./buildZlib.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 ./buildAssimp.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 ./buildSDL3.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
+./buildSPIRV-Reflect.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 ```
 
 ## Windows Platform Android Build Library
@@ -69,14 +72,26 @@ cd external
 ./buildZlib.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 ./buildAssimp.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 ./buildSDL3.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
+./buildSPIRV-Reflect.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
+```
+
+## Varies Platform Shader compile
+
+```
+./compile.sh android //android Platform
+./compile.sh desktop //Windows Macos Platform
+./compile.sh debug //Debug compile
+```
+
+```
+cd shader
+./compile.sh
+cd ..
 ```
 
 ## Windows Platform Build:
     
 ```
-cd shader
-./compile.sh
-cd ..
 cmake -G "Visual Studio 17 2022" -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cd build
 cmake --build .
