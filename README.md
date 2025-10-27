@@ -135,8 +135,6 @@ cmake -B buildAndroid -S . \
 -DANDROID_PLATFORM=android-29
 cd buildAndroid
 cmake --build .
-cd Debug
-./VulkanFromScratch
 ```
 
 ## Windows Platform Android Build
@@ -154,6 +152,4 @@ cmake -B buildAndroid -S . \
 -G "Unix Makefiles"
 cd buildAndroid
 cmake --build .
-cd Debug
-./VulkanFromScratch.exe
 ```
