@@ -32,6 +32,7 @@ OS_NAME="$(uname)"
 # set the installation directory
 INSTALL_DIR="$(dirname "$0")/../thirdparty/zlib/lib"
 FROM_DIR="$(dirname "$0")/zlib"
+BUILD_DIR="$FROM_DIR/build"
 # enter the script directory
 
 cd "$(dirname "$0")/zlib"
