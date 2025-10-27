@@ -35,7 +35,7 @@ FROM_DIR="$(dirname "$0")/zlib"
 BUILD_DIR="$FROM_DIR/build"
 # enter the script directory
 
-cd "$(dirname "$0")/zlib"
+cd "$FROM_DIR"
 
 # configure the build
 
