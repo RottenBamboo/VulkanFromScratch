@@ -45,7 +45,6 @@ git submodule update
 chmod +x external/buildZlib.sh
 chmod +x external/buildAssimp.sh 
 chmod +x external/buildSDL3.sh 
-chmod +x external/buildSPIRV-Reflect.sh 
 chmod +x external/buildSPIRV-Cross.sh 
 ```
 
@@ -56,7 +55,6 @@ cd external
 ./buildZlib.sh
 ./buildAssimp.sh
 ./buildSDL3.sh
-./buildSPIRV-Reflect.sh
 ./buildSPIRV-Cross.sh
 ```
 
@@ -66,7 +64,6 @@ cd external
 ./buildZlib.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 ./buildAssimp.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 ./buildSDL3.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
-./buildSPIRV-Reflect.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 ./buildSPIRV-Cross.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 ```
 
@@ -76,7 +73,6 @@ cd external
 ./buildZlib.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 ./buildAssimp.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 ./buildSDL3.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
-./buildSPIRV-Reflect.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 ./buildSPIRV-Cross.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 ```
 

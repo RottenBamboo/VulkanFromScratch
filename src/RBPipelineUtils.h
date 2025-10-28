@@ -5,7 +5,6 @@
 #pragma once
 
 #include "RBDevice.h"
-#include "spirv_reflect.h"
 
 namespace RottenBamboo {
     class RBPipelineUtils {
