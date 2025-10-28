@@ -29,6 +29,7 @@ git config --file .gitmodules submodule.external/imgui.url https://github.com/oc
 git config --file .gitmodules submodule.external/SDL.url https://github.com/libsdl-org/SDL.git
 git config --file .gitmodules submodule.external/ImGuizmo.url https://github.com/CedricGuillemet/ImGuizmo.git
 git config --file .gitmodules submodule.external/SPIRV-Reflect.url https://github.com/KhronosGroup/SPIRV-Reflect.git
+git config --file .gitmodules submodule.external/SPIRV-Cross.url https://github.com/KhronosGroup/SPIRV-Cross.git
 git submodule sync
 ```
 then clone all submodule one more time
@@ -45,6 +46,7 @@ chmod +x external/buildZlib.sh
 chmod +x external/buildAssimp.sh 
 chmod +x external/buildSDL3.sh 
 chmod +x external/buildSPIRV-Reflect.sh 
+chmod +x external/buildSPIRV-Cross.sh 
 ```
 
 ## MacOS Windows Platform Build Library
@@ -55,6 +57,7 @@ cd external
 ./buildAssimp.sh
 ./buildSDL3.sh
 ./buildSPIRV-Reflect.sh
+./buildSPIRV-Cross.sh
 ```
 
 ## MacOS Platform Android Build Library
@@ -64,6 +67,7 @@ cd external
 ./buildAssimp.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 ./buildSDL3.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 ./buildSPIRV-Reflect.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
+./buildSPIRV-Cross.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 ```
 
 ## Windows Platform Android Build Library
@@ -73,6 +77,7 @@ cd external
 ./buildAssimp.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 ./buildSDL3.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 ./buildSPIRV-Reflect.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
+./buildSPIRV-Cross.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 ```
 
 ## Varies Platform Shader compile
