@@ -67,7 +67,8 @@ set(ASSIMP_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/assimp/include")
 set(SDL_INCLUDE_DIRS "external/SDL/include")
 set(SDL_SPIRV_REFLECT_INCLUDE_DIRS "external/SPIRV-Reflect")
 set(SDL_SPIRV_REFLECT_INCLUDE_DIRS1 "external/SPIRV-Reflect/include")
-set(SDL_SPIRV_CROSS_INCLUDE_DIRS "external/SPIRV-Cross/include")
+set(SDL_SPIRV_CROSS_INCLUDE_DIRS "external/SPIRV-Cross")
+set(SDL_SPIRV_CROSS_INCLUDE_DIRS1 "external/SPIRV-Cross/include")
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # add executable file
@@ -182,6 +183,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUIZMO_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_SPIRV_REFLECT_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_SPIRV_REFLECT_INCLUDE_DIRS1})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_SPIRV_CROSS_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_SPIRV_CROSS_INCLUDE_DIRS1})
 
 # find Vulkan SDK
 find_package(Vulkan REQUIRED)

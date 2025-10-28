@@ -90,9 +90,9 @@ elif [[ "$OS_NAME" == "Darwin" ]]; then
     cp -vf "$BUILD_DIR"/libspirv-cross-core.a "$INSTALL_DIR"/libspirv-cross-core.a
     cp -vf "$BUILD_DIR"/libspirv-cross-glsl.a "$INSTALL_DIR"/libspirv-cross-glsl.a
 elif [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then
-    cp -vf "$BUILD_DIR"/Debug/libspirv-cross-c.lib "$INSTALL_DIR"/libspirv-cross-c.lib
-    cp -vf "$BUILD_DIR"/Debug/libspirv-cross-core.lib "$INSTALL_DIR"/libspirv-cross-core.lib
-    cp -vf "$BUILD_DIR"/Debug/libspirv-cross-glsl.lib "$INSTALL_DIR"/libspirv-cross-glsl.lib
+    cp -vf "$BUILD_DIR"/Debug/spirv-cross-cd.lib "$INSTALL_DIR"/libspirv-cross-c.lib
+    cp -vf "$BUILD_DIR"/Debug/spirv-cross-cored.lib "$INSTALL_DIR"/libspirv-cross-core.lib
+    cp -vf "$BUILD_DIR"/Debug/spirv-cross-glsld.lib "$INSTALL_DIR"/libspirv-cross-glsl.lib
 else
     cp -vf "$BUILD_DIR"/libspirv-cross-c.a "$INSTALL_DIR"/libspirv-cross-c.a
     cp -vf "$BUILD_DIR"/libspirv-cross-core.a "$INSTALL_DIR"/libspirv-cross-core.a

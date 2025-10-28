@@ -88,15 +88,12 @@ cd external
 ./compile.sh debug //Debug compile
 ```
 
+## Windows Platform Build:
+    
 ```
 cd shader
 ./compile.sh
 cd ..
-```
-
-## Windows Platform Build:
-    
-```
 cmake -G "Visual Studio 17 2022" -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cd build
 cmake --build .
