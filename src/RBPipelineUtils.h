@@ -12,10 +12,6 @@ namespace RottenBamboo {
     public:
         static std::vector<char> readFile(const std::string &filename);
 
-        static int SpirvReflectExample(const void* spirv_code, size_t spirv_nbytes);
-
-        static const char* GetShaderStageName(SpvReflectShaderStageFlagBits stage);
-
-        static const char* GetDescriptorTypeName(SpvReflectDescriptorType type);
+        static void ReflectShader(const uint32_t* spirv_code, size_t spirv_nbytes);
     };
 }
