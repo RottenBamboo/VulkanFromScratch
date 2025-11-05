@@ -6,6 +6,7 @@
 
 #include "RBDevice.h"
 #include "RBBuffer.h"
+#include "RBResourceShader.h"
 
 namespace RottenBamboo {
 
@@ -18,6 +19,7 @@ namespace RottenBamboo {
 
     public:
         RBShader(RBDevice &device, RBCommandBuffer &commandBuffer);
+        RBResourceShader resourceShader;
     };
 
 } // Rottenbamboo
