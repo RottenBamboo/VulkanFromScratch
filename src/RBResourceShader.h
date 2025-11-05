@@ -11,9 +11,8 @@ namespace RottenBamboo {
         RBResourceShader(const std::string &path) : RBResource(path) {}
         ~RBResourceShader() = default;
 
-        void Load(const std::string& path) override 
-        {
-            
-        }
+        void Load(const std::string& path) override;
+        
+        std::vector<char> shaderCode;
     };
 }
