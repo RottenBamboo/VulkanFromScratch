@@ -71,7 +71,7 @@ namespace RottenBamboo {
 
         virtual void fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName, RBShaderModule &shaderModule);
 
-        virtual void recordCommandBuffer(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1>& descriptorsGBuffer, RBMesh &mesh);
+        virtual void Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1>& descriptorsGBuffer, RBMesh &mesh);
     private:
 
         RBShaderModule vertShaderModule;

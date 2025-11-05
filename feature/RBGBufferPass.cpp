@@ -163,7 +163,7 @@ namespace RottenBamboo {
         std::cout << "RBGBufferPass::~RBGBufferPass()" << std::endl;
     }
 
-    void RBGBufferPass::recordCommandBuffer(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1>& descriptorsGBuffer, RBMesh &mesh) 
+    void RBGBufferPass::Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1>& descriptorsGBuffer, RBMesh &mesh) 
     {
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 

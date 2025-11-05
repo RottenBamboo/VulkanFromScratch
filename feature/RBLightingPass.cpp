@@ -132,7 +132,7 @@ namespace RottenBamboo {
         vkDestroyDescriptorSetLayout(rbDevice.device, rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout, nullptr);
         std::cout << "RBLightingPass::~RBLightingPass()" << std::endl;
     }
-    void RBLightingPass::recordCommandBuffer(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1>& descriptors, RBMesh &mesh, RBGUI& gui, UniformBufferShaderVariables& uniformMatirx) 
+    void RBLightingPass::Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1>& descriptors, RBMesh &mesh, RBGUI& gui, UniformBufferShaderVariables& uniformMatirx) 
     {
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 

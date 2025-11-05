@@ -17,7 +17,6 @@ namespace RottenBamboo {
         InitializeDevice();
         InitializeCommandBuffer();
         resourceManager.Load<RBModel>(MODEL_PATH);
-        //resourceManager.LoadModels(MODEL_PATH);
         InitializeBuffers();
         InitializeDescriptors();
         InitializeSwapChain();
@@ -284,10 +283,10 @@ void RBApplication::processModelNode(
 
         vkCmdBindIndexBuffer(commandBuffer, (*mesh).indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
         
-        //std::cout << "before gBufferPass::recordCommandBuffer()" << std::endl;
+        //std::cout << "before gBufferPass::Execute()" << std::endl;
         // gbuffer pass pipeline
-        gBufferPass.recordCommandBuffer(commandBuffer, gbufferRenderPassInfo, descriptorsGBuffer, *mesh);
-        //std::cout << "after gBufferPass::recordCommandBuffer()" << std::endl;
+        gBufferPass.Execute(commandBuffer, gbufferRenderPassInfo, descriptorsGBuffer, *mesh);
+        //std::cout << "after gBufferPass::Execute()" << std::endl;
 
         // VkBuffer lightingVertexBuffers[] = {mesh.vertexBuffer.buffer};
         // VkDeviceSize lightingOffsets[] = {0};
@@ -359,21 +358,21 @@ void RBApplication::processModelNode(
         lightingRenderPassInfo.pClearValues = lightingClearValues.data();
 
         //lighting pass pipeline
-        //std::cout << "before lightPassManager::recordCommandBuffer()" << std::endl;
+        //std::cout << "before lightPassManager::Execute()" << std::endl;
         //std::cout << "descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout = " << descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout << std::endl;
 
-        skyPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsSkyBox, *mesh);
+        skyPassManager.Execute(commandBuffer, lightingRenderPassInfo, descriptorsSkyBox, *mesh);
 
-        lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, *mesh, gui, uniformShaderVariables);
+        lightPassManager.Execute(commandBuffer, lightingRenderPassInfo, descriptorsLighting, *mesh, gui, uniformShaderVariables);
 
-        //std::cout << "after lightPassManager::recordCommandBuffer()" << std::endl;
+        //std::cout << "after lightPassManager::Execute()" << std::endl;
 
         VkResult result = vkEndCommandBuffer(commandBuffer);
         if (result != VK_SUCCESS) {
             std::cerr << "vkEndCommandBuffer failed: " << result << std::endl;
             throw std::runtime_error("failed to record command buffer!");
         }
-        //std::cout << "RBApplication::recordCommandBuffer()" << std::endl;
+        //std::cout << "RBApplication::Execute()" << std::endl;
     }
 
     void RBApplication::drawFrame()
