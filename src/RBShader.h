@@ -19,7 +19,7 @@ namespace RottenBamboo {
 
     public:
         RBShader(RBDevice &device, RBCommandBuffer &commandBuffer);
-        RBResourceShader resourceShader;
+        std::shared_ptr<RBResourceShader> resourceShader;
     };
 
 } // Rottenbamboo
