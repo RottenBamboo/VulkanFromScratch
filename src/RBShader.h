@@ -19,7 +19,8 @@ namespace RottenBamboo {
 
     public:
         RBShader(RBDevice &device, RBCommandBuffer &commandBuffer);
-        std::shared_ptr<RBResourceShader> resourceShader;
+        std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
+        std::vector<DescriptorInfo> descriptorInfos;
     };
 
 } // Rottenbamboo
