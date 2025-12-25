@@ -153,8 +153,10 @@ add_executable(${PROJECT_NAME}
         src/RBMaterialUtils.h
         src/RBModel.cpp src/RBModel.h
         src/RBResource.h
+        src/RBResourceUtils.h
         src/RBShader.cpp src/RBShader.h
         src/RBResourceManager.cpp src/RBResourceManager.h
+        src/RBResourceShader.cpp src/RBResourceShader.h
         feature/RBGBufferPass.cpp feature/RBGBufferPass.h
         feature/RBLightingPass.cpp feature/RBLightingPass.h
         feature/RBSkyPass.cpp feature/RBSkyPass.h

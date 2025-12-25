@@ -16,6 +16,7 @@
 #include <iostream>
 #include <filesystem>
 #include "RBWindows.h"
+#include "RBResourceUtils.h"
 
 #define GET_PROJECT_ROOT_DIR RottenBamboo::GetProjectRootPath()
 struct TexturesInfo
@@ -25,6 +26,16 @@ struct TexturesInfo
     std::string path;
     TexturesInfo() : format(VK_FORMAT_UNDEFINED), isHDR(false), path(""){}
     TexturesInfo(VkFormat f, bool hdr, const std::string& p) : format(f), isHDR(hdr), path(p) {}
+};
+
+struct ShadersInfo
+{
+    RottenBamboo::ShaderStage stage;
+    
+    std::string path;
+    ShadersInfo() : path(""){}
+    ShadersInfo(const std::string& p) : path(p) {}
+    ShadersInfo(RottenBamboo::ShaderStage s, const std::string& p) : stage(s), path(p) {}
 };
 
 struct FrameBuffersInfo
@@ -47,11 +58,13 @@ static const int skyBoxPassColorAttachmentCount = 1;
 #define DEPTH_ATTACHMENT_COUNT 1
 #define TEXTURE_PATHS_COUNT 1
 #define TEXTURE_PATHS_MECH_COUNT 4
+#define SHADER_PATHS_COUNT 6
 #define TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT (int)(4 + DEPTH_ATTACHMENT_COUNT)
 #define TEXTURE_PATHS_SKYBOX_COUNT 1
 
 extern const std::string MODEL_PATH;
 extern const TexturesInfo fallBackFormat;
+extern const std::array<ShadersInfo, SHADER_PATHS_COUNT> inputShader;
 extern const std::array<TexturesInfo, TEXTURE_PATHS_COUNT> inputImagesInfo;
 extern const std::array<TexturesInfo, TEXTURE_PATHS_MECH_COUNT> inputImageInfoMech;
 extern const std::array<TexturesInfo, TEXTURE_PATHS_SKYBOX_COUNT> inputImageInfoSkyBox;

@@ -3,13 +3,16 @@
 //
 #pragma once
 
+#include <vector>
+#include <unordered_map>
 #include "RBResource.h"
 #include "RBResourceUtils.h"
 namespace RottenBamboo {
 
     class RBResourceShader : public RBResource {
     public:
-        RBResourceShader(const std::string &path) : RBResource(path) {}
+    
+        RBResourceShader(const std::string &path);
         ~RBResourceShader() = default;
 
         void Load(ShaderStage stage, const std::string& path);

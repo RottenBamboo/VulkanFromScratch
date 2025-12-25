@@ -29,6 +29,16 @@ const std::array<TexturesInfo, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> inputIma
     TexturesInfo{VK_FORMAT_D32_SFLOAT, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.jpeg"}  // Emission
 };
 
+const std::array<ShadersInfo, SHADER_PATHS_COUNT> inputShader = 
+{
+    ShadersInfo{RottenBamboo::ShaderStage::SHADER_STAGE_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/gbufferFrag.spv"},
+    ShadersInfo{RottenBamboo::ShaderStage::SHADER_STAGE_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/gbufferVert.spv"},
+    ShadersInfo{RottenBamboo::ShaderStage::SHADER_STAGE_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/lightingFrag.spv"},
+    ShadersInfo{RottenBamboo::ShaderStage::SHADER_STAGE_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/lightingVert.spv"},
+    ShadersInfo{RottenBamboo::ShaderStage::SHADER_STAGE_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/skyFrag.spv"},
+    ShadersInfo{RottenBamboo::ShaderStage::SHADER_STAGE_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/skyVert.spv"}
+};
+
 const std::array<TexturesInfo, TEXTURE_PATHS_SKYBOX_COUNT> inputImageInfoSkyBox = {
     TexturesInfo{VK_FORMAT_R32G32B32A32_SFLOAT, true, GET_PROJECT_ROOT_DIR + "textures/cape_hill_4k.hdr"}
 };

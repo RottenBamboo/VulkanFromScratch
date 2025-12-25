@@ -13,6 +13,7 @@
 #include "RBLightingPass.h"
 #include "RBBuffer.h"
 #include "RBResourceManager.h"
+#include "RBResourceShader.h"
 #include "RBRuntimeCameraManager.h"
 #include "RBEditorCameraManager.h"
 #include <stdexcept>
@@ -89,6 +90,8 @@ namespace RottenBamboo {
         RBCommandBuffer commandBuffer{device};
 
         ResourceManager resourceManager{device, commandBuffer};
+
+        RBResourceShader resourceShader{inputShader[0].path};
 
         RBPipelineConfig pipelineConfig{};
         
