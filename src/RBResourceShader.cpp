@@ -32,39 +32,83 @@ namespace RottenBamboo {
         // SPIR-V ID
         for (auto id : compiler.get_active_interface_variables())
         {
-            if (!compiler.has_decoration(id, spv::DecorationBinding))
-                continue;
-        
-            uint32_t binding =
-                compiler.get_decoration(id, spv::DecorationBinding);
-        
-            uint32_t set = 0;
+            const auto& type = compiler.get_type_from_variable(id);
+            auto storage = compiler.get_storage_class(id);
+            uint32_t set = 0, binding = 0;
+                    
+            // 先获取 descriptor set / binding（如果有的话）
             if (compiler.has_decoration(id, spv::DecorationDescriptorSet))
                 set = compiler.get_decoration(id, spv::DecorationDescriptorSet);
-        
-            const auto& type = compiler.get_type_from_variable(id);
-        
-            // descriptor type
-            switch (type.storage)
+            if (compiler.has_decoration(id, spv::DecorationBinding))
+                binding = compiler.get_decoration(id, spv::DecorationBinding);
+                    
+            switch (storage)
             {
-            case spv::StorageClassUniform:
-                std::cout << "Uniform buffer  set=" << set
-                          << " binding=" << binding << "\n";
-                break;
+                case spv::StorageClassUniform:
+                    // Uniform Buffer Object (UBO)
+                    std::cout << "Uniform buffer  set=" << set
+                              << " binding=" << binding << "\n";
+                    break;
             
-            case spv::StorageClassUniformConstant:
-                // sampler / sampled image
-                std::cout << "Sampled image   set=" << set
-                          << " binding=" << binding << "\n";
-                break;
-            
-            case spv::StorageClassStorageBuffer:
-                std::cout << "Storage buffer  set=" << set
-                          << " binding=" << binding << "\n";
-                break;
-            
-            default:
-                break;
+                case spv::StorageClassUniformConstant:
+                    // Sampler / Sampled Image
+                    if (type.basetype == spirv_cross::SPIRType::SampledImage)
+                    {
+                        std::cout << "Sampled image   set=" << set
+                                  << " binding=" << binding << "\n";
+                    }
+                    else if (type.basetype == spirv_cross::SPIRType::Sampler)
+                    {
+                        std::cout << "Sampler         set=" << set
+                                  << " binding=" << binding << "\n";
+                    }
+                    else
+                    {
+                        std::cout << "Uniform constant unknown type set=" << set
+                                  << " binding=" << binding << "\n";
+                    }
+                    break;
+                
+                case spv::StorageClassStorageBuffer:
+                    // Storage Buffer (SSBO)
+                    std::cout << "Storage buffer  set=" << set
+                              << " binding=" << binding << "\n";
+                    break;
+                
+                case spv::StorageClassPushConstant:
+                    std::cout << "Push constant   name=" << compiler.get_name(id) << "\n";
+                    break;
+                
+                case spv::StorageClassInput:
+                    if (compiler.has_decoration(id, spv::DecorationBuiltIn))
+                    {
+                        std::cout << "BuiltIn input   name=" << compiler.get_name(id) << "\n";
+                    }
+                    else
+                    {
+                        uint32_t loc = compiler.get_decoration(id, spv::DecorationLocation);
+                        std::cout << "Vertex/FS input location=" << loc
+                                  << " name=" << compiler.get_name(id) << "\n";
+                    }
+                    break;
+                
+                case spv::StorageClassOutput:
+                    if (compiler.has_decoration(id, spv::DecorationBuiltIn))
+                    {
+                        std::cout << "BuiltIn output  name=" << compiler.get_name(id) << "\n";
+                    }
+                    else
+                    {
+                        uint32_t loc = compiler.get_decoration(id, spv::DecorationLocation);
+                        std::cout << "Vertex/FS output location=" << loc
+                                  << " name=" << compiler.get_name(id) << "\n";
+                    }
+                    break;
+                
+                default:
+                    std::cout << "Other storage class " << storage
+                              << " name=" << compiler.get_name(id) << "\n";
+                    break;
             }
         }
     }
