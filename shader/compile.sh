@@ -45,7 +45,6 @@ glslc $FLAGS "gBuffer.vert" -o "$OUTPUT_DIR/gBufferVert.spv"
 glslc $FLAGS "gBuffer.frag" -o "$OUTPUT_DIR/gBufferFrag.spv"
 glslc $FLAGS "lighting.vert" -o "$OUTPUT_DIR/lightingVert.spv"
 glslc $FLAGS "lighting.frag" -o "$OUTPUT_DIR/lightingFrag.spv"
-glslc $FLAGS "gBuffer.frag" -o "$OUTPUT_DIR/gBufferFrag.spv"
 glslc $FLAGS "sky.vert" -o "$OUTPUT_DIR/skyVert.spv"
 glslc $FLAGS "sky.frag" -o "$OUTPUT_DIR/skyFrag.spv"
 

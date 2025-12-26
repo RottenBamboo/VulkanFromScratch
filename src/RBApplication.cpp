@@ -21,8 +21,8 @@ namespace RottenBamboo {
         for(int i = 0; i < inputShader.size(); i++)
         {
             resourceShader.Load(inputShader[i].stage, inputShader[i].path);
+            resourceShader.Reflect(*resourceShader.Get(inputShader[i].stage));
         }
-        
         InitializeBuffers();
         InitializeDescriptors();
         InitializeSwapChain();

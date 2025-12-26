@@ -19,6 +19,8 @@ namespace RottenBamboo {
 
         void Load(const std::string& path) override {};
 
+        void Reflect(const std::vector<uint32_t>& spirv);
+        
         const std::vector<uint32_t>* Get(ShaderPipelineStage shaderStage) const;
     private:
         std::unordered_map<ShaderPipelineStage, std::vector<uint32_t>> shaderSPIRV;
