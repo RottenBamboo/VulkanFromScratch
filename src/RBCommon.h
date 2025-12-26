@@ -30,12 +30,12 @@ struct TexturesInfo
 
 struct ShadersInfo
 {
-    RottenBamboo::ShaderStage stage;
+    RottenBamboo::ShaderPipelineStage stage;
     
     std::string path;
     ShadersInfo() : path(""){}
     ShadersInfo(const std::string& p) : path(p) {}
-    ShadersInfo(RottenBamboo::ShaderStage s, const std::string& p) : stage(s), path(p) {}
+    ShadersInfo(RottenBamboo::ShaderPipelineStage s, const std::string& p) : stage(s), path(p) {}
 };
 
 struct FrameBuffersInfo

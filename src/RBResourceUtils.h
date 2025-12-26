@@ -5,17 +5,19 @@
 #pragma once
 #include <vulkan/vulkan.h>
 namespace RottenBamboo {
-    typedef enum ShaderStage
-    {
-        SHADER_STAGE_VERTEX,
-        SHADER_STAGE_TESSELLATION_CONTROL,
-        SHADER_STAGE_TESSELLATION_EVALUATION,
-        SHADER_STAGE_GEOMETRY,
-        SHADER_STAGE_FRAGMENT,
-        SHADER_STAGE_COMPUTE,
-        SHADER_STAGE_MESH
-    } ShaderStage;
 
+    typedef enum ShaderPipelineStage
+    {
+        SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT,
+        SHADER_PIPELINE_STAGE_GBUFFER_VERTEX,
+        SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT,
+        SHADER_PIPELINE_STAGE_LIGHTING_VERTEX,
+        SHADER_PIPELINE_STAGE_SKYBOX_FRAGMENT,
+        SHADER_PIPELINE_STAGE_SKYBOX_VERTEX,
+        SHADER_PIPELINE_STAGE_POST_PROCESSING_FRAGMENT,
+        SHADER_PIPELINE_STAGE_POST_PROCESSING_VERTEX
+    } ShaderPipelineStage;
+    
     struct DescriptorInfo
     {
         VkDescriptorSetLayoutBinding binding;

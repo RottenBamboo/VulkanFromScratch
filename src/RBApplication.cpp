@@ -16,8 +16,13 @@ namespace RottenBamboo {
         InitializeCamera();
         InitializeDevice();
         InitializeCommandBuffer();
+
         resourceManager.Load<RBModel>(MODEL_PATH);
-        resourceShader.Load(inputShader[0].stage, inputShader[0].path);
+        for(int i = 0; i < inputShader.size(); i++)
+        {
+            resourceShader.Load(inputShader[i].stage, inputShader[i].path);
+        }
+        
         InitializeBuffers();
         InitializeDescriptors();
         InitializeSwapChain();

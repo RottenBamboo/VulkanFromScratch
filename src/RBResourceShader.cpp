@@ -17,7 +17,7 @@ namespace RottenBamboo {
 
     }
 
-    void RBResourceShader::Load(ShaderStage stage, const std::string& path)
+    void RBResourceShader::Load(ShaderPipelineStage stage, const std::string& path)
     {
         auto shaderCode = RBPipelineUtils::readFile(path);
         std::cout << "Loaded shader code from : " << path << std::endl;
@@ -31,7 +31,7 @@ namespace RottenBamboo {
         std::memcpy(shaderSPIRV[stage].data(), shaderCode.data(), codeSize);
     }
 
-    const std::vector<uint32_t>* RBResourceShader::Get(ShaderStage shaderStage) const
+    const std::vector<uint32_t>* RBResourceShader::Get(ShaderPipelineStage shaderStage) const
     {
         if (shaderSPIRV.find(shaderStage) != shaderSPIRV.end())
         {

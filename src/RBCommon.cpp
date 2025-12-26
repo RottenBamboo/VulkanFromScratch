@@ -31,12 +31,12 @@ const std::array<TexturesInfo, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> inputIma
 
 const std::array<ShadersInfo, SHADER_PATHS_COUNT> inputShader = 
 {
-    ShadersInfo{RottenBamboo::ShaderStage::SHADER_STAGE_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/gbufferFrag.spv"},
-    ShadersInfo{RottenBamboo::ShaderStage::SHADER_STAGE_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/gbufferVert.spv"},
-    ShadersInfo{RottenBamboo::ShaderStage::SHADER_STAGE_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/lightingFrag.spv"},
-    ShadersInfo{RottenBamboo::ShaderStage::SHADER_STAGE_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/lightingVert.spv"},
-    ShadersInfo{RottenBamboo::ShaderStage::SHADER_STAGE_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/skyFrag.spv"},
-    ShadersInfo{RottenBamboo::ShaderStage::SHADER_STAGE_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/skyVert.spv"}
+    ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/gbufferFrag.spv"},
+    ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_GBUFFER_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/gbufferVert.spv"},
+    ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/lightingFrag.spv"},
+    ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_LIGHTING_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/lightingVert.spv"},
+    ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_POST_PROCESSING_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/skyFrag.spv"},
+    ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_POST_PROCESSING_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/skyVert.spv"}
 };
 
 const std::array<TexturesInfo, TEXTURE_PATHS_SKYBOX_COUNT> inputImageInfoSkyBox = {
