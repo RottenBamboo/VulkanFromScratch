@@ -20,8 +20,9 @@ namespace RottenBamboo {
         resourceManager.Load<RBModel>(MODEL_PATH);
         for(int i = 0; i < inputShader.size(); i++)
         {
+            RBShaderReflection refl;
             resourceShader.Load(inputShader[i].stage, inputShader[i].path);
-            resourceShader.Reflect(*resourceShader.Get(inputShader[i].stage));
+            resourceShader.Reflect(refl, *resourceShader.Get(inputShader[i].stage));
         }
         InitializeBuffers();
         InitializeDescriptors();

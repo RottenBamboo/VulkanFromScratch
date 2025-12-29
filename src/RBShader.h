@@ -20,7 +20,7 @@ namespace RottenBamboo {
     public:
         RBShader(RBDevice &device, RBCommandBuffer &commandBuffer);
         std::vector<VkDescriptorSetLayout> descriptorSetLayouts;
-        std::vector<DescriptorInfo> descriptorInfos;
+        //std::vector<DescriptorInfo> descriptorInfos;
     };
 
 } // Rottenbamboo
