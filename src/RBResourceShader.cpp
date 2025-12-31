@@ -207,4 +207,10 @@ namespace RottenBamboo {
             return nullptr;
         }
     }
+
+    RBShaderReflection* RBResourceShader::GetReflection()
+    {
+        return &shaderReflection;
+    }
+    
 }
