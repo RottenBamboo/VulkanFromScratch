@@ -15,6 +15,7 @@
 #include "RBDescriptorSetManager.h"
 #include "RBImageManager.h"
 #include "RBBufferManager.h"
+#include "RBResourceShader.h"
 
 #ifdef __ANDROID__
 #include <SDL3/SDL_iostream.h>
@@ -82,7 +83,7 @@ namespace RottenBamboo {
 
         void checkImagesInfo();
 
-        void InitializeDescriptors();
+        void InitializeDescriptors(const RBResourceShader& resourceShader);
         
         void InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, 
                                               std::array<VkFormat, ImageCount> imageFormats,

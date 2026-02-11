@@ -21,10 +21,10 @@ namespace RottenBamboo {
         for(int i = 0; i < inputShader.size(); i++)
         {
             resourceShader.Load(inputShader[i].stage, inputShader[i].path);
-            resourceShader.Reflect(*(resourceShader.GetReflection()), *resourceShader.Get(inputShader[i].stage));
+            resourceShader.Reflect(resourceShader.GetReflection(), *resourceShader.Get(inputShader[i].stage));
         }
         InitializeBuffers();
-        InitializeDescriptors();
+        InitializeDescriptors(resourceShader);
         InitializeSwapChain();
         InitializeGraphicPipeline();
         InitializeGUI();
@@ -78,20 +78,20 @@ namespace RottenBamboo {
         std::cout << "RBApplication::InitializeBuffers()" << std::endl;
     }
 
-    void RBApplication::InitializeDescriptors()
+    void RBApplication::InitializeDescriptors(const RBResourceShader& resourceShader)
     {
-        descriptorsGBuffer.InitializeDescriptors();
+        descriptorsGBuffer.InitializeDescriptors(resourceShader);
 
-        descriptors.InitializeDescriptors();
+        descriptors.InitializeDescriptors(resourceShader);
 
         RBSwapChain::SetSwapChainExtent(device, windows);
 
         descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits, attahmentLayouts);
 
-        descriptorsSkyBox.InitializeDescriptors();
+        descriptorsSkyBox.InitializeDescriptors(resourceShader);
 
-        descriptorsLighting.InitializeDescriptors();
-        std::cout << "RBApplication::InitializeDescriptors()" << std::endl;
+        descriptorsLighting.InitializeDescriptors(resourceShader);
+        std::cout << "RBApplication::InitializeDescriptors(const RBResourceShader& resourceShader)" << std::endl;
     }
 
     void RBApplication::InitializeGraphicPipeline()

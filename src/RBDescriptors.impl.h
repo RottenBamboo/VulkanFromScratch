@@ -444,9 +444,21 @@ namespace RottenBamboo{
     }
 
     template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptors()
+    void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptors(const RBResourceShader& resourceShader)
     {
         //checkImagesInfo();
+        const RBShaderReflection& reflection = resourceShader.GetReflection();
+        for (std::unordered_map<uint32_t, RBDescriptorSetLayoutInfo>::const_iterator descriptorSetIt = reflection.descriptorSets.begin();
+             descriptorSetIt != reflection.descriptorSets.end(); ++descriptorSetIt)
+        {
+            uint32_t setIndex = descriptorSetIt->first;
+            const RBDescriptorSetLayoutInfo& descriptorSetLayoutInfo = descriptorSetIt->second;
+            for(std::unordered_map<uint32_t, RBDescriptorBinding>::const_iterator bindingIt = descriptorSetLayoutInfo.bindings.begin();
+                bindingIt != descriptorSetLayoutInfo.bindings.end(); ++bindingIt)
+            {
+                const RBDescriptorBinding& descriptorBinding = bindingIt->second;
+            }
+        }
         createTextureImage();
         createTextureImageView();
         createTextureSampler();

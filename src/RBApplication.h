@@ -67,7 +67,7 @@ namespace RottenBamboo {
 
         void InitializeBuffers();
 
-        void InitializeDescriptors();
+        void InitializeDescriptors(const RBResourceShader& resourceShader);
 
         void InitializeGraphicPipeline();
 

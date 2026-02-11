@@ -85,7 +85,7 @@ namespace RottenBamboo {
 
                 if (descType != VK_DESCRIPTOR_TYPE_MAX_ENUM)
                 {
-                    auto& setInfo = refl.descriptorSets[set];
+                    auto& setInfo = shaderReflection.descriptorSets[set];
                     setInfo.set = set;
 
                     auto& bindingInfo = setInfo.bindings[binding];
@@ -105,7 +105,7 @@ namespace RottenBamboo {
                 range.offset = 0;
                 range.size = compiler.get_declared_struct_size(baseType);
 
-                refl.pushConstants.push_back(range);
+                shaderReflection.pushConstants.push_back(range);
                 continue;
             }
 
@@ -208,9 +208,14 @@ namespace RottenBamboo {
         }
     }
 
-    RBShaderReflection* RBResourceShader::GetReflection()
+    const RBShaderReflection& RBResourceShader::GetReflection() const
     {
-        return &shaderReflection;
+        return shaderReflection;
+    }
+
+    RBShaderReflection& RBResourceShader::GetReflection()
+    {
+        return shaderReflection;
     }
     
 }
