@@ -176,7 +176,7 @@ namespace RottenBamboo {
                         break;
                     }
                 }
-                refl.vertexInputs.push_back(inputAttr);
+                shaderReflection.vertexInputs.push_back(inputAttr);
                 std::cout << "Location:: Binding: " << binding << ", Type: " << typeName << ", Format: " << formatStr << ", Offset: " << currentOffset << std::endl;
             }
         }
