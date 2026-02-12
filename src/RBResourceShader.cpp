@@ -19,7 +19,7 @@ namespace RottenBamboo {
 
     }
 
-    void RBResourceShader::Reflect(RBShaderReflection& refl, const std::vector<uint32_t>& spirv)
+    void RBResourceShader::Reflect(ShaderReflectionMap& refl, const ShaderPipelineStage shaderPipelineStage, const std::vector<uint32_t>& spirv)
     {
         if (spirv.size() < 5 || spirv[0] != 0x07230203u)
             return;
@@ -85,7 +85,7 @@ namespace RottenBamboo {
 
                 if (descType != VK_DESCRIPTOR_TYPE_MAX_ENUM)
                 {
-                    auto& setInfo = shaderReflection.descriptorSets[set];
+                    auto& setInfo = shaderReflection[shaderPipelineStage].descriptorSets[set];
                     setInfo.set = set;
 
                     auto& bindingInfo = setInfo.bindings[binding];
@@ -105,7 +105,7 @@ namespace RottenBamboo {
                 range.offset = 0;
                 range.size = compiler.get_declared_struct_size(baseType);
 
-                shaderReflection.pushConstants.push_back(range);
+                shaderReflection[shaderPipelineStage].pushConstants.push_back(range);
                 continue;
             }
 
@@ -176,7 +176,7 @@ namespace RottenBamboo {
                         break;
                     }
                 }
-                shaderReflection.vertexInputs.push_back(inputAttr);
+                shaderReflection[shaderPipelineStage].vertexInputs.push_back(inputAttr);
                 std::cout << "Location:: Binding: " << binding << ", Type: " << typeName << ", Format: " << formatStr << ", Offset: " << currentOffset << std::endl;
             }
         }
@@ -208,14 +208,25 @@ namespace RottenBamboo {
         }
     }
 
-    const RBShaderReflection& RBResourceShader::GetReflection() const
+    const ShaderReflectionMap& RBResourceShader::GetReflection() const
     {
         return shaderReflection;
     }
 
-    RBShaderReflection& RBResourceShader::GetReflection()
+    ShaderReflectionMap& RBResourceShader::GetReflection()
     {
         return shaderReflection;
     }
     
+    const RBShaderReflection* RBResourceShader::GetReflection(ShaderPipelineStage shaderPipelineStage) const
+    {
+        auto it = shaderReflection.find(shaderPipelineStage);
+        return it != shaderReflection.end() ? &shaderReflection.at(shaderPipelineStage) : nullptr;
+    }
+
+    RBShaderReflection* RBResourceShader::GetReflection(ShaderPipelineStage shaderPipelineStage)
+    {
+        auto it = shaderReflection.find(shaderPipelineStage);
+        return it != shaderReflection.end() ? &shaderReflection[shaderPipelineStage] : nullptr;
+    }
 }

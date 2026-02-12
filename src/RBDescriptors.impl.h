@@ -147,7 +147,7 @@ namespace RottenBamboo{
 #ifdef __ANDROID__
             std::vector<uint8_t> buffer;
             LoadFromMemoryAndroid(imagesInfo[index].path, imagesInfo[index].isHDR, buffer);
-            // 从内存加载纹理
+            // load texture form memory
             if(imagesInfo[index].isHDR)
             {
                 pixels = (float*)stbi_loadf_from_memory(buffer.data(), buffer.size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
@@ -444,12 +444,11 @@ namespace RottenBamboo{
     }
 
     template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptors(const RBResourceShader& resourceShader)
+    void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptors(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment)
     {
         //checkImagesInfo();
-        const RBShaderReflection& reflection = resourceShader.GetReflection();
-        for (std::unordered_map<uint32_t, RBDescriptorSetLayoutInfo>::const_iterator descriptorSetIt = reflection.descriptorSets.begin();
-             descriptorSetIt != reflection.descriptorSets.end(); ++descriptorSetIt)
+        for (std::unordered_map<uint32_t, RBDescriptorSetLayoutInfo>::const_iterator descriptorSetIt = resourceShaderVertex->descriptorSets.begin();
+             descriptorSetIt != resourceShaderVertex->descriptorSets.end(); ++descriptorSetIt)
         {
             uint32_t setIndex = descriptorSetIt->first;
             const RBDescriptorSetLayoutInfo& descriptorSetLayoutInfo = descriptorSetIt->second;

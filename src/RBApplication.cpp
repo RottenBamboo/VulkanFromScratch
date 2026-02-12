@@ -21,7 +21,7 @@ namespace RottenBamboo {
         for(int i = 0; i < inputShader.size(); i++)
         {
             resourceShader.Load(inputShader[i].stage, inputShader[i].path);
-            resourceShader.Reflect(resourceShader.GetReflection(), *resourceShader.Get(inputShader[i].stage));
+            resourceShader.Reflect(resourceShader.GetReflection(), inputShader[i].stage, *resourceShader.Get(inputShader[i].stage));
         }
         InitializeBuffers();
         InitializeDescriptors(resourceShader);
@@ -80,17 +80,18 @@ namespace RottenBamboo {
 
     void RBApplication::InitializeDescriptors(const RBResourceShader& resourceShader)
     {
-        descriptorsGBuffer.InitializeDescriptors(resourceShader);
-
-        descriptors.InitializeDescriptors(resourceShader);
 
         RBSwapChain::SetSwapChainExtent(device, windows);
 
+        descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
+
+        descriptors.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_POST_PROCESSING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_POST_PROCESSING_FRAGMENT));
+
+        descriptorsSkyBox.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_POST_PROCESSING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_POST_PROCESSING_FRAGMENT));
+
+        descriptorsLighting.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT));
+        
         descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits, attahmentLayouts);
-
-        descriptorsSkyBox.InitializeDescriptors(resourceShader);
-
-        descriptorsLighting.InitializeDescriptors(resourceShader);
         std::cout << "RBApplication::InitializeDescriptors(const RBResourceShader& resourceShader)" << std::endl;
     }
 

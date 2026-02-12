@@ -9,6 +9,8 @@
 #include "RBResourceUtils.h"
 namespace RottenBamboo {
 
+    using ShaderReflectionMap = std::unordered_map<ShaderPipelineStage, RBShaderReflection>;
+
     class RBResourceShader : public RBResource {
     public:
     
@@ -19,16 +21,20 @@ namespace RottenBamboo {
 
         void Load(const std::string& path) override {};
 
-        void Reflect(RBShaderReflection& refl, const std::vector<uint32_t>& spirv);
+        void Reflect(ShaderReflectionMap& refl, const ShaderPipelineStage shaderPipelineStage, const std::vector<uint32_t>& spirv);
         
         const std::vector<uint32_t>* Get(ShaderPipelineStage shaderStage) const;
 
-        const RBShaderReflection& GetReflection() const;
+        const ShaderReflectionMap& GetReflection() const;
 
-        RBShaderReflection& GetReflection();
+        ShaderReflectionMap& GetReflection();
+
+        const RBShaderReflection* GetReflection(ShaderPipelineStage shaderPipelineStage) const;
+
+        RBShaderReflection* GetReflection(ShaderPipelineStage shaderPipelineStage);
     private:
         std::unordered_map<ShaderPipelineStage, std::vector<uint32_t>> shaderSPIRV;
 
-        RBShaderReflection shaderReflection;
+        ShaderReflectionMap shaderReflection;
     };
 }

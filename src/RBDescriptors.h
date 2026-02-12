@@ -83,7 +83,7 @@ namespace RottenBamboo {
 
         void checkImagesInfo();
 
-        void InitializeDescriptors(const RBResourceShader& resourceShader);
+        void InitializeDescriptors(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment);
         
         void InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, 
                                               std::array<VkFormat, ImageCount> imageFormats,
