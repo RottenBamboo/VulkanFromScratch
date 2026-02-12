@@ -212,24 +212,24 @@ namespace RottenBamboo{
             //rbImageManager.transitionImageLayout(commandBufferEnd, imageBundle.image, imagesInfo[index].format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
             //rbCommandBuffer.endSingleTimeCommands(commandBufferEnd);
 
-        VkFormatProperties formatProperties;
-        vkGetPhysicalDeviceFormatProperties(rbDevice.physicalDevice, imagesInfo[index].format, &formatProperties);
-        
-        bool supportsLinearBlitting = (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT) != 0;
-        bool supportsBlit = (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT) != 0 && 
-                           (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT) != 0;
-
-        if (supportsLinearBlitting && supportsBlit && mipLevels > 1) 
-        {
-            generateMipmaps(imageBundle.image, imagesInfo[index].format, texWidth, texHeight, mipLevels);
-        } 
-        else 
-        {
-            // transition to final layout directly
-            VkCommandBuffer layoutCmdBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-            rbImageManager.transitionImageLayout(layoutCmdBuffer, imageBundle.image, imagesInfo[index].format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
-            rbCommandBuffer.endSingleTimeCommands(layoutCmdBuffer);
-        }
+            VkFormatProperties formatProperties;
+            vkGetPhysicalDeviceFormatProperties(rbDevice.physicalDevice, imagesInfo[index].format, &formatProperties);
+            
+            bool supportsLinearBlitting = (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT) != 0;
+            bool supportsBlit = (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT) != 0 && 
+                               (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT) != 0;
+            
+            if (supportsLinearBlitting && supportsBlit && mipLevels > 1) 
+            {
+                generateMipmaps(imageBundle.image, imagesInfo[index].format, texWidth, texHeight, mipLevels);
+            } 
+            else 
+            {
+                // transition to final layout directly
+                VkCommandBuffer layoutCmdBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+                rbImageManager.transitionImageLayout(layoutCmdBuffer, imageBundle.image, imagesInfo[index].format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
+                rbCommandBuffer.endSingleTimeCommands(layoutCmdBuffer);
+            }
             index++;
             std::cout << "index = " << index << std::endl;
             std::cout << "mipLevels = " << mipLevels << std::endl;

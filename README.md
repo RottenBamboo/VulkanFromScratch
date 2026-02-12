@@ -88,7 +88,7 @@ cd external
     
 ```
 cd shader
-./compile.sh
+./compile.sh debug
 cd ..
 cmake -G "Visual Studio 17 2022" -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cd build
@@ -101,7 +101,7 @@ cd Debug
 
 ```
 cd shader
-./compile.sh
+./compile.sh debug
 cd ..
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cd build
