@@ -187,7 +187,23 @@ namespace RottenBamboo {
                 if (isDeviceSuitable(device)) {
                     physicalDevice = device;
                     msaaSamples = getMaxUsableSampleCount();
+                    VkPhysicalDeviceProperties deviceProperties;
+                    vkGetPhysicalDeviceProperties(device, &deviceProperties);
+                    VkPhysicalDeviceType deviceType = deviceProperties.deviceType;
+#ifdef __WINDOWS__
+                    if(deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+                    {
+                        std::cout<<"Selected discrete GPU: " << deviceProperties.deviceName << std::endl;
+                        break;
+                    }
+                    else                    
+                    {
+                        std::cout<<"Selected non-discrete GPU: " << deviceProperties.deviceName << std::endl;
+                        break;
+                    }
+#else
                     break;
+#endif
                 }
             }
 
