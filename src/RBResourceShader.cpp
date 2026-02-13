@@ -10,8 +10,6 @@
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
-#include <spirv_cross/spirv_cross.hpp>
-#include <spirv_cross/spirv_glsl.hpp>
 
 namespace RottenBamboo {
     RBResourceShader::RBResourceShader(const std::string &path) : RBResource(path)
@@ -48,53 +46,53 @@ namespace RottenBamboo {
             if (compiler.has_decoration(id, spv::DecorationBinding))
                 binding = compiler.get_decoration(id, spv::DecorationBinding);
 
-            if (storage == spv::StorageClassUniform ||
-            storage == spv::StorageClassUniformConstant ||
-            storage == spv::StorageClassStorageBuffer)
+            VkDescriptorType descType = VK_DESCRIPTOR_TYPE_MAX_ENUM;
+            VkFormat vkFormat = VK_FORMAT_MAX_ENUM;
+           
+
+            if (storage == spv::StorageClassUniform)
             {
-                VkDescriptorType descType = VK_DESCRIPTOR_TYPE_MAX_ENUM;
-
-                if (storage == spv::StorageClassUniform)
+                descType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                std::cout << "Uniform buffer" << std::endl;
+            }
+            else if (storage == spv::StorageClassStorageBuffer)
+            {
+                descType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+                std::cout << "Storage buffer" << std::endl;
+            }
+            else if (storage == spv::StorageClassUniformConstant)
+            {
+                if (baseType.basetype == spirv_cross::SPIRType::SampledImage)
                 {
-                    descType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                    std::cout << "Uniform buffer" << std::endl;
+                    descType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                    std::cout << "Combined image sampler" << std::endl;
                 }
-                else if (storage == spv::StorageClassStorageBuffer)
+                else if (baseType.basetype == spirv_cross::SPIRType::Image)
                 {
-                    descType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-                    std::cout << "Storage buffer" << std::endl;
+                    descType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+                    std::cout << "Sampled image" << std::endl;
                 }
-                else if (storage == spv::StorageClassUniformConstant)
+                else if (baseType.basetype == spirv_cross::SPIRType::Sampler)
                 {
-                    if (baseType.basetype == spirv_cross::SPIRType::SampledImage)
-                    {
-                        descType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                        std::cout << "Combined image sampler" << std::endl;
-                    }
-                    else if (baseType.basetype == spirv_cross::SPIRType::Image)
-                    {
-                        descType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-                        std::cout << "Sampled image" << std::endl;
-                    }
-                    else if (baseType.basetype == spirv_cross::SPIRType::Sampler)
-                    {
-                        descType = VK_DESCRIPTOR_TYPE_SAMPLER;
-                        std::cout << "Sampler" << std::endl;
-                    }
+                    descType = VK_DESCRIPTOR_TYPE_SAMPLER;
+                    std::cout << "Sampler" << std::endl;
                 }
 
-                if (descType != VK_DESCRIPTOR_TYPE_MAX_ENUM)
-                {
-                    auto& setInfo = shaderReflection[shaderPipelineStage].descriptorSets[set];
-                    setInfo.set = set;
+                spv::ImageFormat spirvFormat = baseType.image.format;
+                vkFormat = SpirvImageFormatToVkFormat(spirvFormat);
+            }
 
-                    auto& bindingInfo = setInfo.bindings[binding];
-                    bindingInfo.binding = binding;
-                    bindingInfo.type = descType;
-                    bindingInfo.count = 1;
-                    std::cout << "Descriptor Set: " << set << ", Binding: " << binding << std::endl;
-                }
+            if (descType != VK_DESCRIPTOR_TYPE_MAX_ENUM)
+            {
+                auto& setInfo = shaderReflection[shaderPipelineStage].descriptorSets[set];
+                setInfo.set = set;
 
+                auto& bindingInfo = setInfo.bindings[binding];
+                bindingInfo.binding = binding;
+                bindingInfo.type = descType;
+                bindingInfo.format = vkFormat;
+                bindingInfo.count = 1;
+                std::cout << "Descriptor Set: " << set << ", Binding: " << binding << ", Format: " << vkFormat << std::endl;
                 continue;
             }
 
@@ -106,6 +104,7 @@ namespace RottenBamboo {
                 range.size = compiler.get_declared_struct_size(baseType);
 
                 shaderReflection[shaderPipelineStage].pushConstants.push_back(range);
+                std::cout << "constant offset " << range.offset << ", constant size " << range.size << std::endl;
                 continue;
             }
 
@@ -124,13 +123,10 @@ namespace RottenBamboo {
 
                 inputAttr.binding = 0;
                 std::string typeName;
-                std::string formatStr;
                 std::string offsetStr;
-                std::string bingStr;
                 if (cols > 1)
                 {
                     typeName = "mat" + std::to_string(vecSize) + "x" + std::to_string(cols);
-                    formatStr = "MATRIX_FORMAT";
                 }
                 else
                 {
@@ -138,50 +134,83 @@ namespace RottenBamboo {
                     {
                     case 1:
                         typeName = "float";
-                        formatStr = "VK_FORMAT_R32_SFLOAT";
-                        inputAttr.format = VK_FORMAT_R32_SFLOAT;
+                        inputAttr.vecSize = vecSize;
                         offsetStr = "0";
                         inputAttr.offset = currentOffset;
                         currentOffset += 1;
                         break;
                     case 2:
                         typeName = "vec2";
-                        formatStr = "VK_FORMAT_R32G32_SFLOAT";
-                        inputAttr.format = VK_FORMAT_R32G32_SFLOAT;
+                        inputAttr.vecSize = vecSize;
                         offsetStr = "1";
                         inputAttr.offset = currentOffset;
                         currentOffset += 1;
                         break;
                     case 3:
                         typeName = "vec3";
-                        formatStr = "VK_FORMAT_R32G32B32_SFLOAT";
-                        inputAttr.format = VK_FORMAT_R32G32B32_SFLOAT;
+                        inputAttr.vecSize = vecSize;
                         offsetStr = "2";
                         inputAttr.offset = currentOffset;
                         currentOffset += 1;
                         break;
                     case 4: 
                         typeName = "vec4"; 
-                        formatStr = "VK_FORMAT_R32G32B32A32_SFLOAT";
-                        inputAttr.format = VK_FORMAT_R32G32B32A32_SFLOAT;
+                        inputAttr.vecSize = vecSize;
                         inputAttr.offset = currentOffset;
                         currentOffset += 1;
                         break;
                     default: 
                         typeName = "unknown"; 
-                        formatStr = "VK_FORMAT_UNDEFINED";
-                        inputAttr.format = VK_FORMAT_UNDEFINED;
+                        inputAttr.vecSize = vecSize;
                         offsetStr = "0";
                         inputAttr.offset = 0;
                         break;
                     }
                 }
                 shaderReflection[shaderPipelineStage].vertexInputs.push_back(inputAttr);
-                std::cout << "Location:: Binding: " << binding << ", Type: " << typeName << ", Format: " << formatStr << ", Offset: " << currentOffset << std::endl;
+                std::cout << "Location:: Binding: " << binding << ", Type: " << typeName << ", Offset: " << currentOffset << std::endl;
             }
         }
     }
-
+VkFormat RBResourceShader::SpirvImageFormatToVkFormat(spv::ImageFormat format)
+{
+    switch (format)
+    {
+    case spv::ImageFormatUnknown:    return VK_FORMAT_UNDEFINED;
+    case spv::ImageFormatRgba32f:    return VK_FORMAT_R32G32B32A32_SFLOAT;
+    case spv::ImageFormatRgba16f:    return VK_FORMAT_R16G16B16A16_SFLOAT;
+    case spv::ImageFormatR32f:       return VK_FORMAT_R32_SFLOAT;
+    case spv::ImageFormatRgba8:      return VK_FORMAT_R8G8B8A8_UNORM;
+    case spv::ImageFormatRgba8Snorm: return VK_FORMAT_R8G8B8A8_SNORM;
+    case spv::ImageFormatRg32f:      return VK_FORMAT_R32G32_SFLOAT;
+    case spv::ImageFormatRg16f:      return VK_FORMAT_R16G16_SFLOAT;
+    case spv::ImageFormatR11fG11fB10f: return VK_FORMAT_B10G11R11_UFLOAT_PACK32;
+    case spv::ImageFormatR16f:       return VK_FORMAT_R16_SFLOAT;
+    case spv::ImageFormatRgba16:     return VK_FORMAT_R16G16B16A16_UNORM;
+    case spv::ImageFormatRgb10A2:    return VK_FORMAT_A2B10G10R10_UNORM_PACK32;
+    case spv::ImageFormatRgba8ui:    return VK_FORMAT_R8G8B8A8_UINT;
+    case spv::ImageFormatRgba8i:     return VK_FORMAT_R8G8B8A8_SINT;
+    case spv::ImageFormatRgba16ui:   return VK_FORMAT_R16G16B16A16_UINT;
+    case spv::ImageFormatRgba16i:    return VK_FORMAT_R16G16B16A16_SINT;
+    case spv::ImageFormatRgba32ui:   return VK_FORMAT_R32G32B32A32_UINT;
+    case spv::ImageFormatRgba32i:    return VK_FORMAT_R32G32B32A32_SINT;
+    case spv::ImageFormatRg32ui:     return VK_FORMAT_R32G32_UINT;
+    case spv::ImageFormatRg32i:      return VK_FORMAT_R32G32_SINT;
+    case spv::ImageFormatRg16ui:     return VK_FORMAT_R16G16_UINT;
+    case spv::ImageFormatRg16i:      return VK_FORMAT_R16G16_SINT;
+    case spv::ImageFormatRg8:        return VK_FORMAT_R8G8_UNORM;
+    case spv::ImageFormatRg8ui:      return VK_FORMAT_R8G8_UINT;
+    case spv::ImageFormatRg8i:       return VK_FORMAT_R8G8_SINT;
+    case spv::ImageFormatR32ui:      return VK_FORMAT_R32_UINT;
+    case spv::ImageFormatR32i:       return VK_FORMAT_R32_SINT;
+    case spv::ImageFormatR16ui:      return VK_FORMAT_R16_UINT;
+    case spv::ImageFormatR16i:       return VK_FORMAT_R16_SINT;
+    case spv::ImageFormatR8:         return VK_FORMAT_R8_UNORM;
+    case spv::ImageFormatR8ui:       return VK_FORMAT_R8_UINT;
+    case spv::ImageFormatR8i:        return VK_FORMAT_R8_SINT;
+    default:                         return VK_FORMAT_UNDEFINED;
+    }
+}
     void RBResourceShader::Load(ShaderPipelineStage stage, const std::string& path)
     {
         auto shaderCode = RBPipelineUtils::readFile(path);
