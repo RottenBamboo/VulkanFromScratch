@@ -23,7 +23,6 @@ namespace RottenBamboo {
     {
         uint32_t            binding;
         VkDescriptorType    type;
-        VkFormat            format;
         uint32_t            count;
     };
 

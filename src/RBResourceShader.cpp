@@ -47,7 +47,6 @@ namespace RottenBamboo {
                 binding = compiler.get_decoration(id, spv::DecorationBinding);
 
             VkDescriptorType descType = VK_DESCRIPTOR_TYPE_MAX_ENUM;
-            VkFormat vkFormat = VK_FORMAT_MAX_ENUM;
            
 
             if (storage == spv::StorageClassUniform)
@@ -77,9 +76,6 @@ namespace RottenBamboo {
                     descType = VK_DESCRIPTOR_TYPE_SAMPLER;
                     std::cout << "Sampler" << std::endl;
                 }
-
-                spv::ImageFormat spirvFormat = baseType.image.format;
-                vkFormat = SpirvImageFormatToVkFormat(spirvFormat);
             }
 
             if (descType != VK_DESCRIPTOR_TYPE_MAX_ENUM)
@@ -90,9 +86,8 @@ namespace RottenBamboo {
                 auto& bindingInfo = setInfo.bindings[binding];
                 bindingInfo.binding = binding;
                 bindingInfo.type = descType;
-                bindingInfo.format = vkFormat;
                 bindingInfo.count = 1;
-                std::cout << "Descriptor Set: " << set << ", Binding: " << binding << ", Format: " << vkFormat << std::endl;
+                std::cout << "Descriptor Set: " << set << ", Binding: " << binding << std::endl;
                 continue;
             }
 
