@@ -36,7 +36,7 @@ namespace RottenBamboo {
 
         void createDescriptorSetLayout();
 
-        void createDescriptorPool();
+        void createDescriptorPool(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment);
 
         void createDescriptorSets();
 
@@ -89,7 +89,8 @@ namespace RottenBamboo {
                                               std::array<VkFormat, ImageCount> imageFormats,
                                               std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags,
                                               std::array<VkImageAspectFlagBits, ImageCount> imageAspectFlagBits,
-                                              std::array<VkImageLayout, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> lightingImageLayouts);
+                                              std::array<VkImageLayout, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> lightingImageLayouts,
+                                              const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment);
 
         void ReleaseAllResource();
     };

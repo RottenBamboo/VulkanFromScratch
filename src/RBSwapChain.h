@@ -17,7 +17,6 @@ namespace RottenBamboo {
         RBDevice &refDevice;
         RBWindows &refWindow;
         RBCommandBuffer &refCommandBuffer;
-        RBDescriptors<1, 1> &refDescriptors;
         VkRenderPass renderPass;
         std::vector<VkImage> swapChainImages;
         VkFormat swapChainImageFormat;
@@ -71,7 +70,7 @@ namespace RottenBamboo {
 
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice &device, VkSurfaceKHR *surface);
 
-        RBSwapChain(RBDevice &device, RBWindows &window, RBCommandBuffer &commandBuffer, RBDescriptors<1, 1> &descriptors);
+        RBSwapChain(RBDevice &device, RBWindows &window, RBCommandBuffer &commandBuffer);
 
         void operator=(const RBSwapChain &) = delete;
 

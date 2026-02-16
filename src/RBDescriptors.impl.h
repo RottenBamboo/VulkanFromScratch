@@ -29,7 +29,7 @@ namespace RottenBamboo{
     }
 
     template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::createDescriptorPool()
+    void RBDescriptors<ImageCount, BufferCount>::createDescriptorPool(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment)
     {
         descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * BufferCount));
         descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * ImageCount));
@@ -461,7 +461,7 @@ namespace RottenBamboo{
         createTextureImage();
         createTextureImageView();
         createTextureSampler();
-        createDescriptorPool();
+        createDescriptorPool(resourceShaderVertex, resourceShaderFragment);
         createDescriptorSetLayout();
         createDescriptorSets();
     }
@@ -488,12 +488,13 @@ namespace RottenBamboo{
                                                                                   std::array<VkFormat, ImageCount> imageFormats,
                                                                                   std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags,
                                                                                   std::array<VkImageAspectFlagBits, ImageCount> imageAspectFlagBits,
-                                                                                  std::array<VkImageLayout, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> lightingImageLayouts)
+                                                                                  std::array<VkImageLayout, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> lightingImageLayouts,
+                                                                                  const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment)
     {
         createTextureImageFrameBuffer(framebufferExtent, imageFormats, imageUsageFlags);
         createTextureImageViewFrameBuffer(imageFormats, imageUsageFlags, imageAspectFlagBits);
         createTextureSamplerFrameBuffer();
-        createDescriptorPool();
+        createDescriptorPool(resourceShaderVertex, resourceShaderFragment);
         createDescriptorSetLayout();
         createDescriptorSetsFrameBuffer(lightingImageLayouts);
     }
