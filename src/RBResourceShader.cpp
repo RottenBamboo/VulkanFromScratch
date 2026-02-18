@@ -30,7 +30,16 @@ namespace RottenBamboo {
 
         //input attribute
         uint32_t currentOffset = 0;
-
+        uint32_t uniformBufferCount = 0;
+        uint32_t storageBufferCount = 0;
+        uint32_t combinedImageSamplerCount = 0;
+        uint32_t sampledImageCount = 0;
+        uint32_t samplerCount = 0;
+        uint32_t inputFloatCount = 0;
+        uint32_t inputVec2Count = 0;
+        uint32_t inputVec3Count = 0;
+        uint32_t inputVec4Count = 0;
+        uint32_t typeCount = 0;
         // SPIR-V ID
         for (auto id : compiler.get_active_interface_variables())
         {
@@ -52,11 +61,15 @@ namespace RottenBamboo {
             if (storage == spv::StorageClassUniform)
             {
                 descType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                uniformBufferCount++;
+                typeCount = uniformBufferCount;
                 std::cout << "Uniform buffer" << std::endl;
             }
             else if (storage == spv::StorageClassStorageBuffer)
             {
                 descType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+                storageBufferCount++;
+                typeCount = storageBufferCount;
                 std::cout << "Storage buffer" << std::endl;
             }
             else if (storage == spv::StorageClassUniformConstant)
@@ -64,16 +77,22 @@ namespace RottenBamboo {
                 if (baseType.basetype == spirv_cross::SPIRType::SampledImage)
                 {
                     descType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                    combinedImageSamplerCount++;
+                    typeCount = combinedImageSamplerCount;
                     std::cout << "Combined image sampler" << std::endl;
                 }
                 else if (baseType.basetype == spirv_cross::SPIRType::Image)
                 {
                     descType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+                    sampledImageCount++;
+                    typeCount = sampledImageCount;
                     std::cout << "Sampled image" << std::endl;
                 }
                 else if (baseType.basetype == spirv_cross::SPIRType::Sampler)
                 {
                     descType = VK_DESCRIPTOR_TYPE_SAMPLER;
+                    samplerCount++;
+                    typeCount = samplerCount;
                     std::cout << "Sampler" << std::endl;
                 }
             }
@@ -88,6 +107,8 @@ namespace RottenBamboo {
                 bindingInfo.type = descType;
                 bindingInfo.count = 1;
                 std::cout << "Descriptor Set: " << set << ", Binding: " << binding << std::endl;
+                setInfo.typeCount[descType] = typeCount;
+                typeCount = 0;
                 continue;
             }
 
@@ -253,4 +274,6 @@ VkFormat RBResourceShader::SpirvImageFormatToVkFormat(spv::ImageFormat format)
         auto it = shaderReflection.find(shaderPipelineStage);
         return it != shaderReflection.end() ? &shaderReflection[shaderPipelineStage] : nullptr;
     }
+    
+    
 }

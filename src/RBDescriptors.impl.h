@@ -31,7 +31,13 @@ namespace RottenBamboo{
     template<int ImageCount, int BufferCount>
     void RBDescriptors<ImageCount, BufferCount>::createDescriptorPool(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment)
     {
-        descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * BufferCount));
+        uint32_t bufferCountFragment = resourceShaderVertex->GetUniformBufferCount(0);
+
+        uint32_t bufferCountVertex = resourceShaderVertex->GetUniformBufferCount(0);
+        
+        uint32_t bufferCount = std::max(bufferCountFragment, bufferCountVertex);
+        
+        descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * bufferCount));
         descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * ImageCount));
         descriptorSetManager.descriptorPoolManager.fillDescriptorPoolCreateInfo(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT));
         descriptorSetManager.descriptorPoolManager.CreateDescriptorPool();

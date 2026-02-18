@@ -36,7 +36,9 @@ namespace RottenBamboo {
         const RBShaderReflection* GetReflection(ShaderPipelineStage shaderPipelineStage) const;
 
         RBShaderReflection* GetReflection(ShaderPipelineStage shaderPipelineStage);
+        
     private:
+
         std::unordered_map<ShaderPipelineStage, std::vector<uint32_t>> shaderSPIRV;
 
         ShaderReflectionMap shaderReflection;
