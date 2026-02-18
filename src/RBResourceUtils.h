@@ -52,14 +52,27 @@ namespace RottenBamboo {
             auto it = descriptorSets.find(setIndex);
             if(it != descriptorSets.end())
             {
-            auto itFragmentBuffer = it->second.typeCount.find(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-            if(itFragmentBuffer != it->second.typeCount.end())
-            {
-                return itFragmentBuffer->second;
+                auto itBuffer = it->second.typeCount.find(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+                if(itBuffer != it->second.typeCount.end())
+                {
+                    return itBuffer->second;
+                }
             }
+            return 0;
         }
-
-        return 0;
-    }
+        
+        uint32_t GetCombinedImageSamplerCount(uint32_t setIndex) const
+        {
+            auto it = descriptorSets.find(setIndex);
+            if(it != descriptorSets.end())
+            {
+                auto itCombinedImageSampler = it->second.typeCount.find(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+                if(itCombinedImageSampler != it->second.typeCount.end())
+                {
+                    return itCombinedImageSampler->second;
+                }
+            }
+            return 0;
+        }
     };
 }
