@@ -35,7 +35,7 @@ namespace RottenBamboo{
 
         uint32_t bufferCountVertex = resourceShaderVertex->GetUniformBufferCount(0);
         
-        uint32_t bufferCount = std::max(static_cast<uint32_t>(0), std::max(bufferCountFragment, bufferCountVertex));
+        uint32_t bufferCount = std::max(static_cast<uint32_t>(1), std::max(bufferCountFragment, bufferCountVertex));
         
         uint32_t imageCountFragment = resourceShaderFragment->GetCombinedImageSamplerCount(0);
 
