@@ -36,7 +36,7 @@ namespace RottenBamboo {
 
         void createDescriptorSetLayout();
 
-        void createDescriptorPool(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment);
+        void createDescriptorPool(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled = false);
 
         void createDescriptorSets();
 
@@ -83,14 +83,14 @@ namespace RottenBamboo {
 
         void checkImagesInfo();
 
-        void InitializeDescriptors(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment);
+        void InitializeDescriptors(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled = false);
         
         void InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, 
                                               std::array<VkFormat, ImageCount> imageFormats,
                                               std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags,
                                               std::array<VkImageAspectFlagBits, ImageCount> imageAspectFlagBits,
                                               std::array<VkImageLayout, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> lightingImageLayouts,
-                                              const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment);
+                                              const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled = false);
 
         void ReleaseAllResource();
     };

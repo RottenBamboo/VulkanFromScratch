@@ -87,9 +87,9 @@ namespace RottenBamboo {
 
         descriptorsSkyBox.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_POST_PROCESSING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_POST_PROCESSING_FRAGMENT));
 
-        descriptorsLighting.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT));
+        descriptorsLighting.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT), true);
         
-        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits, attahmentLayouts, resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
+        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits, attahmentLayouts, resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT), true);
         std::cout << "RBApplication::InitializeDescriptors(const RBResourceShader& resourceShader)" << std::endl;
     }
 
@@ -449,7 +449,7 @@ void RBApplication::processModelNode(
             gBufferPass.clearFrameBuffers();
             descriptorsAttachment.ReleaseAllResource();
             RBSwapChain::SetSwapChainExtent(device, windows);
-            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits, attahmentLayouts, resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
+            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits, attahmentLayouts, resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT), true);
 
             gBufferPass.createGraphicsPipeline();
 
