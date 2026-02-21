@@ -52,12 +52,14 @@ namespace RottenBamboo {
         std::cout << "RBGBufferPass::refreFrameBuffers()" << std::endl;
     }
     void RBGBufferPass::createFrameBuffers() {
-        std::vector<VkImageView> attachments(rbColorAttachmentCount);
+        int attachmentCount = rbColorAttachmentDescriptors.rbImageManager.imageBundles.size();
+        std::vector<VkImageView> attachments;
+        attachments.reserve(attachmentCount);
         
         std::cout << "gBufferFrameBuffers.resize(" << MAX_FRAMES_IN_FLIGHT << ")"<< std::endl;
         
-        for (int i = 0; i < rbColorAttachmentCount; ++i) {
-            attachments[i] = rbColorAttachmentDescriptors.rbImageManager.imageBundles[i].imageView; // GBuffer colorAttachment imageView
+        for (int i = 0; i < attachmentCount; ++i) {
+            attachments.push_back(rbColorAttachmentDescriptors.rbImageManager.imageBundles[i].imageView); // GBuffer colorAttachment imageView
         }
 
         
@@ -73,6 +75,15 @@ namespace RottenBamboo {
         if (vkCreateFramebuffer(rbDevice.device, &framebufferInfo, nullptr, &gBufferFrameBuffers) != VK_SUCCESS) {
             throw std::runtime_error("failed to create GBuffer framebuffer!");
         }
+    }
+
+    void RBGBufferPass::setResourceCount()
+    {
+        isDepthAttachment = rbColorAttachmentDescriptors.DepthEnabled() ? true : false;
+        rbColorAttachmentCount = rbColorAttachmentDescriptors.rbImageManager.getImageCount();
+        pureColorAttachmentCount = rbColorAttachmentCount - (isDepthAttachment ? 1 : 0);
+        depthAttachmentCount = isDepthAttachment ? 1 : 0;
+        ColorAttachKind = 1 + (isResolveAttachment ? 1 : 0);
     }
 
     void RBGBufferPass::setupAttachments()

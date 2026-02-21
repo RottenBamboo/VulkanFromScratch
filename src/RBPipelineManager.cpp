@@ -402,6 +402,7 @@ namespace RottenBamboo {
     
     void RBPipelineManager::setupPipelineStates()
     {
+        setResourceCount();
         fillVertexInputStateCreateInfo();
         fillInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);
         fillViewport(0, 0, swapChainExtent.width, swapChainExtent.height, 0, 1);

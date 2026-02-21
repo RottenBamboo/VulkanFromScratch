@@ -36,8 +36,15 @@ namespace RottenBamboo{
     }
     
     template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::SetDepthAttachmentEnabled(bool depthEnabled)
+    {
+        enabledDepthAttachment = depthEnabled;
+    }
+
+    template<int ImageCount, int BufferCount>
     void RBDescriptors<ImageCount, BufferCount>::SetResourceCount(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled)
     {
+        SetDepthAttachmentEnabled(depthEnabled);
         uint32_t depthCount = depthEnabled ? 1 : 0;
 
         uint32_t bufferCountFragment = resourceShaderFragment->GetUniformBufferCount(0);
@@ -276,6 +283,7 @@ namespace RottenBamboo{
             // {
             //     usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
             // }
+
             rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, msaaSamples, imageFormats[imageIndex], VK_IMAGE_TILING_OPTIMAL, imageUsageFlags[imageIndex]);
             rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageBundle.image, imageBundle.imageMemory);
 
@@ -283,6 +291,12 @@ namespace RottenBamboo{
             std::cout << "index = " << imageIndex << std::endl;
             std::cout << "mipLevels = " << mipLevels << std::endl;
         }
+    }
+
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::setTextureImageCount()
+    {
+        rbImageManager.setImageCount(this->imageCount);
     }
 
     template<int ImageCount, int BufferCount>
@@ -483,6 +497,7 @@ namespace RottenBamboo{
         }
         
         SetResourceCount(resourceShaderVertex, resourceShaderFragment, depthEnabled);
+        setTextureImageCount();
         createTextureImage();
         createTextureImageView();
         createTextureSampler();
@@ -517,6 +532,7 @@ namespace RottenBamboo{
                                                                                   const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled)
     {
         SetResourceCount(resourceShaderVertex, resourceShaderFragment, depthEnabled);
+        setTextureImageCount();
         createTextureImageFrameBuffer(framebufferExtent, imageFormats, imageUsageFlags);
         createTextureImageViewFrameBuffer(imageFormats, imageUsageFlags, imageAspectFlagBits);
         createTextureSamplerFrameBuffer();

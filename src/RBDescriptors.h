@@ -28,6 +28,8 @@ namespace RottenBamboo {
 
         bool isColorAttachment;
 
+        bool enabledDepthAttachment;
+
         uint32_t imageCount;
 
         uint32_t bufferCount;
@@ -61,6 +63,10 @@ namespace RottenBamboo {
         void SetResourceCount(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled);
 
         std::pair<uint32_t, uint32_t> GetResourceCount() const;
+
+        void SetDepthAttachmentEnabled(bool depthEnabled);
+
+        void setTextureImageCount();
 
 #ifdef __ANDROID__
         bool LoadFromMemoryAndroid(const std::string& filePath, bool isHDR, std::vector<uint8_t>& buffer);
@@ -101,6 +107,8 @@ namespace RottenBamboo {
                                               const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled = false);
 
         void ReleaseAllResource();
+
+        inline bool DepthEnabled() const { return enabledDepthAttachment;}
     };
 }
 

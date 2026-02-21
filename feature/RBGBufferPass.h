@@ -29,6 +29,8 @@ namespace RottenBamboo {
 
         void setupAttachments() override;
 
+        void setResourceCount() override;
+
         void createFrameBuffers() override;
 
     public:

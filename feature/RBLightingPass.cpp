@@ -45,7 +45,12 @@ namespace RottenBamboo {
     {
  
     }
+    
+    void RBLightingPass::setResourceCount()
+    {
 
+    }
+    
     void RBLightingPass::setupAttachments()
     {
         SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);

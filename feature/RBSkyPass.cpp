@@ -46,6 +46,11 @@ namespace RottenBamboo {
  
     }
 
+    void RBSkyPass::setResourceCount()
+    {
+
+    }
+    
     void RBSkyPass::setupAttachments()
     {
         SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);

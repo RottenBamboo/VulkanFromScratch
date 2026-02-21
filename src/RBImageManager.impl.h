@@ -85,9 +85,21 @@ namespace RottenBamboo {
     }
 
     template<int ImageCount>
-    void RBImageManager<ImageCount>::fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels, uint32_t imageCount) 
+    void RBImageManager<ImageCount>::setImageCount(uint32_t imageCount)
     {
         this->imageCount = imageCount;
+        imageBundles = std::vector<RBImageBundle>(imageCount);
+    }
+
+    template<int ImageCount>
+    uint32_t RBImageManager<ImageCount>::getImageCount() const
+    {
+        return imageCount;
+    }
+
+    template<int ImageCount>
+    void RBImageManager<ImageCount>::fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels, uint32_t imageCount) 
+    {
         VkPhysicalDeviceProperties properties{};
         vkGetPhysicalDeviceProperties(rbDevice.physicalDevice, &properties);
 

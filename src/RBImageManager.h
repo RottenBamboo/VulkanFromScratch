@@ -68,6 +68,9 @@ namespace RottenBamboo {
         
         void fillAllocInfo(VkDeviceSize size, uint32_t memoryTypeIndex);
 
+        void setImageCount(uint32_t imageCount);
+
+        uint32_t getImageCount() const;
 
         //VkImage textureImage{};
 
@@ -79,7 +82,7 @@ namespace RottenBamboo {
 
         //RBImageBundle imageBundle{};
 
-        std::array<RBImageBundle, ImageCount> imageBundles{};
+        std::vector<RBImageBundle> imageBundles;
 
         VkSamplerCreateInfo samplerInfo{};
         

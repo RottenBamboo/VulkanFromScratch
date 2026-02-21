@@ -60,6 +60,8 @@ namespace RottenBamboo {
         
         virtual void setupAttachments() = 0;
 
+        virtual void setResourceCount() = 0;
+
         // Fill Pipeline States
         virtual void fillVertexInputStateCreateInfo();
 
