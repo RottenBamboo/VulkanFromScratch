@@ -22,7 +22,7 @@ namespace RottenBamboo {
     template<int ImageCount>
     void RBImageManager<ImageCount>::ReleaseAllResource() 
     {
-        for (int i = 0; i < ImageCount; i++)
+        for (int i = 0; i < imageCount; i++)
         {
             vkDestroyImageView(rbDevice.device, imageBundles[i].imageView, nullptr);
             vkDestroySampler(rbDevice.device, imageBundles[i].sampler, nullptr);
@@ -85,8 +85,9 @@ namespace RottenBamboo {
     }
 
     template<int ImageCount>
-    void RBImageManager<ImageCount>::fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels) 
+    void RBImageManager<ImageCount>::fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels, uint32_t imageCount) 
     {
+        this->imageCount = imageCount;
         VkPhysicalDeviceProperties properties{};
         vkGetPhysicalDeviceProperties(rbDevice.physicalDevice, &properties);
 
@@ -105,7 +106,7 @@ namespace RottenBamboo {
     template<int ImageCount>
     void RBImageManager<ImageCount>::createTextureSampler()
     {
-        for (int i = 0; i < ImageCount; i++)
+        for (int i = 0; i < imageCount; i++)
         {
             if (vkCreateSampler(rbDevice.device, &samplerInfo, nullptr, &imageBundles[i].sampler) != VK_SUCCESS)
             {

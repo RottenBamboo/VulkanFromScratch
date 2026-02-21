@@ -28,6 +28,10 @@ namespace RottenBamboo {
 
         bool isColorAttachment;
 
+        uint32_t imageCount;
+
+        uint32_t bufferCount;
+
         std::array<TexturesInfo, ImageCount> imagesInfo;
 
         RBDevice &rbDevice;
@@ -36,7 +40,7 @@ namespace RottenBamboo {
 
         void createDescriptorSetLayout();
 
-        void createDescriptorPool(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled = false);
+        void createDescriptorPool();
 
         void createDescriptorSets();
 
@@ -53,6 +57,10 @@ namespace RottenBamboo {
         void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
         void createTextureImage();
+        
+        void SetResourceCount(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled);
+
+        std::pair<uint32_t, uint32_t> GetResourceCount() const;
 
 #ifdef __ANDROID__
         bool LoadFromMemoryAndroid(const std::string& filePath, bool isHDR, std::vector<uint8_t>& buffer);

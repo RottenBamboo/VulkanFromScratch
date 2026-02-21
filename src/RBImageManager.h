@@ -26,6 +26,7 @@ namespace RottenBamboo {
 
     private:
         RBDevice &rbDevice;
+        uint32_t imageCount;
 
     public:
     
@@ -35,7 +36,7 @@ namespace RottenBamboo {
 
         void createImageView(VkImageViewCreateInfo &viewInfo, VkImageView &imageView);
 
-        void fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels);
+        void fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels, uint32_t imageCount);
 
         void createTextureSampler();
 

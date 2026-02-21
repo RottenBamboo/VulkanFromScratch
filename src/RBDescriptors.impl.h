@@ -14,7 +14,7 @@ namespace RottenBamboo{
     {
         descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, nullptr);
 
-        for(int i = 0; i < ImageCount; i++)
+        for(int i = 0; i < imageCount; i++)
         {
             descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(i + 1, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT, nullptr);
         }
@@ -28,24 +28,32 @@ namespace RottenBamboo{
         }
     }
 
+    
     template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::createDescriptorPool(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled)
+     std::pair<uint32_t, uint32_t> RBDescriptors<ImageCount, BufferCount>::GetResourceCount() const
+    {
+        return {this->bufferCount, this->imageCount};
+    }
+    
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::SetResourceCount(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled)
     {
         uint32_t depthCount = depthEnabled ? 1 : 0;
 
         uint32_t bufferCountFragment = resourceShaderFragment->GetUniformBufferCount(0);
-
         uint32_t bufferCountVertex = resourceShaderVertex->GetUniformBufferCount(0);
-        
-        uint32_t bufferCount = std::max(static_cast<uint32_t>(1), std::max(bufferCountFragment, bufferCountVertex));
+        this->bufferCount = std::max(static_cast<uint32_t>(1), std::max(bufferCountFragment, bufferCountVertex));
         
         uint32_t imageCountFragment = resourceShaderFragment->GetCombinedImageSamplerCount(0);
-
         uint32_t imageCountVertex = resourceShaderVertex->GetCombinedImageSamplerCount(0);
+        this->imageCount = imageCountFragment + imageCountVertex + depthCount;
 
-        uint32_t imageCount = imageCountFragment + imageCountVertex + depthCount;
+        std::cout << "SetResourceCount()" << ", Buffer count: " << this->bufferCount << ", Image count: " << this->imageCount << std::endl;
+    }
 
-        std::cout << "Buffer count: " << bufferCount << ", Image count: " << imageCount << std::endl;
+    template<int ImageCount, int BufferCount>
+    void RBDescriptors<ImageCount, BufferCount>::createDescriptorPool()
+    {
         descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * bufferCount));
         descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * imageCount));
         descriptorSetManager.descriptorPoolManager.fillDescriptorPoolCreateInfo(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT));
@@ -72,7 +80,7 @@ namespace RottenBamboo{
             // imageInfo.sampler = rbImageManager.imageBundles[0].sampler;
             descriptorSetManager.fillDescriptotSetsWriteBuffer(i, 0, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
 
-            for(int j = 0; j < ImageCount; j++)
+            for(int j = 0; j < imageCount; j++)
             {
                 rbImageManager.imageBundles[j].imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
                 rbImageManager.imageBundles[j].imageInfo.imageView = rbImageManager.imageBundles[j].imageView;
@@ -105,7 +113,7 @@ namespace RottenBamboo{
             // imageInfo.sampler = rbImageManager.imageBundles[0].sampler;
             descriptorSetManager.fillDescriptotSetsWriteBuffer(i, 0, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
 
-            for (int j = 0; j < ImageCount; j++)
+            for (int j = 0; j < imageCount; j++)
             {
                 rbImageManager.imageBundles[j].imageInfo.imageLayout = lightingImageLayouts[j];
                 rbImageManager.imageBundles[j].imageInfo.imageView = rbImageManager.imageBundles[j].imageView;
@@ -426,14 +434,14 @@ namespace RottenBamboo{
     template<int ImageCount, int BufferCount>
     void RBDescriptors<ImageCount, BufferCount>::createTextureSampler()
     {
-        rbImageManager.fillSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, VK_SAMPLER_MIPMAP_MODE_LINEAR, VK_COMPARE_OP_LESS_OR_EQUAL, mipLevels);
+        rbImageManager.fillSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, VK_SAMPLER_MIPMAP_MODE_LINEAR, VK_COMPARE_OP_LESS_OR_EQUAL, mipLevels, imageCount);
         rbImageManager.createTextureSampler();
     }
 
     template<int ImageCount, int BufferCount>
     void RBDescriptors<ImageCount, BufferCount>::createTextureSamplerFrameBuffer()
     {
-        rbImageManager.fillSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, VK_SAMPLER_MIPMAP_MODE_LINEAR, VK_COMPARE_OP_LESS_OR_EQUAL, mipLevels);
+        rbImageManager.fillSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, VK_SAMPLER_MIPMAP_MODE_LINEAR, VK_COMPARE_OP_LESS_OR_EQUAL, mipLevels, imageCount);
         rbImageManager.createTextureSampler();
     }
 
@@ -473,10 +481,12 @@ namespace RottenBamboo{
                 const RBDescriptorBinding& descriptorBinding = bindingIt->second;
             }
         }
+        
+        SetResourceCount(resourceShaderVertex, resourceShaderFragment, depthEnabled);
         createTextureImage();
         createTextureImageView();
         createTextureSampler();
-        createDescriptorPool(resourceShaderVertex, resourceShaderFragment, depthEnabled);
+        createDescriptorPool();
         createDescriptorSetLayout();
         createDescriptorSets();
     }
@@ -506,10 +516,11 @@ namespace RottenBamboo{
                                                                                   std::array<VkImageLayout, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> lightingImageLayouts,
                                                                                   const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled)
     {
+        SetResourceCount(resourceShaderVertex, resourceShaderFragment, depthEnabled);
         createTextureImageFrameBuffer(framebufferExtent, imageFormats, imageUsageFlags);
         createTextureImageViewFrameBuffer(imageFormats, imageUsageFlags, imageAspectFlagBits);
         createTextureSamplerFrameBuffer();
-        createDescriptorPool(resourceShaderVertex, resourceShaderFragment, depthEnabled);
+        createDescriptorPool();
         createDescriptorSetLayout();
         createDescriptorSetsFrameBuffer(lightingImageLayouts);
     }
