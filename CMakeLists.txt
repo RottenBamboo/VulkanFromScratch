@@ -93,7 +93,7 @@ add_library(${PROJECT_NAME} SHARED
         src/RBDescriptorSetManager.cpp src/RBDescriptorSetManager.h
         src/RBDescriptorSetLayoutManager.cpp src/RBDescriptorSetLayoutManager.h
         src/RBPipelineLayoutManager.cpp src/RBPipelineLayoutManager.h
-        src/RBImageManager.impl.h src/RBImageManager.h
+        src/RBImageManager.cpp src/RBImageManager.h
         src/RBGUI.cpp src/RBGUI.h
         src/RBBufferManager.cpp src/RBBufferManager.h
         src/RBCamera.h src/RBCameraManager.h
@@ -141,7 +141,7 @@ add_executable(${PROJECT_NAME}
         src/RBDescriptorSetManager.cpp src/RBDescriptorSetManager.h
         src/RBDescriptorSetLayoutManager.cpp src/RBDescriptorSetLayoutManager.h
         src/RBPipelineLayoutManager.cpp src/RBPipelineLayoutManager.h
-        src/RBImageManager.impl.h src/RBImageManager.h
+        src/RBImageManager.cpp src/RBImageManager.h
         src/RBGUI.cpp src/RBGUI.h
         src/RBBufferManager.cpp src/RBBufferManager.h
         src/RBCamera.h src/RBCameraManager.h

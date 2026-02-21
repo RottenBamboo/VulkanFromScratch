@@ -85,7 +85,7 @@ namespace RottenBamboo {
 
         RBDescriptorSetManager descriptorSetManager;
 
-        RBImageManager<ImageCount> rbImageManager;
+        RBImageManager rbImageManager;
 
         RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, const std::array<std::string, ImageCount> &texturePaths, bool isColorAttachment);
 

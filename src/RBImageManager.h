@@ -21,7 +21,6 @@ namespace RottenBamboo {
         bool isHDR;
     };
 
-    template<int ImageCount>
     class RBImageManager {
 
     private:
@@ -107,6 +106,3 @@ namespace RottenBamboo {
 
         };
 }
-
-// 包含实现文件
-#include "RBImageManager.impl.h"
