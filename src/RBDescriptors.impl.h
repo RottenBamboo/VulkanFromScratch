@@ -9,8 +9,8 @@
 
 namespace RottenBamboo{
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::createDescriptorSetLayout()
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::createDescriptorSetLayout()
     {
         descriptorSetManager.descriptorSetLayoutManager.fillDescriptorSetLayoutBinding(0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, nullptr);
 
@@ -29,20 +29,20 @@ namespace RottenBamboo{
     }
 
     
-    template<int ImageCount, int BufferCount>
-     std::pair<uint32_t, uint32_t> RBDescriptors<ImageCount, BufferCount>::GetResourceCount() const
+    template<int ImageCount>
+     std::pair<uint32_t, uint32_t> RBDescriptors<ImageCount>::GetResourceCount() const
     {
         return {this->bufferCount, this->imageCount};
     }
     
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::SetDepthAttachmentEnabled(bool depthEnabled)
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::SetDepthAttachmentEnabled(bool depthEnabled)
     {
         enabledDepthAttachment = depthEnabled;
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::SetResourceCount(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled)
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::SetResourceCount(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled)
     {
         SetDepthAttachmentEnabled(depthEnabled);
         uint32_t depthCount = depthEnabled ? 1 : 0;
@@ -58,8 +58,8 @@ namespace RottenBamboo{
         std::cout << "SetResourceCount()" << ", Buffer count: " << this->bufferCount << ", Image count: " << this->imageCount << std::endl;
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::createDescriptorPool()
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::createDescriptorPool()
     {
         descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * bufferCount));
         descriptorSetManager.descriptorPoolManager.fillDescriptorPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT * imageCount));
@@ -67,8 +67,8 @@ namespace RottenBamboo{
         descriptorSetManager.descriptorPoolManager.CreateDescriptorPool();
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::createDescriptorSets()
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::createDescriptorSets()
     {
         std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout);
         descriptorSetManager.fillDescriptorSetsAllocateInfo(descriptorSetManager.descriptorPoolManager.descriptorPool, MAX_FRAMES_IN_FLIGHT, layouts.data());
@@ -100,8 +100,8 @@ namespace RottenBamboo{
         }
     }
 
-    template <int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::createDescriptorSetsFrameBuffer(std::array<VkImageLayout, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> lightingImageLayouts)
+    template <int ImageCount>
+    void RBDescriptors<ImageCount>::createDescriptorSetsFrameBuffer(std::array<VkImageLayout, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> lightingImageLayouts)
     {
         std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout);
         descriptorSetManager.fillDescriptorSetsAllocateInfo(descriptorSetManager.descriptorPoolManager.descriptorPool, MAX_FRAMES_IN_FLIGHT, layouts.data());
@@ -134,8 +134,8 @@ namespace RottenBamboo{
     }
 
 #ifdef __ANDROID__
-    template <int ImageCount, int BufferCount>
-    bool RBDescriptors<ImageCount, BufferCount>:: LoadFromMemoryAndroid(const std::string& filePath, bool isHDR, std::vector<uint8_t>& buffer) {
+    template <int ImageCount>
+    bool RBDescriptors<ImageCount>:: LoadFromMemoryAndroid(const std::string& filePath, bool isHDR, std::vector<uint8_t>& buffer) {
     
     SDL_IOStream* file = SDL_IOFromFile(filePath.c_str(), "rb");
     if (!file) {
@@ -166,8 +166,8 @@ namespace RottenBamboo{
     return true;
 }
 #endif
-    template <int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::createTextureImage()
+    template <int ImageCount>
+    void RBDescriptors<ImageCount>::createTextureImage()
     {
         int index = 0;
         for (auto & imageBundle : rbImageManager.imageBundles)
@@ -266,8 +266,8 @@ namespace RottenBamboo{
         }
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::createTextureImageFrameBuffer(VkExtent2D framebufferExtent, 
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::createTextureImageFrameBuffer(VkExtent2D framebufferExtent, 
                                                                                std::array<VkFormat, ImageCount> imageFormats,
                                                                                std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags)
     {
@@ -293,14 +293,14 @@ namespace RottenBamboo{
         }
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::setTextureImageCount()
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::setTextureImageCount()
     {
         rbImageManager.setImageCount(this->imageCount);
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::createTextureImageView()
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::createTextureImageView()
     {
         int index = 0;
         for (auto & imageBundle : rbImageManager.imageBundles)
@@ -312,8 +312,8 @@ namespace RottenBamboo{
 
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::createTextureImageViewFrameBuffer(std::array<VkFormat, ImageCount> imageFormats,
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::createTextureImageViewFrameBuffer(std::array<VkFormat, ImageCount> imageFormats,
                                                                                    std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags,
                                                                                    std::array<VkImageAspectFlagBits, ImageCount> imageAspectFlagBits)
     {
@@ -327,8 +327,8 @@ namespace RottenBamboo{
 
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
         VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
         rbImageManager.copyBufferToImage(commandBuffer, buffer, image, width, height);
@@ -336,8 +336,8 @@ namespace RottenBamboo{
         rbCommandBuffer.endSingleTimeCommands(commandBuffer);
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::generateMipmaps(VkImage image, VkFormat imageFormat, uint32_t texWidth, uint32_t texHeight, uint32_t mipLevels)
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::generateMipmaps(VkImage image, VkFormat imageFormat, uint32_t texWidth, uint32_t texHeight, uint32_t mipLevels)
     {
         // check linear blitting compatibility
         VkFormatProperties formatProperties;
@@ -445,22 +445,22 @@ namespace RottenBamboo{
         rbCommandBuffer.endSingleTimeCommands(commandBuffer);
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::createTextureSampler()
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::createTextureSampler()
     {
         rbImageManager.fillSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, VK_SAMPLER_MIPMAP_MODE_LINEAR, VK_COMPARE_OP_LESS_OR_EQUAL, mipLevels, imageCount);
         rbImageManager.createTextureSampler();
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::createTextureSamplerFrameBuffer()
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::createTextureSamplerFrameBuffer()
     {
         rbImageManager.fillSampler(VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_REPEAT, VK_SAMPLER_MIPMAP_MODE_LINEAR, VK_COMPARE_OP_LESS_OR_EQUAL, mipLevels, imageCount);
         rbImageManager.createTextureSampler();
     }
 
-    template<int ImageCount, int BufferCount>
-    RBDescriptors<ImageCount, BufferCount>::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffers, const std::array<TexturesInfo, ImageCount> &texturesInfo, bool isColorAttachment) : rbDevice(device),
+    template<int ImageCount>
+    RBDescriptors<ImageCount>::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffers, const std::array<TexturesInfo, ImageCount> &texturesInfo, bool isColorAttachment) : rbDevice(device),
     rbCommandBuffer(commandBuffer),
     rbBufferPtr(uniformBuffers),
     descriptorSetManager(device),
@@ -470,8 +470,8 @@ namespace RottenBamboo{
     {
     }
 
-    template<int ImageCount, int BufferCount>
-    RBDescriptors<ImageCount, BufferCount>::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffers, bool isColorAttachment) : rbDevice(device),
+    template<int ImageCount>
+    RBDescriptors<ImageCount>::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffers, bool isColorAttachment) : rbDevice(device),
     rbCommandBuffer(commandBuffer),
     rbBufferPtr(uniformBuffers),
     descriptorSetManager(device),
@@ -480,8 +480,8 @@ namespace RottenBamboo{
     {
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptors(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled)
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::InitializeDescriptors(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled)
     {
         //checkImagesInfo();
         for (std::unordered_map<uint32_t, RBDescriptorSetLayoutInfo>::const_iterator descriptorSetIt = resourceShaderVertex->descriptorSets.begin();
@@ -506,8 +506,8 @@ namespace RottenBamboo{
         createDescriptorSets();
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::checkImagesInfo()
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::checkImagesInfo()
     {
         // if(imagesInfo.size() != ImageCount)
         // {
@@ -523,8 +523,8 @@ namespace RottenBamboo{
         // }
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, 
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, 
                                                                                   std::array<VkFormat, ImageCount> imageFormats,
                                                                                   std::array<VkImageUsageFlagBits, ImageCount> imageUsageFlags,
                                                                                   std::array<VkImageAspectFlagBits, ImageCount> imageAspectFlagBits,
@@ -541,15 +541,15 @@ namespace RottenBamboo{
         createDescriptorSetsFrameBuffer(lightingImageLayouts);
     }
 
-    template<int ImageCount, int BufferCount>
-    void RBDescriptors<ImageCount, BufferCount>::ReleaseAllResource()
+    template<int ImageCount>
+    void RBDescriptors<ImageCount>::ReleaseAllResource()
     {
         rbImageManager.ReleaseAllResource();
         descriptorSetManager.Destroy();
     }
 
-    template<int ImageCount, int BufferCount>
-    RBDescriptors<ImageCount, BufferCount>::~RBDescriptors()
+    template<int ImageCount>
+    RBDescriptors<ImageCount>::~RBDescriptors()
     {
     }
 }

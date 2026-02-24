@@ -22,7 +22,7 @@
 #endif
 
 namespace RottenBamboo {
-    template<int ImageCount, int BufferCount>
+    template<int ImageCount>
     class RBDescriptors {
     private:
 

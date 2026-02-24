@@ -138,7 +138,7 @@ namespace RottenBamboo {
         std::cout << "RBGBufferPass::createGraphicsPipeline()" << std::endl;
     }
 
-    RBGBufferPass::RBGBufferPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> &descriptors, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> &descriptorColorAttachment, const RBPipelineConfig &config, VkImageLayout layout)
+    RBGBufferPass::RBGBufferPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<TEXTURE_PATHS_MECH_COUNT> &descriptors, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> &descriptorColorAttachment, const RBPipelineConfig &config, VkImageLayout layout)
         : RBPipelineManager(colorAttachmentCount, bResolveAttachment, bDephAttament, device, layout), rbPipelineConfig(config),
         vertShaderModule(device), fragShaderModule(device), rbDescriptors(descriptors), rbColorAttachmentDescriptors(descriptorColorAttachment)
     {
@@ -174,7 +174,7 @@ namespace RottenBamboo {
         std::cout << "RBGBufferPass::~RBGBufferPass()" << std::endl;
     }
 
-    void RBGBufferPass::Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1>& descriptorsGBuffer, RBMesh &mesh) 
+    void RBGBufferPass::Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_COUNT>& descriptorsGBuffer, RBMesh &mesh) 
     {
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
