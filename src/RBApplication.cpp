@@ -336,7 +336,8 @@ void RBApplication::processModelNode(
 
             descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteBuffer(currentFrame, 0, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
 
-            for(int j = 0; j < 4; j++)
+            //set gbuffer attachment output as lighting pass input
+            for(int j = 0; j < gBufferPass.rbColorAttachmentDescriptors.rbImageManager.getImageCount(); j++)
             {
                 descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageLayout = attahmentLayouts[j];
                 descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageView = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].imageView;
