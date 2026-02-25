@@ -34,7 +34,8 @@ namespace RottenBamboo {
 
         uint32_t bufferCount;
 
-        std::array<TexturesInfo, ImageCount> imagesInfo;
+        //std::array<TexturesInfo, ImageCount> imagesInfo;
+        std::vector<TexturesInfo> imagesInfo;
 
         RBDevice &rbDevice;
 
@@ -87,9 +88,9 @@ namespace RottenBamboo {
 
         RBImageManager rbImageManager;
 
-        RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, const std::array<std::string, ImageCount> &texturePaths, bool isColorAttachment);
+        RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, const std::vector<std::string> &texturePaths, bool isColorAttachment);
 
-        RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, const std::array<TexturesInfo, ImageCount> &texturesInfo, bool isColorAttachment);
+        RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment);
 
         RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, bool isColorAttachment);
 

@@ -64,11 +64,11 @@ static const int skyBoxPassColorAttachmentCount = 1;
 
 extern const std::string MODEL_PATH;
 extern const TexturesInfo fallBackFormat;
-extern const std::array<ShadersInfo, SHADER_PATHS_COUNT> inputShader;
-extern const std::array<TexturesInfo, TEXTURE_PATHS_COUNT> inputImagesInfo;
-extern const std::array<TexturesInfo, TEXTURE_PATHS_MECH_COUNT> inputImageInfoMech;
-extern const std::array<TexturesInfo, TEXTURE_PATHS_SKYBOX_COUNT> inputImageInfoSkyBox;
-extern const std::array<TexturesInfo, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> inputImageInfoLighting;
+extern const std::vector<ShadersInfo> inputShader;
+extern const std::vector<TexturesInfo> inputImagesInfo;
+extern const std::vector<TexturesInfo> inputImageInfoMech;
+extern const std::vector<TexturesInfo> inputImageInfoSkyBox;
+extern const std::vector<TexturesInfo> inputImageInfoLighting;
 
 extern uint32_t mipLevels;
 

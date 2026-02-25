@@ -8,11 +8,11 @@ const std::string MODEL_PATH = GET_PROJECT_ROOT_DIR + "models/scene.gltf";
 
 const TexturesInfo fallBackFormat{VK_FORMAT_R8G8B8A8_SRGB, false, ""};
 
-const std::array<TexturesInfo, TEXTURE_PATHS_COUNT> inputImagesInfo = {
+const std::vector<TexturesInfo> inputImagesInfo = {
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_BaseMap.jpg"}
 };
 
-const std::array<TexturesInfo, TEXTURE_PATHS_MECH_COUNT> inputImageInfoMech = 
+const std::vector<TexturesInfo> inputImageInfoMech = 
 {
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Substance_texture_baseColor.jpeg"},
     TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, false, GET_PROJECT_ROOT_DIR + "textures/Substance_texture_normal.jpeg"},
@@ -20,7 +20,7 @@ const std::array<TexturesInfo, TEXTURE_PATHS_MECH_COUNT> inputImageInfoMech =
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.jpeg"}
 };
 
-const std::array<TexturesInfo, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> inputImageInfoLighting = 
+const std::vector<TexturesInfo> inputImageInfoLighting = 
 {
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_BaseMap.jpg"}, // BaseMap
     TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Normal.jpg"}, // Normal
@@ -29,7 +29,7 @@ const std::array<TexturesInfo, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> inputIma
     TexturesInfo{VK_FORMAT_D32_SFLOAT, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.jpeg"}  // Emission
 };
 
-const std::array<ShadersInfo, SHADER_PATHS_COUNT> inputShader = 
+const std::vector<ShadersInfo> inputShader = 
 {
     ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/gBufferFrag.spv"},
     ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/lightingFrag.spv"},
@@ -39,7 +39,7 @@ const std::array<ShadersInfo, SHADER_PATHS_COUNT> inputShader =
     ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_LIGHTING_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/lightingVert.spv"}
 };
 
-const std::array<TexturesInfo, TEXTURE_PATHS_SKYBOX_COUNT> inputImageInfoSkyBox = {
+const std::vector<TexturesInfo> inputImageInfoSkyBox = {
     TexturesInfo{VK_FORMAT_R32G32B32A32_SFLOAT, true, GET_PROJECT_ROOT_DIR + "textures/cape_hill_4k.hdr"}
 };
 
