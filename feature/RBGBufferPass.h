@@ -21,7 +21,7 @@ namespace RottenBamboo {
         RBPipelineConfig rbPipelineConfig;
 
         //input image
-        RBDescriptors<TEXTURE_PATHS_MECH_COUNT> &rbDescriptors;
+        RBDescriptors &rbDescriptors;
 
         void setupShaders() override;
 
@@ -40,7 +40,7 @@ namespace RottenBamboo {
         VkFramebuffer gBufferFrameBuffers;
     
         //output image
-        RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> &rbColorAttachmentDescriptors;
+        RBDescriptors &rbColorAttachmentDescriptors;
 
         void createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo) override;
 
@@ -50,7 +50,7 @@ namespace RottenBamboo {
 
         void InitializeGraphicPipeline() override;
 
-        RBGBufferPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<TEXTURE_PATHS_MECH_COUNT> &descriptors, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> &descriptorColorAttachment, const RBPipelineConfig &config, VkImageLayout layout);
+        RBGBufferPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors &descriptors, RBDescriptors &descriptorColorAttachment, const RBPipelineConfig &config, VkImageLayout layout);
 
         void fillGraphicsPipelineCreateInfo(uint32_t stageCount,
                                             const VkPipelineShaderStageCreateInfo* pStages,
@@ -73,7 +73,7 @@ namespace RottenBamboo {
 
         virtual void fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName, RBShaderModule &shaderModule);
 
-        virtual void Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_COUNT>& descriptorsGBuffer, RBMesh &mesh);
+        virtual void Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors& descriptorsGBuffer, RBMesh &mesh);
     private:
 
         RBShaderModule vertShaderModule;
