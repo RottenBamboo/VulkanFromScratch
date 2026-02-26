@@ -42,7 +42,14 @@ set(FEATURE_PATH "${CMAKE_SOURCE_DIR}/feature")
 include_directories(${FEATURE_PATH})
 
 # set lib path
-if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+if(CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "android.toolchain.cmake")
+    set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdpartyAndroid/assimp/lib")
+    set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdpartyAndroid/zlib/lib")
+    set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdpartyAndroid/sdl3/lib")
+    set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui")
+    set(IMGUIZMO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo")
+    set(SPIRV_CROSS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdpartyAndroid/SPIRV-Cross/lib")
+elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
     set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/sdl3/lib")
@@ -67,106 +74,49 @@ set(SDL_SPIRV_CROSS_INCLUDE_DIRS "external/SPIRV-Cross")
 set(SDL_SPIRV_CROSS_INCLUDE_DIRS1 "external/SPIRV-Cross/include")
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
-# add executable file
+# add source files from src folder
+file(GLOB_RECURSE SRC_SOURCES 
+    "${CMAKE_SOURCE_DIR}/src/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/*.h"
+)
+
+# add source files from feature folder
+file(GLOB_RECURSE FEATURE_SOURCES 
+    "${CMAKE_SOURCE_DIR}/feature/*.cpp"
+    "${CMAKE_SOURCE_DIR}/feature/*.h"
+)
+
+# add android source files
+# set(GLOB_RECURSE ANDROID_SOURCES 
+#     "${CMAKE_SOURCE_DIR}/androidsrc/*.cpp" 
+#     "${CMAKE_SOURCE_DIR}/androidsrc/*.h"
+# )
+
+# add ImGui and ImGuizmo source files
+set(IMGUI_SOURCES
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_vulkan.cpp
+    ${IMGUIZMO_DIR}/ImGuizmo.h ${IMGUIZMO_DIR}/ImGuizmo.cpp
+)
+
+# add specific source file depending on specific platform
 if(ANDROID)
-add_library(${PROJECT_NAME} SHARED
-        src/RBPipelineUtils.cpp src/RBPipelineUtils.h
-        src/RBShaderModule.cpp src/RBShaderModule.h
-        src/RBApplication.cpp src/RBApplication.h
-        src/RBPipelineConfig.h
-        src/RBWindows.h src/RBWindows.cpp
-        src/AppMain.cpp
-        src/AppMainAndroid.cpp
-        src/RBPipelineManager.cpp src/RBPipelineManager.h
-        src/RBDevice.cpp src/RBDevice.h
-        src/RBSwapChain.cpp src/RBSwapChain.h
-        src/RBCommon.cpp src/RBCommon.h
-        src/RBCommandBuffer.cpp src/RBCommandBuffer.h
-        src/RBDescriptors.cpp src/RBDescriptors.h
-        src/RBBuffer.cpp src/RBBuffer.h
-        src/RBMesh.cpp src/RBMesh.h
-        src/RBDescriptorPoolManager.cpp src/RBDescriptorPoolManager.h
-        src/RBDescriptorSetManager.cpp src/RBDescriptorSetManager.h
-        src/RBDescriptorSetLayoutManager.cpp src/RBDescriptorSetLayoutManager.h
-        src/RBPipelineLayoutManager.cpp src/RBPipelineLayoutManager.h
-        src/RBImageManager.cpp src/RBImageManager.h
-        src/RBGUI.cpp src/RBGUI.h
-        src/RBBufferManager.cpp src/RBBufferManager.h
-        src/RBCamera.h src/RBCameraManager.h
-        src/RBRuntimeCameraManager.cpp src/RBRuntimeCameraManager.h
-        src/RBEditorCameraManager.cpp src/RBEditorCameraManager.h
-        src/RBRenderer.cpp src/RBRenderer.h
-        src/RBMesh.cpp src/RBMesh.h
-        src/RBMaterial.cpp src/RBMaterial.h
-        src/RBMaterialUtils.h
-        src/RBModel.cpp src/RBModel.h
-        src/RBResource.h
-        src/RBResourceUtils.h
-        src/RBShader.cpp src/RBShader.h
-        src/RBResourceManager.cpp src/RBResourceManager.h
-        src/RBResourceShader.cpp src/RBResourceShader.h
-        feature/RBGBufferPass.cpp feature/RBGBufferPass.h
-        feature/RBLightingPass.cpp feature/RBLightingPass.h
-        feature/RBSkyPass.cpp feature/RBSkyPass.h
-
-        ${IMGUI_DIR}/imgui.cpp
-        ${IMGUI_DIR}/imgui_draw.cpp
-        ${IMGUI_DIR}/imgui_widgets.cpp
-        ${IMGUI_DIR}/imgui_tables.cpp
-        ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
-        ${IMGUI_DIR}/backends/imgui_impl_vulkan.cpp
-        ${IMGUIZMO_DIR}/ImGuizmo.h ${IMGUIZMO_DIR}/ImGuizmo.cpp
-        )
+set(ALL_SOURCES ${SRC_SOURCES} ${FEATURE_SOURCES} ${IMGUI_SOURCES} ${ANDROID_SOURCES})
 else()
-add_executable(${PROJECT_NAME}
-        src/RBPipelineUtils.cpp src/RBPipelineUtils.h
-        src/RBShaderModule.cpp src/RBShaderModule.h
-        src/RBApplication.cpp src/RBApplication.h
-        src/RBPipelineConfig.h
-        src/RBWindows.h src/RBWindows.cpp
-        src/AppMain.cpp
-        src/RBPipelineManager.cpp src/RBPipelineManager.h
-        src/RBDevice.cpp src/RBDevice.h
-        src/RBSwapChain.cpp src/RBSwapChain.h
-        src/RBCommon.cpp src/RBCommon.h
-        src/RBCommandBuffer.cpp src/RBCommandBuffer.h
-        src/RBDescriptors.cpp src/RBDescriptors.h
-        src/RBBuffer.cpp src/RBBuffer.h
-        src/RBMesh.cpp src/RBMesh.h
-        src/RBDescriptorPoolManager.cpp src/RBDescriptorPoolManager.h
-        src/RBDescriptorSetManager.cpp src/RBDescriptorSetManager.h
-        src/RBDescriptorSetLayoutManager.cpp src/RBDescriptorSetLayoutManager.h
-        src/RBPipelineLayoutManager.cpp src/RBPipelineLayoutManager.h
-        src/RBImageManager.cpp src/RBImageManager.h
-        src/RBGUI.cpp src/RBGUI.h
-        src/RBBufferManager.cpp src/RBBufferManager.h
-        src/RBCamera.h src/RBCameraManager.h
-        src/RBRuntimeCameraManager.cpp src/RBRuntimeCameraManager.h
-        src/RBEditorCameraManager.cpp src/RBEditorCameraManager.h
-        src/RBRenderer.cpp src/RBRenderer.h
-        src/RBMesh.cpp src/RBMesh.h
-        src/RBMaterial.cpp src/RBMaterial.h
-        src/RBMaterialUtils.h
-        src/RBModel.cpp src/RBModel.h
-        src/RBResource.h
-        src/RBResourceUtils.h
-        src/RBShader.cpp src/RBShader.h
-        src/RBResourceManager.cpp src/RBResourceManager.h
-        src/RBResourceShader.cpp src/RBResourceShader.h
-        feature/RBGBufferPass.cpp feature/RBGBufferPass.h
-        feature/RBLightingPass.cpp feature/RBLightingPass.h
-        feature/RBSkyPass.cpp feature/RBSkyPass.h
-
-        ${IMGUI_DIR}/imgui.cpp
-        ${IMGUI_DIR}/imgui_draw.cpp
-        ${IMGUI_DIR}/imgui_widgets.cpp
-        ${IMGUI_DIR}/imgui_tables.cpp
-        ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
-        ${IMGUI_DIR}/backends/imgui_impl_vulkan.cpp
-        ${IMGUIZMO_DIR}/ImGuizmo.h ${IMGUIZMO_DIR}/ImGuizmo.cpp
-        )
+# combine all source files
+set(ALL_SOURCES ${SRC_SOURCES} ${FEATURE_SOURCES} ${IMGUI_SOURCES})
 endif()
 
+# add executable or library
+if(ANDROID)
+    add_library(${PROJECT_NAME} SHARED ${ALL_SOURCES})
+else()
+    add_executable(${PROJECT_NAME} ${ALL_SOURCES})
+endif()
 
 # add Assimp header path
 target_compile_definitions(${PROJECT_NAME} PUBLIC PROJECT_ROOT_DIR=\"${CMAKE_SOURCE_DIR}\")

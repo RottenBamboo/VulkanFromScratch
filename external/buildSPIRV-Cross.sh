@@ -29,7 +29,11 @@ done
 
 OS_NAME="$(uname)"
 
+if [ "$BUILD_ANDROID" = true ]; then
+INSTALL_DIR="$(pwd)/../thirdpartyAndroid/SPIRV-Cross/lib"
+else
 INSTALL_DIR="$(pwd)/../thirdparty/SPIRV-Cross/lib"
+fi
 SPIRV_REFLECT_DIR="$(pwd)/SPIRV-Cross"
 BUILD_DIR="$SPIRV_REFLECT_DIR/build"
 

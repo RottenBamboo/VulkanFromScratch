@@ -29,7 +29,11 @@ done
 
 OS_NAME="$(uname)"
 
+if [ "$BUILD_ANDROID" = true ]; then
+INSTALL_DIR="$(pwd)/../thirdpartyAndroid/sdl3/lib"
+else
 INSTALL_DIR="$(pwd)/../thirdparty/sdl3/lib"
+fi
 SDL_DIR="$(pwd)/SDL"
 BUILD_DIR="$SDL_DIR/build"
 

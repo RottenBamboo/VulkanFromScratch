@@ -30,7 +30,11 @@ done
 OS_NAME="$(uname)"
 
 # set the installation directory
+if [ "$BUILD_ANDROID" = true ]; then
+INSTALL_DIR="$(dirname "$0")/../thirdpartyAndroid/zlib/lib"
+else
 INSTALL_DIR="$(dirname "$0")/../thirdparty/zlib/lib"
+fi
 FROM_DIR="$(dirname "$0")/zlib"
 BUILD_DIR="$FROM_DIR/build"
 # enter the script directory
