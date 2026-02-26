@@ -48,7 +48,6 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/sdl3/lib")
     set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui")
     set(IMGUIZMO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo")
-    set(SPIRV_REFLECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/SPIRV-Reflect/lib")
     set(SPIRV_CROSS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/SPIRV-Cross/lib")
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
@@ -56,7 +55,6 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     set(SDL_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/sdl3/lib")
     set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui")
     set(IMGUIZMO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo")
-    set(SPIRV_REFLECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/SPIRV-Reflect/lib")
     set(SPIRV_CROSS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/SPIRV-Cross/lib")
 endif()
 
@@ -65,8 +63,6 @@ set(STB_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/stb")
 set(ASSIMP_THIRDPARTY_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/include")
 set(ASSIMP_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/assimp/include")
 set(SDL_INCLUDE_DIRS "external/SDL/include")
-set(SDL_SPIRV_REFLECT_INCLUDE_DIRS "external/SPIRV-Reflect")
-set(SDL_SPIRV_REFLECT_INCLUDE_DIRS1 "external/SPIRV-Reflect/include")
 set(SDL_SPIRV_CROSS_INCLUDE_DIRS "external/SPIRV-Cross")
 set(SDL_SPIRV_CROSS_INCLUDE_DIRS1 "external/SPIRV-Cross/include")
 include_directories(${CMAKE_SOURCE_DIR}/src)
@@ -86,7 +82,7 @@ add_library(${PROJECT_NAME} SHARED
         src/RBSwapChain.cpp src/RBSwapChain.h
         src/RBCommon.cpp src/RBCommon.h
         src/RBCommandBuffer.cpp src/RBCommandBuffer.h
-        src/RBDescriptors.impl.h src/RBDescriptors.h
+        src/RBDescriptors.cpp src/RBDescriptors.h
         src/RBBuffer.cpp src/RBBuffer.h
         src/RBMesh.cpp src/RBMesh.h
         src/RBDescriptorPoolManager.cpp src/RBDescriptorPoolManager.h
@@ -184,8 +180,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR}/backends)
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUIZMO_DIR})
-target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_SPIRV_REFLECT_INCLUDE_DIRS})
-target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_SPIRV_REFLECT_INCLUDE_DIRS1})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_SPIRV_CROSS_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_SPIRV_CROSS_INCLUDE_DIRS1})
 
@@ -203,7 +197,6 @@ endif()
 if(CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "android.toolchain.cmake")
     #macro definition
     target_compile_definitions(${PROJECT_NAME} PRIVATE __ANDROID__=1)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC SPIRV_REFLECT_USE_SYSTEM_SPIRV_H)
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.a)
     target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/libSDL3.so)
@@ -213,7 +206,6 @@ if(CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "android.toolchain.cmak
     target_link_libraries(${PROJECT_NAME} log)
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     target_compile_definitions(${PROJECT_NAME} PRIVATE __MACOS__=1)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC SPIRV_REFLECT_USE_SYSTEM_SPIRV_H)
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/libz.a)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.a)
     target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/libSDL3.dylib)
@@ -223,7 +215,6 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
 
 elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     target_compile_definitions(${PROJECT_NAME} PRIVATE __WINDOWS__=1)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC SPIRV_REFLECT_USE_SYSTEM_SPIRV_H)
     target_link_libraries(${PROJECT_NAME} ${ZLIB_LIB_DIRS}/zsd.lib)
     target_link_libraries(${PROJECT_NAME} ${ASSIMP_LIB_DIRS}/libassimp.lib)
     target_link_libraries(${PROJECT_NAME} ${SDL_LIB_DIRS}/SDL3.lib)
