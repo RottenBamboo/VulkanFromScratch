@@ -94,7 +94,7 @@ namespace RottenBamboo{
         }
     }
 
-    void RBDescriptors::createDescriptorSetsFrameBuffer(std::vector<VkImageLayout> lightingImageLayouts)
+    void RBDescriptors::createDescriptorSetsFrameBuffer(const TextureParams& attachmentParams, const TextureParams& depthParams)
     {
         std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout);
         descriptorSetManager.fillDescriptorSetsAllocateInfo(descriptorSetManager.descriptorPoolManager.descriptorPool, MAX_FRAMES_IN_FLIGHT, layouts.data());
@@ -115,7 +115,8 @@ namespace RottenBamboo{
 
             for (int j = 0; j < imageCount; j++)
             {
-                rbImageManager.imageBundles[j].imageInfo.imageLayout = lightingImageLayouts[j];
+                VkImageLayout layout = DepthEnabled() && (j == imageCount - 1) ? depthParams.layout : attachmentParams.layout;
+                rbImageManager.imageBundles[j].imageInfo.imageLayout = layout;
                 rbImageManager.imageBundles[j].imageInfo.imageView = rbImageManager.imageBundles[j].imageView;
                 rbImageManager.imageBundles[j].imageInfo.sampler = rbImageManager.imageBundles[j].sampler;
                 descriptorSetManager.fillDescriptotSetsWriteImage(i, j + 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &rbImageManager.imageBundles[j].imageInfo);
@@ -258,8 +259,8 @@ namespace RottenBamboo{
     }
 
     void RBDescriptors::createTextureImageFrameBuffer(VkExtent2D framebufferExtent, 
-                                                                               std::vector<VkFormat> imageFormats,
-                                                                               std::vector<VkImageUsageFlagBits> imageUsageFlags)
+                                                      const TextureParams& attachmentParams,
+                                                      const TextureParams& depthParams)
     {
         int imageIndex = 0;
         for (auto & imageBundle : rbImageManager.imageBundles)
@@ -274,7 +275,9 @@ namespace RottenBamboo{
             //     usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
             // }
 
-            rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, msaaSamples, imageFormats[imageIndex], VK_IMAGE_TILING_OPTIMAL, imageUsageFlags[imageIndex]);
+            VkImageUsageFlagBits usageFlags = DepthEnabled() && (imageIndex == imageCount - 1) ? depthParams.usage : attachmentParams.usage;
+            VkFormat format = DepthEnabled() && (imageIndex == imageCount - 1) ? depthParams.format : attachmentParams.format;
+            rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, msaaSamples, format, VK_IMAGE_TILING_OPTIMAL, usageFlags);
             rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageBundle.image, imageBundle.imageMemory);
 
             imageIndex++;
@@ -300,14 +303,15 @@ namespace RottenBamboo{
 
     }
 
-    void RBDescriptors::createTextureImageViewFrameBuffer(std::vector<VkFormat> imageFormats,
-                                                                                   std::vector<VkImageUsageFlagBits> imageUsageFlags,
-                                                                                   std::vector<VkImageAspectFlagBits> imageAspectFlagBits)
+    void RBDescriptors::createTextureImageViewFrameBuffer(const TextureParams& attachmentParams,
+                                                          const TextureParams& depthParams)
     {
         int imageViewIndex = 0;
         for (auto & imageBundle : rbImageManager.imageBundles)
         {
-            rbImageManager.fillViewInfo(imageBundle.viewInfo, imageBundle.image, VK_IMAGE_VIEW_TYPE_2D, imageFormats[imageViewIndex], imageAspectFlagBits[imageViewIndex], mipLevels);
+            VkFormat format = (DepthEnabled() && (imageViewIndex == imageCount - 1)) ? depthParams.format : attachmentParams.format;
+            VkImageAspectFlagBits aspect = (DepthEnabled() && (imageViewIndex == imageCount - 1)) ? depthParams.aspect : attachmentParams.aspect;
+            rbImageManager.fillViewInfo(imageBundle.viewInfo, imageBundle.image, VK_IMAGE_VIEW_TYPE_2D, format, aspect, mipLevels);
             rbImageManager.createImageView(imageBundle.viewInfo, imageBundle.imageView);
             imageViewIndex++;
         }
@@ -503,20 +507,19 @@ namespace RottenBamboo{
     }
 
     void RBDescriptors::InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, 
-                                                                                  std::vector<VkFormat> imageFormats,
-                                                                                  std::vector<VkImageUsageFlagBits> imageUsageFlags,
-                                                                                  std::vector<VkImageAspectFlagBits> imageAspectFlagBits,
-                                                                                  std::vector<VkImageLayout> lightingImageLayouts,
-                                                                                  const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled)
+                                                                                  const TextureParams& attachmentParams,
+                                                                                  const TextureParams& depthParams,
+                                                                                  const RBShaderReflection* resourceShaderVertex, 
+                                                                                  const RBShaderReflection* resourceShaderFragment, bool depthEnabled)
     {
         SetResourceCount(resourceShaderVertex, resourceShaderFragment, depthEnabled);
         setTextureImageCount();
-        createTextureImageFrameBuffer(framebufferExtent, imageFormats, imageUsageFlags);
-        createTextureImageViewFrameBuffer(imageFormats, imageUsageFlags, imageAspectFlagBits);
+        createTextureImageFrameBuffer(framebufferExtent, attachmentParams, depthParams);
+        createTextureImageViewFrameBuffer(attachmentParams, depthParams);
         createTextureSamplerFrameBuffer();
         createDescriptorPool();
         createDescriptorSetLayout();
-        createDescriptorSetsFrameBuffer(lightingImageLayouts);
+        createDescriptorSetsFrameBuffer(attachmentParams, depthParams);
     }
 
     void RBDescriptors::ReleaseAllResource()

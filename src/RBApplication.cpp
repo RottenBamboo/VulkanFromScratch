@@ -89,7 +89,7 @@ namespace RottenBamboo {
 
         descriptorsLighting.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT), true);
         
-        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits, attahmentLayouts, resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT), true);
+        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, attachmentParams, depthParams, resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT), true);
         std::cout << "RBApplication::InitializeDescriptors(const RBResourceShader& resourceShader)" << std::endl;
     }
 
@@ -339,7 +339,7 @@ void RBApplication::processModelNode(
             //set gbuffer attachment output as lighting pass input
             for(int j = 0; j < gBufferPass.rbColorAttachmentDescriptors.rbImageManager.getImageCount(); j++)
             {
-                descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageLayout = attahmentLayouts[j];
+                descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageLayout = attachmentParams.layout;
                 descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageView = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].imageView;
                 descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.sampler = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].sampler;
                 descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteImage(currentFrame, j + 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].imageInfo);
@@ -449,7 +449,7 @@ void RBApplication::processModelNode(
             gBufferPass.clearFrameBuffers();
             descriptorsAttachment.ReleaseAllResource();
             RBSwapChain::SetSwapChainExtent(device, windows);
-            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits, attahmentLayouts, resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT), true);
+            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent,AttachmentParams, DepthParams, resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT), true);
 
             gBufferPass.createGraphicsPipeline();
 

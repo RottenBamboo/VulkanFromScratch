@@ -72,6 +72,8 @@ extern const std::vector<TexturesInfo> inputImageInfoLighting;
 
 extern uint32_t mipLevels;
 
+#define attachmentUsageFlagBits (VkImageUsageFlagBits)(VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
+
 extern VkSampleCountFlagBits msaaSamples;
 extern VkSampleCountFlagBits msaaSamples2;
 extern VkExtent2D swapChainExtent;
@@ -79,6 +81,17 @@ extern uint32_t currentFrame;
 extern bool checkbox;
 extern bool isDeviceSupportHDR;
 extern bool isDesiredHDR;
+
+const struct TextureParams
+{
+    VkImageUsageFlagBits usage;
+    VkImageAspectFlagBits aspect;
+    VkFormat format;
+    VkImageLayout layout;
+};
+
+extern const TextureParams attachmentParams;
+extern const TextureParams depthParams;
 
 struct Vertex {
     glm::vec3 pos;

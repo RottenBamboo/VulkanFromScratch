@@ -46,13 +46,12 @@ namespace RottenBamboo {
 
         void createDescriptorSets();
 
-        void createDescriptorSetsFrameBuffer(std::vector<VkImageLayout> lightingImageLayouts);
+        void createDescriptorSetsFrameBuffer(const TextureParams& attachmentParams, const TextureParams& depthParams);
 
         void createTextureImageView();
 
-        void createTextureImageViewFrameBuffer(std::vector<VkFormat> imageFormats,
-                                               std::vector<VkImageUsageFlagBits> imageUsageFlags,
-                                               std::vector<VkImageAspectFlagBits> imageAspectFlagBits);
+        void createTextureImageViewFrameBuffer(const TextureParams& attachmentParams,
+                                               const TextureParams& depthParams);
 
         void generateMipmaps(VkImage image, VkFormat imageFormat, uint32_t texWidth, uint32_t texHeight, uint32_t mipLevels);
 
@@ -71,9 +70,9 @@ namespace RottenBamboo {
 #ifdef __ANDROID__
         bool LoadFromMemoryAndroid(const std::string& filePath, bool isHDR, std::vector<uint8_t>& buffer);
 #endif
-        void createTextureImageFrameBuffer(VkExtent2D framebufferExtent, 
-                                          std::vector<VkFormat> imageFormats,
-                                          std::vector<VkImageUsageFlagBits> imageUsageFlags);
+        void createTextureImageFrameBuffer(VkExtent2D framebufferExtent,
+                                           const TextureParams& attachmentParams,
+                                           const TextureParams& depthParams);
 
         void createTextureSampler();
 
@@ -100,11 +99,11 @@ namespace RottenBamboo {
         void InitializeDescriptors(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled = false);
         
         void InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, 
-                                              std::vector<VkFormat> imageFormats,
-                                              std::vector<VkImageUsageFlagBits> imageUsageFlags,
-                                              std::vector<VkImageAspectFlagBits> imageAspectFlagBits,
-                                              std::vector<VkImageLayout> lightingImageLayouts,
-                                              const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled = false);
+                                              const TextureParams& attachmentParams,
+                                              const TextureParams& depthParams,
+                                              const RBShaderReflection* resourceShaderVertex, 
+                                              const RBShaderReflection* resourceShaderFragment, 
+                                              bool depthEnabled = false);
 
         void ReleaseAllResource();
 

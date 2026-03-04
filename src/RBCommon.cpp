@@ -39,6 +39,23 @@ const std::vector<ShadersInfo> inputShader =
     ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_LIGHTING_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/lightingVert.spv"}
 };
 
+
+const TextureParams attachmentParams
+{
+    attachmentUsageFlagBits,
+    VK_IMAGE_ASPECT_COLOR_BIT,
+    VK_FORMAT_R8G8B8A8_UNORM,
+    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+};
+
+const TextureParams depthParams
+{
+    VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+    VK_IMAGE_ASPECT_DEPTH_BIT,
+    VK_FORMAT_D32_SFLOAT,
+    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
+};
+
 const std::vector<TexturesInfo> inputImageInfoSkyBox = {
     TexturesInfo{VK_FORMAT_R32G32B32A32_SFLOAT, true, GET_PROJECT_ROOT_DIR + "textures/cape_hill_4k.hdr"}
 };
@@ -50,6 +67,6 @@ VkSampleCountFlagBits msaaSamples2 = VK_SAMPLE_COUNT_2_BIT;
 VkExtent2D swapChainExtent;
 uint32_t currentFrame = 0;
 
- bool checkbox = false;
- bool isDeviceSupportHDR = false;
- bool isDesiredHDR = true;
+bool checkbox = false;
+bool isDeviceSupportHDR = false;
+bool isDesiredHDR = true;

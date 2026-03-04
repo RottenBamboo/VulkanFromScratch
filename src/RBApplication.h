@@ -25,7 +25,7 @@
 #include <chrono>
 
 namespace RottenBamboo {
-    #define attachmentUsageFlagBits (VkImageUsageFlagBits)(VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
+    
     class RBApplication {
 
     public:
@@ -94,16 +94,6 @@ namespace RottenBamboo {
         RBResourceShader resourceShader{inputShader[0].path};
 
         RBPipelineConfig pipelineConfig{};
-        
-        std::vector<VkImageUsageFlagBits> lightingImageUsageFlags{attachmentUsageFlagBits, attachmentUsageFlagBits, attachmentUsageFlagBits, attachmentUsageFlagBits, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT};
-
-        std::vector<VkImageAspectFlagBits> lightingImageAspectFlagBits{VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_ASPECT_DEPTH_BIT};
-
-        std::vector<VkFormat> lightingImageFormats{VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT};
-
-        std::vector<VkImageLayout> attahmentLayouts{VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL};
-
-        std::vector<VkImageLayout> gbufferLayouts{VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL};
 
         RBDescriptors descriptorsGBuffer{device, commandBuffer, uniformBuffers, inputImageInfoMech, false};
 
