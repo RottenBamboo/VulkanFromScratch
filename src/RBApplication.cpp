@@ -449,7 +449,7 @@ void RBApplication::processModelNode(
             gBufferPass.clearFrameBuffers();
             descriptorsAttachment.ReleaseAllResource();
             RBSwapChain::SetSwapChainExtent(device, windows);
-            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent,AttachmentParams, DepthParams, resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT), true);
+            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent,attachmentParams, depthParams, resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT), true);
 
             gBufferPass.createGraphicsPipeline();
 
