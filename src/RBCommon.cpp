@@ -6,6 +6,8 @@
 
 const std::string MODEL_PATH = GET_PROJECT_ROOT_DIR + "models/scene.gltf";
 
+const std::string TERRAIN_PATH = GET_PROJECT_ROOT_DIR + "models/CraterCityMesh.fbx";
+
 const TexturesInfo fallBackFormat{VK_FORMAT_R8G8B8A8_SRGB, false, ""};
 
 const std::vector<TexturesInfo> inputImagesInfo = {
@@ -23,6 +25,15 @@ const std::vector<TexturesInfo> inputImageInfoMech =
 const std::vector<TexturesInfo> inputImageInfoLighting = 
 {
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_BaseMap.jpg"}, // BaseMap
+    TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Normal.jpg"}, // Normal
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_AO.jpeg"}, // AO
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.jpeg"},  // Emission
+    TexturesInfo{VK_FORMAT_D32_SFLOAT, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.jpeg"}  // Emission
+};
+
+const std::vector<TexturesInfo> inputImageTerrain = 
+{
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/AlienPlanet1_Diffuse.jpg"}, // BaseMap
     TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Normal.jpg"}, // Normal
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_AO.jpeg"}, // AO
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.jpeg"},  // Emission

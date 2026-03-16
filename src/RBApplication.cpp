@@ -18,6 +18,7 @@ namespace RottenBamboo {
         InitializeCommandBuffer();
 
         resourceManager.Load<RBModel>(MODEL_PATH);
+        resourceManager.Load<RBModel>(TERRAIN_PATH);
         for(int i = 0; i < inputShader.size(); i++)
         {
             resourceShader.Load(inputShader[i].stage, inputShader[i].path);
