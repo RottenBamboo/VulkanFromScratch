@@ -4,6 +4,8 @@
 
 #include "RBCommon.h"
 
+std::unordered_map<int, std::string> model_paths;
+
 const std::string MODEL_PATH = GET_PROJECT_ROOT_DIR + "models/scene.gltf";
 
 const std::string TERRAIN_PATH = GET_PROJECT_ROOT_DIR + "models/CraterCityMesh.fbx";

@@ -9,7 +9,7 @@
 #include "RBPipelineManager.h"
 #include "RBPipelineConfig.h"
 #include "RBShaderModule.h" // Added to define RBShaderModule
-#include "RBMesh.h"
+#include "RBResourceManager.h"
 #include <stdexcept>
 #include <iostream>
 
@@ -73,7 +73,7 @@ namespace RottenBamboo {
 
         virtual void fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName, RBShaderModule &shaderModule);
 
-        virtual void Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors& descriptorsGBuffer, RBMesh &mesh);
+        virtual void Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors& descriptorsGBuffer, ResourceManager& resourceManager);
     private:
 
         RBShaderModule vertShaderModule;

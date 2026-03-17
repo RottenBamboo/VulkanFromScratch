@@ -16,6 +16,25 @@ namespace RottenBamboo {
         std::shared_ptr<RBModel> LoadModels(const std::string& path);
 
         std::shared_ptr<RBModel> GetModel(const std::string& path);
+
+        template<typename T>
+        bool Load(const std::unordered_map<int, std::string>& paths) 
+        {
+            
+            auto typeId = std::type_index(typeid(T));
+            auto& table = resources[typeId];
+
+            for(const auto& pair : paths)
+            {
+                const std::string& path = pair.second;
+                if (table.count(path))
+                    continue;
+                auto res = std::make_shared<T>(path, device, commandBuffer);
+                res->Load(path);
+                table[path] = res;
+            }
+            return true;
+        }
         
         template<typename T>
         std::shared_ptr<T> Load(const std::string& path) 
@@ -44,7 +63,7 @@ namespace RottenBamboo {
             }
             return nullptr;
         }
-
+        
         void Clear();
 
     private:

@@ -17,8 +17,11 @@ namespace RottenBamboo {
         InitializeDevice();
         InitializeCommandBuffer();
 
-        resourceManager.Load<RBModel>(MODEL_PATH);
-        resourceManager.Load<RBModel>(TERRAIN_PATH);
+        model_paths.insert({0, MODEL_PATH});
+        //model_paths.insert({1, TERRAIN_PATH});
+
+        resourceManager.Load<RBModel>(model_paths);
+
         for(int i = 0; i < inputShader.size(); i++)
         {
             resourceShader.Load(inputShader[i].stage, inputShader[i].path);
@@ -280,18 +283,11 @@ void RBApplication::processModelNode(
         gbufferRenderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
         gbufferRenderPassInfo.pClearValues = clearValues.data();
 
-        auto shared_ptr_model = resourceManager.Get<RBModel>(MODEL_PATH);
-        auto& mesh = shared_ptr_model->getMeshes(0);
-        VkBuffer vertexBuffers[] = {(*mesh).vertexBuffer.buffer};
-        VkDeviceSize offsets[] = {0};
         
-        vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-
-        vkCmdBindIndexBuffer(commandBuffer, (*mesh).indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
-        
-        //std::cout << "before gBufferPass::Execute()" << std::endl;
+         //std::cout << "before gBufferPass::Execute()" << std::endl;
         // gbuffer pass pipeline
-        gBufferPass.Execute(commandBuffer, gbufferRenderPassInfo, descriptorsGBuffer, *mesh);
+        gBufferPass.Execute(commandBuffer, gbufferRenderPassInfo, descriptorsGBuffer, resourceManager);
+
         //std::cout << "after gBufferPass::Execute()" << std::endl;
 
         // VkBuffer lightingVertexBuffers[] = {mesh.vertexBuffer.buffer};
@@ -368,9 +364,9 @@ void RBApplication::processModelNode(
         //std::cout << "before lightPassManager::Execute()" << std::endl;
         //std::cout << "descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout = " << descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout << std::endl;
 
-        skyPassManager.Execute(commandBuffer, lightingRenderPassInfo, descriptorsSkyBox, *mesh);
+        skyPassManager.Execute(commandBuffer, lightingRenderPassInfo, descriptorsSkyBox);
 
-        lightPassManager.Execute(commandBuffer, lightingRenderPassInfo, descriptorsLighting, *mesh, gui, uniformShaderVariables);
+        lightPassManager.Execute(commandBuffer, lightingRenderPassInfo, descriptorsLighting, gui, uniformShaderVariables);
 
         //std::cout << "after lightPassManager::Execute()" << std::endl;
 
