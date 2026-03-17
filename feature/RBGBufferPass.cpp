@@ -174,13 +174,12 @@ namespace RottenBamboo {
         std::cout << "RBGBufferPass::~RBGBufferPass()" << std::endl;
     }
 
-    void RBGBufferPass::Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors& descriptorsGBuffer, ResourceManager& resourceManager) 
+    void RBGBufferPass::Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, std::vector<RBDescriptors*> descriptorsGBuffersVec, ResourceManager& resourceManager) 
     {
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptorsGBuffer.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
         
         for(auto it = model_paths.cbegin(); it != model_paths.cend(); ++it)
         {
@@ -188,6 +187,8 @@ namespace RottenBamboo {
             auto& mesh = shared_ptr_model->getMeshes(0);
             VkBuffer vertexBuffers[] = {(*mesh).vertexBuffer.buffer};
             VkDeviceSize offsets[] = {0};
+
+            vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptorsGBuffersVec[it->first]->descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
         
             vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 

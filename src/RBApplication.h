@@ -95,7 +95,11 @@ namespace RottenBamboo {
 
         RBPipelineConfig pipelineConfig{};
 
+        std::vector<RBDescriptors*> descriptorsGBuffersVec;
+
         RBDescriptors descriptorsGBuffer{device, commandBuffer, uniformBuffers, inputImageInfoMech, false};
+
+        RBDescriptors descriptorsTerrain{device, commandBuffer, uniformBuffers, inputImageTerrain, false};
 
         RBDescriptors descriptorsSkyBox{device, commandBuffer, uniformBuffers, inputImageInfoSkyBox, false};
 

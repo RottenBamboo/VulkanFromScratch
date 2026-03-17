@@ -18,7 +18,7 @@ namespace RottenBamboo {
         InitializeCommandBuffer();
 
         model_paths.insert({0, MODEL_PATH});
-        //model_paths.insert({1, TERRAIN_PATH});
+        model_paths.insert({1, TERRAIN_PATH});
 
         resourceManager.Load<RBModel>(model_paths);
 
@@ -88,6 +88,13 @@ namespace RottenBamboo {
         RBSwapChain::SetSwapChainExtent(device, windows);
 
         descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
+
+        descriptorsTerrain.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
+
+        descriptorsGBuffersVec.clear();
+        descriptorsGBuffersVec.reserve(0);
+        descriptorsGBuffersVec.push_back(&descriptorsGBuffer);
+        descriptorsGBuffersVec.push_back(&descriptorsTerrain);
 
         descriptorsSkyBox.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_POST_PROCESSING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_POST_PROCESSING_FRAGMENT));
 
@@ -286,7 +293,7 @@ void RBApplication::processModelNode(
         
          //std::cout << "before gBufferPass::Execute()" << std::endl;
         // gbuffer pass pipeline
-        gBufferPass.Execute(commandBuffer, gbufferRenderPassInfo, descriptorsGBuffer, resourceManager);
+        gBufferPass.Execute(commandBuffer, gbufferRenderPassInfo, descriptorsGBuffersVec, resourceManager);
 
         //std::cout << "after gBufferPass::Execute()" << std::endl;
 
