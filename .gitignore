@@ -8,12 +8,14 @@ buildAndroid
 output/*
 .DS_Store
 cmake-build-debug
-shader/bin/*
-thirdparty
+imgui.ini
+app.log
+shader/bin/
+thirdparty/
 
 #external 
-/external/assimp/*
-/external/zlib/*
-/external/SDL/*
-/external/imgui/*
-/external/ImGuizmo/*
+/external/assimp/
+/external/zlib/
+/external/SDL/
+/external/imgui/
+/external/ImGuizmo/

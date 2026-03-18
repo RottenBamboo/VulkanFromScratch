@@ -36,8 +36,8 @@ const std::vector<TexturesInfo> inputImageInfoLighting =
 const std::vector<TexturesInfo> inputImageTerrain = 
 {
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/AlienPlanet1_Diffuse.jpg"}, // BaseMap
-    TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Normal.jpg"}, // Normal
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_AO.jpeg"}, // AO
+    TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, false, GET_PROJECT_ROOT_DIR + "textures/AlienPlanet1_FinalBump1.png"}, // Normal
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/AlienPlanet1_Wetness.png"}, // AO
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.jpeg"},  // Emission
     TexturesInfo{VK_FORMAT_D32_SFLOAT, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.jpeg"}  // Emission
 };

@@ -87,15 +87,17 @@ namespace RottenBamboo {
 
         RBSwapChain::SetSwapChainExtent(device, windows);
 
-        descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
-
-        descriptorsTerrain.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
-
+        //GBuffer pass descriptors
         descriptorsGBuffersVec.clear();
         descriptorsGBuffersVec.reserve(0);
+
+        descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
         descriptorsGBuffersVec.push_back(&descriptorsGBuffer);
+
+        descriptorsTerrain.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
         descriptorsGBuffersVec.push_back(&descriptorsTerrain);
 
+        //after GBuffer pass descriptors
         descriptorsSkyBox.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_POST_PROCESSING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_POST_PROCESSING_FRAGMENT));
 
         descriptorsLighting.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT), true);

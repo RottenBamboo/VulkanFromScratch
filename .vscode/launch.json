@@ -16,6 +16,20 @@
       "osx": true
     },
     {
+      "name": "Release (macOS)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/VulkanFromScratch",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb",
+      "preLaunchTask": "build (macOS-Release)",
+      "osx": true
+    },
+    {
       "name": "Debug (Windows)",
       "type": "cppvsdbg",
       "request": "launch",
@@ -24,6 +38,19 @@
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "preLaunchTask": "build (Windows)",
+      "windows": true
+    },
+    {
+      "name": "Release (Windows)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}\\build\\release\\VulkanFromScratch.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "preLaunchTask": "build (Windows-Release)",
       "windows": true
     }
   ]

@@ -17,6 +17,22 @@
       "problemMatcher": ["$gcc"]
     },
     {
+      "label": "build (macOS-Release)",
+      "type": "shell",
+      "command": "cmake",
+      "args": [
+        "-S", ".",
+        "-B", "build/release",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "osx": true,
+      "problemMatcher": ["$gcc"]
+    },
+    {
       "label": "build (Windows)",
       "type": "shell",
       "command": "cmd.exe",
@@ -27,6 +43,18 @@
       "group": "build",
       "windows": true,
       "problemMatcher": ["$msCompile"]
-    }
+    },
+    {
+      "label": "build (Windows-Release)",
+      "type": "shell",
+      "command": "cmd.exe",
+      "args": [
+        "/c",
+        "cmake -S . -B build/release -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-cl.exe -DCMAKE_CXX_COMPILER=clang-cl.exe && cmake --build build/release --config Release"
+      ],
+      "group": "build",
+      "windows": true,
+      "problemMatcher": ["$msCompile"]
+    },
   ]
 }

@@ -18,7 +18,7 @@ cmake_minimum_required(VERSION 3.23.2)
 project(VulkanFromScratch)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_BUILD_TYPE Debug)
+# set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -118,9 +118,55 @@ else()
     add_executable(${PROJECT_NAME} ${ALL_SOURCES})
 endif()
 
-# add Assimp header path
 target_compile_definitions(${PROJECT_NAME} PUBLIC PROJECT_ROOT_DIR=\"${CMAKE_SOURCE_DIR}\")
 
+# Debug macro for logging
+if(CMAKE_GENERATOR MATCHES "Visual Studio" OR CMAKE_GENERATOR MATCHES "Xcode" OR CMAKE_GENERATOR MATCHES "Multi-Config")
+    # multiple config generators (Visual Studio, Xcode)
+    message(STATUS "Multi-config generator detected: ${CMAKE_GENERATOR}")
+    message(STATUS "Logging will be enabled for Debug builds, disabled for others")
+    
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+        $<$<CONFIG:Debug>:RB_ENABLE_LOGGING=1>
+        $<$<CONFIG:Release>:RB_ENABLE_LOGGING=0>
+        $<$<CONFIG:Release>:NDEBUG=1>
+        $<$<CONFIG:RelWithDebInfo>:RB_ENABLE_LOGGING=0>
+        $<$<CONFIG:RelWithDebInfo>:NDEBUG=1>
+        $<$<CONFIG:MinSizeRel>:RB_ENABLE_LOGGING=0>
+        $<$<CONFIG:MinSizeRel>:NDEBUG=1>
+    )
+    
+    # Android Release keep error logs
+    if(ANDROID)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE
+            $<$<CONFIG:Release>:ANDROID_RELEASE_WITH_ERROR_LOG=1>
+        )
+    endif()
+    
+else()
+    # single-config generator (Makefile, Ninja) - macOS default uses this branch
+    message(STATUS "Single-config generator detected: ${CMAKE_GENERATOR}")
+    
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_compile_definitions(${PROJECT_NAME} PRIVATE 
+            RB_ENABLE_LOGGING=1
+        )
+        message(STATUS "Building in DEBUG mode: logging ENABLED")
+    else()
+        target_compile_definitions(${PROJECT_NAME} PRIVATE 
+            RB_ENABLE_LOGGING=0
+            NDEBUG=1
+        )
+        message(STATUS "Building in RELEASE mode: logging DISABLED")
+        
+        # Android Release keep error logs
+        if(ANDROID)
+            target_compile_definitions(${PROJECT_NAME} PRIVATE ANDROID_RELEASE_WITH_ERROR_LOG=1)
+        endif()
+    endif()
+endif()
+
+# add Assimp header path
 target_include_directories(${PROJECT_NAME} PUBLIC ${ASSIMP_THIRDPARTY_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${ASSIMP_INCLUDE_DIRS})
 

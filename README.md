@@ -83,16 +83,25 @@ cd external
 ./compile.sh desktop //Windows Macos Platform
 ./compile.sh debug //Debug compile
 ```
+## Configuration
+```
+Debug platform using "Debug"
+Release platform use "Release"
+```
+
+## Chose Specific MSBuild
+```
+cmake -G "Visual Studio 17 2022" -S . -B build
+```
 
 ## Windows Platform Build:
-    
 ```
 cd shader
 ./compile.sh debug
 cd ..
-cmake -G "Visual Studio 17 2022" -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake -S . -B build
 cd build
-cmake --build .
+cmake --build . --config Debug
 cd Debug
 ./VulkanFromScratch.exe
 ```
