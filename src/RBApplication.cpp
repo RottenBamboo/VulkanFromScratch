@@ -18,7 +18,8 @@ namespace RottenBamboo {
         InitializeCommandBuffer();
 
         model_paths.insert({0, MODEL_PATH});
-        model_paths.insert({1, TERRAIN_PATH});
+        model_paths.insert({1, SAMURI_PATH});
+        model_paths.insert({2, LOW_POLY_TERRAIN_PATH});
 
         resourceManager.Load<RBModel>(model_paths);
 
@@ -93,6 +94,9 @@ namespace RottenBamboo {
 
         descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
         descriptorsGBuffersVec.push_back(&descriptorsGBuffer);
+
+        descriptorsSamuri.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
+        descriptorsGBuffersVec.push_back(&descriptorsSamuri);
 
         descriptorsTerrain.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
         descriptorsGBuffersVec.push_back(&descriptorsTerrain);
@@ -225,7 +229,7 @@ void RBApplication::processModelNode(
         //                                 glm::vec3(0, 1, 0));
         //uniformShaderVariables.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 100.0f);
         //uniformShaderVariables.proj[1][1] *= -1;
-        uniformShaderVariables.model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
+        uniformShaderVariables.model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
         uniformShaderVariables.view = mainCamera.GetViewMatrix();
         float aspectRatio = static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);

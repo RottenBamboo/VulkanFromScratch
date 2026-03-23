@@ -6,14 +6,34 @@
 
 std::unordered_map<int, std::string> model_paths;
 
-const std::string MODEL_PATH = GET_PROJECT_ROOT_DIR + "models/scene.gltf";
+const std::string MODEL_PATH = GET_PROJECT_ROOT_DIR + "models/mach.gltf";
 
 const std::string TERRAIN_PATH = GET_PROJECT_ROOT_DIR + "models/CraterCityMesh.fbx";
+
+const std::string SAMURI_PATH = GET_PROJECT_ROOT_DIR + "models/samuri.gltf";
+
+const std::string LOW_POLY_TERRAIN_PATH = GET_PROJECT_ROOT_DIR + "models/low_poly_terrain.gltf";
 
 const TexturesInfo fallBackFormat{VK_FORMAT_R8G8B8A8_SRGB, false, ""};
 
 const std::vector<TexturesInfo> inputImagesInfo = {
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_BaseMap.jpg"}
+};
+
+const std::vector<TexturesInfo> lowPolyTerrainTex = 
+{
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/low_poly_terrain_basecolor.jpeg"},
+    TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, false, GET_PROJECT_ROOT_DIR + "textures/low_poly_terrain_normal.jpeg"},
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/low_poly_terrain_metal_roughness.png"},
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.png"}
+};
+
+const std::vector<TexturesInfo> samuriTex = 
+{
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/samuri_diffuse.jpeg"},
+    TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, false, GET_PROJECT_ROOT_DIR + "textures/samuri_normal.jpeg"},
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/samuri_specular_glossiness.png"},
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.png"}
 };
 
 const std::vector<TexturesInfo> inputImageInfoMech = 

@@ -65,6 +65,8 @@ static const int skyBoxPassColorAttachmentCount = 1;
 extern std::unordered_map<int, std::string> model_paths;
 extern const std::string MODEL_PATH;
 extern const std::string TERRAIN_PATH;
+extern const std::string SAMURI_PATH;
+extern const std::string LOW_POLY_TERRAIN_PATH;
 extern const TexturesInfo fallBackFormat;
 extern const std::vector<ShadersInfo> inputShader;
 extern const std::vector<TexturesInfo> inputImagesInfo;
@@ -72,6 +74,9 @@ extern const std::vector<TexturesInfo> inputImageInfoMech;
 extern const std::vector<TexturesInfo> inputImageInfoSkyBox;
 extern const std::vector<TexturesInfo> inputImageInfoLighting;
 extern const std::vector<TexturesInfo> inputImageTerrain;
+extern const std::vector<TexturesInfo> samuriTex;
+extern const std::vector<TexturesInfo> mineCraftTex;
+extern const std::vector<TexturesInfo> lowPolyTerrainTex;
 
 extern uint32_t mipLevels;
 
