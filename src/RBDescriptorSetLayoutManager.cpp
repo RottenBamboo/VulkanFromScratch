@@ -43,6 +43,7 @@ namespace RottenBamboo {
         layoutInfo.pBindings = bindings.data();
 
         if (vkCreateDescriptorSetLayout(rbDevice.device, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS) {
+            RBLOG_FATAL("failed to create descriptor set layout!");
             throw std::runtime_error("failed to create descriptor set layout!");
         }
         std::cout << "RBDescriptorSetLayoutManager::createDescriptorSetLayout()" << std::endl;

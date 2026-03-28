@@ -73,6 +73,7 @@ namespace RottenBamboo {
         framebufferInfo.layers = 1;
     
         if (vkCreateFramebuffer(rbDevice.device, &framebufferInfo, nullptr, &gBufferFrameBuffers) != VK_SUCCESS) {
+            RBLOG_FATAL("failed to create GBuffer framebuffer!");
             throw std::runtime_error("failed to create GBuffer framebuffer!");
         }
     }

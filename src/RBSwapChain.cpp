@@ -61,6 +61,7 @@ namespace RottenBamboo{
         imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
         if (vkCreateImage(refDevice.device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
+            RBLOG_FATAL("Failed to create image!");
             throw std::runtime_error("failed to create image!");
         }
 
@@ -73,6 +74,7 @@ namespace RottenBamboo{
         allocInfo.memoryTypeIndex = findMemoryType(refDevice.physicalDevice, memRequirements.memoryTypeBits, properties);
 
         if (vkAllocateMemory(refDevice.device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
+            RBLOG_FATAL("Failed to allocate image memory!");
             throw std::runtime_error("failed to allocate image memory!");
         }
 
@@ -96,6 +98,7 @@ namespace RottenBamboo{
         VkImageView imageView;
         if(vkCreateImageView(refDevice.device, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
         {
+            RBLOG_FATAL("Failed to create image view!");
             throw std::runtime_error("failed to create texture image view!");
         }
         return imageView;
@@ -126,6 +129,7 @@ namespace RottenBamboo{
             }
         }
 
+        RBLOG_FATAL("Failed to find supported format!");
         throw std::runtime_error("failed to find supported format!");
 
     }
@@ -307,6 +311,7 @@ namespace RottenBamboo{
 
         if(vkCreateSwapchainKHR(refDevice.device, &createInfo, nullptr, &swapChain) != VK_SUCCESS)
         {
+            RBLOG_FATAL("Failed to create swap chain!");
             throw std::runtime_error("failed to create swap chain!");
             vkGetSwapchainImagesKHR(refDevice.device, swapChain, &imageCount, nullptr);
             swapChainImages.resize(imageCount);

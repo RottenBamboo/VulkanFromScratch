@@ -136,6 +136,7 @@ void RBModel::Load(const std::string& filepath) {
             __android_log_print(ANDROID_LOG_ERROR, "RottenBamboo", 
                                "Failed to open model file: %s, error: %s", 
                                filepath.c_str(), SDL_GetError());
+            RBLOG_FATAL("failed to open model file");
             throw std::runtime_error("Failed to open model file");
         }
         
@@ -145,6 +146,7 @@ void RBModel::Load(const std::string& filepath) {
             __android_log_print(ANDROID_LOG_ERROR, "RottenBamboo", 
                                "Failed to get file size: %s", filepath.c_str());
             SDL_CloseIO(file);
+            RBLOG_FATAL("failed to get file size");
             throw std::runtime_error("Failed to get file size");
         }
         
@@ -155,6 +157,7 @@ void RBModel::Load(const std::string& filepath) {
         if (bytesRead != static_cast<size_t>(fileSize)) {
             __android_log_print(ANDROID_LOG_ERROR, "RottenBamboo", 
                                "Failed to read entire file: %s", filepath.c_str());
+            RBLOG_FATAL("failed to read entire file");
             throw std::runtime_error("Failed to read entire file");
         }
         
@@ -179,18 +182,21 @@ void RBModel::Load(const std::string& filepath) {
             __android_log_print(ANDROID_LOG_ERROR, "RottenBamboo", 
                                "Assimp failed to load model from memory: %s", 
                                importer.GetErrorString());
+            RBLOG_FATAL("Assimp failed load model from memory");
             throw std::runtime_error("Assimp failed to load model from memory");
         }
 
         if (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) {
             __android_log_print(ANDROID_LOG_ERROR, "RottenBamboo", 
                                "Assimp scene is incomplete");
+            RBLOG_FATAL("Assimp scene is incomplete");
             throw std::runtime_error("Assimp scene is incomplete");
         }
 
         if (!scene->mRootNode) {
             __android_log_print(ANDROID_LOG_ERROR, "RottenBamboo", 
                                "Assimp scene has no root node");
+            RBLOG_FATAL("Assimp scene has no root node");
             throw std::runtime_error("Assimp scene has no root node");
         }
 
@@ -265,6 +271,7 @@ void RBModel::Load(const std::string& filepath) {
 }
 void RBModel::ProcessScene(const aiScene* scene, const std::string& filepath) {
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+        RBLOG_FATAL("Invalid scene");
         throw std::runtime_error("Invalid scene");
     }
 
@@ -450,6 +457,7 @@ void RBModel::Load(const std::string& path) {
         {
             std::cout << path.c_str() << std::endl;
 
+            RBLOG_FATAL("Assimp import failed: %s", importer.GetErrorString());
             std::cerr << "Assimp import failed: " << importer.GetErrorString() << std::endl;
         } 
         else 
@@ -459,6 +467,7 @@ void RBModel::Load(const std::string& path) {
 
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
         {
+            RBLOG_FATAL("Assimp failed to load model: " + std::string(importer.GetErrorString()));
             throw std::runtime_error("Assimp failed to load model: " + std::string(importer.GetErrorString()));
         }
         std::cout << "Root node name: " << scene->mRootNode->mName.C_Str() << "\n";

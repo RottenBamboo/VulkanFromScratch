@@ -277,6 +277,7 @@ void RBApplication::processModelNode(
         beginInfo.flags = 0;
         beginInfo.pInheritanceInfo = nullptr;
         if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
+            RBLOG_FATAL("failed to begin recording command buffer!");
             throw std::runtime_error("failed to begin recording command buffer!");
         }
 
@@ -386,6 +387,7 @@ void RBApplication::processModelNode(
         VkResult result = vkEndCommandBuffer(commandBuffer);
         if (result != VK_SUCCESS) {
             std::cerr << "vkEndCommandBuffer failed: " << result << std::endl;
+            RBLOG_FATAL("failed to record command buffer!");
             throw std::runtime_error("failed to record command buffer!");
         }
         //std::cout << "RBApplication::Execute()" << std::endl;
@@ -405,6 +407,7 @@ void RBApplication::processModelNode(
         }
         else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
         {
+            RBLOG_FATAL("failed to acquire swap chain image!");
             throw std::runtime_error("failed to acquire swap chain image!");
         }
 
@@ -414,6 +417,7 @@ void RBApplication::processModelNode(
 
         result = vkResetCommandBuffer(commandBuffer.commandBuffers[currentFrame], /*vkCommandBufferResetFlagBits*/ 0);
         if (result != VK_SUCCESS) {
+            RBLOG_FATAL("failed to reset command buffer!");
             throw std::runtime_error("failed to reset command buffer!");
         }
 
@@ -438,6 +442,7 @@ void RBApplication::processModelNode(
         if (result != VK_SUCCESS)
         {
             std::cerr << "vkQueueSubmit failed with VkResult: " << result << std::endl;
+            RBLOG_FATAL("vkQueueSubmit failed with VkResult: %d", result);
             throw std::runtime_error("failed to submit draw command buffer!");
         }
 
@@ -469,6 +474,7 @@ void RBApplication::processModelNode(
             swapChain.recreateSwapChain(&(descriptorsAttachment.rbImageManager.imageBundles[descriptorsAttachment.rbImageManager.getImageCount() - 1].imageView));
         }
         else if (result != VK_SUCCESS) {
+            RBLOG_FATAL("failed to present swap chain image!");
             throw std::runtime_error("failed to present swap chain image!");
         }
 

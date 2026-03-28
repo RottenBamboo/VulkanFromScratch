@@ -48,6 +48,7 @@ namespace RottenBamboo {
     void RBDescriptorPoolManager::CreateDescriptorPool()
     {
         if (vkCreateDescriptorPool(rbDevice.device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
+            RBLOG_FATAL("failed to create descriptor pool!");
             throw std::runtime_error("failed to create descriptor pool!");
         }
         std::cout << "RBDescriptorPoolManager::CreateDescriptorPool()" << std::endl;

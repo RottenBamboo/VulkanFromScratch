@@ -13,6 +13,7 @@ namespace RottenBamboo {
     std::vector<char> RBPipelineUtils::readFile(const std::string &filename) {
         std::ifstream file(filename, std::ios::ate | std::ios::binary);
         if (!file.is_open()) {
+            RBLOG_FATAL("Failed to open file!");
             throw std::runtime_error("failed to open file!");
         }
         size_t fileSize = (size_t) file.tellg();
@@ -36,6 +37,7 @@ namespace RottenBamboo {
             __android_log_print(ANDROID_LOG_ERROR, "RottenBamboo", 
                                "Failed to open shader file: %s, error: %s", 
                                filename.c_str(), SDL_GetError());
+            RBLOG_FATAL("Failed to open file!");
             throw std::runtime_error("failed to open file!");
         } else {
             __android_log_print(ANDROID_LOG_INFO, "RottenBamboo", 
@@ -47,6 +49,7 @@ namespace RottenBamboo {
     Sint64 fileSize = SDL_GetIOSize(file);
     if (fileSize <= 0) {
         SDL_CloseIO(file);
+        RBLOG_FATAL("Failed to get file size!");
         throw std::runtime_error("failed to get file size!");
     }
     
@@ -55,6 +58,7 @@ namespace RottenBamboo {
     SDL_CloseIO(file);
     
     if (bytesRead != static_cast<size_t>(fileSize)) {
+        RBLOG_FATAL("Failed to read entire file!");
         throw std::runtime_error("failed to read entire file!");
     }
     

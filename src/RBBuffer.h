@@ -126,6 +126,7 @@ namespace RottenBamboo {
             bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
             if (vkCreateBuffer(rbDevice.device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
+                RBLOG_FATAL("failed to create buffer!");
                 throw std::runtime_error("failed to create buffer!");
             }
 
@@ -138,6 +139,7 @@ namespace RottenBamboo {
             allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties, rbDevice.physicalDevice);
 
             if (vkAllocateMemory(rbDevice.device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
+                RBLOG_FATAL("failed to allocate buffer memory!");
                 throw std::runtime_error("failed to allocate buffer memory!");
             }
 
@@ -156,6 +158,7 @@ namespace RottenBamboo {
                 }
             }
 
+            RBLOG_FATAL("failed to find suitable memory type!");
             throw std::runtime_error("failed to find suitable memory type!");
         }
     };

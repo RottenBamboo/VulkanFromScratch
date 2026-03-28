@@ -234,6 +234,7 @@ VkFormat RBResourceShader::SpirvImageFormatToVkFormat(spv::ImageFormat format)
         size_t codeSize = shaderCode.size();
         if (codeSize % sizeof(uint32_t) != 0)
         {
+            RBLOG_FATAL("Char vector size is not aligned to 4 bytes");
             throw std::runtime_error("Char vector size is not aligned to 4 bytes");
         }
         size_t wordCount = codeSize / sizeof(uint32_t);

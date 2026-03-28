@@ -24,6 +24,7 @@ int main(int argc, char* argv[]) {
     catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
         RBLOG_FATAL(std::string("Fatal error: ") + e.what());
+        RBLOG_FATAL("%s", e.what());
         return EXIT_FAILURE;
     }
     RBLOG_INFO("Application shutting down normally");

@@ -26,10 +26,29 @@
 #include <mutex>
 #include <chrono>
 #include <ctime>
+#include <cstdio>
+#include <vector>
+#include <utility>
 
 class Logger {
 public:
     enum class Level { RB_DEBUG, RB_INFO, RB_WARNING, RB_ERROR, RB_FATAL };
+
+    template<typename... Args>
+    static std::string formatString(const char* fmt, Args&&... args) {
+        if (fmt == nullptr) {
+            return {};
+        }
+
+        int size = std::snprintf(nullptr, 0, fmt, std::forward<Args>(args)...);
+        if (size < 0) {
+            return std::string(fmt);
+        }
+
+        std::vector<char> buffer(static_cast<size_t>(size) + 1);
+        std::snprintf(buffer.data(), buffer.size(), fmt, std::forward<Args>(args)...);
+        return std::string(buffer.data(), static_cast<size_t>(size));
+    }
 
     static Logger& instance() {
         static Logger logger;
@@ -90,7 +109,7 @@ public:
 private:
     Logger() : m_minLevel(Level::RB_DEBUG) {
         // default log file
-        setLogFile("vulkan_app.log");
+        //setLogFile("vulkan_app.log");
     }
     ~Logger() { if (m_file.is_open()) m_file.close(); }
     
@@ -125,12 +144,25 @@ private:
     #endif
 };
 
+inline std::string RBLogMakeMessage(const std::string& message) {
+    return message;
+}
+
+inline std::string RBLogMakeMessage(const char* message) {
+    return message != nullptr ? std::string(message) : std::string();
+}
+
+template<typename... Args>
+inline std::string RBLogMakeMessage(const char* fmt, Args&&... args) {
+    return Logger::formatString(fmt, std::forward<Args>(args)...);
+}
+
 // logger macro
-#define RBLOG_DEBUG(msg) Logger::instance().log(Logger::Level::RB_DEBUG, msg, __FILE__, __LINE__)
-#define RBLOG_INFO(msg)  Logger::instance().log(Logger::Level::RB_INFO, msg)
-#define RBLOG_WARN(msg)  Logger::instance().log(Logger::Level::RB_WARNING, msg, __FILE__, __LINE__)
-#define RBLOG_ERROR(msg) Logger::instance().log(Logger::Level::RB_ERROR, msg, __FILE__, __LINE__)
-#define RBLOG_FATAL(msg) Logger::instance().log(Logger::Level::RB_FATAL, msg, __FILE__, __LINE__)
+#define RBLOG_DEBUG(...) Logger::instance().log(Logger::Level::RB_DEBUG, RBLogMakeMessage(__VA_ARGS__), __FILE__, __LINE__)
+#define RBLOG_INFO(...)  Logger::instance().log(Logger::Level::RB_INFO, RBLogMakeMessage(__VA_ARGS__))
+#define RBLOG_WARN(...)  Logger::instance().log(Logger::Level::RB_WARNING, RBLogMakeMessage(__VA_ARGS__), __FILE__, __LINE__)
+#define RBLOG_ERROR(...) Logger::instance().log(Logger::Level::RB_ERROR, RBLogMakeMessage(__VA_ARGS__), __FILE__, __LINE__)
+#define RBLOG_FATAL(...) Logger::instance().log(Logger::Level::RB_FATAL, RBLogMakeMessage(__VA_ARGS__), __FILE__, __LINE__)
 
 #else // RB_ENABLE_LOGGING == 0 (Release mode)
 

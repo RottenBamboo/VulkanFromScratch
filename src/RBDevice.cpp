@@ -31,7 +31,11 @@ namespace RottenBamboo {
             const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
             void *pUserData) {
         if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
-            std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+            const char* message = (pCallbackData != nullptr && pCallbackData->pMessage != nullptr)
+                ? pCallbackData->pMessage
+                : "(null)";
+            RBLOG_FATAL("validation layer: %s", message);
+            std::cerr << "validation layer: " << message << std::endl;
         }
 
         std::cout << "RBDevice::debugCallback()" << std::endl;
@@ -135,6 +139,7 @@ namespace RottenBamboo {
     // }
     void RBDevice::createSurface(RBWindows& window) {
         if (!SDL_Vulkan_CreateSurface(window.GetWindow(), instance, nullptr, &surface)) {
+            RBLOG_FATAL("failed to create Vulkan window surface with SDL!");
             throw std::runtime_error("failed to create Vulkan window surface with SDL!");
         }
         std::cout << "RBDevice::createSurface()" << std::endl;
@@ -155,6 +160,7 @@ namespace RottenBamboo {
         populateDebugMessengerCreateInfo(createInfo);
 
         if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
+            RBLOG_FATAL("failed to set up debug messenger!");
             throw std::runtime_error("failed to set up debug messenger!");
         }
 #endif
@@ -179,6 +185,7 @@ namespace RottenBamboo {
         uint32_t deviceCount = 0;
         vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
         if (deviceCount == 0) {
+            RBLOG_FATAL("failed to find GPUs with Vulkan support!");
             throw std::runtime_error("filed to find GPUs with Vulkan support!");
         } else {
             std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -208,6 +215,7 @@ namespace RottenBamboo {
             }
 
             if (physicalDevice == VK_NULL_HANDLE) {
+                RBLOG_FATAL("failed to find a suitable GPU!");
                 throw std::runtime_error("failed to find a suitable GPU!");
             }
         }
@@ -250,6 +258,7 @@ namespace RottenBamboo {
             createInfo.enabledLayerCount = 0;
         }
         if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
+            RBLOG_FATAL("failed to create logical device!");
             throw std::runtime_error("failed to create logical device!");
         }
 
@@ -377,6 +386,7 @@ namespace RottenBamboo {
 #else
         // desktop code
         if (enableValidationLayers && !checkValidationLayerSupport()) {
+            RBLOG_FATAL("validation layers requested, but not available!");
             throw std::runtime_error("validation layers requested, but not available!");
         }
         VkApplicationInfo appInfo{};
@@ -424,8 +434,10 @@ namespace RottenBamboo {
         }
 
         if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
+            RBLOG_FATAL("failed to create Vulkan instance!");
             throw std::runtime_error("failed to create instance!");
         }
+        RBLOG_INFO("Vulkan instance created successfully");
         std::cout << "RBDevice::createInstance()" << std::endl;
 #endif
     }

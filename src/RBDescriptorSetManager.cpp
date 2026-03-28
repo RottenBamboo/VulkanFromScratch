@@ -69,6 +69,7 @@ namespace RottenBamboo{
         descriptorSets.resize(size);
         if(vkAllocateDescriptorSets(rbDevice.device, &(this->allocInfo), descriptorSets.data()) != VK_SUCCESS)
         {
+            RBLOG_FATAL("failed to allocate descriptor sets!");
             throw std::runtime_error("failed to allocate descriptor sets!");
         }
         std::cout << "RBDescriptorSetManager::allocateDescriptorSets()" << std::endl;

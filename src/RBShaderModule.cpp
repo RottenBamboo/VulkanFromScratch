@@ -33,6 +33,7 @@ namespace RottenBamboo {
         fillCreateInfo(code);
 
         if (vkCreateShaderModule(device.device, &createInfo, nullptr, &module) != VK_SUCCESS) {
+            RBLOG_FATAL("Failed to create shader module!");
             throw std::runtime_error("failed to create shader module!");
         }
         std::cout << "RBShaderModule::createShaderModule()" << std::endl;

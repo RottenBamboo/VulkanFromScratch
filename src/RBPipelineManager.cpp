@@ -21,6 +21,7 @@ namespace RottenBamboo {
     void RBPipelineManager::createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo) 
     {
         if (vkCreateGraphicsPipelines(rbDevice.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
+            RBLOG_FATAL("Failed to create graphics pipeline");
             throw std::runtime_error("failed to create graphics pipeline!");
         }
         std::cout << "RBPipelineManager::createGraphicsPipelines()" << std::endl;
@@ -198,7 +199,7 @@ namespace RottenBamboo {
                 return format;
             }
         }
-
+        RBLOG_FATAL("Failed to find supported format");
         throw std::runtime_error("failed to find supported format!");
 
     }

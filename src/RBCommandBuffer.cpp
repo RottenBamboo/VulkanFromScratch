@@ -94,6 +94,7 @@ namespace RottenBamboo {
         allocInfo.commandBufferCount = (uint32_t) commandBuffers.size();
 
         if (vkAllocateCommandBuffers(rbDevice.device, &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
+            RBLOG_FATAL("failed to allocate command buffers!");
             throw std::runtime_error("failed to allocate command buffers!");
         }
         std::cout << "RBCommandBuffer::createCommandBuffers()" << std::endl;
@@ -107,6 +108,7 @@ namespace RottenBamboo {
         poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
         poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
         if (vkCreateCommandPool(rbDevice.device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
+            RBLOG_FATAL("failed to create command pool!");
             throw std::runtime_error("failed to create command pool!");
         }
         std::cout << "RBCommandBuffer::createCommandBuffers()" << std::endl;

@@ -17,6 +17,7 @@
 #include <filesystem>
 #include "RBWindows.h"
 #include "RBResourceUtils.h"
+#include "RBLogger.h"
 
 #define GET_PROJECT_ROOT_DIR RottenBamboo::GetProjectRootPath()
 struct TexturesInfo
@@ -355,6 +356,7 @@ namespace RottenBamboo
             }
         }
 
+        RBLOG_FATAL("failed to find suitable memory type!");
         throw std::runtime_error("failed to find suitable memory type!");
     }
 }

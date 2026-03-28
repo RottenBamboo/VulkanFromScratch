@@ -24,6 +24,7 @@ namespace RottenBamboo{
 
    
         if (descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout == VK_NULL_HANDLE) {
+            RBLOG_FATAL("failed to create descriptor set layout!");
             throw std::runtime_error("Failed to create DescriptorSetLayout!");
         }
     }
@@ -198,6 +199,7 @@ namespace RottenBamboo{
             VkDeviceSize imageSize = texWidth * texHeight * 4 * typeSize;
     
             if (!pixels) {
+                RBLOG_FATAL("failed to load texture image!");
                 throw std::runtime_error("failed to load texture image!");
             }
     
@@ -334,6 +336,7 @@ namespace RottenBamboo{
 
         if(!(formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT))
         {
+            RBLOG_FATAL("texture image format does not support linear blitting!");
             throw std::runtime_error("texture image format does not support linear blitting!");
         }
 
@@ -368,6 +371,7 @@ namespace RottenBamboo{
             
             rbCommandBuffer.endSingleTimeCommands(commandBuffer);
             
+            RBLOG_FATAL("texture image format does not support linear blitting!");
             throw std::runtime_error("texture image format does not support linear blitting!");
         }
 

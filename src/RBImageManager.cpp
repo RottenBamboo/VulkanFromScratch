@@ -54,6 +54,7 @@ namespace RottenBamboo {
         samplerInfo.anisotropyEnable = enable;
         if (enable) {
             if (maxAnisotropy == 0) {
+                RBLOG_FATAL("Anisotropy is enabled but maxAnisotropy is 0");
                 throw std::runtime_error("Anisotropy is enabled but maxAnisotropy is 0");
             }
             samplerInfo.maxAnisotropy = maxAnisotropy;
@@ -111,6 +112,7 @@ namespace RottenBamboo {
         {
             if (vkCreateSampler(rbDevice.device, &samplerInfo, nullptr, &imageBundles[i].sampler) != VK_SUCCESS)
             {
+                RBLOG_FATAL("failed to create texture sampler!");
                 throw std::runtime_error("failed to create texture sampler!");
             }
         }
@@ -153,6 +155,7 @@ namespace RottenBamboo {
     {
         if (vkCreateImageView(rbDevice.device, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
         {
+            RBLOG_FATAL("failed to create texture image view!");
             throw std::runtime_error("failed to create texture image view!");
         }
         std::cout << "RBImageManager::createImageView()" << std::endl;
@@ -238,6 +241,7 @@ namespace RottenBamboo {
     void RBImageManager::createImage(VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
     {
         if (vkCreateImage(rbDevice.device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
+            RBLOG_FATAL("failed to create image!");
             throw std::runtime_error("failed to create image!");
         }
 
@@ -247,6 +251,7 @@ namespace RottenBamboo {
         fillAllocInfo(memRequirements.size, findMemoryType(rbDevice.physicalDevice, memRequirements.memoryTypeBits, properties));
 
         if (vkAllocateMemory(rbDevice.device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
+            RBLOG_FATAL("failed to allocate image memory!");
             throw std::runtime_error("failed to allocate image memory!");
         }
 
