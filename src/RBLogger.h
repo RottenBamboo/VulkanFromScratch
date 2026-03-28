@@ -2,6 +2,9 @@
 #pragma once
 
 #include <string>
+#include <cstdio>
+#include <vector>
+#include <utility>
 
 // Android special case：Release mode still logs errors
 #if defined(__ANDROID__) && defined(ANDROID_RELEASE_WITH_ERROR_LOG)
@@ -19,6 +22,30 @@
     #endif
 #endif
 
+inline std::string RBLogMakeMessage(const std::string& message) {
+    return message;
+}
+
+inline std::string RBLogMakeMessage(const char* message) {
+    return message != nullptr ? std::string(message) : std::string();
+}
+
+template<typename... Args>
+inline std::string RBLogMakeMessage(const char* fmt, Args&&... args) {
+    if (fmt == nullptr) {
+        return {};
+    }
+
+    int size = std::snprintf(nullptr, 0, fmt, std::forward<Args>(args)...);
+    if (size < 0) {
+        return std::string(fmt);
+    }
+
+    std::vector<char> buffer(static_cast<size_t>(size) + 1);
+    std::snprintf(buffer.data(), buffer.size(), fmt, std::forward<Args>(args)...);
+    return std::string(buffer.data(), static_cast<size_t>(size));
+}
+
 #if RB_ENABLE_LOGGING
 
 #include <iostream>
@@ -33,22 +60,6 @@
 class Logger {
 public:
     enum class Level { RB_DEBUG, RB_INFO, RB_WARNING, RB_ERROR, RB_FATAL };
-
-    template<typename... Args>
-    static std::string formatString(const char* fmt, Args&&... args) {
-        if (fmt == nullptr) {
-            return {};
-        }
-
-        int size = std::snprintf(nullptr, 0, fmt, std::forward<Args>(args)...);
-        if (size < 0) {
-            return std::string(fmt);
-        }
-
-        std::vector<char> buffer(static_cast<size_t>(size) + 1);
-        std::snprintf(buffer.data(), buffer.size(), fmt, std::forward<Args>(args)...);
-        return std::string(buffer.data(), static_cast<size_t>(size));
-    }
 
     static Logger& instance() {
         static Logger logger;
@@ -144,19 +155,6 @@ private:
     #endif
 };
 
-inline std::string RBLogMakeMessage(const std::string& message) {
-    return message;
-}
-
-inline std::string RBLogMakeMessage(const char* message) {
-    return message != nullptr ? std::string(message) : std::string();
-}
-
-template<typename... Args>
-inline std::string RBLogMakeMessage(const char* fmt, Args&&... args) {
-    return Logger::formatString(fmt, std::forward<Args>(args)...);
-}
-
 // logger macro
 #define RBLOG_DEBUG(...) Logger::instance().log(Logger::Level::RB_DEBUG, RBLogMakeMessage(__VA_ARGS__), __FILE__, __LINE__)
 #define RBLOG_INFO(...)  Logger::instance().log(Logger::Level::RB_INFO, RBLogMakeMessage(__VA_ARGS__))
@@ -167,11 +165,16 @@ inline std::string RBLogMakeMessage(const char* fmt, Args&&... args) {
 #else // RB_ENABLE_LOGGING == 0 (Release mode)
 
 // Release mode: all log macros are empty
-#define RBLOG_DEBUG(msg) ((void)0)
-#define RBLOG_INFO(msg)  ((void)0)
-#define RBLOG_WARN(msg)  ((void)0)
-#define RBLOG_ERROR(msg) ANDROID_LOG_ERROR_ONLY(msg)  // Android keep error logs
-#define RBLOG_FATAL(msg) ANDROID_LOG_ERROR_ONLY(msg)
+#define RBLOG_DEBUG(...) ((void)0)
+#define RBLOG_INFO(...)  ((void)0)
+#define RBLOG_WARN(...)  ((void)0)
+#if defined(__ANDROID__) && defined(ANDROID_RELEASE_WITH_ERROR_LOG)
+    #define RBLOG_ERROR(...) ANDROID_LOG_ERROR_ONLY(RBLogMakeMessage(__VA_ARGS__).c_str())
+    #define RBLOG_FATAL(...) ANDROID_LOG_ERROR_ONLY(RBLogMakeMessage(__VA_ARGS__).c_str())
+#else
+    #define RBLOG_ERROR(...) ((void)0)
+    #define RBLOG_FATAL(...) ((void)0)
+#endif
 
 // empty Logger class（keep interface）
 class Logger {
