@@ -52,7 +52,7 @@ namespace RottenBamboo {
         void createTextureImageViewFrameBuffer(const TextureParams& attachmentParams,
                                                const TextureParams& depthParams);
 
-        void generateMipmaps(VkImage image, VkFormat imageFormat, uint32_t texWidth, uint32_t texHeight, uint32_t mipLevels);
+        void generateMipmaps(VkImage image, VkFormat imageFormat, VkImageUsageFlags usage, uint32_t texWidth, uint32_t texHeight, uint32_t mipLevels);
 
         void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 

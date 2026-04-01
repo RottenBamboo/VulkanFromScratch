@@ -10,12 +10,14 @@ namespace RottenBamboo
     RBBufferManager::RBBufferManager(RBDevice &device) : rbDevice(device)
     {
         std::cout << "RBBufferManager::RBBufferManager()" << std::endl;
+        RBLOG_INFO("RBBufferManager::RBBufferManager()");
     }
 
     RBBufferManager::~RBBufferManager()
     {
         destroyBuffer();
         std::cout << "RBBufferManager::~RBBufferManager()" << std::endl;
+        RBLOG_INFO("RBBufferManager::~RBBufferManager()");
     }
 
     void RBBufferManager::destroyBuffer()
@@ -31,6 +33,7 @@ namespace RottenBamboo
         bufferInfo.usage = usage;
         bufferInfo.sharingMode = sharingMode;
         std::cout << "RBBufferManager::fillBufferCreateInfo()" << std::endl;
+        RBLOG_INFO("RBBufferManager::fillBufferCreateInfo()");
     }
 
     void RBBufferManager::createBuffer()
@@ -40,6 +43,7 @@ namespace RottenBamboo
             throw std::runtime_error("failed to create buffer!");
         }
         std::cout << "RBBufferManager::createBuffer()" << std::endl;
+        RBLOG_INFO("RBBufferManager::createBuffer()");
     }
 
     void RBBufferManager::fillMemoryAllocateInfo(VkMemoryPropertyFlags properties)
@@ -51,6 +55,7 @@ namespace RottenBamboo
         memoryallocInfo.allocationSize = memRequirements.size;
         memoryallocInfo.memoryTypeIndex = findMemoryType(rbDevice.physicalDevice, memRequirements.memoryTypeBits, properties);
         std::cout << "RBBufferManager::fillMemoryAllocateInfo()" << std::endl;
+        RBLOG_INFO("RBBufferManager::fillMemoryAllocateInfo()");
     }
 
     void RBBufferManager::allocateMemory()
@@ -60,6 +65,7 @@ namespace RottenBamboo
             throw std::runtime_error("failed to allocate buffer memory!");
         }
         std::cout << "RBBufferManager::allocateMemory()" << std::endl;
+        RBLOG_INFO("RBBufferManager::allocateMemory()");
     }
 
     void RBBufferManager::BindBufferMemory()
@@ -69,6 +75,7 @@ namespace RottenBamboo
             throw std::runtime_error("failed to bind buffer memory!");
         }
         std::cout << "RBBufferManager::BindBufferMemory()" << std::endl;
+        RBLOG_INFO("RBBufferManager::BindBufferMemory()");
     }
 
     void RBBufferManager::CreateBufferAllocBindMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkSharingMode sharingMode, VkMemoryPropertyFlags properties)
@@ -78,6 +85,7 @@ namespace RottenBamboo
         fillMemoryAllocateInfo(properties);
         allocateMemory();
         BindBufferMemory();
+        //RBLOG_INFO("RBBufferManager::CreateBufferAllocBindMemory()");
     }
 
     void RBBufferManager::copyMemory(VkDeviceSize size, void* dstData, stbi_uc* data)
@@ -85,6 +93,7 @@ namespace RottenBamboo
         vkMapMemory(rbDevice.device, bufferMemory, 0, size, 0, &dstData);
         memcpy(dstData, data, size);
         vkUnmapMemory(rbDevice.device, bufferMemory);
+        //RBLOG_INFO("RBBufferManager::copyMemory(VkDeviceSize size, void* dstData, stbi_uc* data)");
     }
 
     void RBBufferManager::copyMemory(VkDeviceSize size, void* dstData, float* data)
@@ -92,5 +101,6 @@ namespace RottenBamboo
         vkMapMemory(rbDevice.device, bufferMemory, 0, size, 0, &dstData);
         memcpy(dstData, data, size);
         vkUnmapMemory(rbDevice.device, bufferMemory);
+        //RBLOG_INFO("RBBufferManager::copyMemory(VkDeviceSize size, void* dstData, float* data)");
     }
 }

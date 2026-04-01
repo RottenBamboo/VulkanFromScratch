@@ -35,6 +35,7 @@ namespace RottenBamboo {
         InitializeGUI();
         InitializeMatrix();
         std::cout << "RBApplication::RBApplication()" << std::endl;
+            RBLOG_INFO("RBApplication::RBApplication()");
     }
 
     RBApplication::~RBApplication() {
@@ -44,6 +45,7 @@ namespace RottenBamboo {
     {
         windows.InitializeWindow();
         std::cout << "RBApplication::InitializeWindow()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeWindow()");
     }
 
     void RBApplication::InitializeCamera()
@@ -54,16 +56,19 @@ namespace RottenBamboo {
             }
         });
         std::cout << "RBApplication::InitializeCamera()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeCamera()");
     }
     void RBApplication::InitializeDevice()
     {
         device.InitializeDevice();
         std::cout << "RBApplication::InitializeDevice()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeDevice()");
     }
     void RBApplication::InitializeCommandBuffer()
     {
         commandBuffer.InitializeCommandBuffer();
         std::cout << "RBApplication::InitializeCommandBuffer()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeCommandBuffer()");
     }
 
     void RBApplication::InitializeSwapChain()
@@ -71,6 +76,7 @@ namespace RottenBamboo {
         swapChain.SetDepthView(&(descriptorsAttachment.rbImageManager.imageBundles[descriptorsAttachment.rbImageManager.getImageCount() - 1].imageView));
         swapChain.InitializeSwapChain();
         std::cout << "RBApplication::InitializeSwapChain()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeSwapChain()");
     }
 
     void RBApplication::InitializeBuffers()
@@ -81,6 +87,7 @@ namespace RottenBamboo {
         }
 
         std::cout << "RBApplication::InitializeBuffers()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeBuffers()");
     }
 
     void RBApplication::InitializeDescriptors()
@@ -108,6 +115,7 @@ namespace RottenBamboo {
         
         descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, attachmentParams, depthParams, resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT), true);
         std::cout << "RBApplication::InitializeDescriptors(const RBResourceShader& resourceShader)" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeDescriptors(const RBResourceShader& resourceShader)");
     }
 
     void RBApplication::InitializeGraphicPipeline()
@@ -118,12 +126,14 @@ namespace RottenBamboo {
 
         skyPassManager.InitializeGraphicPipeline();
         std::cout << "RBApplication::InitializeGraphicPipeline()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeGraphicPipeline()");
     };
 
     void RBApplication::InitializeGUI()
     {
         gui.Initialize(swapChain.renderPass);
         std::cout << "RBApplication::InitializeGUI()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeGUI()");
     };
 
     void RBApplication::transformModelVertex(

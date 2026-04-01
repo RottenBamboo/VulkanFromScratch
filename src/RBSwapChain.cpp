@@ -223,6 +223,7 @@ namespace RottenBamboo{
 
         if(vkCreateRenderPass(refDevice.device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS)
         {
+            RBLOG_FATAL("failed to create render pass!");
             throw::std::runtime_error("failed to create render pass!");
         }
     }
@@ -245,6 +246,7 @@ namespace RottenBamboo{
 
             if(vkCreateFramebuffer(refDevice.device, &framebufferInfo, nullptr, &swapChainFrameBuffers[i]) != VK_SUCCESS)
             {
+                RBLOG_FATAL("failed to create framebuffer");
                 throw::std::runtime_error("failed to create framebuffer");
             }
         }
@@ -342,6 +344,7 @@ namespace RottenBamboo{
             if (vkCreateSemaphore(refDevice.device, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS
                 || vkCreateSemaphore(refDevice.device, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS
                 || vkCreateFence(refDevice.device, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
+                RBLOG_FATAL("failed to create synchronization object for a frame!");
                 throw ::std::runtime_error("failed to create synchronization object for a frame!");
             }
         }

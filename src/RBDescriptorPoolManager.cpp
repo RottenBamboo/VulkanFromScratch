@@ -9,12 +9,14 @@ namespace RottenBamboo {
     RBDescriptorPoolManager::RBDescriptorPoolManager(RBDevice &device) : rbDevice(device)
     {
         std::cout << "RBDescriptorPoolManager::RBDescriptorPoolManager()" << std::endl;
+            RBLOG_INFO("RBDescriptorPoolManager::RBDescriptorPoolManager()");
     }
 
     RBDescriptorPoolManager::~RBDescriptorPoolManager()
     {
         Destroy();
         std::cout << "RBDescriptorPoolManager::~RBDescriptorPoolManager()" << std::endl;
+            RBLOG_INFO("RBDescriptorPoolManager::~RBDescriptorPoolManager()");
     }
 
     void RBDescriptorPoolManager::Destroy()
@@ -23,6 +25,7 @@ namespace RottenBamboo {
         descriptorPool = VK_NULL_HANDLE;
         poolSizes = {};
         std::cout << "RBDescriptorPoolManager::~Destroy()" << std::endl;
+            RBLOG_INFO("RBDescriptorPoolManager::~Destroy()");
     }
 
     void RBDescriptorPoolManager::fillDescriptorPoolSize(VkDescriptorType type,uint32_t descriptorCount)
@@ -32,6 +35,7 @@ namespace RottenBamboo {
         poolSizes.descriptorCount = descriptorCount;
         this->poolSizes.push_back(poolSizes);
         std::cout << "RBDescriptorPoolManager::fillDescriptorPoolSize()" << std::endl;
+            RBLOG_INFO("RBDescriptorPoolManager::fillDescriptorPoolSize()");
     }
 
     void RBDescriptorPoolManager::fillDescriptorPoolCreateInfo(VkStructureType type, uint32_t maxSets)
@@ -43,6 +47,7 @@ namespace RottenBamboo {
         poolInfo.pPoolSizes = poolSizes.data();
         poolInfo.maxSets = maxSets;
         std::cout << "RBDescriptorPoolManager::fillDescriptorPoolCreateInfo()" << std::endl;
+            RBLOG_INFO("RBDescriptorPoolManager::fillDescriptorPoolCreateInfo()");
     }
 
     void RBDescriptorPoolManager::CreateDescriptorPool()
@@ -52,5 +57,6 @@ namespace RottenBamboo {
             throw std::runtime_error("failed to create descriptor pool!");
         }
         std::cout << "RBDescriptorPoolManager::CreateDescriptorPool()" << std::endl;
+            RBLOG_INFO("RBDescriptorPoolManager::CreateDescriptorPool()");
     }
 }

@@ -5,12 +5,14 @@ namespace RottenBamboo {
     RBShaderModule::RBShaderModule(RBDevice &device) : device(device) 
     {
         std::cout << "RBShaderModule::RBShaderModule()" << std::endl;
+        RBLOG_INFO("RBShaderModule::RBShaderModule()");
     }
 
     RBShaderModule::~RBShaderModule() 
     {
         Destroy();
         std::cout << "RBShaderModule::~RBShaderModule()" << std::endl;
+        RBLOG_INFO("RBShaderModule::~RBShaderModule()");
     }
 
     void RBShaderModule::Destroy()
@@ -18,6 +20,7 @@ namespace RottenBamboo {
         vkDestroyShaderModule(device.device, module, nullptr);
         module = VK_NULL_HANDLE;;
         std::cout << "RBShaderModule::Destroy()" << std::endl;
+        RBLOG_INFO("RBShaderModule::Destroy()");
     }
     void RBShaderModule::fillCreateInfo(const std::vector<char> &code)
     {
@@ -37,10 +40,12 @@ namespace RottenBamboo {
             throw std::runtime_error("failed to create shader module!");
         }
         std::cout << "RBShaderModule::createShaderModule()" << std::endl;
+        RBLOG_INFO("RBShaderModule::createShaderModule()");
     }
     VkShaderModule RBShaderModule::get() const
     {
         std::cout << "RBShaderModule::get()" << std::endl;
+        RBLOG_INFO("RBShaderModule::get()");
         return module;
     }
 }

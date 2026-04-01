@@ -64,6 +64,7 @@ namespace RottenBamboo {
                 uniformBufferCount++;
                 typeCount = uniformBufferCount;
                 std::cout << "Uniform buffer" << std::endl;
+                RBLOG_INFO("Uniform buffer");
             }
             else if (storage == spv::StorageClassStorageBuffer)
             {
@@ -71,6 +72,7 @@ namespace RottenBamboo {
                 storageBufferCount++;
                 typeCount = storageBufferCount;
                 std::cout << "Storage buffer" << std::endl;
+                RBLOG_INFO("Storage buffer");
             }
             else if (storage == spv::StorageClassUniformConstant)
             {
@@ -80,6 +82,7 @@ namespace RottenBamboo {
                     combinedImageSamplerCount++;
                     typeCount = combinedImageSamplerCount;
                     std::cout << "Combined image sampler" << std::endl;
+                    RBLOG_INFO("Combined image sampler");
                 }
                 else if (baseType.basetype == spirv_cross::SPIRType::Image)
                 {
@@ -87,6 +90,7 @@ namespace RottenBamboo {
                     sampledImageCount++;
                     typeCount = sampledImageCount;
                     std::cout << "Sampled image" << std::endl;
+                    RBLOG_INFO("Sampled image");
                 }
                 else if (baseType.basetype == spirv_cross::SPIRType::Sampler)
                 {
@@ -94,6 +98,7 @@ namespace RottenBamboo {
                     samplerCount++;
                     typeCount = samplerCount;
                     std::cout << "Sampler" << std::endl;
+                    RBLOG_INFO("Sampler");
                 }
             }
 
@@ -107,6 +112,7 @@ namespace RottenBamboo {
                 bindingInfo.type = descType;
                 bindingInfo.count = 1;
                 std::cout << "Descriptor Set: " << set << ", Binding: " << binding << std::endl;
+                RBLOG_INFO("Descriptor Set: %d, Binding: %d", set, binding);
                 setInfo.typeCount[descType] = typeCount;
                 typeCount = 0;
                 continue;
@@ -121,6 +127,7 @@ namespace RottenBamboo {
 
                 shaderReflection[shaderPipelineStage].pushConstants.push_back(range);
                 std::cout << "constant offset " << range.offset << ", constant size " << range.size << std::endl;
+                RBLOG_INFO("constant offset %d, constant size %d", range.offset, range.size);
                 continue;
             }
 
@@ -185,6 +192,7 @@ namespace RottenBamboo {
                 }
                 shaderReflection[shaderPipelineStage].vertexInputs.push_back(inputAttr);
                 std::cout << "Location:: Binding: " << binding << ", Type: " << typeName << ", Offset: " << currentOffset << std::endl;
+                RBLOG_INFO("Location:: Binding: %d, Type: %s, Offset: %d", binding, typeName.c_str(), currentOffset);
             }
         }
     }
@@ -231,6 +239,7 @@ VkFormat RBResourceShader::SpirvImageFormatToVkFormat(spv::ImageFormat format)
     {
         auto shaderCode = RBPipelineUtils::readFile(path);
         std::cout << "Loaded shader code from : " << path << std::endl;
+        RBLOG_INFO("Loaded shader code from : %s", path.c_str());
         size_t codeSize = shaderCode.size();
         if (codeSize % sizeof(uint32_t) != 0)
         {

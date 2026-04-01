@@ -80,6 +80,7 @@ namespace RottenBamboo {
             uint32_t set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
             uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
             std::cout << "Uniform Buffer - Set: " << set << ", Binding: " << binding << ", Name: " << resource.name << std::endl;
+            RBLOG_INFO("Uniform Buffer - Set: %d, Binding: %d, Name: %s", set, binding, resource.name.c_str());
         }
 
         for (const auto& resource : resources.sampled_images) 
@@ -87,6 +88,7 @@ namespace RottenBamboo {
             uint32_t set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
             uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
             std::cout << "Sampled Image - Set: " << set << ", Binding: " << binding << ", Name: " << resource.name << std::endl;
+            RBLOG_INFO("Sampled Image - Set: %d, Binding: %d, Name: %s", set, binding, resource.name.c_str());
         }
     }
 }

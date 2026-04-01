@@ -445,6 +445,7 @@ std::string RBModel::Base64Encode(const std::vector<uint8_t>& data) {
 // 桌面端原有代码保持不变
 void RBModel::Load(const std::string& path) {
         std::cout << "RBModel::Load() Begin" << std::endl;
+        RBLOG_INFO("RBModel::Load() Begin");
         printCurrentWorkingDirectory();
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFile(path.c_str(),
@@ -463,6 +464,7 @@ void RBModel::Load(const std::string& path) {
         else 
         {
             std::cout << "Assimp import succeeded!" << std::endl;
+            RBLOG_INFO("Assimp import succeeded!");
         }
 
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
@@ -473,6 +475,7 @@ void RBModel::Load(const std::string& path) {
         std::cout << "Root node name: " << scene->mRootNode->mName.C_Str() << "\n";
         std::cout << "Mesh count in root node: " << scene->mRootNode->mNumMeshes << "\n";
         std::cout << "Child count in root node: " << scene->mRootNode->mNumChildren << "\n";
+        RBLOG_INFO("Root node name: %s", scene->mRootNode->mName.C_Str());
         
         std::unordered_map<Vertex, uint32_t> uniqueVertices{};
 
@@ -494,12 +497,15 @@ void RBModel::Load(const std::string& path) {
         mesh->InitializeMesh();
 
         std::cout << "RBModel::Load() Before push_back()!" << std::endl;
+        RBLOG_INFO("RBModel::Load() Before push_back()");
         meshes.push_back(std::move(mesh));
 
         //std::cout << "Mesh vertex count: " << mesh->vertexBuffer.data.size() << std::endl;
         //std::cout << "Mesh index count: " << mesh->indexBuffer.data.size() << std::endl;
         std::cout << "RBModel::loadModel() - model loaded using Assimp" << std::endl;
         std::cout << "RBModel::Load() End" << std::endl;
+        RBLOG_INFO("RBModel::loadModel() - model loaded using Assimp");
+        RBLOG_INFO("RBModel::Load() End");
     }
 #endif
-} // Rottenbamboo
+} // RottenBamboo

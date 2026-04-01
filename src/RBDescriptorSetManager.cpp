@@ -7,12 +7,14 @@ namespace RottenBamboo{
     RBDescriptorSetManager::RBDescriptorSetManager(RBDevice &device) : rbDevice(device)
     {
         std::cout << "RBDescriptorSetManager::RBDescriptorSetManager()" << std::endl;
+            RBLOG_INFO("RBDescriptorSetManager::RBDescriptorSetManager()");
     }
 
     RBDescriptorSetManager::~RBDescriptorSetManager()
     {
         Destroy();
         std::cout << "RBDescriptorSetManager::~RBDescriptorSetManager()" << std::endl;
+            RBLOG_INFO("RBDescriptorSetManager::~RBDescriptorSetManager()");
     }
 
     void RBDescriptorSetManager::Destroy()
@@ -24,6 +26,7 @@ namespace RottenBamboo{
         descriptorSets.clear();
         descriptorWrites.clear();
         std::cout << "RBDescriptorSetManager::Destroy()" << std::endl;
+            RBLOG_INFO("RBDescriptorSetManager::Destroy()");
     }
 
     void RBDescriptorSetManager::fillDescriptorSetsAllocateInfo(VkDescriptorPool &descriptorPool, uint32_t descriptorSetCount, const VkDescriptorSetLayout* pSetLayouts)
@@ -34,6 +37,7 @@ namespace RottenBamboo{
         allocInfo.descriptorSetCount = descriptorSetCount;
         allocInfo.pSetLayouts = pSetLayouts;
         std::cout << "RBDescriptorSetManager::fillDescriptorSetsAllocateInfo()" << std::endl;
+            RBLOG_INFO("RBDescriptorSetManager::fillDescriptorSetsAllocateInfo()");
     }
 
     void RBDescriptorSetManager::fillDescriptotSetsWriteBuffer(uint32_t dstSetIndex, uint32_t dstBinding, uint32_t dstArrayElement, uint32_t descriptorCount, VkDescriptorType descriptorType, const VkDescriptorBufferInfo* pBufferInfo)
@@ -73,6 +77,7 @@ namespace RottenBamboo{
             throw std::runtime_error("failed to allocate descriptor sets!");
         }
         std::cout << "RBDescriptorSetManager::allocateDescriptorSets()" << std::endl;
+            RBLOG_INFO("RBDescriptorSetManager::allocateDescriptorSets()");
     }
 
     void RBDescriptorSetManager::updateDescriptorSets(RBDevice &device)
@@ -100,6 +105,7 @@ namespace RottenBamboo{
         descriptorSets.clear();
         descriptorSets.reserve(0);
         std::cout << "RBDescriptorSetManager::clearDescriptorSets() " << "descriptorWrites size: " << descriptorWrites.size() << std::endl;
+            RBLOG_INFO("RBDescriptorSetManager::clearDescriptorSets() " "descriptorWrites size: %d", descriptorWrites.size());
     }
 
     VkDescriptorSet* RBDescriptorSetManager::getDescriptorSet(int index)

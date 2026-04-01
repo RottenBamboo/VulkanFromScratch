@@ -53,6 +53,7 @@ namespace RottenBamboo{
         this->imageCount = imageCountFragment + imageCountVertex + depthCount;
 
         std::cout << "SetResourceCount()" << ", Buffer count: " << this->bufferCount << ", Image count: " << this->imageCount << std::endl;
+            RBLOG_INFO("RBDescriptors::SetResourceCount(), Buffer count: %d, Image count: %d", this->bufferCount, this->imageCount);
     }
 
     void RBDescriptors::createDescriptorPool()
@@ -218,16 +219,24 @@ namespace RottenBamboo{
             stbi_image_free(pixels);
 
 
-            VkImageUsageFlags usageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-            if(isColorAttachment)
+            VkImageUsageFlags usageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+            if(imagesInfo[index].format == VK_FORMAT_D32_SFLOAT || imagesInfo[index].format == VK_FORMAT_D16_UNORM)
+            {
+                usageFlags = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+            }
+            else
             {
                 usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+                if(isColorAttachment)
+                {
+                    usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+                }
             }
             rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, msaaSamples, imagesInfo[index].format, VK_IMAGE_TILING_OPTIMAL, usageFlags);
             rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageBundle.image, imageBundle.imageMemory);
 
             VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-            rbImageManager.transitionImageLayout(commandBuffer, imageBundle.image, imagesInfo[index].format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
+            rbImageManager.transitionImageLayout(commandBuffer, imageBundle.image, imagesInfo[index].format, usageFlags, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
             rbCommandBuffer.endSingleTimeCommands(commandBuffer);
 
             copyBufferToImage(stageBufferManager.buffer, imageBundle.image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
@@ -245,18 +254,19 @@ namespace RottenBamboo{
             
             if (supportsLinearBlitting && supportsBlit && mipLevels > 1) 
             {
-                generateMipmaps(imageBundle.image, imagesInfo[index].format, texWidth, texHeight, mipLevels);
+                generateMipmaps(imageBundle.image, imagesInfo[index].format, usageFlags, texWidth, texHeight, mipLevels);
             } 
             else 
             {
                 // transition to final layout directly
                 VkCommandBuffer layoutCmdBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-                rbImageManager.transitionImageLayout(layoutCmdBuffer, imageBundle.image, imagesInfo[index].format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
+                rbImageManager.transitionImageLayout(layoutCmdBuffer, imageBundle.image, imagesInfo[index].format, usageFlags, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
                 rbCommandBuffer.endSingleTimeCommands(layoutCmdBuffer);
             }
             index++;
             std::cout << "index = " << index << std::endl;
             std::cout << "mipLevels = " << mipLevels << std::endl;
+            RBLOG_INFO("RBDescriptors::SetResourceCount(), Buffer count: %d, Image count: %d", this->bufferCount, this->imageCount);
         }
     }
 
@@ -285,6 +295,7 @@ namespace RottenBamboo{
             imageIndex++;
             std::cout << "index = " << imageIndex << std::endl;
             std::cout << "mipLevels = " << mipLevels << std::endl;
+            RBLOG_INFO("index = %d, mipLevels = %d", imageIndex, mipLevels);
         }
     }
 
@@ -328,7 +339,7 @@ namespace RottenBamboo{
         rbCommandBuffer.endSingleTimeCommands(commandBuffer);
     }
 
-    void RBDescriptors::generateMipmaps(VkImage image, VkFormat imageFormat, uint32_t texWidth, uint32_t texHeight, uint32_t mipLevels)
+    void RBDescriptors::generateMipmaps(VkImage image, VkFormat imageFormat, VkImageUsageFlags usage, uint32_t texWidth, uint32_t texHeight, uint32_t mipLevels)
     {
         // check linear blitting compatibility
         VkFormatProperties formatProperties;
@@ -354,7 +365,7 @@ namespace RottenBamboo{
             barrier.image = image;
             barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
             barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-            barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            barrier.subresourceRange.aspectMask = usage;
             barrier.subresourceRange.baseMipLevel = 0;
             barrier.subresourceRange.levelCount = mipLevels;
             barrier.subresourceRange.baseArrayLayer = 0;
@@ -383,7 +394,7 @@ namespace RottenBamboo{
         barrier.image = image;
         barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
         barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        barrier.subresourceRange.aspectMask = usage;
         barrier.subresourceRange.baseArrayLayer = 0;
         barrier.subresourceRange.layerCount = 1;
         barrier.subresourceRange.levelCount = 1;
@@ -403,13 +414,13 @@ namespace RottenBamboo{
             VkImageBlit blit{};
             blit.srcOffsets[0] = {0, 0, 0};
             blit.srcOffsets[1] = { mipWidth, mipHeight, 1};
-            blit.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            blit.srcSubresource.aspectMask = usage;
             blit.srcSubresource.mipLevel = i - 1;
             blit.srcSubresource.baseArrayLayer = 0;
             blit.srcSubresource.layerCount = 1;
             blit.dstOffsets[0] = {0, 0, 0};
             blit.dstOffsets[1] = {mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1};
-            blit.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            blit.dstSubresource.aspectMask = usage;
             blit.dstSubresource.mipLevel = i;
             blit.dstSubresource.baseArrayLayer = 0;
             blit.dstSubresource.layerCount = 1;

@@ -33,6 +33,7 @@ namespace RottenBamboo {
     if (!SDL_Init(SDL_INIT_VIDEO)) 
     {
         SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+        RBLOG_FATAL("Failed to initialize SDL!");
     }
 
     std::cout << "SDL Initialized successfully!\n";

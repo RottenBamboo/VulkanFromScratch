@@ -35,11 +35,13 @@ namespace RottenBamboo {
             i++;
         }
         std::cout << "RBCommandBuffer::findQueueFamilies()" << std::endl;
+            RBLOG_INFO("RBCommandBuffer::findQueueFamilies()");
         return indices;
     }
 
     RBCommandBuffer::RBCommandBuffer(RBDevice &device) : rbDevice(device) {
         std::cout << "RBCommandBuffer::RBCommandBuffer()" << std::endl;
+            RBLOG_INFO("RBCommandBuffer::RBCommandBuffer()");
     }
 
     void RBCommandBuffer::InitializeCommandBuffer()
@@ -47,6 +49,7 @@ namespace RottenBamboo {
         createCommandPool();
         createCommandBuffers();
         std::cout << "RBCommandBuffer::InitializeCommandBuffer()" << std::endl;
+            RBLOG_INFO("RBCommandBuffer::InitializeCommandBuffer()");
     }
 
     VkCommandBuffer RBCommandBuffer::beginSingleTimeCommands(VkCommandBufferLevel level)
@@ -66,6 +69,7 @@ namespace RottenBamboo {
 
         vkBeginCommandBuffer(commandBuffer, &beginInfo);
         std::cout << "RBCommandBuffer::beginSingleTimeCommands()" << std::endl;
+            RBLOG_INFO("RBCommandBuffer::beginSingleTimeCommands()");
         return commandBuffer;
     }
 
@@ -82,6 +86,7 @@ namespace RottenBamboo {
 
         vkFreeCommandBuffers(rbDevice.device, commandPool, 1, &commandBuffer);
         std::cout << "RBCommandBuffer::endSingleTimeCommands()" << std::endl;
+            RBLOG_INFO("RBCommandBuffer::endSingleTimeCommands()");
     }
 
     void RBCommandBuffer::createCommandBuffers() {
@@ -98,6 +103,7 @@ namespace RottenBamboo {
             throw std::runtime_error("failed to allocate command buffers!");
         }
         std::cout << "RBCommandBuffer::createCommandBuffers()" << std::endl;
+            RBLOG_INFO("RBCommandBuffer::createCommandBuffers()");
     }
 
     void RBCommandBuffer::createCommandPool() {
@@ -111,11 +117,13 @@ namespace RottenBamboo {
             RBLOG_FATAL("failed to create command pool!");
             throw std::runtime_error("failed to create command pool!");
         }
-        std::cout << "RBCommandBuffer::createCommandBuffers()" << std::endl;
+        std::cout << "RBCommandBuffer::createCommandPool()" << std::endl;
+            RBLOG_INFO("RBCommandBuffer::createCommandPool()");
     }
 
     RBCommandBuffer::~RBCommandBuffer() {
         vkDestroyCommandPool(rbDevice.device, commandPool, nullptr);
-        std::cout << "RBCommandBuffer::RBCommandBuffer()" << std::endl;
+        std::cout << "RBCommandBuffer::~RBCommandBuffer()" << std::endl;
+            RBLOG_INFO("RBCommandBuffer::~RBCommandBuffer()");
     }
 }
