@@ -220,9 +220,11 @@ namespace RottenBamboo{
 
 
             VkImageUsageFlags usageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+            VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
             if(imagesInfo[index].format == VK_FORMAT_D32_SFLOAT || imagesInfo[index].format == VK_FORMAT_D16_UNORM)
             {
                 usageFlags = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+                aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
             }
             else
             {
@@ -236,7 +238,7 @@ namespace RottenBamboo{
             rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageBundle.image, imageBundle.imageMemory);
 
             VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-            rbImageManager.transitionImageLayout(commandBuffer, imageBundle.image, imagesInfo[index].format, usageFlags, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
+            rbImageManager.transitionImageLayout(commandBuffer, imageBundle.image, imagesInfo[index].format, aspectFlags, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
             rbCommandBuffer.endSingleTimeCommands(commandBuffer);
 
             copyBufferToImage(stageBufferManager.buffer, imageBundle.image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
@@ -260,7 +262,7 @@ namespace RottenBamboo{
             {
                 // transition to final layout directly
                 VkCommandBuffer layoutCmdBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-                rbImageManager.transitionImageLayout(layoutCmdBuffer, imageBundle.image, imagesInfo[index].format, usageFlags, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
+                rbImageManager.transitionImageLayout(layoutCmdBuffer, imageBundle.image, imagesInfo[index].format, aspectFlags, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
                 rbCommandBuffer.endSingleTimeCommands(layoutCmdBuffer);
             }
             index++;
