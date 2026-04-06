@@ -57,9 +57,9 @@ namespace RottenBamboo {
 
         void transitionImageLayout(VkCommandBuffer &commandBuffer, VkImage image, VkFormat format, VkImageAspectFlags aspectMask, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
 
-        void copyBufferToImage(VkCommandBuffer &commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+        void copyBufferToImage(VkCommandBuffer &commandBuffer, VkBuffer buffer, VkImage image, VkImageAspectFlags aspectFlags, uint32_t width, uint32_t height);
 
-        void fillBufferImageCopy(VkBufferImageCopy &region, uint32_t width, uint32_t height);
+        void fillBufferImageCopy(VkBufferImageCopy &region, VkImageAspectFlags aspectFlags, uint32_t width, uint32_t height);
 
         void createImage(VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
 

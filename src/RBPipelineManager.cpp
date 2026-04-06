@@ -349,7 +349,7 @@ namespace RottenBamboo {
 
         VkAttachmentReference depthAttachmentRef{};
         depthAttachmentRef.attachment = pureColorAttachmentCount * ColorAttachKind;
-        depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        depthAttachmentRef.layout = depthAttachmentDescription.finalLayout;
 
         VkSubpassDescription subpass{};
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;

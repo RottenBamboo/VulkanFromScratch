@@ -110,6 +110,7 @@ namespace RottenBamboo{
         VkFormat colorFormat = swapChainImageFormat;
         createImage(swapChainExtent.width, swapChainExtent.height, 1, msaaSamples, colorFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, colorImage, colorImageMemory);
         colorImageView = createImageView(colorImage, colorFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
+        RBLOG_INFO("RBSwapChain::createColorResources()");
     }
 
     VkFormat RBSwapChain::findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
@@ -142,8 +143,9 @@ namespace RottenBamboo{
     void RBSwapChain::createDepthResources()
     {
         VkFormat depthFormat = findDepthFormat();
-        createImage(swapChainExtent.width, swapChainExtent.height, 1, msaaSamples, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
+        createImage(swapChainExtent.width, swapChainExtent.height, 1, msaaSamples, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
         depthImageView = createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
+        RBLOG_INFO("RBSwapChain::createDepthResources()");
     }
 
     void RBSwapChain::createRenderPass()
@@ -173,13 +175,13 @@ namespace RottenBamboo{
 
         VkAttachmentDescription colorAttachmentResolve{};
         colorAttachmentResolve.format = swapChainImageFormat;
-        colorAttachmentResolve.samples = VK_SAMPLE_COUNT_1_BIT;
+        colorAttachmentResolve.samples = msaaSamples;
         colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
         colorAttachmentResolve.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
         colorAttachmentResolve.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         colorAttachmentResolve.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        colorAttachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+        colorAttachmentResolve.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        colorAttachmentResolve.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 
         VkAttachmentReference colorAttachmentResolveRef{};
@@ -226,6 +228,7 @@ namespace RottenBamboo{
             RBLOG_FATAL("failed to create render pass!");
             throw::std::runtime_error("failed to create render pass!");
         }
+        RBLOG_INFO("RBSwapChain::createRenderPass()");
     }
 
     void RBSwapChain::createFrameBuffers()
@@ -249,6 +252,7 @@ namespace RottenBamboo{
                 RBLOG_FATAL("failed to create framebuffer");
                 throw::std::runtime_error("failed to create framebuffer");
             }
+            RBLOG_INFO("RBSwapChain::createFrameBuffers()");
         }
     }
 
@@ -259,6 +263,7 @@ namespace RottenBamboo{
         {
             swapChainImageViews[i] = createImageView(swapChainImages[i], swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
         }
+        RBLOG_INFO("RBSwapChain::createImageView()");
     }
 
     void RBSwapChain::SetSwapChainExtent(RBDevice& rbDevice, RBWindows& window)
@@ -325,6 +330,7 @@ namespace RottenBamboo{
         swapChainImageFormat = surfaceFormat.format;
 
         swapChainExtent = extent;
+        RBLOG_INFO("RBSwapChain::CreateSwapChain()");
     }
 
     void RBSwapChain::createSyncObjects()
@@ -348,6 +354,7 @@ namespace RottenBamboo{
                 throw ::std::runtime_error("failed to create synchronization object for a frame!");
             }
         }
+        RBLOG_INFO("RBSwapChain::createSyncObjects()");
     }
 
     void RBSwapChain::InitializeSwapChain()

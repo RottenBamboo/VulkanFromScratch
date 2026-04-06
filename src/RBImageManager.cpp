@@ -278,12 +278,12 @@ namespace RottenBamboo {
         RBLOG_INFO("RBImageManager::createImage()");
     }
 
-    void RBImageManager::fillBufferImageCopy(VkBufferImageCopy &region, uint32_t width, uint32_t height)
+    void RBImageManager::fillBufferImageCopy(VkBufferImageCopy &region, VkImageAspectFlags aspectFlags, uint32_t width, uint32_t height)
     {
         region.bufferOffset = 0;
         region.bufferRowLength = 0;
         region.bufferImageHeight = 0;
-        region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        region.imageSubresource.aspectMask = aspectFlags;
         region.imageSubresource.mipLevel = 0;
         region.imageSubresource.baseArrayLayer = 0;
         region.imageSubresource.layerCount = 1;
@@ -295,9 +295,9 @@ namespace RottenBamboo {
         };
     }
 
-    void RBImageManager::copyBufferToImage(VkCommandBuffer &commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
-
-        fillBufferImageCopy(region, width, height);
+    void RBImageManager::copyBufferToImage(VkCommandBuffer &commandBuffer, VkBuffer buffer, VkImage image, VkImageAspectFlags aspectFlags, uint32_t width, uint32_t height) 
+    {
+        fillBufferImageCopy(region, aspectFlags, width, height);
         vkCmdCopyBufferToImage(
                 commandBuffer,
                 buffer,

@@ -54,7 +54,7 @@ namespace RottenBamboo {
 
         void generateMipmaps(VkImage image, VkFormat imageFormat, VkImageUsageFlags usage, uint32_t texWidth, uint32_t texHeight, uint32_t mipLevels);
 
-        void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+        void copyBufferToImage(VkBuffer buffer, VkImage image, VkImageAspectFlags aspectFlags, uint32_t width, uint32_t height);
 
         void createTextureImage();
         
@@ -94,8 +94,12 @@ namespace RottenBamboo {
         ~RBDescriptors();
 
         void checkImagesInfo();
+                                   
+        void SetBufferParams(TextureParams& attachmentParams, TextureParams& depthParams);
 
-        void InitializeDescriptors(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled = false);
+        void InitializeDescriptors(const RBShaderReflection* resourceShaderVertex, 
+                                   const RBShaderReflection* resourceShaderFragment, 
+                                   bool depthEnabled = false);
         
         void InitializeDescriptorsFrameBuffer(VkExtent2D framebufferExtent, 
                                               const TextureParams& attachmentParams,

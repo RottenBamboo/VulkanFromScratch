@@ -223,7 +223,7 @@ namespace RottenBamboo{
             VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
             if(imagesInfo[index].format == VK_FORMAT_D32_SFLOAT || imagesInfo[index].format == VK_FORMAT_D16_UNORM)
             {
-                usageFlags = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+                usageFlags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
                 aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
             }
             else
@@ -241,7 +241,7 @@ namespace RottenBamboo{
             rbImageManager.transitionImageLayout(commandBuffer, imageBundle.image, imagesInfo[index].format, aspectFlags, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
             rbCommandBuffer.endSingleTimeCommands(commandBuffer);
 
-            copyBufferToImage(stageBufferManager.buffer, imageBundle.image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+            copyBufferToImage(stageBufferManager.buffer, imageBundle.image, aspectFlags, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 
             //VkCommandBuffer commandBufferEnd = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
             //rbImageManager.transitionImageLayout(commandBufferEnd, imageBundle.image, imagesInfo[index].format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
@@ -289,7 +289,7 @@ namespace RottenBamboo{
             //     usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
             // }
 
-            VkImageUsageFlagBits usageFlags = DepthEnabled() && (imageIndex == imageCount - 1) ? depthParams.usage : attachmentParams.usage;
+            VkImageUsageFlags usageFlags = DepthEnabled() && (imageIndex == imageCount - 1) ? depthParams.usage : attachmentParams.usage;
             VkFormat format = DepthEnabled() && (imageIndex == imageCount - 1) ? depthParams.format : attachmentParams.format;
             rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, msaaSamples, format, VK_IMAGE_TILING_OPTIMAL, usageFlags);
             rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageBundle.image, imageBundle.imageMemory);
@@ -311,7 +311,7 @@ namespace RottenBamboo{
         int index = 0;
         for (auto & imageBundle : rbImageManager.imageBundles)
         {
-            rbImageManager.fillViewInfo(imageBundle.viewInfo, imageBundle.image, VK_IMAGE_VIEW_TYPE_2D, imagesInfo[index].format, VK_IMAGE_ASPECT_COLOR_BIT, mipLevels);
+            rbImageManager.fillViewInfo(imageBundle.viewInfo, imageBundle.image, VK_IMAGE_VIEW_TYPE_2D, imagesInfo[index].format, imagesInfo[index].aspect, mipLevels);
             rbImageManager.createImageView(imageBundle.viewInfo, imageBundle.imageView);
             index++;
         }
@@ -325,7 +325,7 @@ namespace RottenBamboo{
         for (auto & imageBundle : rbImageManager.imageBundles)
         {
             VkFormat format = (DepthEnabled() && (imageViewIndex == imageCount - 1)) ? depthParams.format : attachmentParams.format;
-            VkImageAspectFlagBits aspect = (DepthEnabled() && (imageViewIndex == imageCount - 1)) ? depthParams.aspect : attachmentParams.aspect;
+            VkImageAspectFlags aspect = (DepthEnabled() && (imageViewIndex == imageCount - 1)) ? depthParams.aspect : attachmentParams.aspect;
             rbImageManager.fillViewInfo(imageBundle.viewInfo, imageBundle.image, VK_IMAGE_VIEW_TYPE_2D, format, aspect, mipLevels);
             rbImageManager.createImageView(imageBundle.viewInfo, imageBundle.imageView);
             imageViewIndex++;
@@ -333,10 +333,10 @@ namespace RottenBamboo{
 
     }
 
-    void RBDescriptors::copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
+    void RBDescriptors::copyBufferToImage(VkBuffer buffer, VkImage image, VkImageAspectFlags aspectFlags, uint32_t width, uint32_t height) {
         VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 
-        rbImageManager.copyBufferToImage(commandBuffer, buffer, image, width, height);
+        rbImageManager.copyBufferToImage(commandBuffer, buffer, image, aspectFlags, width, height);
 
         rbCommandBuffer.endSingleTimeCommands(commandBuffer);
     }

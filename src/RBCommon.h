@@ -23,10 +23,12 @@
 struct TexturesInfo
 {
     VkFormat format;
+    VkImageAspectFlags aspect;
+    
     bool isHDR;
     std::string path;
-    TexturesInfo() : format(VK_FORMAT_UNDEFINED), isHDR(false), path(""){}
-    TexturesInfo(VkFormat f, bool hdr, const std::string& p) : format(f), isHDR(hdr), path(p) {}
+    TexturesInfo() : format(VK_FORMAT_UNDEFINED), aspect(0), isHDR(false), path(""){}
+    TexturesInfo(VkFormat f, VkImageAspectFlags a, bool hdr, const std::string& p) : format(f), aspect(a), isHDR(hdr), path(p) {}
 };
 
 struct ShadersInfo
@@ -81,10 +83,11 @@ extern const std::vector<TexturesInfo> lowPolyTerrainTex;
 
 extern uint32_t mipLevels;
 
-#define attachmentUsageFlagBits (VkImageUsageFlagBits)(VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
+#define attachmentUsageFlagBits (VkImageUsageFlags)(VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
 
 extern VkSampleCountFlagBits msaaSamples;
 extern VkSampleCountFlagBits msaaSamples2;
+extern VkSampleCountFlagBits msaaSamples4;
 extern VkExtent2D swapChainExtent;
 extern uint32_t currentFrame;
 extern bool checkbox;
@@ -93,8 +96,8 @@ extern bool isDesiredHDR;
 
 const struct TextureParams
 {
-    VkImageUsageFlagBits usage;
-    VkImageAspectFlagBits aspect;
+    VkImageUsageFlags usage;
+    VkImageAspectFlags aspect;
     VkFormat format;
     VkImageLayout layout;
 };
