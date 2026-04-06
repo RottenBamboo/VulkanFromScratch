@@ -94,7 +94,7 @@ extern bool checkbox;
 extern bool isDeviceSupportHDR;
 extern bool isDesiredHDR;
 
-const struct TextureParams
+struct TextureParams
 {
     VkImageUsageFlags usage;
     VkImageAspectFlags aspect;
