@@ -295,8 +295,11 @@ namespace RottenBamboo {
 
     void RBPipelineManager::fillRenderPass(VkImageLayout layout, int attachmentCount = 1)
     {
+        const bool useResolveAttachment = isResolveAttachment && (colorAttachmentDescription.samples != VK_SAMPLE_COUNT_1_BIT);
+        const int colorAttachKind = 1 + (useResolveAttachment ? 1 : 0);
+
         attachmentDescriptions.clear();
-        attachmentDescriptions.reserve(depthAttachmentCount + pureColorAttachmentCount * ColorAttachKind);
+        attachmentDescriptions.reserve(depthAttachmentCount + pureColorAttachmentCount * colorAttachKind);
 
 
         for(int i = 0; i < pureColorAttachmentCount; i++)
@@ -307,7 +310,7 @@ namespace RottenBamboo {
         
         for(int i = 0; i < pureColorAttachmentCount; i++)
         {
-            if(isResolveAttachment)
+            if(useResolveAttachment)
             {
                 addColorAttachment(colorResolveAttachmentDescription);
             }
@@ -338,7 +341,7 @@ namespace RottenBamboo {
 
         std::vector<VkAttachmentReference> colorAttachmentResolveRef(pureColorAttachmentCount);
 
-        if(isResolveAttachment)
+        if(useResolveAttachment)
         {
             for(int i = 0; i < pureColorAttachmentCount; i++)
             {
@@ -348,7 +351,7 @@ namespace RottenBamboo {
         }
 
         VkAttachmentReference depthAttachmentRef{};
-        depthAttachmentRef.attachment = pureColorAttachmentCount * ColorAttachKind;
+        depthAttachmentRef.attachment = pureColorAttachmentCount * colorAttachKind;
         depthAttachmentRef.layout = depthAttachmentDescription.finalLayout;
 
         VkSubpassDescription subpass{};
@@ -356,7 +359,7 @@ namespace RottenBamboo {
         subpass.colorAttachmentCount = pureColorAttachmentCount;
         subpass.pColorAttachments = colorAttachmentRefs.data();
         subpass.pDepthStencilAttachment = isDepthAttachment ? &depthAttachmentRef : nullptr;
-        subpass.pResolveAttachments = isResolveAttachment ? colorAttachmentResolveRef.data() : nullptr;
+        subpass.pResolveAttachments = useResolveAttachment ? colorAttachmentResolveRef.data() : nullptr;
 
         VkSubpassDependency dependency{};
         dependency.srcSubpass = VK_SUBPASS_EXTERNAL;

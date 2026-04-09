@@ -108,10 +108,10 @@ namespace RottenBamboo{
     void RBSwapChain::createColorResources()
     {
         VkFormat colorFormat = swapChainImageFormat;
-        createImage(swapChainExtent.width, swapChainExtent.height, 1, msaaSamples4, colorFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, colorImage, colorImageMemory);
+        createImage(swapChainExtent.width, swapChainExtent.height, 1, msaaSamples, colorFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, colorImage, colorImageMemory);
         colorImageView = createImageView(colorImage, colorFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
 
-        RBLOG_INFO("RBSwapChain::createColorResources() - Created MSAA color image (samples: {}) and resolve image (samples: 1)", msaaSamples4);
+        RBLOG_INFO("RBSwapChain::createColorResources() - Created MSAA color image (samples: {}) and resolve image (samples: 1)", msaaSamples);
     }
 
     VkFormat RBSwapChain::findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
@@ -144,16 +144,18 @@ namespace RottenBamboo{
     void RBSwapChain::createDepthResources()
     {
         VkFormat depthFormat = findDepthFormat();
-        createImage(swapChainExtent.width, swapChainExtent.height, 1, msaaSamples4, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
+        createImage(swapChainExtent.width, swapChainExtent.height, 1, msaaSamples, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
         depthImageView = createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
         RBLOG_INFO("RBSwapChain::createDepthResources()");
     }
 
     void RBSwapChain::createRenderPass()
     {
+        const bool useResolveAttachment = (msaaSamples != VK_SAMPLE_COUNT_1_BIT);
+
         VkAttachmentDescription depthAttachment{};
         depthAttachment.format = findDepthFormat();
-        depthAttachment.samples = msaaSamples4;
+        depthAttachment.samples = msaaSamples;
         depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
         depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
         depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
@@ -164,24 +166,24 @@ namespace RottenBamboo{
 
         VkAttachmentDescription colorAttachment{};
         colorAttachment.format = swapChainImageFormat;
-        colorAttachment.samples = msaaSamples4;
+        colorAttachment.samples = msaaSamples;
         colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
         colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
         colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
         colorAttachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+        colorAttachment.finalLayout = useResolveAttachment ? VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL : VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 
 
         VkAttachmentDescription colorAttachmentResolve{};
         colorAttachmentResolve.format = swapChainImageFormat;
-        colorAttachmentResolve.samples = msaaSamples;
-        colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+        colorAttachmentResolve.samples = VK_SAMPLE_COUNT_1_BIT;
+        colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         colorAttachmentResolve.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
         colorAttachmentResolve.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         colorAttachmentResolve.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        colorAttachmentResolve.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        colorAttachmentResolve.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         colorAttachmentResolve.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 
@@ -202,7 +204,7 @@ namespace RottenBamboo{
         subpass.colorAttachmentCount = 1;
         subpass.pColorAttachments = &colorAttachmentRef;
         subpass.pDepthStencilAttachment = &depthAttachmentRef;
-        subpass.pResolveAttachments = &colorAttachmentResolveRef;
+        subpass.pResolveAttachments = useResolveAttachment ? &colorAttachmentResolveRef : nullptr;
 
         VkSubpassDependency dependency{};
         dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -213,7 +215,14 @@ namespace RottenBamboo{
         dependency.dstAccessMask = 0;
         dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
-        std::array<VkAttachmentDescription, 3> attachments = {colorAttachment, depthAttachment, colorAttachmentResolve};
+        std::vector<VkAttachmentDescription> attachments{};
+        attachments.reserve(useResolveAttachment ? 3 : 2);
+        attachments.push_back(colorAttachment);
+        attachments.push_back(depthAttachment);
+        if (useResolveAttachment)
+        {
+            attachments.push_back(colorAttachmentResolve);
+        }
 
         VkRenderPassCreateInfo renderPassInfo{};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -234,10 +243,24 @@ namespace RottenBamboo{
 
     void RBSwapChain::createFrameBuffers()
     {
+        const bool useResolveAttachment = (msaaSamples != VK_SAMPLE_COUNT_1_BIT);
+
         swapChainFrameBuffers.resize(swapChainImageViews.size());
         for(size_t i = 0; i < swapChainImageViews.size(); i++)
         {
-            std::array<VkImageView, 3> attachments = {swapChainImageViews[i], depthImageView, colorImageView};
+            std::vector<VkImageView> attachments{};
+            attachments.reserve(useResolveAttachment ? 3 : 2);
+            if (useResolveAttachment)
+            {
+                attachments.push_back(colorImageView);
+                attachments.push_back(depthImageView);
+                attachments.push_back(swapChainImageViews[i]);
+            }
+            else
+            {
+                attachments.push_back(swapChainImageViews[i]);
+                attachments.push_back(depthImageView);
+            }
 
             VkFramebufferCreateInfo framebufferInfo{};
             framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;

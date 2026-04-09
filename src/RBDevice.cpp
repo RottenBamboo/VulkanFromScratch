@@ -221,7 +221,7 @@ namespace RottenBamboo {
             for (const auto &device: devices) {
                 if (isDeviceSuitable(device)) {
                     physicalDevice = device;
-                    msaaSamples = getMaxUsableSampleCount();
+                    this->msaaSamples = getMaxUsableSampleCount();
                     VkPhysicalDeviceProperties deviceProperties;
                     vkGetPhysicalDeviceProperties(device, &deviceProperties);
                     VkPhysicalDeviceType deviceType = deviceProperties.deviceType;
