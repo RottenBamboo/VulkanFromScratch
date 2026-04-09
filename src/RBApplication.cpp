@@ -19,7 +19,7 @@ namespace RottenBamboo {
 
         model_paths.insert({0, MODEL_PATH});
         model_paths.insert({1, SAMURI_PATH});
-        model_paths.insert({2, LOW_POLY_TERRAIN_PATH});
+        model_paths.insert({2, TERRAIN_PATH});
 
         resourceManager.Load<RBModel>(model_paths);
 
@@ -370,6 +370,20 @@ void RBApplication::processModelNode(
         }
 
         
+        // Sky pass: first render on the swap-chain image each frame — clears to black.
+        VkRenderPassBeginInfo skyRenderPassInfo{};
+        skyRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        skyRenderPassInfo.renderPass = swapChain.renderPassSky;
+        skyRenderPassInfo.framebuffer = swapChain.swapChainFrameBuffers[imageIndex];
+        skyRenderPassInfo.renderArea.offset = {0, 0};
+        skyRenderPassInfo.renderArea.extent = swapChainExtent;
+
+        VkClearValue skyClearValue{};
+        skyClearValue.color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+        skyRenderPassInfo.clearValueCount = 1;
+        skyRenderPassInfo.pClearValues = &skyClearValue;
+
+        // Lighting pass: loads the sky output and composites the deferred lighting result.
         VkRenderPassBeginInfo lightingRenderPassInfo{};
         lightingRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         lightingRenderPassInfo.renderPass = swapChain.renderPass;
@@ -377,18 +391,12 @@ void RBApplication::processModelNode(
         lightingRenderPassInfo.renderArea.offset = {0, 0};
         lightingRenderPassInfo.renderArea.extent = swapChainExtent;
 
-        std::array<VkClearValue, 2> lightingClearValues{};
-        lightingClearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
-        lightingClearValues[1].depthStencil = {1.0f, 0};
+        VkClearValue lightingClearValue{};
+        lightingClearValue.color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+        lightingRenderPassInfo.clearValueCount = 1;
+        lightingRenderPassInfo.pClearValues = &lightingClearValue;
 
-        lightingRenderPassInfo.clearValueCount = static_cast<uint32_t>(lightingClearValues.size());
-        lightingRenderPassInfo.pClearValues = lightingClearValues.data();
-
-        //lighting pass pipeline
-        //std::cout << "before lightPassManager::Execute()" << std::endl;
-        //std::cout << "descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout = " << descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout << std::endl;
-
-        skyPassManager.Execute(commandBuffer, lightingRenderPassInfo, descriptorsSkyBox);
+        skyPassManager.Execute(commandBuffer, skyRenderPassInfo, descriptorsSkyBox);
 
         lightPassManager.Execute(commandBuffer, lightingRenderPassInfo, descriptorsLighting, gui, uniformShaderVariables);
 
@@ -470,6 +478,8 @@ void RBApplication::processModelNode(
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || windows.framebufferResized)
         {
             windows.framebufferResized = false;
+
+            vkDeviceWaitIdle(device.device);
 
             gBufferPass.clearFrameBuffers();
             descriptorsAttachment.ReleaseAllResource();

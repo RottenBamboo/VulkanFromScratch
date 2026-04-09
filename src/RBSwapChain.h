@@ -17,7 +17,8 @@ namespace RottenBamboo {
         RBDevice &refDevice;
         RBWindows &refWindow;
         RBCommandBuffer &refCommandBuffer;
-        VkRenderPass renderPass;
+        VkRenderPass renderPass = VK_NULL_HANDLE;
+        VkRenderPass renderPassSky = VK_NULL_HANDLE;
         std::vector<VkImage> swapChainImages;
         VkFormat swapChainImageFormat;
         std::vector<VkFramebuffer> swapChainFrameBuffers;

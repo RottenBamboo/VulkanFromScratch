@@ -17,8 +17,11 @@ namespace RottenBamboo {
 
     void RBShaderModule::Destroy()
     {
-        vkDestroyShaderModule(device.device, module, nullptr);
-        module = VK_NULL_HANDLE;;
+        if (module != VK_NULL_HANDLE)
+        {
+            vkDestroyShaderModule(device.device, module, nullptr);
+            module = VK_NULL_HANDLE;
+        }
         std::cout << "RBShaderModule::Destroy()" << std::endl;
         RBLOG_INFO("RBShaderModule::Destroy()");
     }
@@ -33,6 +36,12 @@ namespace RottenBamboo {
 
     void RBShaderModule::createShaderModule(RBDevice &device, const std::vector<char> &code)
     {
+        if (module != VK_NULL_HANDLE)
+        {
+            vkDestroyShaderModule(device.device, module, nullptr);
+            module = VK_NULL_HANDLE;
+        }
+
         fillCreateInfo(code);
 
         if (vkCreateShaderModule(device.device, &createInfo, nullptr, &module) != VK_SUCCESS) {

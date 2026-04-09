@@ -99,7 +99,7 @@ namespace RottenBamboo {
 
         RBDescriptors descriptorsGBuffer{device, commandBuffer, uniformBuffers, inputImageInfoMech, false};
 
-        RBDescriptors descriptorsTerrain{device, commandBuffer, uniformBuffers, lowPolyTerrainTex, false};
+        RBDescriptors descriptorsTerrain{device, commandBuffer, uniformBuffers, inputImageTerrain, false};
 
         RBDescriptors descriptorsSamuri{device, commandBuffer, uniformBuffers, samuriTex, false};
 

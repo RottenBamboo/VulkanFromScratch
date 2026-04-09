@@ -16,13 +16,28 @@ namespace RottenBamboo {
 
     RBPipelineManager::~RBPipelineManager() 
     {
-        vkDestroyPipeline(rbDevice.device, graphicsPipeline, nullptr);
+        if (graphicsPipeline != VK_NULL_HANDLE)
+        {
+            vkDestroyPipeline(rbDevice.device, graphicsPipeline, nullptr);
+            graphicsPipeline = VK_NULL_HANDLE;
+        }
+        if (renderPass != VK_NULL_HANDLE)
+        {
+            vkDestroyRenderPass(rbDevice.device, renderPass, nullptr);
+            renderPass = VK_NULL_HANDLE;
+        }
         std::cout << "RBPipelineManager::~RBPipelineManager()" << std::endl;
         RBLOG_INFO("RBPipelineManager::~RBPipelineManager()");
     }
 
     void RBPipelineManager::createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo) 
     {
+        if (graphicsPipeline != VK_NULL_HANDLE)
+        {
+            vkDestroyPipeline(rbDevice.device, graphicsPipeline, nullptr);
+            graphicsPipeline = VK_NULL_HANDLE;
+        }
+
         if (vkCreateGraphicsPipelines(rbDevice.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
             RBLOG_FATAL("Failed to create graphics pipeline");
             throw std::runtime_error("failed to create graphics pipeline!");

@@ -21,8 +21,11 @@ namespace RottenBamboo {
 
     void RBDescriptorPoolManager::Destroy()
     {
-        vkDestroyDescriptorPool(rbDevice.device, descriptorPool, nullptr);
-        descriptorPool = VK_NULL_HANDLE;
+        if (descriptorPool != VK_NULL_HANDLE)
+        {
+            vkDestroyDescriptorPool(rbDevice.device, descriptorPool, nullptr);
+            descriptorPool = VK_NULL_HANDLE;
+        }
         poolSizes = {};
         std::cout << "RBDescriptorPoolManager::~Destroy()" << std::endl;
             RBLOG_INFO("RBDescriptorPoolManager::~Destroy()");

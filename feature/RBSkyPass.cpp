@@ -9,6 +9,7 @@ namespace RottenBamboo {
 
     void RBSkyPass::setupShaders()
     {
+        shaderStageInfos.clear();
         fillShaderModule(GET_PROJECT_ROOT_DIR + "shader/bin/skyVert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main", vertShaderModule);
         fillShaderModule(GET_PROJECT_ROOT_DIR + "shader/bin/skyFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main", fragShaderModule);
     }
