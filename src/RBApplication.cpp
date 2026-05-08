@@ -7,6 +7,10 @@
 #include <stb_image.h>
 #include <thread>
 
+#include "json.h"
+#include <fstream>
+#include <string>
+
 namespace RottenBamboo {
 
     RBApplication::RBApplication() {
@@ -33,6 +37,7 @@ namespace RottenBamboo {
         InitializeSwapChain();
         InitializeGraphicPipeline();
         InitializeGUI();
+        gui.SetMaterialEditor(&materialEditor);
         InitializeMatrix();
         std::cout << "RBApplication::RBApplication()" << std::endl;
             RBLOG_INFO("RBApplication::RBApplication()");

@@ -5,22 +5,25 @@
 #pragma once
 
 #include "RBResource.h"
-#include "RBDevice.h"
-#include "RBBuffer.h"
+#include "RBMaterialUtils.h"
 
 namespace RottenBamboo {
 
     class RBMaterial : public RBResource {
     public:
+        explicit RBMaterial(const std::string& path = "");
+
         void Load(const std::string& path) override;
 
-    private:
-    private:
-        RBDevice &device;
-        RBCommandBuffer &commandBuffer;
+        bool Save(const std::string& path = "") const;
 
-    public:
-        RBMaterial(const std::string& path, RBDevice &device, RBCommandBuffer &commandBuffer);
+        MaterialData& GetData();
+        const MaterialData& GetData() const;
+
+        void Reset();
+
+    private:
+        MaterialData data;
     };
 
 } // Rottenbamboo

@@ -5,6 +5,7 @@
 #pragma once
 
 #include "RBDevice.h"
+#include "RBMaterial.h"
 #include <iostream>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
@@ -29,14 +30,19 @@ namespace RottenBamboo
 
         void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix);
 
+        void SetMaterialEditor(RBMaterial* material);
+
         void createDescriptorPool();
 
     public:
         void RenderGizmo(UniformBufferShaderVariables& uniformMatrix);
+        void RenderMaterialEditor();
 
     private:
         RBDevice &rbDevice;
         RBWindows &rbWindows;
+        RBMaterial* materialEditor = nullptr;
+        bool showMaterialEditor = true;
         bool gizmoActive = true;
         ImGuizmo::OPERATION currentOperation = ImGuizmo::TRANSLATE;
         ImGuizmo::MODE currentMode = ImGuizmo::WORLD;
