@@ -10,7 +10,7 @@
 #include "RBPipelineConfig.h"
 #include "RBShaderModule.h" // Added to define RBShaderModule
 #include "RBMesh.h"
-#include "RBGUI.h"
+#include "../editors/RBGUI.h"
 #include <stdexcept>
 #include <iostream>
 

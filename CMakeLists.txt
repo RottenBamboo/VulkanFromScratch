@@ -41,6 +41,9 @@ include_directories(${GLM_PATH})
 set(FEATURE_PATH "${CMAKE_SOURCE_DIR}/feature")
 include_directories(${FEATURE_PATH})
 
+set(EDITOR_PATH "${CMAKE_SOURCE_DIR}/editors")
+include_directories(${EDITOR_PATH})
+
 # set lib path
 if(CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "android.toolchain.cmake")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdpartyAndroid/assimp/lib")
@@ -78,6 +81,8 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 file(GLOB_RECURSE SRC_SOURCES 
     "${CMAKE_SOURCE_DIR}/src/*.cpp"
     "${CMAKE_SOURCE_DIR}/src/*.h"
+    "${CMAKE_SOURCE_DIR}/editors/*.cpp"
+    "${CMAKE_SOURCE_DIR}/editors/*.h"
 )
 
 # add source files from feature folder

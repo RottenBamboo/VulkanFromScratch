@@ -3,17 +3,10 @@
 //
 
 #pragma once
-
-#include "RBDevice.h"
-#include "RBMaterial.h"
-#include <iostream>
-#include <imgui.h>
-#include <imgui_impl_sdl3.h>
-#include <imgui_impl_vulkan.h>
-#include <ImGuizmo.h>
+#include "RBGUIBase.h"
 namespace RottenBamboo 
 {
-    class RBGUI 
+    class RBGUI : public RBGUIBase
     {
     
     public:
@@ -22,25 +15,25 @@ namespace RottenBamboo
 
         RBGUI(RBDevice &device, RBWindows &windows);
 
-        ~RBGUI();
+        virtual ~RBGUI() override;
 
-        void Initialize(VkRenderPass renderPass);
+        virtual void Initialize(VkRenderPass renderPass);
 
         //void Reinitialize(SDL_Window* window, VkRenderPass renderPass);
 
-        void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix);
+        virtual void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix);
 
-        void SetMaterialEditor(RBMaterial* material);
+        virtual void SetMaterialEditor(RBMaterial* material);
 
-        void createDescriptorPool();
+        virtual void createDescriptorPool();
 
     public:
         void RenderGizmo(UniformBufferShaderVariables& uniformMatrix);
         void RenderMaterialEditor();
 
     private:
-        RBDevice &rbDevice;
-        RBWindows &rbWindows;
+        //RBDevice &rbDevice;
+        //RBWindows &rbWindows;
         RBMaterial* materialEditor = nullptr;
         bool showMaterialEditor = true;
         bool gizmoActive = true;

@@ -151,7 +151,7 @@ namespace RottenBamboo
         materialEditor = material;
     }
 
-    RBGUI::RBGUI(RBDevice &device, RBWindows &window) : rbDevice(device), rbWindows(window)
+    RBGUI::RBGUI(RBDevice &device, RBWindows &window) : RBGUIBase(device, window)
     {
         checkbox = false;
         std::cout << "RBGUI::RBGUI()" << std::endl;
