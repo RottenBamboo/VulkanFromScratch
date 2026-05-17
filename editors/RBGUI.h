@@ -4,6 +4,7 @@
 
 #pragma once
 #include "RBGUIMaterials.h"
+#include "RBGUIAssets.h"
 namespace RottenBamboo 
 {
     class RBGUI
@@ -32,8 +33,10 @@ namespace RottenBamboo
         RBDevice &rbDevice;
         RBWindows &rbWindows;
         RBGUIMaterials materialsGUI;
-        bool showMaterialEditor = true;
+        RBGUIAssets assetsGUI;
+        bool materialEditorActive = true;
         bool gizmoActive = true;
+        bool assetsActive = true;
         ImGuizmo::OPERATION currentOperation = ImGuizmo::TRANSLATE;
         ImGuizmo::MODE currentMode = ImGuizmo::WORLD;
 

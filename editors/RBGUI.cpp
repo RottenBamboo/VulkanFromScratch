@@ -59,7 +59,7 @@ namespace RottenBamboo
         ImGui::RadioButton("World", (int *)&mode, ImGuizmo::WORLD);
         ImGui::SameLine();
         ImGui::RadioButton("Local", (int *)&mode, ImGuizmo::LOCAL);
-        ImGui::Checkbox("Material Editor", &showMaterialEditor);
+        ImGui::Checkbox("Material Editor", &materialEditorActive);
         ImGui::End();
     }
 
@@ -149,10 +149,15 @@ namespace RottenBamboo
         ImGui::NewFrame();
         //ImGui::ShowMetricsWindow();
         RenderGizmo(uniformMatrix);
-        if (showMaterialEditor)
+        if (materialEditorActive)
         {
             materialsGUI.Render(commandBuffer, uniformMatrix);
         }
+        if(assetsActive)
+        {
+            assetsGUI.Render(commandBuffer, uniformMatrix);
+        }
+        
         ImGui::Render();
         ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
     }
