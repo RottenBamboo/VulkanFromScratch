@@ -37,7 +37,6 @@ namespace RottenBamboo {
         InitializeSwapChain();
         InitializeGraphicPipeline();
         InitializeGUI();
-        gui.SetMaterialEditor(&materialEditor);
         InitializeMatrix();
         std::cout << "RBApplication::RBApplication()" << std::endl;
             RBLOG_INFO("RBApplication::RBApplication()");
@@ -91,7 +90,7 @@ namespace RottenBamboo {
             uniformBuffers[i].CreateBufferNoStageing();
         }
 
-        std::cout << "RBApplication::InitializeBuffers()" << std::endl;
+            std::cout << "RBApplication::InitializeBuffers()" << std::endl;
             RBLOG_INFO("RBApplication::InitializeBuffers()");
     }
 
@@ -137,6 +136,7 @@ namespace RottenBamboo {
     void RBApplication::InitializeGUI()
     {
         gui.Initialize(swapChain.renderPass);
+        gui.SetEditorMaterial(&editorMaterial);
         std::cout << "RBApplication::InitializeGUI()" << std::endl;
             RBLOG_INFO("RBApplication::InitializeGUI()");
     };

@@ -3,10 +3,10 @@
 //
 
 #pragma once
-#include "RBGUIBase.h"
+#include "RBGUIMaterials.h"
 namespace RottenBamboo 
 {
-    class RBGUI : public RBGUIBase
+    class RBGUI
     {
     
     public:
@@ -15,26 +15,23 @@ namespace RottenBamboo
 
         RBGUI(RBDevice &device, RBWindows &windows);
 
-        virtual ~RBGUI() override;
+        virtual ~RBGUI();
 
         virtual void Initialize(VkRenderPass renderPass);
 
-        //void Reinitialize(SDL_Window* window, VkRenderPass renderPass);
-
         virtual void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix);
 
-        virtual void SetMaterialEditor(RBMaterial* material);
+        virtual void SetEditorMaterial(RBMaterial* material);
 
         virtual void createDescriptorPool();
 
     public:
         void RenderGizmo(UniformBufferShaderVariables& uniformMatrix);
-        void RenderMaterialEditor();
 
     private:
-        //RBDevice &rbDevice;
-        //RBWindows &rbWindows;
-        RBMaterial* materialEditor = nullptr;
+        RBDevice &rbDevice;
+        RBWindows &rbWindows;
+        RBGUIMaterials materialsGUI;
         bool showMaterialEditor = true;
         bool gizmoActive = true;
         ImGuizmo::OPERATION currentOperation = ImGuizmo::TRANSLATE;

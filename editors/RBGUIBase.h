@@ -15,34 +15,14 @@ namespace RottenBamboo
 {
     class RBGUIBase 
     {
-    
     public:
-
-        VkDescriptorPool imguiDescriptorPool;    
-
-        RBGUIBase(RBDevice &device, RBWindows &windows) : rbDevice(device), rbWindows(windows) {};
+        RBGUIBase() {};
 
         virtual ~RBGUIBase() = default;
 
         virtual void Initialize(VkRenderPass renderPass) = 0;
 
         virtual void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix) = 0;
-
-        virtual void createDescriptorPool() = 0;
-
-    public:
-        virtual void RenderGizmo(UniformBufferShaderVariables& uniformMatrix) = 0;
-
-    private:
-    protected:
-        RBDevice &rbDevice;
-        RBWindows &rbWindows;
-        //RBMaterial* materialEditor = nullptr;
-        //bool showMaterialEditor = true;
-        //bool gizmoActive = true;
-        //ImGuizmo::OPERATION currentOperation = ImGuizmo::TRANSLATE;
-        //ImGuizmo::MODE currentMode = ImGuizmo::WORLD;
-
     };
 
 }

@@ -89,7 +89,7 @@ namespace RottenBamboo {
 
         RBCommandBuffer commandBuffer{device};
 
-        RBMaterial materialEditor{GET_PROJECT_ROOT_DIR + std::string("materials/default_material.json")};
+        RBMaterial editorMaterial{GET_PROJECT_ROOT_DIR + std::string("materials/default_material.json")};
 
         ResourceManager resourceManager{device, commandBuffer};
 
