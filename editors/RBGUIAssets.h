@@ -1,25 +1,40 @@
-
 //
 // Created by rottenbamboo on 2026/5/19.
 //
 
+#pragma once
+
 #include "RBGUIBase.h"
-#include <iostream>
-#include <imgui.h>
-#include <imgui_impl_sdl3.h>
-#include <imgui_impl_vulkan.h>
-#include <ImGuizmo.h>
+#include "../src/RBResourceManager.h"
+#include <filesystem>
+#include <array>
+
 namespace RottenBamboo 
 {
     class RBGUIAssets : public RBGUIBase 
     {
     public:
         RBGUIAssets();
-        
         virtual ~RBGUIAssets() override = default;
 
-        virtual void Initialize(VkRenderPass renderPass) override;
+        void Initialize(VkRenderPass renderPass) override;
+        void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix) override;
 
-        virtual void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix) override;
+        void SetResourceManager(ResourceManager* resourceManager);
+
+    private:
+        void RenderQuickAccess();
+        void RenderDirectoryContents();
+        void RenderLoadedModels();
+        void RenderAssetDetails();
+        void NavigateTo(const std::filesystem::path& path);
+        static bool IsModelFile(const std::filesystem::path& path);
+        static std::string HumanReadableSize(std::uintmax_t bytes);
+
+    private:
+        ResourceManager* resourceManager;
+        std::filesystem::path currentDirectory;
+        std::filesystem::path selectedPath;
+        std::array<char, 256> searchText{};
     };
 }

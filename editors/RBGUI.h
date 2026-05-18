@@ -24,6 +24,8 @@ namespace RottenBamboo
 
         virtual void SetEditorMaterial(RBMaterial* material);
 
+        virtual void SetResourceManager(ResourceManager* resourceManager);
+
         virtual void createDescriptorPool();
 
     public:

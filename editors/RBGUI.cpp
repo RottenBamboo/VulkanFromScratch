@@ -68,6 +68,11 @@ namespace RottenBamboo
         materialsGUI.SetMaterial(material);
     }
 
+    void RBGUI::SetResourceManager(ResourceManager* resourceManager)
+    {
+        assetsGUI.SetResourceManager(resourceManager);
+    }
+
     RBGUI::RBGUI(RBDevice &device, RBWindows &window) : rbDevice(device), rbWindows(window)
     {
         checkbox = false;

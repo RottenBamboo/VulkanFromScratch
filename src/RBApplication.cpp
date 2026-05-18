@@ -135,6 +135,7 @@ namespace RottenBamboo {
 
     void RBApplication::InitializeGUI()
     {
+        gui.SetResourceManager(&resourceManager);
         gui.Initialize(swapChain.renderPass);
         gui.SetEditorMaterial(&editorMaterial);
         std::cout << "RBApplication::InitializeGUI()" << std::endl;

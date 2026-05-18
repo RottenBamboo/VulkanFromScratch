@@ -17,10 +17,6 @@ namespace RottenBamboo
     {
     }
 
-    RBGUIMaterials::~RBGUIMaterials()
-    {
-    }
-
     void RBGUIMaterials::Initialize(VkRenderPass renderPass)
     {
     }
