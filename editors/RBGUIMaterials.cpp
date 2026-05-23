@@ -39,10 +39,8 @@ namespace RottenBamboo
 
         char filePathBuffer[512];
         CopyStringToBuffer(filePathBuffer, sizeof(filePathBuffer), currentMaterial->GetPath());
-        if (ImGui::InputText("Save Path", filePathBuffer, sizeof(filePathBuffer)))
-        {
-            currentMaterial->SetPath(filePathBuffer);
-        }
+
+        currentMaterial->SetPath(materialsFilePath.c_str());
 
         char nameBuffer[128];
         CopyStringToBuffer(nameBuffer, sizeof(nameBuffer), material.name);
@@ -92,12 +90,12 @@ namespace RottenBamboo
         ImGui::SameLine();
         if (ImGui::Button("Load"))
         {
-            currentMaterial->Load(currentMaterial->GetPath());
+            currentMaterial->Load(currentMaterial->GetPath() + material.name + ".mat");
         }
         ImGui::SameLine();
         if (ImGui::Button("Save"))
         {
-            currentMaterial->Save(currentMaterial->GetPath());
+            currentMaterial->Save(currentMaterial->GetPath() + material.name + ".mat");
         }
         ImGui::SameLine();
         if (ImGui::Button("Save As Default"))

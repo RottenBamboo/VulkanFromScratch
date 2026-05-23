@@ -154,10 +154,12 @@ namespace RottenBamboo
             ImGui::TextUnformatted("Folders");
             for (const auto& entry : directories) {
                 const bool selected = selectedPath == entry.path();
-                const std::string label = std::string("📁 ") + entry.path().filename().string();
+                const std::string label = std::string("Folder: ") + entry.path().filename().string();
+                ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 200, 80, 255));
                 if (ImGui::Selectable(label.c_str(), selected)) {
                     selectedPath = entry.path();
                 }
+                ImGui::PopStyleColor();
                 if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
                     NavigateTo(entry.path());
                 }
@@ -167,10 +169,12 @@ namespace RottenBamboo
             ImGui::TextUnformatted("Files");
             for (const auto& entry : files) {
                 const bool selected = selectedPath == entry.path();
-                const std::string label = std::string("📄 ") + entry.path().filename().string();
+                const std::string label = std::string("File: ") + entry.path().filename().string();
+                ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(200, 200, 200, 255));
                 if (ImGui::Selectable(label.c_str(), selected)) {
                     selectedPath = entry.path();
                 }
+                ImGui::PopStyleColor();
             }
         }
         ImGui::EndChild();

@@ -21,9 +21,9 @@ namespace RottenBamboo {
         InitializeDevice();
         InitializeCommandBuffer();
 
-        model_paths.insert({0, MODEL_PATH});
-        model_paths.insert({1, SAMURI_PATH});
-        model_paths.insert({2, TERRAIN_PATH});
+        model_paths.insert({0, LOW_POLY_TERRAIN_PATH});
+        model_paths.insert({1, LOW_POLY_TERRAIN_PATH});
+        model_paths.insert({2, LOW_POLY_TERRAIN_PATH});
 
         resourceManager.Load<RBModel>(model_paths);
 
