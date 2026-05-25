@@ -97,13 +97,8 @@ namespace RottenBamboo
         {
             currentMaterial->Save(currentMaterial->GetPath() + material.name + ".mat");
         }
-        ImGui::SameLine();
-        if (ImGui::Button("Save As Default"))
-        {
-            currentMaterial->Save(GET_PROJECT_ROOT_DIR + std::string("materials/default_material.json"));
-        }
 
-        ImGui::TextWrapped("Edit the material properties and save them as JSON.");
+        ImGui::TextWrapped("Edit the material properties and save them as MAT files.");
         ImGui::End();
     }
 }
