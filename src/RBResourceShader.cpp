@@ -40,6 +40,7 @@ namespace RottenBamboo {
         uint32_t inputVec3Count = 0;
         uint32_t inputVec4Count = 0;
         uint32_t typeCount = 0;
+        std::string variableName;
         // SPIR-V ID
         for (auto id : compiler.get_active_interface_variables())
         {
@@ -64,6 +65,7 @@ namespace RottenBamboo {
                 uniformBufferCount++;
                 typeCount = uniformBufferCount;
                 std::cout << "Uniform buffer" << std::endl;
+                
                 RBLOG_INFO("Uniform buffer");
             }
             else if (storage == spv::StorageClassStorageBuffer)
@@ -79,6 +81,7 @@ namespace RottenBamboo {
                 if (baseType.basetype == spirv_cross::SPIRType::SampledImage)
                 {
                     descType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                    variableName = compiler.get_name(id);
                     combinedImageSamplerCount++;
                     typeCount = combinedImageSamplerCount;
                     std::cout << "Combined image sampler" << std::endl;
@@ -87,6 +90,7 @@ namespace RottenBamboo {
                 else if (baseType.basetype == spirv_cross::SPIRType::Image)
                 {
                     descType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+                    variableName = compiler.get_name(id);
                     sampledImageCount++;
                     typeCount = sampledImageCount;
                     std::cout << "Sampled image" << std::endl;
@@ -95,6 +99,7 @@ namespace RottenBamboo {
                 else if (baseType.basetype == spirv_cross::SPIRType::Sampler)
                 {
                     descType = VK_DESCRIPTOR_TYPE_SAMPLER;
+                    variableName = compiler.get_name(id);
                     samplerCount++;
                     typeCount = samplerCount;
                     std::cout << "Sampler" << std::endl;
@@ -111,8 +116,9 @@ namespace RottenBamboo {
                 bindingInfo.binding = binding;
                 bindingInfo.type = descType;
                 bindingInfo.count = 1;
-                std::cout << "Descriptor Set: " << set << ", Binding: " << binding << std::endl;
-                RBLOG_INFO("Descriptor Set: %d, Binding: %d", set, binding);
+                bindingInfo.name = variableName;
+                std::cout << "Descriptor Set: " << set << ", Binding: " << binding << ", Variable Name: " << variableName << std::endl;
+                RBLOG_INFO("Descriptor Set: %d, Binding: %d, Variable Name: %s", set, binding, variableName.c_str());
                 setInfo.typeCount[descType] = typeCount;
                 typeCount = 0;
                 continue;

@@ -1,8 +1,8 @@
 {
-    "name": "RobotMaterial",
+    "name": "default_material",
     "baseColor": [1, 0.191176, 0.191176, 1],
     "emissiveColor": [1, 1, 1],
-    "metallic": 0.26,
+    "metallic": 0.328,
     "roughness": 0.573,
     "emissiveStrength": 13.802,
     "alphaCutoff": 0.224,

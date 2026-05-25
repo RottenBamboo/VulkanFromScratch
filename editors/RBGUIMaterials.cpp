@@ -98,7 +98,7 @@ namespace RottenBamboo
             currentMaterial->Save(currentMaterial->GetPath() + material.name + ".mat");
         }
 
-        ImGui::TextWrapped("Edit the material properties and save them as MAT files.");
+        ImGui::TextWrapped("Edit the material properties and save them as .mat files.");
         ImGui::End();
     }
 }

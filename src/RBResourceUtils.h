@@ -21,6 +21,7 @@ namespace RottenBamboo {
     
     struct RBDescriptorBinding
     {
+        std::string         name;
         uint32_t            binding;
         VkDescriptorType    type;
         uint32_t            count;

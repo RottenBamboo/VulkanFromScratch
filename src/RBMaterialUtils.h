@@ -4,6 +4,7 @@
 #include <string>
 
 #include "json.h"
+#include "RBResourceUtils.h"
 
 namespace RottenBamboo {
 
@@ -19,6 +20,7 @@ namespace RottenBamboo {
         std::string normalTexture;
         std::string metallicRoughnessTexture;
         std::string emissiveTexture;
+        RBShaderReflection* shaderReflection = nullptr;
     };
 
 }
