@@ -3,15 +3,18 @@
 //
 
 #pragma once
-
+#include "RBDevice.h"
 #include "RBResource.h"
 #include "RBMaterialUtils.h"
+#include "RBCommandBuffer.h"
 
 namespace RottenBamboo {
 
     class RBMaterial : public RBResource {
     public:
-        explicit RBMaterial(const std::string& path = "");
+        //explicit RBMaterial(const std::string& path = "");
+
+        RBMaterial(const std::string &path, RBDevice &device, RBCommandBuffer &commandBuffer);
 
         void Load(const std::string& path) override;
 
@@ -23,6 +26,8 @@ namespace RottenBamboo {
         void Reset();
 
     private:
+        RBDevice &device;
+        RBCommandBuffer &commandBuffer;
         MaterialData data;
     };
 

@@ -1,4 +1,5 @@
 #include "RBGUIAssets.h"
+#include "RBApplication.h"
 
 #include <algorithm>
 #include <cctype>
@@ -26,11 +27,11 @@ namespace RottenBamboo
             return ToLowerCopy(value).find(ToLowerCopy(query)) != std::string::npos;
         }
 
-        //bool IsMaterialFile(const std::filesystem::path& path)
-        //{
-        //    const std::string ext = ToLowerCopy(path.extension().string());
-        //    return ext == ".mat" || ext == ".material";
-        //}
+        bool IsMaterialFile(const std::filesystem::path& path)
+        {
+           const std::string ext = ToLowerCopy(path.extension().string());
+           return ext == ".mat" || ext == ".material";
+        }
     }
 
     RBGUIAssets::RBGUIAssets()
@@ -181,18 +182,19 @@ namespace RottenBamboo
                     selectedPath = entry.path();
                 }
 
-                //const bool doubleClicked =
-                //    ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
+                const bool doubleClicked =
+                    ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
 
                 ImGui::PopStyleColor();
 
-                // if (doubleClicked) {
-                //     selectedPath = entry.path();
+                 if (doubleClicked) {
+                     selectedPath = entry.path();
 
-                //     if (IsMaterialFile(entry.path()) && resourceManager != nullptr) {
-                //         resourceManager->Load<RBMaterial>(entry.path().string());
-                //     }
-                // }
+                    if (IsMaterialFile(entry.path()) && resourceManager != nullptr) {
+                        const std::string path = entry.path().string();
+                        RBApplication::GetGUI()->SetEditorMaterial(resourceManager->Load<RBMaterial>(path).get());
+                    }
+                }
             }
         }
         ImGui::EndChild();

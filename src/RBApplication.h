@@ -89,7 +89,7 @@ namespace RottenBamboo {
 
         RBCommandBuffer commandBuffer{device};
 
-        RBMaterial editorMaterial{GET_PROJECT_ROOT_DIR + std::string("materials/default_material.mat")};
+        RBMaterial editorMaterial{GET_PROJECT_ROOT_DIR + std::string("materials/default_material.mat"), device, commandBuffer};
 
         ResourceManager resourceManager{device, commandBuffer};
 
@@ -126,5 +126,11 @@ namespace RottenBamboo {
     private:
 
         void updateUniformBuffer(uint32_t currentImage);
+        void InitializeStaticPtr();
+
+    public:
+        static RBGUI* ptr_gui;
+
+        static RBGUI* GetGUI();
     };
 }

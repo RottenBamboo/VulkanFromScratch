@@ -13,17 +13,23 @@
 
 namespace RottenBamboo {
 
-    RBApplication::RBApplication() {
+        RBGUI* RBApplication::ptr_gui = nullptr;
+
+        RBGUI* RBApplication::GetGUI() {
+            return RBApplication::ptr_gui;
+        }
+
+        RBApplication::RBApplication() {
         lastFrameTime = std::chrono::high_resolution_clock::now();
         cameraManager = std::make_unique<RBRuntimeCameraManager>();
         InitializeWindow();
         InitializeCamera();
         InitializeDevice();
         InitializeCommandBuffer();
-
-        model_paths.insert({0, LOW_POLY_TERRAIN_PATH});
-        model_paths.insert({1, LOW_POLY_TERRAIN_PATH});
-        model_paths.insert({2, LOW_POLY_TERRAIN_PATH});
+        
+        model_paths.insert({0, MODEL_PATH});
+        model_paths.insert({1, SAMURI_PATH});
+        model_paths.insert({2, TERRAIN_PATH});
 
         resourceManager.Load<RBModel>(model_paths);
 
@@ -37,9 +43,16 @@ namespace RottenBamboo {
         InitializeSwapChain();
         InitializeGraphicPipeline();
         InitializeGUI();
+
+        InitializeStaticPtr();
+        
         InitializeMatrix();
         std::cout << "RBApplication::RBApplication()" << std::endl;
             RBLOG_INFO("RBApplication::RBApplication()");
+    }
+    void RBApplication::InitializeStaticPtr()
+    {
+        RBApplication::ptr_gui = &gui;
     }
 
     RBApplication::~RBApplication() {
@@ -141,6 +154,7 @@ namespace RottenBamboo {
         std::cout << "RBApplication::InitializeGUI()" << std::endl;
             RBLOG_INFO("RBApplication::InitializeGUI()");
     };
+
 
     void RBApplication::transformModelVertex(
     aiMesh* meshPtr, 
