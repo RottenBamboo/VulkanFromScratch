@@ -25,6 +25,12 @@ namespace RottenBamboo
             }
             return ToLowerCopy(value).find(ToLowerCopy(query)) != std::string::npos;
         }
+
+        //bool IsMaterialFile(const std::filesystem::path& path)
+        //{
+        //    const std::string ext = ToLowerCopy(path.extension().string());
+        //    return ext == ".mat" || ext == ".material";
+        //}
     }
 
     RBGUIAssets::RBGUIAssets()
@@ -174,7 +180,19 @@ namespace RottenBamboo
                 if (ImGui::Selectable(label.c_str(), selected)) {
                     selectedPath = entry.path();
                 }
+
+                //const bool doubleClicked =
+                //    ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
+
                 ImGui::PopStyleColor();
+
+                // if (doubleClicked) {
+                //     selectedPath = entry.path();
+
+                //     if (IsMaterialFile(entry.path()) && resourceManager != nullptr) {
+                //         resourceManager->Load<RBMaterial>(entry.path().string());
+                //     }
+                // }
             }
         }
         ImGui::EndChild();
@@ -254,6 +272,28 @@ namespace RottenBamboo
                 resourceManager->Load<RBModel>(selectedPath.string());
             }
         }
+        
+        // if (resourceManager != nullptr && resourceManager->IsLoaded<RBMaterial>(selectedPath.string())) {
+        //     auto material = resourceManager->Get<RBMaterial>(selectedPath.string());
+        //     if (material) {
+        //         ImGui::TextUnformatted("Loaded as material: yes");
+
+        //         if (ImGui::Button("Reload Material")) {
+        //             resourceManager->Reload<RBMaterial>(selectedPath.string());
+        //         }
+        //         ImGui::SameLine();
+        //         if (ImGui::Button("Unload Material")) {
+        //             resourceManager->Remove<RBMaterial>(selectedPath.string());
+        //         }
+        //         return;
+        //     }
+        // }
+
+        // if (resourceManager != nullptr && IsMaterialFile(selectedPath)) {
+        //     if (ImGui::Button("Load as Material")) {
+        //         resourceManager->Load<RBMaterial>(selectedPath.string());
+        //     }
+        // }
     }
 
     void RBGUIAssets::Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix)
