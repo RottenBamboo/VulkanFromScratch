@@ -1,0 +1,8 @@
+{
+    "name": "lighting_material",
+    "shaderPathName": "G:/Project/VulkanFromScratch/shader/bin/lightingFrag.spv",
+    "gPosition": "0.891000",
+    "gAlbedo": "0.531000",
+    "gNormal": "0.375000",
+    "gMetallicRoughnessAO": "0.000000"
+}

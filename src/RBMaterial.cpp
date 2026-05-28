@@ -3,7 +3,7 @@
 //
 
 #include "RBMaterial.h"
-
+#include "RBApplication.h"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -101,18 +101,26 @@ namespace RottenBamboo
             MaterialData loaded{};
             FindStringValue(text, "name", loaded.name);
             FindStringValue(text, "shaderPathName", loaded.shaderPathName);
-            FindArrayValue(text, "baseColor", loaded.baseColor);
-            FindArrayValue(text, "emissiveColor", loaded.emissiveColor);
-            FindFloatValue(text, "metallic", loaded.metallic);
-            FindFloatValue(text, "roughness", loaded.roughness);
-            FindFloatValue(text, "emissiveStrength", loaded.emissiveStrength);
-            FindFloatValue(text, "alphaCutoff", loaded.alphaCutoff);
-            FindStringValue(text, "baseColorTexture", loaded.baseColorTexture);
-            FindStringValue(text, "normalTexture", loaded.normalTexture);
-            FindStringValue(text, "metallicRoughnessTexture", loaded.metallicRoughnessTexture);
-            FindStringValue(text, "emissiveTexture", loaded.emissiveTexture);
+            loaded.shaderReflection = RBApplication::GetResourceShader()->GetCustomReflection(loaded.shaderPathName);
+            if(loaded.shaderReflection && loaded.shaderReflection->descriptorSets.size() > 0)
+            {
+                auto descriptorSets = loaded.shaderReflection->descriptorSets.at(0);
+                for(auto itr = descriptorSets.bindings.begin(); itr != descriptorSets.bindings.end(); itr++)
+                {
+                    if(itr->second.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+                    {
+                        continue;
+                    }
+                    const std::string name = itr->second.name;
+                    float value;
+                    FindFloatValue(text, name, value);
+                    itr->second.floatValue = value;
+                }
+            }
 
-            data = std::move(loaded);
+            data.name = loaded.name;
+            data.shaderPathName = loaded.shaderPathName;
+            data.shaderReflection = loaded.shaderReflection;
         }
         catch (const std::exception& e) {
             std::cout << "RBMaterial::Load() failed for " << this->path << ": " << e.what() << std::endl;
@@ -120,7 +128,7 @@ namespace RottenBamboo
         }
     }
 
-    bool RBMaterial::Save(const std::string& savePath) const
+    bool RBMaterial::Save(const std::string& savePath, const MaterialData& materialData) const
     {
         const std::string& targetPath = savePath.empty() ? path : savePath;
         if (targetPath.empty()) {
@@ -138,20 +146,32 @@ namespace RottenBamboo
                 return false;
             }
 
-              file << "{\n"
-                  << "    \"name\": \"" << data.name << "\",\n"
-                  << "    \"shaderPathName\": \"" << data.shaderPathName << "\",\n"
-                  << "    \"baseColor\": [" << data.baseColor[0] << ", " << data.baseColor[1] << ", " << data.baseColor[2] << ", " << data.baseColor[3] << "],\n"
-                  << "    \"emissiveColor\": [" << data.emissiveColor[0] << ", " << data.emissiveColor[1] << ", " << data.emissiveColor[2] << "],\n"
-                  << "    \"metallic\": " << data.metallic << ",\n"
-                  << "    \"roughness\": " << data.roughness << ",\n"
-                  << "    \"emissiveStrength\": " << data.emissiveStrength << ",\n"
-                  << "    \"alphaCutoff\": " << data.alphaCutoff << ",\n"
-                  << "    \"baseColorTexture\": \"" << data.baseColorTexture << "\",\n"
-                  << "    \"normalTexture\": \"" << data.normalTexture << "\",\n"
-                  << "    \"metallicRoughnessTexture\": \"" << data.metallicRoughnessTexture << "\",\n"
-                  << "    \"emissiveTexture\": \"" << data.emissiveTexture << "\"\n"
-                  << "}\n";
+            
+            std::string materialFileData = "{\n";
+            
+            materialFileData += "    \"name\": \"" + data.name + "\",\n";
+            materialFileData += "    \"shaderPathName\": \"" + data.shaderPathName + "\",\n";
+            if(materialData.shaderReflection && materialData.shaderReflection->descriptorSets.size() > 0)
+            {
+                auto descriptorSets = materialData.shaderReflection->descriptorSets.at(0);
+                for(auto itr = descriptorSets.bindings.begin(); itr != descriptorSets.bindings.end(); itr++)
+                {
+                    if(itr->second.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+                    {
+                        continue;
+                    }
+                    const std::string &name = itr->second.name;
+                    std::string value = std::to_string(itr->second.floatValue);
+                    if(itr != descriptorSets.bindings.begin())
+                    {
+                        materialFileData += ",\n";
+                    }
+                    materialFileData += "    \"" + name + "\": \"" + value + "\"";
+                }
+            }
+
+            materialFileData += "\n}\n";
+            file << materialFileData;
             return true;
         }
         catch (const std::exception& e) {

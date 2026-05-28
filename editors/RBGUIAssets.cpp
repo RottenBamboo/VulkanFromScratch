@@ -192,7 +192,9 @@ namespace RottenBamboo
 
                     if (IsMaterialFile(entry.path()) && resourceManager != nullptr) {
                         const std::string path = entry.path().string();
-                        RBApplication::GetGUI()->SetEditorMaterial(resourceManager->Load<RBMaterial>(path).get());
+                        RBMaterial* material = resourceManager->Load<RBMaterial>(path).get();
+                        RBApplication::GetGUI()->SetEditorMaterial(material);
+                        material->Load(path);
                     }
                 }
             }

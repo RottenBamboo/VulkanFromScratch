@@ -74,6 +74,8 @@ namespace RottenBamboo {
         void InitializeGUI();
 
         void InitializeMatrix();
+        
+        void InitializeMaterial();
 
         std::chrono::high_resolution_clock::time_point lastFrameTime;
 
@@ -89,7 +91,7 @@ namespace RottenBamboo {
 
         RBCommandBuffer commandBuffer{device};
 
-        RBMaterial editorMaterial{GET_PROJECT_ROOT_DIR + std::string("materials/default_material.mat"), device, commandBuffer};
+        RBMaterial editorMaterial{"", device, commandBuffer};
 
         ResourceManager resourceManager{device, commandBuffer};
 

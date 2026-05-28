@@ -25,6 +25,7 @@ namespace RottenBamboo {
         uint32_t            binding;
         VkDescriptorType    type;
         uint32_t            count;
+        float               floatValue;
     };
 
     struct RBInputAttributeLocation

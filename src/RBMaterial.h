@@ -18,7 +18,7 @@ namespace RottenBamboo {
 
         void Load(const std::string& path) override;
 
-        bool Save(const std::string& path = "") const;
+        bool Save(const std::string& path = "", const MaterialData& material = MaterialData{}) const;
 
         MaterialData& GetData();
         const MaterialData& GetData() const;

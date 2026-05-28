@@ -52,9 +52,16 @@ namespace RottenBamboo {
         InitializeStaticPtr();
         
         InitializeMatrix();
+        InitializeMaterial();
         std::cout << "RBApplication::RBApplication()" << std::endl;
             RBLOG_INFO("RBApplication::RBApplication()");
     }
+    void RBApplication::InitializeMaterial()
+    {
+        editorMaterial.Load(GET_PROJECT_ROOT_DIR + std::string("materials/default_material.mat"));
+        std::cout << "RBApplication::InitializeMaterial()" << std::endl;
+    }
+
     void RBApplication::InitializeStaticPtr()
     {
         RBApplication::ptr_gui = &gui;
