@@ -148,6 +148,17 @@ namespace RottenBamboo
             material.shaderPathName = shaderPathBuffer;
         }
 
+        // if(material.shaderReflection->descriptorSets.size() > 0)
+        // {
+        //     auto descriptorSets = material.shaderReflection->descriptorSets.at(0);
+        //     int paramsCount = descriptorSets.bindings.size();
+        //     for(int i = 0; i < paramsCount; i++)
+        //     {
+        //         float temp = 0.5f;
+        //         ImGui::SliderFloat(descriptorSets.bindings.at(i).name.c_str(), &temp, 0, 1);
+        //     }
+        // }
+
         ImGui::ColorEdit4("Base Color", material.baseColor.data());
         ImGui::ColorEdit3("Emissive Color", material.emissiveColor.data());
         ImGui::SliderFloat("Metallic", &material.metallic, 0.0f, 1.0f);
