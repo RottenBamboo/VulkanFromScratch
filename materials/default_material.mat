@@ -1,5 +1,6 @@
 {
     "name": "default_material",
+    "shaderPathName": "D:/Project/VulkanFromScratch/shader/bin/gBufferVert.spv",
     "baseColor": [1, 0.191176, 0.191176, 1],
     "emissiveColor": [1, 1, 1],
     "metallic": 0,

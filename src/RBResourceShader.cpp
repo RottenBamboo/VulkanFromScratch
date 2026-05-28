@@ -17,7 +17,7 @@ namespace RottenBamboo {
 
     }
 
-    void RBResourceShader::Reflect(ShaderReflectionMap& refl, const ShaderPipelineStage shaderPipelineStage, const std::vector<uint32_t>& spirv)
+    void RBResourceShader::Reflect(const std::string& path, const ShaderPipelineStage shaderPipelineStage, const std::vector<uint32_t>& spirv)
     {
         if (spirv.size() < 5 || spirv[0] != 0x07230203u)
             return;
@@ -197,6 +197,8 @@ namespace RottenBamboo {
                     }
                 }
                 shaderReflection[shaderPipelineStage].vertexInputs.push_back(inputAttr);
+                shaderReflection[shaderPipelineStage].shaderPath = path;
+                customShaderReflection[path] = &shaderReflection[shaderPipelineStage];
                 std::cout << "Location:: Binding: " << binding << ", Type: " << typeName << ", Offset: " << currentOffset << std::endl;
                 RBLOG_INFO("Location:: Binding: %d, Type: %s, Offset: %d", binding, typeName.c_str(), currentOffset);
             }
@@ -291,5 +293,27 @@ VkFormat RBResourceShader::SpirvImageFormatToVkFormat(spv::ImageFormat format)
         return it != shaderReflection.end() ? &shaderReflection[shaderPipelineStage] : nullptr;
     }
     
+    
+    const CustomShaderReflectionMap& RBResourceShader::GetCustomReflection() const
+    {
+        return customShaderReflection;
+    }
+
+    CustomShaderReflectionMap& RBResourceShader::GetCustomReflection()
+    {
+        return customShaderReflection;
+    }
+    
+    const RBShaderReflection* RBResourceShader::GetCustomReflection(const std::string path) const
+    {
+        auto it = customShaderReflection.find(path);
+        return it != customShaderReflection.end() ? customShaderReflection.at(path) : nullptr;
+    }
+
+    RBShaderReflection* RBResourceShader::GetCustomReflection(const std::string path)
+    {
+        auto it = customShaderReflection.find(path);
+        return it != customShaderReflection.end() ? customShaderReflection[path] : nullptr;
+    }
     
 }

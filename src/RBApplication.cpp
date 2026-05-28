@@ -14,9 +14,14 @@
 namespace RottenBamboo {
 
         RBGUI* RBApplication::ptr_gui = nullptr;
-
+        RBResourceShader* RBApplication::ptr_resourceShader = nullptr;
+        
         RBGUI* RBApplication::GetGUI() {
             return RBApplication::ptr_gui;
+        }
+
+        RBResourceShader* RBApplication::GetResourceShader() {
+            return RBApplication::ptr_resourceShader;
         }
 
         RBApplication::RBApplication() {
@@ -36,7 +41,7 @@ namespace RottenBamboo {
         for(int i = 0; i < inputShader.size(); i++)
         {
             resourceShader.Load(inputShader[i].stage, inputShader[i].path);
-            resourceShader.Reflect(resourceShader.GetReflection(), inputShader[i].stage, *resourceShader.Get(inputShader[i].stage));
+            resourceShader.Reflect(inputShader[i].path, inputShader[i].stage, *resourceShader.Get(inputShader[i].stage));
         }
         InitializeBuffers();
         InitializeDescriptors();
@@ -53,6 +58,7 @@ namespace RottenBamboo {
     void RBApplication::InitializeStaticPtr()
     {
         RBApplication::ptr_gui = &gui;
+        RBApplication::ptr_resourceShader = &resourceShader;
     }
 
     RBApplication::~RBApplication() {

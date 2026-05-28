@@ -100,6 +100,7 @@ namespace RottenBamboo
 
             MaterialData loaded{};
             FindStringValue(text, "name", loaded.name);
+            FindStringValue(text, "shaderPathName", loaded.shaderPathName);
             FindArrayValue(text, "baseColor", loaded.baseColor);
             FindArrayValue(text, "emissiveColor", loaded.emissiveColor);
             FindFloatValue(text, "metallic", loaded.metallic);
@@ -139,6 +140,7 @@ namespace RottenBamboo
 
               file << "{\n"
                   << "    \"name\": \"" << data.name << "\",\n"
+                  << "    \"shaderPathName\": \"" << data.shaderPathName << "\",\n"
                   << "    \"baseColor\": [" << data.baseColor[0] << ", " << data.baseColor[1] << ", " << data.baseColor[2] << ", " << data.baseColor[3] << "],\n"
                   << "    \"emissiveColor\": [" << data.emissiveColor[0] << ", " << data.emissiveColor[1] << ", " << data.emissiveColor[2] << "],\n"
                   << "    \"metallic\": " << data.metallic << ",\n"

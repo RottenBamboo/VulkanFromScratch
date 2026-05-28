@@ -44,6 +44,7 @@ namespace RottenBamboo {
 
     struct RBShaderReflection
     {
+        std::string shaderPath;
         std::unordered_map<uint32_t, RBDescriptorSetLayoutInfo> descriptorSets;
         std::vector<VkPushConstantRange> pushConstants;
         std::vector<RBInputAttributeLocation> vertexInputs;

@@ -3,6 +3,8 @@
 // Created by rottenbamboo on 2026/5/17.
 //
 
+#pragma once
+
 #include "RBGUIBase.h"
 #include <iostream>
 #include <imgui.h>
@@ -25,5 +27,7 @@ namespace RottenBamboo
         void SetMaterial(RBMaterial* material);
         
         RBMaterial* currentMaterial = nullptr;
+        
+        std::string currentSelectedShader;
     };
 }

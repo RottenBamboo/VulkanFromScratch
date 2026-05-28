@@ -132,5 +132,9 @@ namespace RottenBamboo {
         static RBGUI* ptr_gui;
 
         static RBGUI* GetGUI();
+
+        static RBResourceShader* ptr_resourceShader;
+
+        static RBResourceShader* GetResourceShader();
     };
 }

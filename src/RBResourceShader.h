@@ -12,6 +12,7 @@
 namespace RottenBamboo {
 
     using ShaderReflectionMap = std::unordered_map<ShaderPipelineStage, RBShaderReflection>;
+    using CustomShaderReflectionMap = std::unordered_map<std::string, RBShaderReflection*>;
 
     class RBResourceShader : public RBResource {
     public:
@@ -23,7 +24,7 @@ namespace RottenBamboo {
 
         void Load(const std::string& path) override {};
 
-        void Reflect(ShaderReflectionMap& refl, const ShaderPipelineStage shaderPipelineStage, const std::vector<uint32_t>& spirv);
+        void Reflect(const std::string& path, const ShaderPipelineStage shaderPipelineStage, const std::vector<uint32_t>& spirv);
         
         VkFormat SpirvImageFormatToVkFormat(spv::ImageFormat format);
         
@@ -37,10 +38,20 @@ namespace RottenBamboo {
 
         RBShaderReflection* GetReflection(ShaderPipelineStage shaderPipelineStage);
         
+
+        const CustomShaderReflectionMap& GetCustomReflection() const;
+
+        CustomShaderReflectionMap& GetCustomReflection();
+
+        const RBShaderReflection* GetCustomReflection(const std::string path) const;
+
+        RBShaderReflection* GetCustomReflection(const std::string path);
+        
     private:
 
         std::unordered_map<ShaderPipelineStage, std::vector<uint32_t>> shaderSPIRV;
 
         ShaderReflectionMap shaderReflection;
+        CustomShaderReflectionMap customShaderReflection;
     };
 }
