@@ -4,6 +4,11 @@
 #include <cstring>
 namespace RottenBamboo
 {
+    static std::string NormalizePathString(std::string path)
+    {
+        std::replace(path.begin(), path.end(), '\\', '/');
+        return path;
+    }
     static std::vector<std::string> CollectShaders(const std::string& shaderDir)
     {
         std::vector<std::string> out;
@@ -98,7 +103,7 @@ namespace RottenBamboo
         CopyStringToBuffer(shaderPathBuffer, sizeof(shaderPathBuffer), material.shaderPathName);
         if (ImGui::InputText("shaderPathName", shaderPathBuffer, sizeof(shaderPathBuffer)))
         {
-            material.shaderPathName = shaderPathBuffer;
+            material.shaderPathName = NormalizePathString(shaderPathBuffer);
         }
         
         ImGui::SameLine();
@@ -132,7 +137,7 @@ namespace RottenBamboo
                     {
                         currentSelectedShader = s;
                         material.shaderReflection = RBApplication::GetResourceShader()->GetCustomReflection(s);
-                        material.shaderPathName = s;
+                        material.shaderPathName = NormalizePathString(s);
                         ImGui::CloseCurrentPopup();
                     }
                 }

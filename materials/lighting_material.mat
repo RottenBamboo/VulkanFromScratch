@@ -1,8 +1,8 @@
 {
     "name": "lighting_material",
-    "shaderPathName": "shader\bin\lightingFrag.spv",
-    "gPosition": 0.109000,
-    "gAlbedo": 0.307000,
-    "gNormal": 0.646000,
+    "shaderPathName": "shader/bin/lightingFrag.spv",
+    "gAlbedo": 0.792000,
+    "gPosition": 0.307000,
+    "gNormal": 0.547000,
     "gMetallicRoughnessAO": 1.000000
 }
