@@ -196,9 +196,10 @@ namespace RottenBamboo {
                         break;
                     }
                 }
+                const std::string normalizedPath = NormalizePathString(path);
                 shaderReflection[shaderPipelineStage].vertexInputs.push_back(inputAttr);
-                shaderReflection[shaderPipelineStage].shaderPath = path;
-                customShaderReflection[path] = &shaderReflection[shaderPipelineStage];
+                shaderReflection[shaderPipelineStage].shaderPath = normalizedPath;
+                customShaderReflection[normalizedPath] = &shaderReflection[shaderPipelineStage];
                 std::cout << "Location:: Binding: " << binding << ", Type: " << typeName << ", Offset: " << currentOffset << std::endl;
                 RBLOG_INFO("Location:: Binding: %d, Type: %s, Offset: %d", binding, typeName.c_str(), currentOffset);
             }

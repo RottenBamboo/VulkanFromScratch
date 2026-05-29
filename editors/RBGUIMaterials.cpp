@@ -4,11 +4,6 @@
 #include <cstring>
 namespace RottenBamboo
 {
-    static std::string NormalizePathString(std::string path)
-    {
-        std::replace(path.begin(), path.end(), '\\', '/');
-        return path;
-    }
     static std::vector<std::string> CollectShaders(const std::string& shaderDir)
     {
         std::vector<std::string> out;

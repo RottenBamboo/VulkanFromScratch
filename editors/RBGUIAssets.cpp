@@ -161,8 +161,10 @@ namespace RottenBamboo
 
             ImGui::TextUnformatted("Folders");
             fs::path relativePath;
+            fs::path entryPath;
             for (const auto& entry : directories) {
-                relativePath = fs::relative(entry.path(), GET_PROJECT_ROOT_DIR);
+                entryPath = entry.path();
+                relativePath = fs::relative(entryPath, GET_PROJECT_ROOT_DIR);
                 const bool selected = selectedPath == relativePath;
                 const std::string label = std::string("Folder: ") + relativePath.filename().string();
                 ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 200, 80, 255));
@@ -171,16 +173,17 @@ namespace RottenBamboo
                 }
                 ImGui::PopStyleColor();
                 if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-                    NavigateTo(entry.path());
+                    NavigateTo(entryPath);
                 }
             }
 
             ImGui::Separator();
             ImGui::TextUnformatted("Files");
             for (const auto& entry : files) {
-                relativePath = fs::relative(entry.path(), GET_PROJECT_ROOT_DIR);
+                entryPath = entry.path();
+                relativePath = fs::relative(entryPath, GET_PROJECT_ROOT_DIR);
                 const bool selected = selectedPath == relativePath;
-                const std::string label = std::string("File: ") + relativePath.filename().string();
+                const std::string label = std::string("File: ") + NormalizePathString(relativePath.filename().string());
                 ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(200, 200, 200, 255));
                 if (ImGui::Selectable(label.c_str(), selected)) {
                     selectedPath = relativePath;
@@ -192,10 +195,10 @@ namespace RottenBamboo
                 ImGui::PopStyleColor();
 
                  if (doubleClicked) {
-                     selectedPath = fs::relative(entry.path(), GET_PROJECT_ROOT_DIR);
+                     selectedPath = fs::relative(entryPath, GET_PROJECT_ROOT_DIR);
 
-                    if (IsMaterialFile(entry.path()) && resourceManager != nullptr) {
-                        const std::string path = relativePath.string();
+                    if (IsMaterialFile(entryPath) && resourceManager != nullptr) {
+                        const std::string path = NormalizePathString(relativePath.string());
                         RBMaterial* material = resourceManager->Load<RBMaterial>(path).get();
                         RBApplication::GetGUI()->SetEditorMaterial(material);
                         material->Load(path);

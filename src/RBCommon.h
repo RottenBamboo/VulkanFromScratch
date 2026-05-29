@@ -208,6 +208,12 @@ namespace RottenBamboo
         std::vector<VkPresentModeKHR> presentModes;
     };
 
+    static std::string NormalizePathString(std::string path)
+    {
+        std::replace(path.begin(), path.end(), '\\', '/');
+        return path;
+    }
+    
     inline std::string EnsureTrailingSlash(const std::string& path) 
     {
         if (!path.empty() && path.back() != '/')
