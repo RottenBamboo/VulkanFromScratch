@@ -1,7 +1,7 @@
 {
     "name": "default_material",
     "shaderPathName": "shader\bin\gBufferFrag.spv",
-    "normalMap": "0.786000",
-    "albedoMap": "0.182000",
-    "metallicRoughnessAOMap": "0.542000"
+    "normalMap": 0.583000,
+    "albedoMap": 0.651000,
+    "metallicRoughnessAOMap": 0.781000
 }

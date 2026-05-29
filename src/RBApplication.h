@@ -29,8 +29,8 @@ namespace RottenBamboo {
     class RBApplication {
 
     public:
-        static const uint32_t WIDTH = 1280;
-        static const uint32_t HEIGHT = 720;
+        static const uint32_t WIDTH = 1920;
+        static const uint32_t HEIGHT = 1080;
 
         void run();
 

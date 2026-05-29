@@ -94,6 +94,13 @@ namespace RottenBamboo
         static std::vector<std::string> shaderList;
 
         //ImGui::Text("Current Shader: %s", material.shaderName.empty() ? "<None>" : material.shaderName.c_str());
+        char shaderPathBuffer[128];
+        CopyStringToBuffer(shaderPathBuffer, sizeof(shaderPathBuffer), material.shaderPathName);
+        if (ImGui::InputText("shaderPathName", shaderPathBuffer, sizeof(shaderPathBuffer)))
+        {
+            material.shaderPathName = shaderPathBuffer;
+        }
+        
         ImGui::SameLine();
         if (ImGui::Button("Select Shader..."))
         {
@@ -141,12 +148,6 @@ namespace RottenBamboo
             ImGui::EndPopup();
         }
 
-        char shaderPathBuffer[128];
-        CopyStringToBuffer(shaderPathBuffer, sizeof(shaderPathBuffer), material.shaderPathName);
-        if (ImGui::InputText("shaderPathName", shaderPathBuffer, sizeof(shaderPathBuffer)))
-        {
-            material.shaderPathName = shaderPathBuffer;
-        }
 
         if(material.shaderReflection && material.shaderReflection->descriptorSets.size() > 0)
         {
@@ -164,40 +165,6 @@ namespace RottenBamboo
                 itr->second.floatValue = value;
             }
         }
-
-        // ImGui::ColorEdit4("Base Color", material.baseColor.data());
-        // ImGui::ColorEdit3("Emissive Color", material.emissiveColor.data());
-        // ImGui::SliderFloat("Metallic", &material.metallic, 0.0f, 1.0f);
-        // ImGui::SliderFloat("Roughness", &material.roughness, 0.0f, 1.0f);
-        // ImGui::SliderFloat("Emissive Strength", &material.emissiveStrength, 0.0f, 50.0f);
-        // ImGui::SliderFloat("Alpha Cutoff", &material.alphaCutoff, 0.0f, 1.0f);
-
-        // char albedoBuffer[512];
-        // char normalBuffer[512];
-        // char mrBuffer[512];
-        // char emissiveBuffer[512];
-
-        // CopyStringToBuffer(albedoBuffer, sizeof(albedoBuffer), material.baseColorTexture);
-        // CopyStringToBuffer(normalBuffer, sizeof(normalBuffer), material.normalTexture);
-        // CopyStringToBuffer(mrBuffer, sizeof(mrBuffer), material.metallicRoughnessTexture);
-        // CopyStringToBuffer(emissiveBuffer, sizeof(emissiveBuffer), material.emissiveTexture);
-
-        // if (ImGui::InputText("Base Color Texture", albedoBuffer, sizeof(albedoBuffer)))
-        // {
-        //     material.baseColorTexture = albedoBuffer;
-        // }
-        // if (ImGui::InputText("Normal Texture", normalBuffer, sizeof(normalBuffer)))
-        // {
-        //     material.normalTexture = normalBuffer;
-        // }
-        // if (ImGui::InputText("Metallic Roughness Texture", mrBuffer, sizeof(mrBuffer)))
-        // {
-        //     material.metallicRoughnessTexture = mrBuffer;
-        // }
-        // if (ImGui::InputText("Emissive Texture", emissiveBuffer, sizeof(emissiveBuffer)))
-        // {
-        //     material.emissiveTexture = emissiveBuffer;
-        // }
 
         if (ImGui::Button("Reset"))
         {

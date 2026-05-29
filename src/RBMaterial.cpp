@@ -104,23 +104,21 @@ namespace RottenBamboo
             loaded.shaderReflection = RBApplication::GetResourceShader()->GetCustomReflection(loaded.shaderPathName);
             if(loaded.shaderReflection && loaded.shaderReflection->descriptorSets.size() > 0)
             {
-                auto descriptorSets = loaded.shaderReflection->descriptorSets.at(0);
+                auto& descriptorSets = loaded.shaderReflection->descriptorSets.at(0);
                 for(auto itr = descriptorSets.bindings.begin(); itr != descriptorSets.bindings.end(); itr++)
                 {
                     if(itr->second.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
                     {
                         continue;
                     }
-                    const std::string name = itr->second.name;
+                    const std::string& name = itr->second.name;
                     float value;
                     FindFloatValue(text, name, value);
                     itr->second.floatValue = value;
                 }
             }
 
-            data.name = loaded.name;
-            data.shaderPathName = loaded.shaderPathName;
-            data.shaderReflection = loaded.shaderReflection;
+            data = std::move(loaded);
         }
         catch (const std::exception& e) {
             std::cout << "RBMaterial::Load() failed for " << this->path << ": " << e.what() << std::endl;
@@ -153,7 +151,7 @@ namespace RottenBamboo
             materialFileData += "    \"shaderPathName\": \"" + data.shaderPathName + "\",\n";
             if(materialData.shaderReflection && materialData.shaderReflection->descriptorSets.size() > 0)
             {
-                auto descriptorSets = materialData.shaderReflection->descriptorSets.at(0);
+                auto& descriptorSets = materialData.shaderReflection->descriptorSets.at(0);
                 for(auto itr = descriptorSets.bindings.begin(); itr != descriptorSets.bindings.end(); itr++)
                 {
                     if(itr->second.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
@@ -166,7 +164,7 @@ namespace RottenBamboo
                     {
                         materialFileData += ",\n";
                     }
-                    materialFileData += "    \"" + name + "\": \"" + value + "\"";
+                    materialFileData += "    \"" + name + "\": " + value;
                 }
             }
 
