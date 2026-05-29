@@ -1,7 +1,7 @@
 {
     "name": "default_material",
-    "shaderPathName": "G:/Project/VulkanFromScratch/shader/bin/gBufferFrag.spv",
-    "normalMap": "0.766000",
-    "albedoMap": "0.531000",
-    "metallicRoughnessAOMap": "0.000000"
+    "shaderPathName": "shader\bin\gBufferFrag.spv",
+    "normalMap": "0.786000",
+    "albedoMap": "0.182000",
+    "metallicRoughnessAOMap": "0.542000"
 }

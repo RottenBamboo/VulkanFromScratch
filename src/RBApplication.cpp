@@ -32,16 +32,16 @@ namespace RottenBamboo {
         InitializeDevice();
         InitializeCommandBuffer();
         
-        model_paths.insert({0, MODEL_PATH});
-        model_paths.insert({1, SAMURI_PATH});
-        model_paths.insert({2, TERRAIN_PATH});
+        model_paths.insert({0, LOW_POLY_TERRAIN_PATH});
+        model_paths.insert({1, LOW_POLY_TERRAIN_PATH});
+        model_paths.insert({2, LOW_POLY_TERRAIN_PATH});
 
         resourceManager.Load<RBModel>(model_paths);
 
         for(int i = 0; i < inputShader.size(); i++)
         {
             resourceShader.Load(inputShader[i].stage, inputShader[i].path);
-            resourceShader.Reflect(inputShader[i].path, inputShader[i].stage, *resourceShader.Get(inputShader[i].stage));
+            resourceShader.Reflect(std::filesystem::relative(inputShader[i].path, GET_PROJECT_ROOT_DIR).string(), inputShader[i].stage, *resourceShader.Get(inputShader[i].stage));
         }
         InitializeBuffers();
         InitializeDescriptors();
@@ -58,7 +58,7 @@ namespace RottenBamboo {
     }
     void RBApplication::InitializeMaterial()
     {
-        editorMaterial.Load(GET_PROJECT_ROOT_DIR + std::string("materials/default_material.mat"));
+        editorMaterial.Load(materialsFilePath + std::string("default_material.mat"));
         std::cout << "RBApplication::InitializeMaterial()" << std::endl;
     }
 

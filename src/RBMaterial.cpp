@@ -87,7 +87,7 @@ namespace RottenBamboo
             return;
         }
 
-        std::ifstream file(this->path);
+        std::ifstream file(GET_PROJECT_ROOT_DIR + this->path);
         if (!file.is_open()) {
             std::cout << "RBMaterial::Load() could not open: " << this->path << std::endl;
             return;
@@ -136,7 +136,7 @@ namespace RottenBamboo
         }
 
         try {
-            std::filesystem::path filePath(targetPath);
+            std::filesystem::path filePath(GET_PROJECT_ROOT_DIR + targetPath);
             if (filePath.has_parent_path()) {
                 std::filesystem::create_directories(filePath.parent_path());
             }

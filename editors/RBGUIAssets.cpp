@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <imgui.h>
 #include <sstream>
+namespace fs = std::filesystem;
 
 namespace RottenBamboo
 {
@@ -159,12 +160,14 @@ namespace RottenBamboo
             });
 
             ImGui::TextUnformatted("Folders");
+            fs::path relativePath;
             for (const auto& entry : directories) {
-                const bool selected = selectedPath == entry.path();
-                const std::string label = std::string("Folder: ") + entry.path().filename().string();
+                relativePath = fs::relative(entry.path(), GET_PROJECT_ROOT_DIR);
+                const bool selected = selectedPath == relativePath;
+                const std::string label = std::string("Folder: ") + relativePath.filename().string();
                 ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 200, 80, 255));
                 if (ImGui::Selectable(label.c_str(), selected)) {
-                    selectedPath = entry.path();
+                    selectedPath = relativePath;
                 }
                 ImGui::PopStyleColor();
                 if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
@@ -175,11 +178,12 @@ namespace RottenBamboo
             ImGui::Separator();
             ImGui::TextUnformatted("Files");
             for (const auto& entry : files) {
-                const bool selected = selectedPath == entry.path();
-                const std::string label = std::string("File: ") + entry.path().filename().string();
+                relativePath = fs::relative(entry.path(), GET_PROJECT_ROOT_DIR);
+                const bool selected = selectedPath == relativePath;
+                const std::string label = std::string("File: ") + relativePath.filename().string();
                 ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(200, 200, 200, 255));
                 if (ImGui::Selectable(label.c_str(), selected)) {
-                    selectedPath = entry.path();
+                    selectedPath = relativePath;
                 }
 
                 const bool doubleClicked =
@@ -188,10 +192,10 @@ namespace RottenBamboo
                 ImGui::PopStyleColor();
 
                  if (doubleClicked) {
-                     selectedPath = entry.path();
+                     selectedPath = fs::relative(entry.path(), GET_PROJECT_ROOT_DIR);
 
                     if (IsMaterialFile(entry.path()) && resourceManager != nullptr) {
-                        const std::string path = entry.path().string();
+                        const std::string path = relativePath.string();
                         RBMaterial* material = resourceManager->Load<RBMaterial>(path).get();
                         RBApplication::GetGUI()->SetEditorMaterial(material);
                         material->Load(path);
