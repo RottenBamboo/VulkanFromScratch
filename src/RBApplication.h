@@ -16,6 +16,7 @@
 #include "RBResourceShader.h"
 #include "RBRuntimeCameraManager.h"
 #include "RBEditorCameraManager.h"
+#include "RBShaderDefinition.h"
 #include <stdexcept>
 #include <iostream>
 #include <string>
@@ -90,6 +91,8 @@ namespace RottenBamboo {
         RBGUI gui{device, windows};
 
         RBCommandBuffer commandBuffer{device};
+
+        RBShaderDefinition ShaderEntry{"shaderDefinition/default.shader"};
 
         RBMaterial editorMaterial{"", device, commandBuffer};
 

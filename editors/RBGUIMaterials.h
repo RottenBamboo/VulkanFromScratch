@@ -6,6 +6,7 @@
 #pragma once
 
 #include "RBGUIBase.h"
+#include "RBShaderDefinition.h"
 #include <iostream>
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
@@ -29,5 +30,7 @@ namespace RottenBamboo
         RBMaterial* currentMaterial = nullptr;
         
         std::string currentSelectedShader;
+
+        RBShaderDefinition shaderDefinition;
     };
 }

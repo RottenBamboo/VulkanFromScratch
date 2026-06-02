@@ -72,6 +72,7 @@ namespace RottenBamboo
 
     void RBMaterial::Reset()
     {
+        RBLOG_INFO("RBMaterial::Reset()");
         data = MaterialData{};
     }
 
@@ -119,6 +120,7 @@ namespace RottenBamboo
             }
 
             data = std::move(loaded);
+            RBLOG_INFO("RBMaterial::Load()");
         }
         catch (const std::exception& e) {
             std::cout << "RBMaterial::Load() failed for " << this->path << ": " << e.what() << std::endl;
@@ -170,6 +172,7 @@ namespace RottenBamboo
 
             materialFileData += "\n}\n";
             file << materialFileData;
+            RBLOG_INFO("RBMaterial::Save()");
             return true;
         }
         catch (const std::exception& e) {
