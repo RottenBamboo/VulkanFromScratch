@@ -36,6 +36,7 @@ namespace RottenBamboo {
         model_paths.insert({1, SAMURI_PATH});
         model_paths.insert({2, TERRAIN_PATH});
 
+        InitializeShader();
         resourceManager.Load<RBModel>(model_paths);
 
         for(int i = 0; i < inputShader.size(); i++)
@@ -59,10 +60,12 @@ namespace RottenBamboo {
     void RBApplication::InitializeMaterial()
     {
         editorMaterial.Load(materialsFilePath + "default_material.mat");
-        shaderEntry.Load(shaderDefinitionFilePath + "default_shader.shader");
         std::cout << "RBApplication::InitializeMaterial()" << std::endl;
     }
-
+    void RBApplication::InitializeShader()
+    {
+        shaderEntry.Load(shaderDefinitionFilePath + "default_shader.shader");
+    }
     void RBApplication::InitializeStaticPtr()
     {
         RBApplication::ptr_gui = &gui;

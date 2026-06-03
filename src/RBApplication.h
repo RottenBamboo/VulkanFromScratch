@@ -77,6 +77,8 @@ namespace RottenBamboo {
         void InitializeMatrix();
         
         void InitializeMaterial();
+        
+        void InitializeShader();
 
         std::chrono::high_resolution_clock::time_point lastFrameTime;
 
