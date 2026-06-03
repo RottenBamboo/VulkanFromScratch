@@ -17,7 +17,7 @@ namespace RottenBamboo {
 
     }
 
-    void RBResourceShader::Reflect(const std::string& path, const ShaderPipelineStage shaderPipelineStage, const std::vector<uint32_t>& spirv)
+    void RBResourceShader::Reflect(const std::string& path, const RenderStage shaderPipelineStage, const std::vector<uint32_t>& spirv)
     {
         if (spirv.size() < 5 || spirv[0] != 0x07230203u)
             return;
@@ -244,7 +244,7 @@ VkFormat RBResourceShader::SpirvImageFormatToVkFormat(spv::ImageFormat format)
     default:                         return VK_FORMAT_UNDEFINED;
     }
 }
-    void RBResourceShader::Load(ShaderPipelineStage stage, const std::string& path)
+    void RBResourceShader::Load(RenderStage stage, const std::string& path)
     {
         auto shaderCode = RBPipelineUtils::readFile(path);
         std::cout << "Loaded shader code from : " << path << std::endl;
@@ -260,7 +260,7 @@ VkFormat RBResourceShader::SpirvImageFormatToVkFormat(spv::ImageFormat format)
         std::memcpy(shaderSPIRV[stage].data(), shaderCode.data(), codeSize);
     }
 
-    const std::vector<uint32_t>* RBResourceShader::Get(ShaderPipelineStage shaderStage) const
+    const std::vector<uint32_t>* RBResourceShader::Get(RenderStage shaderStage) const
     {
         if (shaderSPIRV.find(shaderStage) != shaderSPIRV.end())
         {
@@ -282,13 +282,13 @@ VkFormat RBResourceShader::SpirvImageFormatToVkFormat(spv::ImageFormat format)
         return shaderReflection;
     }
     
-    const RBShaderReflection* RBResourceShader::GetReflection(ShaderPipelineStage shaderPipelineStage) const
+    const RBShaderReflection* RBResourceShader::GetReflection(RenderStage shaderPipelineStage) const
     {
         auto it = shaderReflection.find(shaderPipelineStage);
         return it != shaderReflection.end() ? &shaderReflection.at(shaderPipelineStage) : nullptr;
     }
 
-    RBShaderReflection* RBResourceShader::GetReflection(ShaderPipelineStage shaderPipelineStage)
+    RBShaderReflection* RBResourceShader::GetReflection(RenderStage shaderPipelineStage)
     {
         auto it = shaderReflection.find(shaderPipelineStage);
         return it != shaderReflection.end() ? &shaderReflection[shaderPipelineStage] : nullptr;

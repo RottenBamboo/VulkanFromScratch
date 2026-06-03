@@ -3,11 +3,11 @@
     "stages": [
         {
             "stage": "vertex",
-            "path": "shader/bin/gBufferVert.spv"
+            "path": "shader/gBuffer.vert"
         },
         {
             "stage": "fragment",
-            "path": "shader/bin/gBufferFrag.spv"
+            "path": "shader/gBuffer.frag"
         }
     ],
     "parameters": [

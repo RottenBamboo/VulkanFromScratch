@@ -16,6 +16,7 @@ const std::string LOW_POLY_TERRAIN_PATH = GET_PROJECT_ROOT_DIR + "models/low_pol
 
 const TexturesInfo fallBackFormat{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, ""};
 
+const std::string shaderDefinitionFilePath = "shaderDefinition/";
 const std::string materialsFilePath = "materials/";
 const std::string modelsFilePath = GET_PROJECT_ROOT_DIR + "models/";
 const std::string texturesFilePath = GET_PROJECT_ROOT_DIR + "textures/";
@@ -69,12 +70,12 @@ const std::vector<TexturesInfo> inputImageTerrain =
 
 const std::vector<ShadersInfo> inputShader = 
 {
-    ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/gBufferFrag.spv"},
-    ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/lightingFrag.spv"},
-    ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_POST_PROCESSING_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/skyFrag.spv"},
-    ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_POST_PROCESSING_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/skyVert.spv"},
-    ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_GBUFFER_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/gBufferVert.spv"},
-    ShadersInfo{RottenBamboo::ShaderPipelineStage::SHADER_PIPELINE_STAGE_LIGHTING_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/lightingVert.spv"}
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_GBUFFER_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/gBufferFrag.spv"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_LIGHTING_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/lightingFrag.spv"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_POST_PROCESSING_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/skyFrag.spv"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_POST_PROCESSING_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/skyVert.spv"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_GBUFFER_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/gBufferVert.spv"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_LIGHTING_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/lightingVert.spv"}
 };
 
 

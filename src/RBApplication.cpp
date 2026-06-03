@@ -58,7 +58,8 @@ namespace RottenBamboo {
     }
     void RBApplication::InitializeMaterial()
     {
-        editorMaterial.Load(materialsFilePath + std::string("default_material.mat"));
+        editorMaterial.Load(materialsFilePath + "default_material.mat");
+        shaderEntry.Load(shaderDefinitionFilePath + "default_shader.shader");
         std::cout << "RBApplication::InitializeMaterial()" << std::endl;
     }
 
@@ -129,21 +130,21 @@ namespace RottenBamboo {
         descriptorsGBuffersVec.clear();
         descriptorsGBuffersVec.reserve(0);
 
-        descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
+        descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
         descriptorsGBuffersVec.push_back(&descriptorsGBuffer);
 
-        descriptorsSamuri.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
+        descriptorsSamuri.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
         descriptorsGBuffersVec.push_back(&descriptorsSamuri);
 
-        descriptorsTerrain.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_GBUFFER_FRAGMENT));
+        descriptorsTerrain.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
         descriptorsGBuffersVec.push_back(&descriptorsTerrain);
 
         //after GBuffer pass descriptors
-        descriptorsSkyBox.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_POST_PROCESSING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_POST_PROCESSING_FRAGMENT));
+        descriptorsSkyBox.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_POST_PROCESSING_VERTEX), resourceShader.GetReflection(RENDER_STAGE_POST_PROCESSING_FRAGMENT));
 
-        descriptorsLighting.InitializeDescriptors(resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT), true);
+        descriptorsLighting.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(RENDER_STAGE_LIGHTING_FRAGMENT), true);
         
-        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, attachmentParams, depthParams, resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT), true);
+        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, attachmentParams, depthParams, resourceShader.GetReflection(RENDER_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(RENDER_STAGE_LIGHTING_FRAGMENT), true);
         std::cout << "RBApplication::InitializeDescriptors(const RBResourceShader& resourceShader)" << std::endl;
             RBLOG_INFO("RBApplication::InitializeDescriptors(const RBResourceShader& resourceShader)");
     }
@@ -517,7 +518,7 @@ void RBApplication::processModelNode(
             gBufferPass.clearFrameBuffers();
             descriptorsAttachment.ReleaseAllResource();
             RBSwapChain::SetSwapChainExtent(device, windows);
-            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent,attachmentParams, depthParams, resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(SHADER_PIPELINE_STAGE_LIGHTING_FRAGMENT), true);
+            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent,attachmentParams, depthParams, resourceShader.GetReflection(RENDER_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(RENDER_STAGE_LIGHTING_FRAGMENT), true);
 
             gBufferPass.createGraphicsPipeline();
 

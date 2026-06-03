@@ -33,12 +33,12 @@ struct TexturesInfo
 
 struct ShadersInfo
 {
-    RottenBamboo::ShaderPipelineStage stage;
+    RottenBamboo::RenderStage stage;
     
     std::string path;
     ShadersInfo() : path(""){}
     ShadersInfo(const std::string& p) : path(p) {}
-    ShadersInfo(RottenBamboo::ShaderPipelineStage s, const std::string& p) : stage(s), path(p) {}
+    ShadersInfo(RottenBamboo::RenderStage s, const std::string& p) : stage(s), path(p) {}
 };
 
 struct FrameBuffersInfo
@@ -72,6 +72,7 @@ extern const std::string SAMURI_PATH;
 extern const std::string LOW_POLY_TERRAIN_PATH;
 extern const TexturesInfo fallBackFormat;
 extern const std::string materialsFilePath;
+extern const std::string shaderDefinitionFilePath;
 extern const std::string modelsFilePath;
 extern const std::string texturesFilePath;
 extern const std::string shaderFilePath;

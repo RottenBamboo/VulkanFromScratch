@@ -92,7 +92,7 @@ namespace RottenBamboo {
 
         RBCommandBuffer commandBuffer{device};
 
-        RBShaderDefinition ShaderEntry{"shaderDefinition/default.shader"};
+        RBShaderDefinition shaderEntry{};
 
         RBMaterial editorMaterial{"", device, commandBuffer};
 
