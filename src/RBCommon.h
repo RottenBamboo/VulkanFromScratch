@@ -19,6 +19,7 @@
 #include "RBResourceUtils.h"
 #include "RBLogger.h"
 
+//namespace fs = std::filesystem;
 #define GET_PROJECT_ROOT_DIR RottenBamboo::GetProjectRootPath()
 struct TexturesInfo
 {
@@ -34,11 +35,13 @@ struct TexturesInfo
 struct ShadersInfo
 {
     RottenBamboo::RenderStage stage;
-    
     std::string path;
-    ShadersInfo() : path(""){}
-    ShadersInfo(const std::string& p) : path(p) {}
-    ShadersInfo(RottenBamboo::RenderStage s, const std::string& p) : stage(s), path(p) {}
+
+    RottenBamboo::PipelineStage pipelineStage;
+    std::string shaderDefinitionPath;
+    ShadersInfo() : path(""), shaderDefinitionPath(""){}
+    //ShadersInfo(const std::string& p, const std::string& sd) : path(p), shaderDefinitionPath(sd) {}
+    ShadersInfo(RottenBamboo::RenderStage s, const std::string& p, RottenBamboo::PipelineStage ps, const std::string& sd) : stage(s), path(p), pipelineStage(ps), shaderDefinitionPath(sd) {}
 };
 
 struct FrameBuffersInfo
@@ -208,6 +211,35 @@ namespace RottenBamboo
         std::vector<VkSurfaceFormatKHR> formats;
         std::vector<VkPresentModeKHR> presentModes;
     };
+    
+    inline int countFiles(const std::string& dir) 
+    {
+        int count = 0;
+        for (const auto& entry : std::filesystem::directory_iterator(dir)) 
+        {
+            if (entry.is_regular_file()) 
+            {
+                ++count;
+            }
+        }
+        return count;
+    }
+    
+    inline std::vector<std::string> GetDirectoryFileNames(const std::string& dir)
+    {
+        std::vector<std::string> names;
+        names.reserve(countFiles(dir));
+
+        for (const auto& entry : std::filesystem::directory_iterator(dir))
+        {
+            if (entry.is_regular_file())
+            {
+                names.push_back(entry.path().filename().string());
+            }
+        }
+
+        return names;
+    }
 
     static std::string NormalizePathString(std::string path)
     {

@@ -21,7 +21,6 @@ namespace RottenBamboo {
     
     enum class PipelineStage 
     {
-        PIPELINE_STAGE_INPUT_ASSEMBLY,
         PIPELINE_STAGE_VERTEX,
         PIPELINE_STAGE_GEOMETRY,
         PIPELINE_STAGE_FRAGMENT,

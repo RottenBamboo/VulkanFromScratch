@@ -78,7 +78,7 @@ namespace RottenBamboo {
         
         void InitializeMaterial();
         
-        void InitializeShader();
+        void InitializeShaderDefinition();
 
         std::chrono::high_resolution_clock::time_point lastFrameTime;
 
@@ -94,7 +94,7 @@ namespace RottenBamboo {
 
         RBCommandBuffer commandBuffer{device};
 
-        RBShaderDefinition shaderEntry{};
+        std::unordered_map<std::string, RBShaderDefinition> shaderDefinitions;
 
         RBMaterial editorMaterial{"", device, commandBuffer};
 

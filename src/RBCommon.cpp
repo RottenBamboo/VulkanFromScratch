@@ -70,12 +70,12 @@ const std::vector<TexturesInfo> inputImageTerrain =
 
 const std::vector<ShadersInfo> inputShader = 
 {
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_GBUFFER_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/gBufferFrag.spv"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_LIGHTING_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/lightingFrag.spv"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_POST_PROCESSING_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/skyFrag.spv"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_POST_PROCESSING_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/skyVert.spv"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_GBUFFER_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/gBufferVert.spv"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_LIGHTING_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/lightingVert.spv"}
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_GBUFFER_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/gBufferFrag.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_FRAGMENT, "shaderDefinition/gBufferDefinition.shader"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_LIGHTING_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/lightingFrag.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_FRAGMENT, "shaderDefinition/lightingDefinition.shader"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_POST_PROCESSING_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/skyFrag.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_FRAGMENT, "shaderDefinition/skyDefinition.shader"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_POST_PROCESSING_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/skyVert.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_VERTEX, "shaderDefinition/skyDefinition.shader"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_GBUFFER_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/gBufferVert.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_VERTEX, "shaderDefinition/gBufferDefinition.shader"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_LIGHTING_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/lightingVert.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_VERTEX, "shaderDefinition/lightingDefinition.shader"}
 };
 
 

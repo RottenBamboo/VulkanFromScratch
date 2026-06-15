@@ -36,14 +36,28 @@ namespace RottenBamboo {
         model_paths.insert({1, SAMURI_PATH});
         model_paths.insert({2, TERRAIN_PATH});
 
-        InitializeShader();
+        InitializeShaderDefinition();
         resourceManager.Load<RBModel>(model_paths);
 
         for(int i = 0; i < inputShader.size(); i++)
         {
-            resourceShader.Load(inputShader[i].stage, inputShader[i].path);
-            resourceShader.Reflect(std::filesystem::relative(inputShader[i].path, GET_PROJECT_ROOT_DIR).string(), inputShader[i].stage, *resourceShader.Get(inputShader[i].stage));
+            RBShaderDefinition& rbShaderDef = shaderDefinitions[inputShader[i].shaderDefinitionPath];
+            RBShaderDefinitionData* definitionData = &rbShaderDef.GetData();
+            std::string pathShader;
+
+            if(inputShader[i].pipelineStage == PipelineStage::PIPELINE_STAGE_VERTEX)
+            {
+                pathShader = GET_PROJECT_ROOT_DIR + definitionData->stages[(int)RBShaderStageKind::Vertex].path;
+            }
+            else if (inputShader[i].pipelineStage == PipelineStage::PIPELINE_STAGE_FRAGMENT)
+            {
+                pathShader = GET_PROJECT_ROOT_DIR + definitionData->stages[(int)RBShaderStageKind::Fragment].path;
+            }
+            
+            resourceShader.Load(inputShader[i].stage, pathShader);
+            resourceShader.Reflect(std::filesystem::relative(pathShader, GET_PROJECT_ROOT_DIR).string(), inputShader[i].stage, *resourceShader.Get(inputShader[i].stage));
         }
+        
         InitializeBuffers();
         InitializeDescriptors();
         InitializeSwapChain();
@@ -62,9 +76,18 @@ namespace RottenBamboo {
         editorMaterial.Load(materialsFilePath + "default_material.mat");
         std::cout << "RBApplication::InitializeMaterial()" << std::endl;
     }
-    void RBApplication::InitializeShader()
+    void RBApplication::InitializeShaderDefinition()
     {
-        shaderEntry.Load(shaderDefinitionFilePath + "default_shader.shader");
+        for (const auto& entry : std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + shaderDefinitionFilePath))
+        {
+            if (entry.is_regular_file())
+            {
+                RBShaderDefinition shaderDef;
+                std::string relativePath = std::filesystem::relative(entry.path(), GET_PROJECT_ROOT_DIR).string();
+                shaderDef.Load(relativePath);
+                shaderDefinitions[relativePath] = shaderDef;
+            }
+        }
     }
     void RBApplication::InitializeStaticPtr()
     {

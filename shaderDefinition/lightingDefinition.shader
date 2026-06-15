@@ -3,34 +3,34 @@
     "stages": [
         {
             "stage": "vertex",
-            "path": "shader/bin/gBufferVert.spv"
+            "path": "shader/bin/lightingVert.spv"
         },
         {
             "stage": "fragment",
-            "path": "shader/bin/gBufferFrag.spv"
+            "path": "shader/bin/lightingFrag.spv"
         }
     ],
     "parameters": [
         {
-            "name": "albedoMap",
+            "name": "gPosition",
             "type": "texture2D",
             "set": 1,
             "binding": 1
         },
         {
-            "name": "normalMap",
+            "name": "gNormal",
             "type": "texture2D",
             "set": 1,
             "binding": 2
         },
         {
-            "name": "metallicRoughnessAOMap",
+            "name": "gAlbedo",
             "type": "texture2D",
             "set": 1,
             "binding": 3
         },
 	 {
-            "name": "metallicRoughnessAOMap",
+            "name": "gMetallicRoughnessAO",
             "type": "texture2D",
             "set": 1,
             "binding": 4
