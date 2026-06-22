@@ -33,7 +33,7 @@ namespace RottenBamboo
 
         RBShaderDefinition shaderDefinition;
 
-        const ImVec2 imageVec = ImVec2(32, 32);
+        const ImVec2 imageVec = ImVec2(64, 64);
         std::vector<VkDescriptorSet> vecUIMaterialDescriptorSet;
     };
 }

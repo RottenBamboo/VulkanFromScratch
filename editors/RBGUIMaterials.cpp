@@ -175,6 +175,8 @@ namespace RottenBamboo
                                         VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE ))
                 {
                     ImGui::Image((ImTextureID)vecUIMaterialDescriptorSet[i], imageVec);
+                    ImGui::SameLine();
+                    ImGui::Text(name.c_str());
                     i++;
                 }
                 else
