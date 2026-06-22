@@ -65,6 +65,14 @@ namespace RottenBamboo
 
     void RBGUIMaterials::SetMaterial(RBMaterial* material)
     {
+        std::vector<RBDescriptors*>* ptr_Descriptors = RBApplication::GetDescriptors();
+        int imageCount = (*ptr_Descriptors)[0]->rbImageManager.imageBundles.size();
+        vecUIMaterialDescriptorSet.clear();
+        vecUIMaterialDescriptorSet.reserve(imageCount);
+        for(int i = 0; i < imageCount; i++)
+        {
+            vecUIMaterialDescriptorSet.push_back(ImGui_ImplVulkan_AddTexture((*ptr_Descriptors)[0]->rbImageManager.imageBundles[i].sampler, (*ptr_Descriptors)[0]->rbImageManager.imageBundles[i].imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL));
+        }
         this->currentMaterial = material;
     }
 
@@ -152,6 +160,7 @@ namespace RottenBamboo
         if(material.shaderReflection && material.shaderReflection->descriptorSets.size() > 0)
         {
             auto& descriptorSets = material.shaderReflection->descriptorSets.at(0);
+            int i = 0;
             for(auto itr = descriptorSets.bindings.begin(); itr != descriptorSets.bindings.end(); itr++)
             {
                 if(itr->second.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
@@ -161,7 +170,17 @@ namespace RottenBamboo
                 float temp = 0.5f;
                 const std::string &name = itr->second.name;
                 float value = itr->second.floatValue;
-                ImGui::SliderFloat(name.c_str(), &value, 0, 1);
+                if(itr->second.type & (VK_DESCRIPTOR_TYPE_SAMPLER | 
+                                        VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER | 
+                                        VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE ))
+                {
+                    ImGui::Image((ImTextureID)vecUIMaterialDescriptorSet[i], imageVec);
+                    i++;
+                }
+                else
+                {
+                    ImGui::SliderFloat(name.c_str(), &value, 0, 1);
+                }
                 itr->second.floatValue = value;
             }
         }

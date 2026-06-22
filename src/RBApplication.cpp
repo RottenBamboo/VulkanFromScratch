@@ -15,6 +15,7 @@ namespace RottenBamboo {
 
         RBGUI* RBApplication::ptr_gui = nullptr;
         RBResourceShader* RBApplication::ptr_resourceShader = nullptr;
+        std::vector<RBDescriptors*>* RBApplication::ptr_Descriptors = nullptr;
         
         RBGUI* RBApplication::GetGUI() {
             return RBApplication::ptr_gui;
@@ -22,6 +23,11 @@ namespace RottenBamboo {
 
         RBResourceShader* RBApplication::GetResourceShader() {
             return RBApplication::ptr_resourceShader;
+        }
+
+        std::vector<RBDescriptors*>* RBApplication::GetDescriptors()
+        {
+            return RBApplication::ptr_Descriptors;
         }
 
         RBApplication::RBApplication() {
@@ -62,9 +68,9 @@ namespace RottenBamboo {
         InitializeDescriptors();
         InitializeSwapChain();
         InitializeGraphicPipeline();
-        InitializeGUI();
-
         InitializeStaticPtr();
+
+        InitializeGUI();
         
         InitializeMatrix();
         InitializeMaterial();
@@ -84,6 +90,7 @@ namespace RottenBamboo {
             {
                 RBShaderDefinition shaderDef;
                 std::string relativePath = std::filesystem::relative(entry.path(), GET_PROJECT_ROOT_DIR).string();
+                relativePath = NormalizePathString(relativePath);
                 shaderDef.Load(relativePath);
                 shaderDefinitions[relativePath] = shaderDef;
             }
@@ -93,6 +100,7 @@ namespace RottenBamboo {
     {
         RBApplication::ptr_gui = &gui;
         RBApplication::ptr_resourceShader = &resourceShader;
+        RBApplication::ptr_Descriptors = &descriptorsGBuffersVec;
     }
 
     RBApplication::~RBApplication() {

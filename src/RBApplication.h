@@ -143,5 +143,9 @@ namespace RottenBamboo {
         static RBResourceShader* ptr_resourceShader;
 
         static RBResourceShader* GetResourceShader();
+
+        static std::vector<RBDescriptors*>* ptr_Descriptors;
+
+        static std::vector<RBDescriptors*>* GetDescriptors();
     };
 }

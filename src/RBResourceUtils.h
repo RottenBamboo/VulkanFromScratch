@@ -30,6 +30,7 @@ namespace RottenBamboo {
     struct RBDescriptorBinding
     {
         std::string         name;
+        std::string         texturePath;
         uint32_t            binding;
         VkDescriptorType    type;
         uint32_t            count;
