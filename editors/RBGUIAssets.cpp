@@ -189,6 +189,15 @@ namespace RottenBamboo
                     selectedPath = relativePath;
                 }
 
+                // drag start
+                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+                    const std::string pathString = relativePath.string();
+                    ImGui::SetDragDropPayload("ASSET_FILE", pathString.c_str(), pathString.size() + 1);
+                    ImGui::Text("Dragging: %s", relativePath.filename().string().c_str());
+                    ImGui::EndDragDropSource();
+                }
+                // drag end
+            
                 const bool doubleClicked =
                     ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
 

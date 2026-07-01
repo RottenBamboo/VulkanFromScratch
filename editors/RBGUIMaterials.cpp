@@ -178,6 +178,13 @@ namespace RottenBamboo
                     ImGui::SameLine();
                     ImGui::Text(name.c_str());
                     i++;
+                    // if (ImGui::BeginDragDropTarget()) 
+                    // {
+                    //     if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_FILE")) {
+                    //         const char* filePath = (const char*)payload->Data;
+                    //     }
+                    //     ImGui::EndDragDropTarget();
+                    // }
                 }
                 else
                 {
