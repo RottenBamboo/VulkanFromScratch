@@ -174,17 +174,51 @@ namespace RottenBamboo
                                         VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER | 
                                         VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE ))
                 {
+                    ImVec2 imagePos = ImGui::GetCursorScreenPos();
                     ImGui::Image((ImTextureID)vecUIMaterialDescriptorSet[i], imageVec);
+                    ImVec2 imageMin = ImGui::GetItemRectMin();
+                    ImVec2 imageMax = ImGui::GetItemRectMax();
+                    
+                    // invisible button for drag and drop texture
+                    ImGui::SetCursorScreenPos(imagePos);
+                    ImGui::InvisibleButton(("drop_target_" + name).c_str(), imageVec);
+
+                    ImDrawList* drawList = ImGui::GetWindowDrawList();
+                    bool isHovered = ImGui::IsItemHovered();
+                    bool isDraggingOver = false;
+                    if (ImGui::BeginDragDropTarget()) 
+                    {
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_FILE")) 
+                        {
+                            const char* filePath = (const char*)payload->Data;
+                            std::string pathStr(filePath);
+
+                            ImGui::Text("Dropped: %s", filePath);
+                        }
+                        ImGui::EndDragDropTarget();
+                        isDraggingOver = ImGui::IsItemHovered();
+                    }
+
+                    // draw border around the image based on hover and drag state
+                    ImU32 borderColor;
+                    if (isDraggingOver) 
+                    {
+                        borderColor = IM_COL32(0, 255, 0, 255);
+                    } else if (isHovered) 
+                    {
+                        borderColor = IM_COL32(255, 255, 255, 255);
+                    } else 
+                    {
+                        borderColor = IM_COL32(128, 128, 128, 128);
+                    }
+                    
+                    drawList->AddRect(imagePos, ImVec2(imagePos.x + imageVec.x, imagePos.y + imageVec.y), 
+                      borderColor, 0, 0, 1.0f);
+
                     ImGui::SameLine();
                     ImGui::Text(name.c_str());
+
                     i++;
-                    // if (ImGui::BeginDragDropTarget()) 
-                    // {
-                    //     if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_FILE")) {
-                    //         const char* filePath = (const char*)payload->Data;
-                    //     }
-                    //     ImGui::EndDragDropTarget();
-                    // }
                 }
                 else
                 {
