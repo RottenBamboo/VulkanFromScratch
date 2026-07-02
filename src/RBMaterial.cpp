@@ -113,9 +113,20 @@ namespace RottenBamboo
                         continue;
                     }
                     const std::string& name = itr->second.name;
-                    float value;
-                    FindFloatValue(text, name, value);
-                    itr->second.floatValue = value;
+                    if(itr->second.type & (VK_DESCRIPTOR_TYPE_SAMPLER
+                                         | VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+                                         | VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE))
+                    {
+                        std::string value;
+                        FindStringValue(text, name, value);
+                        itr->second.texturePath = value;
+                    }
+                    else
+                    {
+                        float value;
+                        FindFloatValue(text, name, value);
+                        itr->second.floatValue = value;
+                    }
                 }
             }
 
@@ -161,12 +172,23 @@ namespace RottenBamboo
                         continue;
                     }
                     const std::string &name = itr->second.name;
-                    std::string value = std::to_string(itr->second.floatValue);
+                    std::string value = "";
+                    if(itr->second.type & (VK_DESCRIPTOR_TYPE_SAMPLER
+                                         | VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+                                         | VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE))
+                    {
+                        value = itr->second.texturePath;
+                    }
+                    else
+                    {
+                        value = std::to_string(itr->second.floatValue);
+                    }
+
                     if(itr != descriptorSets.bindings.begin())
                     {
                         materialFileData += ",\n";
                     }
-                    materialFileData += "    \"" + name + "\": " + value;
+                    materialFileData += "    \"" + name + "\": " + "\"" + value + "\"";
                 }
             }
 

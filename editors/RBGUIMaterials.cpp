@@ -2,6 +2,7 @@
 #include "RBApplication.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <cstring>
+namespace fs = std::filesystem;
 namespace RottenBamboo
 {
     static std::vector<std::string> CollectShaders(const std::string& shaderDir)
@@ -170,9 +171,9 @@ namespace RottenBamboo
                 float temp = 0.5f;
                 const std::string &name = itr->second.name;
                 float value = itr->second.floatValue;
-                if(itr->second.type & (VK_DESCRIPTOR_TYPE_SAMPLER | 
-                                        VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER | 
-                                        VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE ))
+                if(itr->second.type & (VK_DESCRIPTOR_TYPE_SAMPLER
+                                     | VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+                                     | VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE))
                 {
                     ImVec2 imagePos = ImGui::GetCursorScreenPos();
                     ImGui::Image((ImTextureID)vecUIMaterialDescriptorSet[i], imageVec);
@@ -191,7 +192,7 @@ namespace RottenBamboo
                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_FILE")) 
                         {
                             const char* filePath = (const char*)payload->Data;
-                            std::string pathStr(filePath);
+                            itr->second.texturePath = NormalizePathString(fs::relative(filePath, GET_PROJECT_ROOT_DIR).string());
 
                             ImGui::Text("Dropped: %s", filePath);
                         }
@@ -213,7 +214,7 @@ namespace RottenBamboo
                     }
                     
                     drawList->AddRect(imagePos, ImVec2(imagePos.x + imageVec.x, imagePos.y + imageVec.y), 
-                      borderColor, 0, 0, 1.0f);
+                    borderColor, 0, 0, 1.0f);
 
                     ImGui::SameLine();
                     ImGui::Text(name.c_str());
@@ -223,8 +224,8 @@ namespace RottenBamboo
                 else
                 {
                     ImGui::SliderFloat(name.c_str(), &value, 0, 1);
+                    itr->second.floatValue = value;
                 }
-                itr->second.floatValue = value;
             }
         }
 
