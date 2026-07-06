@@ -64,15 +64,15 @@ namespace RottenBamboo
     {
     }
 
-    void RBGUIMaterials::SetMaterial(RBMaterial* material)
+    void RBGUIMaterials::SetMaterial(RBMaterial* material, int materialIndex)
     {
         std::vector<RBDescriptors*>* ptr_Descriptors = RBApplication::GetDescriptors();
-        int imageCount = (*ptr_Descriptors)[0]->rbImageManager.imageBundles.size();
+        int imageCount = (*ptr_Descriptors)[materialIndex]->rbImageManager.imageBundles.size();
         vecUIMaterialDescriptorSet.clear();
         vecUIMaterialDescriptorSet.reserve(imageCount);
         for(int i = 0; i < imageCount; i++)
         {
-            vecUIMaterialDescriptorSet.push_back(ImGui_ImplVulkan_AddTexture((*ptr_Descriptors)[0]->rbImageManager.imageBundles[i].sampler, (*ptr_Descriptors)[0]->rbImageManager.imageBundles[i].imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL));
+            vecUIMaterialDescriptorSet.push_back(ImGui_ImplVulkan_AddTexture((*ptr_Descriptors)[materialIndex]->rbImageManager.imageBundles[i].sampler, (*ptr_Descriptors)[materialIndex]->rbImageManager.imageBundles[i].imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL));
         }
         this->currentMaterial = material;
     }
@@ -177,8 +177,6 @@ namespace RottenBamboo
                 {
                     ImVec2 imagePos = ImGui::GetCursorScreenPos();
                     ImGui::Image((ImTextureID)vecUIMaterialDescriptorSet[i], imageVec);
-                    ImVec2 imageMin = ImGui::GetItemRectMin();
-                    ImVec2 imageMax = ImGui::GetItemRectMax();
                     
                     // invisible button for drag and drop texture
                     ImGui::SetCursorScreenPos(imagePos);

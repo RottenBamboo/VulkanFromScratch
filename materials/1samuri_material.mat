@@ -1,0 +1,7 @@
+{
+    "name": "1samuri_material",
+    "shaderPathName": "shader/bin/gBufferFrag.spv",
+    "normalMap": "",
+    "albedoMap": "",
+    "metallicRoughnessAOMap": ""
+}

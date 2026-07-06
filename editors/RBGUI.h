@@ -22,7 +22,7 @@ namespace RottenBamboo
 
         virtual void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix);
 
-        virtual void SetEditorMaterial(RBMaterial* material);
+        virtual void SetEditorMaterial(RBMaterial* material, int index = 0);
 
         virtual void SetResourceManager(ResourceManager* resourceManager);
 

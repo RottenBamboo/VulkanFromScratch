@@ -25,7 +25,7 @@ namespace RottenBamboo
 
         virtual void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix) override;
 
-        void SetMaterial(RBMaterial* material);
+        void SetMaterial(RBMaterial* material, int materialIndex = 0);
         
         RBMaterial* currentMaterial = nullptr;
         

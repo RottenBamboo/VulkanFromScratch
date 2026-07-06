@@ -179,6 +179,7 @@ namespace RottenBamboo
 
             ImGui::Separator();
             ImGui::TextUnformatted("Files");
+            int i = 0;
             for (const auto& entry : files) {
                 entryPath = entry.path();
                 relativePath = fs::relative(entryPath, GET_PROJECT_ROOT_DIR);
@@ -197,7 +198,6 @@ namespace RottenBamboo
                     ImGui::EndDragDropSource();
                 }
                 // drag end
-            
                 const bool doubleClicked =
                     ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left);
 
@@ -209,10 +209,11 @@ namespace RottenBamboo
                     if (IsMaterialFile(entryPath) && resourceManager != nullptr) {
                         const std::string path = NormalizePathString(relativePath.string());
                         RBMaterial* material = resourceManager->Load<RBMaterial>(path).get();
-                        RBApplication::GetGUI()->SetEditorMaterial(material);
+                        RBApplication::GetGUI()->SetEditorMaterial(material, i);
                         material->Load(path);
                     }
                 }
+                i++;
             }
         }
         ImGui::EndChild();

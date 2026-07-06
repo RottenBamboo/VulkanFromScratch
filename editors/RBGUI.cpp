@@ -63,9 +63,9 @@ namespace RottenBamboo
         ImGui::End();
     }
 
-    void RBGUI::SetEditorMaterial(RBMaterial* material)
+    void RBGUI::SetEditorMaterial(RBMaterial* material, int materialIndex)
     {
-        materialsGUI.SetMaterial(material);
+        materialsGUI.SetMaterial(material, materialIndex);
     }
 
     void RBGUI::SetResourceManager(ResourceManager* resourceManager)
