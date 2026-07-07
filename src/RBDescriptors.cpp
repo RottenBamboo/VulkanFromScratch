@@ -463,7 +463,8 @@ namespace RottenBamboo{
         rbImageManager.createTextureSampler();
     }
 
-    RBDescriptors::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffers, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment) : rbDevice(device),
+    RBDescriptors::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffers, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment) : 
+    rbDevice(device),
     rbCommandBuffer(commandBuffer),
     rbBufferPtr(uniformBuffers),
     descriptorSetManager(device),
@@ -473,7 +474,8 @@ namespace RottenBamboo{
     {
     }
 
-    RBDescriptors::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffers, bool isColorAttachment) : rbDevice(device),
+    RBDescriptors::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffers, bool isColorAttachment) : 
+    rbDevice(device),
     rbCommandBuffer(commandBuffer),
     rbBufferPtr(uniformBuffers),
     descriptorSetManager(device),
@@ -482,6 +484,21 @@ namespace RottenBamboo{
     {
     }
 
+    RBDescriptors::RBDescriptors(RBDevice &device, RBCommandBuffer& commandBuffer) : 
+    rbDevice(device),
+    rbCommandBuffer(commandBuffer),
+    descriptorSetManager(device),
+    rbImageManager(device)
+    {
+    }
+
+    void RBDescriptors::SetResourcesInfos(RBBuffer<UniformBufferShaderVariables> *uniformBuffers, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment)
+    {
+        this->rbBufferPtr = uniformBuffers;
+        this->imagesInfo = texturesInfo;
+        this->isColorAttachment = isColorAttachment;
+    }
+    
     void RBDescriptors::InitializeDescriptors(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled)
     {
         //checkImagesInfo();

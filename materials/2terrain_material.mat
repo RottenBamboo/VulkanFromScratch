@@ -1,7 +1,7 @@
 {
     "name": "2terrain_material",
     "shaderPathName": "shader/bin/gBufferFrag.spv",
-    "normalMap": "",
-    "albedoMap": "",
-    "metallicRoughnessAOMap": ""
+    "normalMap": "textures/AlienPlanet1_Diffuse.jpg",
+    "albedoMap": "textures/AlienPlanet1_FinalBump1.png",
+    "metallicRoughnessAOMap": "textures/AlienPlanet1_Wetness.png"
 }

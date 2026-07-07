@@ -14,7 +14,8 @@ namespace RottenBamboo
     {
         std::string ToLowerCopy(std::string value)
         {
-            std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) {
+            std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) 
+            {
                 return static_cast<char>(std::tolower(c));
             });
             return value;
@@ -22,7 +23,8 @@ namespace RottenBamboo
 
         bool ContainsCaseInsensitive(const std::string& value, const std::string& query)
         {
-            if (query.empty()) {
+            if (query.empty()) 
+            {
                 return true;
             }
             return ToLowerCopy(value).find(ToLowerCopy(query)) != std::string::npos;
@@ -64,16 +66,20 @@ namespace RottenBamboo
 
         std::ostringstream stream;
         stream << std::fixed << std::setprecision(2);
-        if (bytes >= static_cast<std::uintmax_t>(gb)) {
+        if (bytes >= static_cast<std::uintmax_t>(gb)) 
+        {
             stream << (static_cast<double>(bytes) / gb) << " GB";
         }
-        else if (bytes >= static_cast<std::uintmax_t>(mb)) {
+        else if (bytes >= static_cast<std::uintmax_t>(mb)) 
+        {
             stream << (static_cast<double>(bytes) / mb) << " MB";
         }
-        else if (bytes >= static_cast<std::uintmax_t>(kb)) {
+        else if (bytes >= static_cast<std::uintmax_t>(kb)) 
+        {
             stream << (static_cast<double>(bytes) / kb) << " KB";
         }
-        else {
+        else 
+        {
             stream << bytes << " B";
         }
         return stream.str();
@@ -92,23 +98,28 @@ namespace RottenBamboo
         ImGui::TextUnformatted("Quick Access");
 
         const std::filesystem::path root = GET_PROJECT_ROOT_DIR;
-        if (ImGui::Button("Project Root")) {
+        if (ImGui::Button("Project Root")) 
+        {
             NavigateTo(root);
         }
         ImGui::SameLine();
-        if (ImGui::Button("Models")) {
+        if (ImGui::Button("Models")) 
+        {
             NavigateTo(root / "models");
         }
         ImGui::SameLine();
-        if (ImGui::Button("Materials")) {
+        if (ImGui::Button("Materials")) 
+        {
             NavigateTo(root / "materials");
         }
         ImGui::SameLine();
-        if (ImGui::Button("Textures")) {
+        if (ImGui::Button("Textures")) 
+        {
             NavigateTo(root / "textures");
         }
         ImGui::SameLine();
-        if (ImGui::Button("Shader")) {
+        if (ImGui::Button("Shader")) 
+        {
             NavigateTo(root / "shader");
         }
 
@@ -135,16 +146,20 @@ namespace RottenBamboo
         }
 
         std::error_code ec;
-        if (ImGui::BeginChild("AssetDirectoryList", ImVec2(0, 320), true)) {
+        if (ImGui::BeginChild("AssetDirectoryList", ImVec2(0, 320), true))
+        {
             std::vector<std::filesystem::directory_entry> directories;
             std::vector<std::filesystem::directory_entry> files;
 
-            for (const auto& entry : std::filesystem::directory_iterator(currentDirectory, ec)) {
-                if (searchText[0] != '\0' && !ContainsCaseInsensitive(entry.path().filename().string(), searchText.data())) {
+            for (const auto& entry : std::filesystem::directory_iterator(currentDirectory, ec)) 
+            {
+                if (searchText[0] != '\0' && !ContainsCaseInsensitive(entry.path().filename().string(), searchText.data())) 
+                {
                     continue;
                 }
 
-                if (entry.is_directory(ec)) {
+                if (entry.is_directory(ec)) 
+                {
                     directories.push_back(entry);
                 }
                 else {
@@ -152,27 +167,32 @@ namespace RottenBamboo
                 }
             }
 
-            std::sort(directories.begin(), directories.end(), [](const auto& lhs, const auto& rhs) {
+            std::sort(directories.begin(), directories.end(), [](const auto& lhs, const auto& rhs) 
+            {
                 return lhs.path().filename().string() < rhs.path().filename().string();
             });
-            std::sort(files.begin(), files.end(), [](const auto& lhs, const auto& rhs) {
+            std::sort(files.begin(), files.end(), [](const auto& lhs, const auto& rhs) 
+            {
                 return lhs.path().filename().string() < rhs.path().filename().string();
             });
 
             ImGui::TextUnformatted("Folders");
             fs::path relativePath;
             fs::path entryPath;
-            for (const auto& entry : directories) {
+            for (const auto& entry : directories) 
+            {
                 entryPath = entry.path();
                 relativePath = fs::relative(entryPath, GET_PROJECT_ROOT_DIR);
                 const bool selected = selectedPath == relativePath;
                 const std::string label = std::string("Folder: ") + relativePath.filename().string();
                 ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 200, 80, 255));
-                if (ImGui::Selectable(label.c_str(), selected)) {
+                if (ImGui::Selectable(label.c_str(), selected)) 
+                {
                     selectedPath = relativePath;
                 }
                 ImGui::PopStyleColor();
-                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) 
+                {
                     NavigateTo(entryPath);
                 }
             }
@@ -180,18 +200,21 @@ namespace RottenBamboo
             ImGui::Separator();
             ImGui::TextUnformatted("Files");
             int i = 0;
-            for (const auto& entry : files) {
+            for (const auto& entry : files) 
+            {
                 entryPath = entry.path();
                 relativePath = fs::relative(entryPath, GET_PROJECT_ROOT_DIR);
                 const bool selected = selectedPath == relativePath;
                 const std::string label = std::string("File: ") + NormalizePathString(relativePath.filename().string());
                 ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(200, 200, 200, 255));
-                if (ImGui::Selectable(label.c_str(), selected)) {
+                if (ImGui::Selectable(label.c_str(), selected)) 
+                {
                     selectedPath = relativePath;
                 }
 
                 // drag start
-                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) 
+                {
                     const std::string pathString = relativePath.string();
                     ImGui::SetDragDropPayload("ASSET_FILE", pathString.c_str(), pathString.size() + 1);
                     ImGui::Text("Dragging: %s", relativePath.filename().string().c_str());
@@ -203,10 +226,12 @@ namespace RottenBamboo
 
                 ImGui::PopStyleColor();
 
-                 if (doubleClicked) {
+                 if (doubleClicked) 
+                 {
                      selectedPath = fs::relative(entryPath, GET_PROJECT_ROOT_DIR);
 
-                    if (IsMaterialFile(entryPath) && resourceManager != nullptr) {
+                    if (IsMaterialFile(entryPath) && resourceManager != nullptr) 
+                    {
                         const std::string path = NormalizePathString(relativePath.string());
                         RBMaterial* material = resourceManager->Load<RBMaterial>(path).get();
                         RBApplication::GetGUI()->SetEditorMaterial(material, i);
@@ -229,16 +254,20 @@ namespace RottenBamboo
         const auto modelPaths = resourceManager->GetPaths<RBModel>();
         ImGui::Text("Loaded Models (%zu)", modelPaths.size());
 
-        if (ImGui::BeginChild("LoadedModelList", ImVec2(0, 220), true)) {
-            for (const auto& path : modelPaths) {
+        if (ImGui::BeginChild("LoadedModelList", ImVec2(0, 220), true)) 
+        {
+            for (const auto& path : modelPaths) 
+            {
                 auto model = resourceManager->Get<RBModel>(path);
                 const bool selected = selectedPath == std::filesystem::path(path);
 
-                if (ImGui::Selectable(path.c_str(), selected)) {
+                if (ImGui::Selectable(path.c_str(), selected)) 
+                {
                     selectedPath = std::filesystem::path(path);
                 }
 
-                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) 
+                {
                     selectedPath = std::filesystem::path(path);
                 }
 
@@ -265,22 +294,26 @@ namespace RottenBamboo
         ImGui::Text("Extension: %s", selectedPath.extension().string().c_str());
 
         std::error_code ec;
-        if (std::filesystem::exists(selectedPath, ec) && std::filesystem::is_regular_file(selectedPath, ec)) {
+        if (std::filesystem::exists(selectedPath, ec) && std::filesystem::is_regular_file(selectedPath, ec)) 
+        {
             ImGui::Text("File Size: %s", HumanReadableSize(std::filesystem::file_size(selectedPath, ec)).c_str());
             ImGui::Text("Source: file system");
         }
 
-        if (resourceManager != nullptr && resourceManager->IsLoaded<RBModel>(selectedPath.string())) {
+        if (resourceManager != nullptr && resourceManager->IsLoaded<RBModel>(selectedPath.string())) 
+        {
             auto model = resourceManager->Get<RBModel>(selectedPath.string());
             if (model) {
                 ImGui::Text("Loaded as model: yes");
                 ImGui::Text("Mesh Count: %zu", model->MeshCount());
 
-                if (ImGui::Button("Reload Model")) {
+                if (ImGui::Button("Reload Model")) 
+                {
                     resourceManager->Reload<RBModel>(selectedPath.string());
                 }
                 ImGui::SameLine();
-                if (ImGui::Button("Unload Model")) {
+                if (ImGui::Button("Unload Model")) 
+                {
                     resourceManager->Remove<RBModel>(selectedPath.string());
                 }
                 return;
@@ -288,7 +321,8 @@ namespace RottenBamboo
         }
 
         ImGui::TextUnformatted("Loaded as model: no");
-        if (resourceManager != nullptr && IsModelFile(selectedPath)) {
+        if (resourceManager != nullptr && IsModelFile(selectedPath)) 
+        {
             if (ImGui::Button("Load as Model")) {
                 resourceManager->Load<RBModel>(selectedPath.string());
             }

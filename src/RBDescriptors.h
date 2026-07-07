@@ -85,14 +85,18 @@ namespace RottenBamboo {
 
         RBImageManager rbImageManager;
 
-        RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, const std::vector<std::string> &texturePaths, bool isColorAttachment);
+        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, const std::vector<std::string> &texturePaths, bool isColorAttachment);
 
-        RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment);
+        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment);
 
-        RBDescriptors(RBDevice &device, RBCommandBuffer &CommandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, bool isColorAttachment);
+        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, bool isColorAttachment);
+
+        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer);
 
         ~RBDescriptors();
-
+        
+        void SetResourcesInfos(RBBuffer<UniformBufferShaderVariables> *uniformBuffers, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment);
+        
         void checkImagesInfo();
                                    
         void SetBufferParams(TextureParams& attachmentParams, TextureParams& depthParams);

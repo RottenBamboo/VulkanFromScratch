@@ -16,6 +16,7 @@ namespace RottenBamboo {
         RBGUI* RBApplication::ptr_gui = nullptr;
         RBResourceShader* RBApplication::ptr_resourceShader = nullptr;
         std::vector<RBDescriptors*>* RBApplication::ptr_Descriptors = nullptr;
+        std::vector<RBMaterial*>* RBApplication::ptr_Materials = nullptr;
         
         RBGUI* RBApplication::GetGUI() {
             return RBApplication::ptr_gui;
@@ -28,6 +29,11 @@ namespace RottenBamboo {
         std::vector<RBDescriptors*>* RBApplication::GetDescriptors()
         {
             return RBApplication::ptr_Descriptors;
+        }
+
+        std::vector<RBMaterial*>* RBApplication::GetMaterials()
+        {
+            return RBApplication::ptr_Materials;
         }
 
         RBApplication::RBApplication() {
@@ -63,24 +69,50 @@ namespace RottenBamboo {
             resourceShader.Load(inputShader[i].stage, pathShader);
             resourceShader.Reflect(std::filesystem::relative(pathShader, GET_PROJECT_ROOT_DIR).string(), inputShader[i].stage, *resourceShader.Get(inputShader[i].stage));
         }
-        
+        RBApplication::ptr_resourceShader = &resourceShader;
+
         InitializeBuffers();
+        
+        InitializeMaterial();
+        RBApplication::ptr_Materials = &materialsVec;
+
         InitializeDescriptors();
+        RBApplication::ptr_Descriptors = &descriptorsGBuffersVec;
+
         InitializeSwapChain();
         InitializeGraphicPipeline();
         InitializeStaticPtr();
 
+        RBApplication::ptr_gui = &gui;
         InitializeGUI();
         
         InitializeMatrix();
-        InitializeMaterial();
+        InitializeEditorMaterial();
         std::cout << "RBApplication::RBApplication()" << std::endl;
             RBLOG_INFO("RBApplication::RBApplication()");
     }
+    void RBApplication::InitializeEditorMaterial()
+    {
+        editorMaterial.Load(materialsFilePath + "0mech_material.mat");
+        RBLOG_INFO("RBApplication::InitializeEditorMaterial()");
+    }
     void RBApplication::InitializeMaterial()
     {
-        editorMaterial.Load(materialsFilePath + "default_material.mat");
-        std::cout << "RBApplication::InitializeMaterial()" << std::endl;
+        RBMaterial materialLoadItem{"", device, commandBuffer};
+        
+        materialsVec.clear();
+        materialsVec.reserve(0);
+        for (const auto& entry : std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + materialsFilePath))
+        {
+            if (entry.is_regular_file())
+            {
+                std::string relativePath = std::filesystem::relative(entry.path(), GET_PROJECT_ROOT_DIR).string();
+                relativePath = NormalizePathString(relativePath);
+                materialLoadItem.Load(relativePath);
+                materialsVec.push_back(&materialLoadItem);
+            }
+        }
+        RBLOG_INFO("RBApplication::InitializeMaterial()");
     }
     void RBApplication::InitializeShaderDefinition()
     {
@@ -98,9 +130,6 @@ namespace RottenBamboo {
     }
     void RBApplication::InitializeStaticPtr()
     {
-        RBApplication::ptr_gui = &gui;
-        RBApplication::ptr_resourceShader = &resourceShader;
-        RBApplication::ptr_Descriptors = &descriptorsGBuffersVec;
     }
 
     RBApplication::~RBApplication() {
@@ -164,8 +193,12 @@ namespace RottenBamboo {
         descriptorsGBuffersVec.clear();
         descriptorsGBuffersVec.reserve(0);
 
-        descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
-        descriptorsGBuffersVec.push_back(&descriptorsGBuffer);
+        descriptorsMech.SetResourcesInfos(uniformBuffers, inputImageInfoMech, false);
+        descriptorsTerrain.SetResourcesInfos(uniformBuffers, inputImageTerrain, false);
+        descriptorsSamuri.SetResourcesInfos(uniformBuffers, samuriTex, false);
+
+        descriptorsMech.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
+        descriptorsGBuffersVec.push_back(&descriptorsMech);
 
         descriptorsSamuri.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
         descriptorsGBuffersVec.push_back(&descriptorsSamuri);
@@ -173,6 +206,7 @@ namespace RottenBamboo {
         descriptorsTerrain.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
         descriptorsGBuffersVec.push_back(&descriptorsTerrain);
 
+        descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
         //after GBuffer pass descriptors
         descriptorsSkyBox.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_POST_PROCESSING_VERTEX), resourceShader.GetReflection(RENDER_STAGE_POST_PROCESSING_FRAGMENT));
 

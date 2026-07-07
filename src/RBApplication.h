@@ -77,6 +77,7 @@ namespace RottenBamboo {
         void InitializeMatrix();
         
         void InitializeMaterial();
+        void InitializeEditorMaterial();
         
         void InitializeShaderDefinition();
 
@@ -106,11 +107,15 @@ namespace RottenBamboo {
 
         std::vector<RBDescriptors*> descriptorsGBuffersVec;
 
+        std::vector<RBMaterial*> materialsVec;
+
+        RBDescriptors descriptorsMech{device, commandBuffer};
+
+        RBDescriptors descriptorsTerrain{device, commandBuffer};
+
+        RBDescriptors descriptorsSamuri{device, commandBuffer};
+
         RBDescriptors descriptorsGBuffer{device, commandBuffer, uniformBuffers, inputImageInfoMech, false};
-
-        RBDescriptors descriptorsTerrain{device, commandBuffer, uniformBuffers, inputImageTerrain, false};
-
-        RBDescriptors descriptorsSamuri{device, commandBuffer, uniformBuffers, samuriTex, false};
 
         RBDescriptors descriptorsSkyBox{device, commandBuffer, uniformBuffers, inputImageInfoSkyBox, false};
 
@@ -147,5 +152,9 @@ namespace RottenBamboo {
         static std::vector<RBDescriptors*>* ptr_Descriptors;
 
         static std::vector<RBDescriptors*>* GetDescriptors();
+
+        static std::vector<RBMaterial*>* ptr_Materials;
+
+        static std::vector<RBMaterial*>* GetMaterials();
     };
 }
