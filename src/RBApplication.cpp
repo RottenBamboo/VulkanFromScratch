@@ -99,9 +99,9 @@ namespace RottenBamboo {
     void RBApplication::InitializeMaterial()
     {
         RBMaterial materialLoadItem{"", device, commandBuffer};
-        
+        auto count = std::distance(std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + materialsFilePath), std::filesystem::directory_iterator{});
         materialsVec.clear();
-        materialsVec.reserve(0);
+        materialsVec.reserve(count);
         for (const auto& entry : std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + materialsFilePath))
         {
             if (entry.is_regular_file())
@@ -191,8 +191,12 @@ namespace RottenBamboo {
 
         //GBuffer pass descriptors
         descriptorsGBuffersVec.clear();
-        descriptorsGBuffersVec.reserve(0);
+        descriptorsGBuffersVec.reserve(materialsVec.size());
 
+        // for(int i = 0; i < materialsVec.size(); i++)
+        // {
+        //     materialsVec[i]->GetData();
+        // }
         descriptorsMech.SetResourcesInfos(uniformBuffers, inputImageInfoMech, false);
         descriptorsTerrain.SetResourcesInfos(uniformBuffers, inputImageTerrain, false);
         descriptorsSamuri.SetResourcesInfos(uniformBuffers, samuriTex, false);
