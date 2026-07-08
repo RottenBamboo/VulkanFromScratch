@@ -34,7 +34,7 @@ namespace RottenBamboo
     private:
         RBDevice &rbDevice;
         RBWindows &rbWindows;
-        RBGUIMaterials materialsGUI;
+        RBGUIMaterials materialsGUI{rbDevice};
         RBGUIAssets assetsGUI;
         bool materialEditorActive = true;
         bool gizmoActive = true;

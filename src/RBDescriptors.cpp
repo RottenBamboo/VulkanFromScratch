@@ -64,6 +64,18 @@ namespace RottenBamboo{
         descriptorSetManager.descriptorPoolManager.CreateDescriptorPool();
     }
 
+    void RBDescriptors::updateDescriptorSetsTextureImage(int index)
+    {
+        for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+        {
+            rbImageManager.imageBundles[index].imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            rbImageManager.imageBundles[index].imageInfo.imageView = rbImageManager.imageBundles[index].imageView;
+            rbImageManager.imageBundles[index].imageInfo.sampler = rbImageManager.imageBundles[index].sampler;
+            descriptorSetManager.fillDescriptotSetsWriteImage(i, index + 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &rbImageManager.imageBundles[index].imageInfo);
+            
+            descriptorSetManager.updateDescriptorSets(rbDevice);
+        }
+    }
     void RBDescriptors::createDescriptorSets()
     {
         std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout);
@@ -161,115 +173,140 @@ namespace RottenBamboo{
     return true;
 }
 #endif
+
+    void RBDescriptors::updateTextureImagePath(int index, const std::string& newTexturePath)
+    {
+        imagesInfo[index].path = newTexturePath;
+        imagesInfo[index].needUpdate = true;
+    }
+
+    void RBDescriptors::refreshTextureImage(int index, const std::string& newTexturePath)
+    {
+        imagesInfo[index].path = newTexturePath;
+        rbImageManager.releaseTextureImage(index);
+        setTextureImage(index);
+        setTextureImageView(index);
+        //setTextureSampler(index);
+    }
+
+    void RBDescriptors::setTextureImage(int index)
+    {
+        auto& imageBundle = rbImageManager.imageBundles[index];
+        auto& imageInfo = imagesInfo[index];
+        int texWidth, texHeight, texChannels, typeSize;
+            void* pixels = nullptr;
+#ifdef __ANDROID__
+        std::vector<uint8_t> buffer;
+        LoadFromMemoryAndroid(imageInfo.path, imageInfo.isHDR, buffer);
+        // load texture form memory
+        if(imageInfo.isHDR)
+        {
+            pixels = (float*)stbi_loadf_from_memory(buffer.data(), buffer.size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+            typeSize = sizeof(float);
+        }
+        else
+        {
+            pixels = (stbi_uc*)stbi_load_from_memory(buffer.data(), buffer.size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+            typeSize = sizeof(stbi_uc);
+        }
+#else
+        if(imageInfo.isHDR)
+        {
+            pixels = (float*)stbi_loadf(imageInfo.path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+            typeSize = sizeof(float);
+        }
+        else
+        {
+            pixels = (stbi_uc*)stbi_load(imageInfo.path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+            typeSize = sizeof(stbi_uc);
+        }
+
+#endif
+        mipLevels = 1;//static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
+        mipLevels = 1;//std::min(mipLevels, (uint32_t)8);
+        VkDeviceSize imageSize = texWidth * texHeight * 4 * typeSize;
+    
+        if (!pixels) {
+            RBLOG_FATAL("failed to load texture image!");
+            throw std::runtime_error("failed to load texture image!");
+        }
+    
+        RBBufferManager stageBufferManager(rbDevice);
+        stageBufferManager.CreateBufferAllocBindMemory(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_SHARING_MODE_EXCLUSIVE, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    
+        void* data = nullptr;
+        if(imageInfo.isHDR)
+        {
+            stageBufferManager.copyMemory(imageSize, data, (float*)pixels);
+        }
+        else
+        {
+            stageBufferManager.copyMemory(imageSize, data, (stbi_uc*)pixels);
+        }
+        stbi_image_free(pixels);
+
+
+        VkImageUsageFlags usageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+        VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
+        if(imageInfo.format == VK_FORMAT_D32_SFLOAT || imageInfo.format == VK_FORMAT_D16_UNORM)
+        {
+            usageFlags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+            aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
+        }
+        else
+        {
+            usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+            if(isColorAttachment)
+            {
+                usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+            }
+        }
+        rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, msaaSamples, imageInfo.format, VK_IMAGE_TILING_OPTIMAL, usageFlags);
+        rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageBundle.image, imageBundle.imageMemory);
+
+        VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+        rbImageManager.transitionImageLayout(commandBuffer, imageBundle.image, imageInfo.format, aspectFlags, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
+        rbCommandBuffer.endSingleTimeCommands(commandBuffer);
+
+        copyBufferToImage(stageBufferManager.buffer, imageBundle.image, aspectFlags, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+
+        //VkCommandBuffer commandBufferEnd = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+        //rbImageManager.transitionImageLayout(commandBufferEnd, imageBundle.image, imageInfo.format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
+        //rbCommandBuffer.endSingleTimeCommands(commandBufferEnd);
+
+        VkFormatProperties formatProperties;
+        vkGetPhysicalDeviceFormatProperties(rbDevice.physicalDevice, imageInfo.format, &formatProperties);
+            
+        bool supportsLinearBlitting = (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT) != 0;
+        bool supportsBlit = (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT) != 0 && 
+                               (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT) != 0;
+            
+        if (supportsLinearBlitting && supportsBlit && mipLevels > 1) 
+        {
+            generateMipmaps(imageBundle.image, imageInfo.format, usageFlags, texWidth, texHeight, mipLevels);
+        } 
+        else 
+        {
+            // transition to final layout directly
+            VkCommandBuffer layoutCmdBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+            rbImageManager.transitionImageLayout(layoutCmdBuffer, imageBundle.image, imageInfo.format, aspectFlags, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
+            rbCommandBuffer.endSingleTimeCommands(layoutCmdBuffer);
+        }
+        index++;
+        std::cout << "index = " << index << std::endl;
+        std::cout << "mipLevels = " << mipLevels << std::endl;
+        RBLOG_INFO("RBDescriptors::setTextureImage(), Buffer count: %d, Image count: %d", this->bufferCount, this->imageCount);
+    }
+
     void RBDescriptors::createTextureImage()
     {
         int index = 0;
         for (auto & imageBundle : rbImageManager.imageBundles)
         {
-            int texWidth, texHeight, texChannels, typeSize;
-            void* pixels = nullptr;
-#ifdef __ANDROID__
-            std::vector<uint8_t> buffer;
-            LoadFromMemoryAndroid(imagesInfo[index].path, imagesInfo[index].isHDR, buffer);
-            // load texture form memory
-            if(imagesInfo[index].isHDR)
-            {
-                pixels = (float*)stbi_loadf_from_memory(buffer.data(), buffer.size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-                typeSize = sizeof(float);
-            }
-            else
-            {
-                pixels = (stbi_uc*)stbi_load_from_memory(buffer.data(), buffer.size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-                typeSize = sizeof(stbi_uc);
-            }
-#else
-            if(imagesInfo[index].isHDR)
-            {
-                pixels = (float*)stbi_loadf(imagesInfo[index].path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-                typeSize = sizeof(float);
-            }
-            else
-            {
-                pixels = (stbi_uc*)stbi_load(imagesInfo[index].path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-                typeSize = sizeof(stbi_uc);
-            }
-
-#endif
-            mipLevels = 1;//static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
-            mipLevels = 1;//std::min(mipLevels, (uint32_t)8);
-            VkDeviceSize imageSize = texWidth * texHeight * 4 * typeSize;
-    
-            if (!pixels) {
-                RBLOG_FATAL("failed to load texture image!");
-                throw std::runtime_error("failed to load texture image!");
-            }
-    
-            RBBufferManager stageBufferManager(rbDevice);
-            stageBufferManager.CreateBufferAllocBindMemory(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_SHARING_MODE_EXCLUSIVE, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-    
-            void* data = nullptr;
-            if(imagesInfo[index].isHDR)
-            {
-                stageBufferManager.copyMemory(imageSize, data, (float*)pixels);
-            }
-            else
-            {
-                stageBufferManager.copyMemory(imageSize, data, (stbi_uc*)pixels);
-            }
-            stbi_image_free(pixels);
-
-
-            VkImageUsageFlags usageFlags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-            VkImageAspectFlags aspectFlags = VK_IMAGE_ASPECT_COLOR_BIT;
-            if(imagesInfo[index].format == VK_FORMAT_D32_SFLOAT || imagesInfo[index].format == VK_FORMAT_D16_UNORM)
-            {
-                usageFlags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-                aspectFlags = VK_IMAGE_ASPECT_DEPTH_BIT;
-            }
-            else
-            {
-                usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-                if(isColorAttachment)
-                {
-                    usageFlags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-                }
-            }
-            rbImageManager.fillImageInfo(texWidth, texHeight, mipLevels, msaaSamples, imagesInfo[index].format, VK_IMAGE_TILING_OPTIMAL, usageFlags);
-            rbImageManager.createImage(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, imageBundle.image, imageBundle.imageMemory);
-
-            VkCommandBuffer commandBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-            rbImageManager.transitionImageLayout(commandBuffer, imageBundle.image, imagesInfo[index].format, aspectFlags, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
-            rbCommandBuffer.endSingleTimeCommands(commandBuffer);
-
-            copyBufferToImage(stageBufferManager.buffer, imageBundle.image, aspectFlags, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
-
-            //VkCommandBuffer commandBufferEnd = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-            //rbImageManager.transitionImageLayout(commandBufferEnd, imageBundle.image, imagesInfo[index].format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
-            //rbCommandBuffer.endSingleTimeCommands(commandBufferEnd);
-
-            VkFormatProperties formatProperties;
-            vkGetPhysicalDeviceFormatProperties(rbDevice.physicalDevice, imagesInfo[index].format, &formatProperties);
-            
-            bool supportsLinearBlitting = (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT) != 0;
-            bool supportsBlit = (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_SRC_BIT) != 0 && 
-                               (formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_BLIT_DST_BIT) != 0;
-            
-            if (supportsLinearBlitting && supportsBlit && mipLevels > 1) 
-            {
-                generateMipmaps(imageBundle.image, imagesInfo[index].format, usageFlags, texWidth, texHeight, mipLevels);
-            } 
-            else 
-            {
-                // transition to final layout directly
-                VkCommandBuffer layoutCmdBuffer = rbCommandBuffer.beginSingleTimeCommands(VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-                rbImageManager.transitionImageLayout(layoutCmdBuffer, imageBundle.image, imagesInfo[index].format, aspectFlags, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, mipLevels);
-                rbCommandBuffer.endSingleTimeCommands(layoutCmdBuffer);
-            }
+            setTextureImage(index);
             index++;
-            std::cout << "index = " << index << std::endl;
-            std::cout << "mipLevels = " << mipLevels << std::endl;
-            RBLOG_INFO("RBDescriptors::SetResourceCount(), Buffer count: %d, Image count: %d", this->bufferCount, this->imageCount);
         }
+            RBLOG_INFO("RBDescriptors::createTextureImage()");
     }
 
     void RBDescriptors::createTextureImageFrameBuffer(VkExtent2D framebufferExtent, 
@@ -315,7 +352,25 @@ namespace RottenBamboo{
             rbImageManager.createImageView(imageBundle.viewInfo, imageBundle.imageView);
             index++;
         }
+    }
 
+    void RBDescriptors::createTextureImageView(int index)
+    {
+        auto& imageBundle = rbImageManager.imageBundles[index];
+        rbImageManager.fillViewInfo(imageBundle.viewInfo, imageBundle.image, VK_IMAGE_VIEW_TYPE_2D, imagesInfo[index].format, imagesInfo[index].aspect, mipLevels);
+        rbImageManager.createImageView(imageBundle.viewInfo, imageBundle.imageView);
+    }
+
+    void RBDescriptors::setTextureImageView(int index)
+    {
+        auto& imageBundle = rbImageManager.imageBundles[index];
+        createTextureImageView(index);
+    }
+
+    void RBDescriptors::setTextureSampler(int index)
+    {
+        auto& imageBundle = rbImageManager.imageBundles[index];
+        rbImageManager.createTextureSampler(imageBundle.sampler);
     }
 
     void RBDescriptors::createTextureImageViewFrameBuffer(const TextureParams& attachmentParams,

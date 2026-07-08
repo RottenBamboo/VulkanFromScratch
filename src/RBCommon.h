@@ -28,8 +28,9 @@ struct TexturesInfo
     
     bool isHDR;
     std::string path;
-    TexturesInfo() : format(VK_FORMAT_UNDEFINED), aspect(0), isHDR(false), path(""){}
-    TexturesInfo(VkFormat f, VkImageAspectFlags a, bool hdr, const std::string& p) : format(f), aspect(a), isHDR(hdr), path(p) {}
+    bool needUpdate = false;
+    TexturesInfo() : format(VK_FORMAT_UNDEFINED), aspect(0), isHDR(false), path(""), needUpdate(false) {}
+    TexturesInfo(VkFormat f, VkImageAspectFlags a, bool hdr, const std::string& p) : format(f), aspect(a), isHDR(hdr), path(p), needUpdate(false) {}
 };
 
 struct ShadersInfo

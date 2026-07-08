@@ -33,8 +33,9 @@ namespace RottenBamboo {
         uint32_t bufferCount;
 
         //std::array<TexturesInfo, ImageCount> imagesInfo;
+public:
         std::vector<TexturesInfo> imagesInfo;
-
+private:
         RBDevice &rbDevice;
 
         RBCommandBuffer &rbCommandBuffer;
@@ -49,6 +50,8 @@ namespace RottenBamboo {
 
         void createTextureImageView();
 
+        void createTextureImageView(int index);
+
         void createTextureImageViewFrameBuffer(const TextureParams& attachmentParams,
                                                const TextureParams& depthParams);
 
@@ -57,6 +60,12 @@ namespace RottenBamboo {
         void copyBufferToImage(VkBuffer buffer, VkImage image, VkImageAspectFlags aspectFlags, uint32_t width, uint32_t height);
 
         void createTextureImage();
+        
+        void setTextureImage(int index);
+
+        void setTextureImageView(int index);
+
+        void setTextureSampler(int index);
         
         void SetResourceCount(const RBShaderReflection* resourceShaderVertex, const RBShaderReflection* resourceShaderFragment, bool depthEnabled);
 
@@ -111,6 +120,12 @@ namespace RottenBamboo {
                                               const RBShaderReflection* resourceShaderVertex, 
                                               const RBShaderReflection* resourceShaderFragment, 
                                               bool depthEnabled = false);
+                                              
+        void updateDescriptorSetsTextureImage(int index);
+
+        void refreshTextureImage(int index, const std::string& newTexturePath);
+        
+        void updateTextureImagePath(int index, const std::string& newTexturePath);
 
         void ReleaseAllResource();
 

@@ -56,7 +56,7 @@ namespace RottenBamboo
         buffer[bufferSize - 1] = '\0';
     }
     
-    RBGUIMaterials::RBGUIMaterials()
+    RBGUIMaterials::RBGUIMaterials(RBDevice& device) : rbDevice(device)
     {
     }
 
@@ -67,12 +67,13 @@ namespace RottenBamboo
     void RBGUIMaterials::SetMaterial(RBMaterial* material, int materialIndex)
     {
         std::vector<RBDescriptors*>* ptr_Descriptors = RBApplication::GetDescriptors();
-        int imageCount = (*ptr_Descriptors)[materialIndex]->rbImageManager.imageBundles.size();
+        currentMaterialDescriptors = (*ptr_Descriptors)[materialIndex];
+        int imageCount = currentMaterialDescriptors->rbImageManager.imageBundles.size();
         vecUIMaterialDescriptorSet.clear();
         vecUIMaterialDescriptorSet.reserve(imageCount);
         for(int i = 0; i < imageCount; i++)
         {
-            vecUIMaterialDescriptorSet.push_back(ImGui_ImplVulkan_AddTexture((*ptr_Descriptors)[materialIndex]->rbImageManager.imageBundles[i].sampler, (*ptr_Descriptors)[materialIndex]->rbImageManager.imageBundles[i].imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL));
+            vecUIMaterialDescriptorSet.push_back(ImGui_ImplVulkan_AddTexture(currentMaterialDescriptors->rbImageManager.imageBundles[i].sampler, (*ptr_Descriptors)[materialIndex]->rbImageManager.imageBundles[i].imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL));
         }
         this->currentMaterial = material;
     }
@@ -191,7 +192,13 @@ namespace RottenBamboo
                         {
                             const char* filePath = (const char*)payload->Data;
                             itr->second.texturePath = NormalizePathString(fs::relative(filePath, GET_PROJECT_ROOT_DIR).string());
-
+                            RBApplication::GetUpdatedDescriptors()->push_back(currentMaterialDescriptors);
+                            if(currentMaterialDescriptors)
+                            {
+                                currentMaterialDescriptors->updateTextureImagePath(i, itr->second.texturePath);
+                                RBApplication::descriptorSetsUpdate = true;
+                            }
+                            RBLOG_INFO("Dropped texture: %s", itr->second.texturePath.c_str());
                             ImGui::Text("Dropped: %s", filePath);
                         }
                         ImGui::EndDragDropTarget();

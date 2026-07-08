@@ -39,6 +39,8 @@ namespace RottenBamboo {
 
         void createTextureSampler();
 
+        void createTextureSampler(VkSampler& sampler);
+
         void fillSamplerAddressMode(VkSamplerAddressMode addressMode);
 
         void fillSamplerFilter(VkFilter filter);
@@ -84,6 +86,8 @@ namespace RottenBamboo {
         std::vector<RBImageBundle> imageBundles;
 
         VkSamplerCreateInfo samplerInfo{};
+
+        void releaseTextureImage(int index);
         
         void ReleaseAllResource();
 

@@ -16,7 +16,9 @@ namespace RottenBamboo {
         RBGUI* RBApplication::ptr_gui = nullptr;
         RBResourceShader* RBApplication::ptr_resourceShader = nullptr;
         std::vector<RBDescriptors*>* RBApplication::ptr_Descriptors = nullptr;
+        std::vector<RBDescriptors*> RBApplication::updatedDescriptors{};
         std::vector<RBMaterial*>* RBApplication::ptr_Materials = nullptr;
+        bool RBApplication::descriptorSetsUpdate = false;
         
         RBGUI* RBApplication::GetGUI() {
             return RBApplication::ptr_gui;
@@ -29,6 +31,11 @@ namespace RottenBamboo {
         std::vector<RBDescriptors*>* RBApplication::GetDescriptors()
         {
             return RBApplication::ptr_Descriptors;
+        }
+
+        std::vector<RBDescriptors*>* RBApplication::GetUpdatedDescriptors()
+        {
+            return &RBApplication::updatedDescriptors;
         }
 
         std::vector<RBMaterial*>* RBApplication::GetMaterials()
@@ -44,9 +51,9 @@ namespace RottenBamboo {
         InitializeDevice();
         InitializeCommandBuffer();
         
-        model_paths.insert({0, MODEL_PATH});
-        model_paths.insert({1, SAMURI_PATH});
-        model_paths.insert({2, TERRAIN_PATH});
+        model_paths.insert({0, LOW_POLY_TERRAIN_PATH});
+        model_paths.insert({1, LOW_POLY_TERRAIN_PATH});
+        model_paths.insert({2, LOW_POLY_TERRAIN_PATH});
 
         InitializeShaderDefinition();
         resourceManager.Load<RBModel>(model_paths);
@@ -76,6 +83,8 @@ namespace RottenBamboo {
         InitializeMaterial();
         RBApplication::ptr_Materials = &materialsVec;
 
+        updatedDescriptors.clear();
+        updatedDescriptors.reserve(0);
         InitializeDescriptors();
         RBApplication::ptr_Descriptors = &descriptorsGBuffersVec;
 
@@ -577,13 +586,36 @@ void RBApplication::processModelNode(
         presentInfo.pImageIndices = &imageIndex;
 
         result = vkQueuePresentKHR(device.presentQueue, &presentInfo);
-        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || windows.framebufferResized)
+        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || windows.framebufferResized || descriptorSetsUpdate)
         {
             windows.framebufferResized = false;
 
             vkDeviceWaitIdle(device.device);
 
             gBufferPass.clearFrameBuffers();
+            
+            for(int i = 0; i < updatedDescriptors.size(); i++)
+            {
+                //mathod 1: release all resource and re-initialize descriptors
+                //updatedDescriptors[i]->ReleaseAllResource();
+                //updatedDescriptors[i]->InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
+                
+                //mathod 2: only update the changed texture image and update descriptor sets
+                // for(int j = 0; j < updatedDescriptors[i]->imagesInfo.size(); j++)
+                // {
+                //     if(updatedDescriptors[i]->imagesInfo[j].needUpdate)
+                //     {
+                //         updatedDescriptors[i]->imagesInfo[i].path;
+                //         updatedDescriptors[i]->refreshTextureImage(j, updatedDescriptors[i]->imagesInfo[j].path);
+                //         updatedDescriptors[i]->updateDescriptorSetsTextureImage(j);
+                //         updatedDescriptors[i]->imagesInfo[j].needUpdate = false;
+                //     }
+                // }
+            }
+            updatedDescriptors.clear();
+            updatedDescriptors.reserve(0);
+            descriptorSetsUpdate = false;
+
             descriptorsAttachment.ReleaseAllResource();
             RBSwapChain::SetSwapChainExtent(device, windows);
             descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent,attachmentParams, depthParams, resourceShader.GetReflection(RENDER_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(RENDER_STAGE_LIGHTING_FRAGMENT), true);

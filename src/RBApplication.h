@@ -91,9 +91,9 @@ namespace RottenBamboo {
 
         RBDevice device{windows};
 
-        RBGUI gui{device, windows};
-
         RBCommandBuffer commandBuffer{device};
+
+        RBGUI gui{device, windows};
 
         std::unordered_map<std::string, RBShaderDefinition> shaderDefinitions;
 
@@ -153,8 +153,14 @@ namespace RottenBamboo {
 
         static std::vector<RBDescriptors*>* GetDescriptors();
 
+        static std::vector<RBDescriptors*> updatedDescriptors;
+
+        static std::vector<RBDescriptors*>* GetUpdatedDescriptors();
+
         static std::vector<RBMaterial*>* ptr_Materials;
 
         static std::vector<RBMaterial*>* GetMaterials();
+
+        static bool descriptorSetsUpdate;
     };
 }

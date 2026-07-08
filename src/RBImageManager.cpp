@@ -20,6 +20,18 @@ namespace RottenBamboo {
         RBLOG_INFO("RBImageManager::~RBImageManager()");
     }
 
+    void RBImageManager::releaseTextureImage(int index)
+    {
+        vkDestroyImageView(rbDevice.device, imageBundles[index].imageView, nullptr);
+        //vkDestroySampler(rbDevice.device, imageBundles[index].sampler, nullptr);
+        vkDestroyImage(rbDevice.device, imageBundles[index].image, nullptr);
+        vkFreeMemory(rbDevice.device, imageBundles[index].imageMemory, nullptr);
+        imageBundles[index].imageView = VK_NULL_HANDLE;
+        //imageBundles[index].sampler = VK_NULL_HANDLE;
+        imageBundles[index].image = VK_NULL_HANDLE;
+        imageBundles[index].imageMemory = VK_NULL_HANDLE;
+    }
+
     void RBImageManager::ReleaseAllResource() 
     {
         for (int i = 0; i < imageCount; i++)
@@ -115,6 +127,14 @@ namespace RottenBamboo {
         RBLOG_INFO("RBImageManager::fillSampler()");
     }
 
+    void RBImageManager::createTextureSampler(VkSampler& sampler)
+    {
+        if (vkCreateSampler(rbDevice.device, &samplerInfo, nullptr, &sampler) != VK_SUCCESS)
+        {
+            RBLOG_FATAL("failed to indexed create texture sampler!");
+            throw std::runtime_error("failed to create indexed texture sampler!");
+        }
+    }
     void RBImageManager::createTextureSampler()
     {
         for (int i = 0; i < imageCount; i++)
