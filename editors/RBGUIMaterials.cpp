@@ -56,7 +56,7 @@ namespace RottenBamboo
         buffer[bufferSize - 1] = '\0';
     }
     
-    RBGUIMaterials::RBGUIMaterials(RBDevice& device) : rbDevice(device)
+    RBGUIMaterials::RBGUIMaterials()
     {
     }
 
@@ -192,10 +192,10 @@ namespace RottenBamboo
                         {
                             const char* filePath = (const char*)payload->Data;
                             itr->second.texturePath = NormalizePathString(fs::relative(filePath, GET_PROJECT_ROOT_DIR).string());
-                            RBApplication::GetUpdatedDescriptors()->push_back(currentMaterialDescriptors);
                             if(currentMaterialDescriptors)
                             {
                                 currentMaterialDescriptors->updateTextureImagePath(i, itr->second.texturePath);
+                                RBApplication::GetUpdatedDescriptors()->push_back(currentMaterialDescriptors);
                                 RBApplication::descriptorSetsUpdate = true;
                             }
                             RBLOG_INFO("Dropped texture: %s", itr->second.texturePath.c_str());
