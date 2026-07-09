@@ -19,6 +19,7 @@ namespace RottenBamboo {
         std::vector<RBDescriptors*> RBApplication::updatedDescriptors{};
         std::vector<RBMaterial*>* RBApplication::ptr_Materials = nullptr;
         bool RBApplication::descriptorSetsUpdate = false;
+        std::vector<ImageResourcePtr>* RBApplication::ptr_oldImageResources = nullptr;
         
         RBGUI* RBApplication::GetGUI() {
             return RBApplication::ptr_gui;
@@ -41,6 +42,11 @@ namespace RottenBamboo {
         std::vector<RBMaterial*>* RBApplication::GetMaterials()
         {
             return RBApplication::ptr_Materials;
+        }
+        
+        std::vector<ImageResourcePtr>* RBApplication::GetOldImageResource()
+        {
+            return RBApplication::ptr_oldImageResources;
         }
 
         RBApplication::RBApplication() {
@@ -87,6 +93,7 @@ namespace RottenBamboo {
         updatedDescriptors.reserve(0);
         InitializeDescriptors();
         RBApplication::ptr_Descriptors = &descriptorsGBuffersVec;
+        RBApplication::ptr_oldImageResources = &oldImageResourceVec;
 
         InitializeSwapChain();
         InitializeGraphicPipeline();
@@ -629,6 +636,16 @@ void RBApplication::processModelNode(
             skyPassManager.createGraphicsPipeline();
 
             lightPassManager.createGraphicsPipeline();
+            
+            // for (int i = 0; i < oldImageResourceVec.size(); i++)
+            // {
+            //     oldImageResourceVec[i].Reset(&device);
+            // }
+
+            // oldImageResourceVec.clear();
+            // oldImageResourceVec.reserve(0);
+            // descriptorSetsUpdate = false;
+
             swapChain.recreateSwapChain(&(descriptorsAttachment.rbImageManager.imageBundles[descriptorsAttachment.rbImageManager.getImageCount() - 1].imageView));
         }
         else if (result != VK_SUCCESS) {

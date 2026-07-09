@@ -180,13 +180,25 @@ namespace RottenBamboo{
         imagesInfo[index].needUpdate = true;
     }
 
+    ImageResourcePtr RBDescriptors::getTextureImagePtr(int index)
+    {
+        ImageResourcePtr imageResourcePtr;
+        imageResourcePtr.imagePtr = &rbImageManager.imageBundles[index].image;
+        imageResourcePtr.imageMemoryPtr = &rbImageManager.imageBundles[index].imageMemory;
+        imageResourcePtr.imageViewPtr = &rbImageManager.imageBundles[index].imageView;
+        return imageResourcePtr;
+    }
     void RBDescriptors::refreshTextureImage(int index, const std::string& newTexturePath)
     {
         imagesInfo[index].path = newTexturePath;
-        rbImageManager.releaseTextureImage(index);
+        //rbImageManager.releaseTextureImage(index);
         setTextureImage(index);
         setTextureImageView(index);
         //setTextureSampler(index);
+    }
+    void RBDescriptors::releaseTextureImage(ImageResourcePtr imageResourcePtr)
+    {
+        rbImageManager.releaseTextureImage(imageResourcePtr);
     }
 
     void RBDescriptors::setTextureImage(int index)

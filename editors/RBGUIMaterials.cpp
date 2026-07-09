@@ -194,8 +194,13 @@ namespace RottenBamboo
                             itr->second.texturePath = NormalizePathString(fs::relative(filePath, GET_PROJECT_ROOT_DIR).string());
                             if(currentMaterialDescriptors)
                             {
+                                ImageResourcePtr imageResourcePtr = currentMaterialDescriptors->getTextureImagePtr(i);
+                                RBApplication::ptr_oldImageResources->push_back(imageResourcePtr);
+
                                 currentMaterialDescriptors->updateTextureImagePath(i, itr->second.texturePath);
                                 RBApplication::GetUpdatedDescriptors()->push_back(currentMaterialDescriptors);
+                                currentMaterialDescriptors->refreshTextureImage(i, itr->second.texturePath);
+                                currentMaterialDescriptors->updateDescriptorSetsTextureImage(i);
                                 RBApplication::descriptorSetsUpdate = true;
                             }
                             RBLOG_INFO("Dropped texture: %s", itr->second.texturePath.c_str());

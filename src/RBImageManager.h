@@ -21,6 +21,25 @@ namespace RottenBamboo {
         bool isHDR;
     };
 
+    struct ImageResourcePtr {
+        public:
+        VkImage* imagePtr;
+        VkDeviceMemory* imageMemoryPtr;
+        VkImageView* imageViewPtr;
+        //VkSampler* samplerPtr;
+        void Reset(RBDevice* rbDevice) 
+        {
+            vkDestroyImageView(rbDevice->device, *imageViewPtr, nullptr);
+            //vkDestroySampler(rbDevice.device, *samplerPtr, nullptr);
+            vkDestroyImage(rbDevice->device, *imagePtr, nullptr);
+            vkFreeMemory(rbDevice->device, *imageMemoryPtr, nullptr);
+            imageViewPtr = VK_NULL_HANDLE;
+            //samplerPtr = VK_NULL_HANDLE;
+            imagePtr = VK_NULL_HANDLE;
+            imageMemoryPtr = VK_NULL_HANDLE;
+        }
+    };
+    
     class RBImageManager {
 
     private:
@@ -88,6 +107,8 @@ namespace RottenBamboo {
         VkSamplerCreateInfo samplerInfo{};
 
         void releaseTextureImage(int index);
+        
+        void releaseTextureImage(ImageResourcePtr imageResourcePtr);
         
         void ReleaseAllResource();
 
