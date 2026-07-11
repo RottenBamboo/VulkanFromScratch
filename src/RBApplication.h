@@ -168,5 +168,7 @@ namespace RottenBamboo {
         static std::vector<ImageResourcePtr>* GetOldImageResource();
 
         static bool descriptorSetsUpdate;
+        
+        int deferredFrameCount = 0;
     };
 }

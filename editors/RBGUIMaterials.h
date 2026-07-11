@@ -18,7 +18,7 @@ namespace RottenBamboo
     class RBGUIMaterials : public RBGUIBase 
     {
     public:
-        RBGUIMaterials();
+        RBGUIMaterials(RBDevice& device);
 
         virtual ~RBGUIMaterials() override = default;
 
@@ -37,5 +37,6 @@ namespace RottenBamboo
         const ImVec2 imageVec = ImVec2(64, 64);
         std::vector<VkDescriptorSet> vecUIMaterialDescriptorSet;
         RBDescriptors* currentMaterialDescriptors = nullptr;
+        RBDevice& rbDevice;
     };
 }

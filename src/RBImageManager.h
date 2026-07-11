@@ -23,20 +23,30 @@ namespace RottenBamboo {
 
     struct ImageResourcePtr {
         public:
-        VkImage* imagePtr;
-        VkDeviceMemory* imageMemoryPtr;
-        VkImageView* imageViewPtr;
-        //VkSampler* samplerPtr;
+        VkImage image;
+        VkDeviceMemory imageMemory;
+        VkImageView imageView;
+        //VkSampler* sampler;
         void Reset(RBDevice* rbDevice) 
         {
-            vkDestroyImageView(rbDevice->device, *imageViewPtr, nullptr);
-            //vkDestroySampler(rbDevice.device, *samplerPtr, nullptr);
-            vkDestroyImage(rbDevice->device, *imagePtr, nullptr);
-            vkFreeMemory(rbDevice->device, *imageMemoryPtr, nullptr);
-            imageViewPtr = VK_NULL_HANDLE;
+            if(imageView != VK_NULL_HANDLE)
+            {
+                vkDestroyImageView(rbDevice->device, imageView, nullptr);
+                imageView = VK_NULL_HANDLE;
+            }
+            
+            if(image != VK_NULL_HANDLE)
+            {
+                vkDestroyImage(rbDevice->device, image, nullptr);
+                image = VK_NULL_HANDLE;
+            }
+
+            if(imageMemory != VK_NULL_HANDLE)
+            {
+                vkFreeMemory(rbDevice->device, imageMemory, nullptr);
+                imageMemory = VK_NULL_HANDLE;
+            }
             //samplerPtr = VK_NULL_HANDLE;
-            imagePtr = VK_NULL_HANDLE;
-            imageMemoryPtr = VK_NULL_HANDLE;
         }
     };
     

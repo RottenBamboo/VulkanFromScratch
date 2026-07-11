@@ -56,7 +56,7 @@ namespace RottenBamboo
         buffer[bufferSize - 1] = '\0';
     }
     
-    RBGUIMaterials::RBGUIMaterials()
+    RBGUIMaterials::RBGUIMaterials(RBDevice& device) : rbDevice(device)
     {
     }
 
@@ -191,16 +191,21 @@ namespace RottenBamboo
                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_FILE")) 
                         {
                             const char* filePath = (const char*)payload->Data;
+                            //std::string path(filePath, payload->DataSize);
+                            //RBLOG_INFO("relative path = " + fs::relative(filePath, GET_PROJECT_ROOT_DIR).string());
                             itr->second.texturePath = NormalizePathString(fs::relative(filePath, GET_PROJECT_ROOT_DIR).string());
-                            if(currentMaterialDescriptors)
+                            //RBLOG_INFO("relative path = " + fs::relative(filePath, GET_PROJECT_ROOT_DIR).string());
+                            //RBLOG_INFO("image path = " + itr->second.texturePath);
+                            if(currentMaterialDescriptors != nullptr)
                             {
-                                ImageResourcePtr imageResourcePtr = currentMaterialDescriptors->getTextureImagePtr(i);
-                                RBApplication::ptr_oldImageResources->push_back(imageResourcePtr);
+                                ImageResourcePtr imageResource = currentMaterialDescriptors->getTextureImage(i);
+                                (*RBApplication::ptr_oldImageResources).push_back(imageResource);
 
                                 currentMaterialDescriptors->updateTextureImagePath(i, itr->second.texturePath);
                                 RBApplication::GetUpdatedDescriptors()->push_back(currentMaterialDescriptors);
-                                currentMaterialDescriptors->refreshTextureImage(i, itr->second.texturePath);
-                                currentMaterialDescriptors->updateDescriptorSetsTextureImage(i);
+                                //vkDeviceWaitIdle(rbDevice.device);
+                                //currentMaterialDescriptors->refreshTextureImage(i, itr->second.texturePath);
+                                //currentMaterialDescriptors->updateDescriptorSetsTextureImage(i);
                                 RBApplication::descriptorSetsUpdate = true;
                             }
                             RBLOG_INFO("Dropped texture: %s", itr->second.texturePath.c_str());

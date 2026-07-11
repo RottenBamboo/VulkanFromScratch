@@ -22,14 +22,14 @@ namespace RottenBamboo {
 
     void RBImageManager::releaseTextureImage(ImageResourcePtr imageResourcePtr)
     {
-        vkDestroyImageView(rbDevice.device, *(imageResourcePtr.imageViewPtr), nullptr);
+        vkDestroyImageView(rbDevice.device, imageResourcePtr.imageView, nullptr);
         //vkDestroySampler(rbDevice.device, *(imageResourcePtr.samplerPtr), nullptr);
-        vkDestroyImage(rbDevice.device, *(imageResourcePtr.imagePtr), nullptr);
-        vkFreeMemory(rbDevice.device, *(imageResourcePtr.imageMemoryPtr), nullptr);
-        imageResourcePtr.imageViewPtr = VK_NULL_HANDLE;
+        vkDestroyImage(rbDevice.device, imageResourcePtr.image, nullptr);
+        vkFreeMemory(rbDevice.device, imageResourcePtr.imageMemory, nullptr);
+        imageResourcePtr.imageView = VK_NULL_HANDLE;
         //imageBundles[index].sampler = VK_NULL_HANDLE;
-        imageResourcePtr.imagePtr = VK_NULL_HANDLE;
-        imageResourcePtr.imageMemoryPtr = VK_NULL_HANDLE;
+        imageResourcePtr.image = VK_NULL_HANDLE;
+        imageResourcePtr.imageMemory = VK_NULL_HANDLE;
     }
     void RBImageManager::releaseTextureImage(int index)
     {

@@ -123,7 +123,7 @@ private:
                                               
         void updateDescriptorSetsTextureImage(int index);
 
-        ImageResourcePtr getTextureImagePtr(int index);
+        ImageResourcePtr getTextureImage(int index);
 
         void refreshTextureImage(int index, const std::string& newTexturePath);
 

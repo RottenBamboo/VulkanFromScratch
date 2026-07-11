@@ -597,7 +597,8 @@ void RBApplication::processModelNode(
         presentInfo.pImageIndices = &imageIndex;
 
         result = vkQueuePresentKHR(device.presentQueue, &presentInfo);
-        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || windows.framebufferResized || descriptorSetsUpdate)
+        
+        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || windows.framebufferResized)
         {
             windows.framebufferResized = false;
 
@@ -623,9 +624,6 @@ void RBApplication::processModelNode(
                 //     }
                 // }
             }
-            updatedDescriptors.clear();
-            updatedDescriptors.reserve(0);
-            descriptorSetsUpdate = false;
 
             descriptorsAttachment.ReleaseAllResource();
             RBSwapChain::SetSwapChainExtent(device, windows);
@@ -636,21 +634,33 @@ void RBApplication::processModelNode(
             skyPassManager.createGraphicsPipeline();
 
             lightPassManager.createGraphicsPipeline();
-            
-            // for (int i = 0; i < oldImageResourceVec.size(); i++)
-            // {
-            //     oldImageResourceVec[i].Reset(&device);
-            // }
-
-            // oldImageResourceVec.clear();
-            // oldImageResourceVec.reserve(0);
-            // descriptorSetsUpdate = false;
 
             swapChain.recreateSwapChain(&(descriptorsAttachment.rbImageManager.imageBundles[descriptorsAttachment.rbImageManager.getImageCount() - 1].imageView));
+           
         }
         else if (result != VK_SUCCESS) {
             RBLOG_FATAL("failed to present swap chain image!");
             throw std::runtime_error("failed to present swap chain image!");
+        }
+
+        if(descriptorSetsUpdate)
+        {
+            if(deferredFrameCount > 10)
+            {
+                vkDeviceWaitIdle(device.device);
+                vkQueueWaitIdle(device.graphicsQueue);
+                for (int i = 0; i < oldImageResourceVec.size(); i++)
+                {
+                    //oldImageResourceVec[i].Reset(&device);
+                    
+                }
+
+                updatedDescriptors.clear();
+                oldImageResourceVec.clear();
+                descriptorSetsUpdate = false;
+                deferredFrameCount = 0;
+            }
+            deferredFrameCount++;
         }
 
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
