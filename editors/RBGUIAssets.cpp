@@ -216,7 +216,8 @@ namespace RottenBamboo
                 if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) 
                 {
                     const std::string pathString = relativePath.string();
-                    ImGui::SetDragDropPayload("ASSET_FILE", pathString.c_str(), pathString.size() + 1);
+                    RBLOG_INFO("drag path = " + pathString);
+                    ImGui::SetDragDropPayload("ASSET_FILE", pathString.data(), pathString.size());
                     ImGui::Text("Dragging: %s", relativePath.filename().string().c_str());
                     ImGui::EndDragDropSource();
                 }

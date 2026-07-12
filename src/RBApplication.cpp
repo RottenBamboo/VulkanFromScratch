@@ -19,7 +19,7 @@ namespace RottenBamboo {
         std::vector<RBDescriptors*> RBApplication::updatedDescriptors{};
         std::vector<RBMaterial*>* RBApplication::ptr_Materials = nullptr;
         bool RBApplication::descriptorSetsUpdate = false;
-        std::vector<ImageResourcePtr>* RBApplication::ptr_oldImageResources = nullptr;
+        std::vector<ImageResourcePtr> RBApplication::oldImageResourceVec;
         
         RBGUI* RBApplication::GetGUI() {
             return RBApplication::ptr_gui;
@@ -46,7 +46,7 @@ namespace RottenBamboo {
         
         std::vector<ImageResourcePtr>* RBApplication::GetOldImageResource()
         {
-            return RBApplication::ptr_oldImageResources;
+            return &oldImageResourceVec;
         }
 
         RBApplication::RBApplication() {
@@ -93,7 +93,6 @@ namespace RottenBamboo {
         updatedDescriptors.reserve(0);
         InitializeDescriptors();
         RBApplication::ptr_Descriptors = &descriptorsGBuffersVec;
-        RBApplication::ptr_oldImageResources = &oldImageResourceVec;
 
         InitializeSwapChain();
         InitializeGraphicPipeline();
@@ -533,9 +532,46 @@ void RBApplication::processModelNode(
         //std::cout << "RBApplication::Execute()" << std::endl;
     }
 
+    void RBApplication::updateDirtyDescriptorSets()
+    {
+        if(descriptorSetsUpdate)
+        {
+            vkDeviceWaitIdle(device.device);
+
+            for(int i = 0; i < updatedDescriptors.size(); i++)
+            {
+                for(int j = 0; j < updatedDescriptors[i]->imagesInfo.size(); j++)
+                {
+                    if(updatedDescriptors[i]->imagesInfo[j].needUpdate)
+                    {
+                        updatedDescriptors[i]->refreshTextureImage(j, updatedDescriptors[i]->imagesInfo[j].path);
+                        updatedDescriptors[i]->updateDescriptorSetsTextureImage(j);
+                        updatedDescriptors[i]->imagesInfo[j].needUpdate = false;
+                    }
+                }
+            }
+
+            for (int i = 0; i < oldImageResourceVec.size(); i++)
+            {
+                oldImageResourceVec[i].Reset(&device);                    
+            }
+
+            updatedDescriptors.clear();
+            oldImageResourceVec.clear();
+            descriptorSetsUpdate = false;
+            deferredFrameCount = 0;
+        }
+        RBLOG_INFO("updateDirtyDescriptorSets");
+    }
+
     void RBApplication::drawFrame()
     {
         vkWaitForFences(device.device, 1, &swapChain.inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
+
+        vkResetFences(device.device, 1, &swapChain.inFlightFences[currentFrame]);
+
+        //update descriptor sets if needed
+        updateDirtyDescriptorSets();
 
         uint32_t imageIndex;
         VkResult result = vkAcquireNextImageKHR(device.device, swapChain.swapChain, UINT64_MAX, swapChain.imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
@@ -552,8 +588,6 @@ void RBApplication::processModelNode(
         }
 
         updateUniformBuffer(currentFrame);
-
-        vkResetFences(device.device, 1, &swapChain.inFlightFences[currentFrame]);
 
         result = vkResetCommandBuffer(commandBuffer.commandBuffers[currentFrame], /*vkCommandBufferResetFlagBits*/ 0);
         if (result != VK_SUCCESS) {
@@ -605,25 +639,6 @@ void RBApplication::processModelNode(
             vkDeviceWaitIdle(device.device);
 
             gBufferPass.clearFrameBuffers();
-            
-            for(int i = 0; i < updatedDescriptors.size(); i++)
-            {
-                //mathod 1: release all resource and re-initialize descriptors
-                //updatedDescriptors[i]->ReleaseAllResource();
-                //updatedDescriptors[i]->InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
-                
-                //mathod 2: only update the changed texture image and update descriptor sets
-                // for(int j = 0; j < updatedDescriptors[i]->imagesInfo.size(); j++)
-                // {
-                //     if(updatedDescriptors[i]->imagesInfo[j].needUpdate)
-                //     {
-                //         updatedDescriptors[i]->imagesInfo[i].path;
-                //         updatedDescriptors[i]->refreshTextureImage(j, updatedDescriptors[i]->imagesInfo[j].path);
-                //         updatedDescriptors[i]->updateDescriptorSetsTextureImage(j);
-                //         updatedDescriptors[i]->imagesInfo[j].needUpdate = false;
-                //     }
-                // }
-            }
 
             descriptorsAttachment.ReleaseAllResource();
             RBSwapChain::SetSwapChainExtent(device, windows);
@@ -638,29 +653,10 @@ void RBApplication::processModelNode(
             swapChain.recreateSwapChain(&(descriptorsAttachment.rbImageManager.imageBundles[descriptorsAttachment.rbImageManager.getImageCount() - 1].imageView));
            
         }
-        else if (result != VK_SUCCESS) {
+        else if (result != VK_SUCCESS) 
+        {
             RBLOG_FATAL("failed to present swap chain image!");
             throw std::runtime_error("failed to present swap chain image!");
-        }
-
-        if(descriptorSetsUpdate)
-        {
-            if(deferredFrameCount > 10)
-            {
-                vkDeviceWaitIdle(device.device);
-                vkQueueWaitIdle(device.graphicsQueue);
-                for (int i = 0; i < oldImageResourceVec.size(); i++)
-                {
-                    //oldImageResourceVec[i].Reset(&device);
-                    
-                }
-
-                updatedDescriptors.clear();
-                oldImageResourceVec.clear();
-                descriptorSetsUpdate = false;
-                deferredFrameCount = 0;
-            }
-            deferredFrameCount++;
         }
 
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;

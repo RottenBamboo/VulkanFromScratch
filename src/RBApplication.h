@@ -81,6 +81,8 @@ namespace RottenBamboo {
         
         void InitializeShaderDefinition();
 
+        void updateDirtyDescriptorSets();
+
         std::chrono::high_resolution_clock::time_point lastFrameTime;
 
         RBWindows windows{WIDTH, HEIGHT, "Vulkan"};
@@ -109,7 +111,7 @@ namespace RottenBamboo {
 
         std::vector<RBMaterial*> materialsVec;
 
-        std::vector<ImageResourcePtr> oldImageResourceVec;
+        static std::vector<ImageResourcePtr> oldImageResourceVec;
 
         RBDescriptors descriptorsMech{device, commandBuffer};
 
@@ -162,8 +164,6 @@ namespace RottenBamboo {
         static std::vector<RBMaterial*>* ptr_Materials;
 
         static std::vector<RBMaterial*>* GetMaterials();
-
-        static std::vector<ImageResourcePtr>* ptr_oldImageResources;
 
         static std::vector<ImageResourcePtr>* GetOldImageResource();
 

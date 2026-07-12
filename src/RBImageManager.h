@@ -26,7 +26,7 @@ namespace RottenBamboo {
         VkImage image;
         VkDeviceMemory imageMemory;
         VkImageView imageView;
-        //VkSampler* sampler;
+        VkSampler sampler;
         void Reset(RBDevice* rbDevice) 
         {
             if(imageView != VK_NULL_HANDLE)

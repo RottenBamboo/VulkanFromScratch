@@ -64,16 +64,64 @@ namespace RottenBamboo
     {
     }
 
+    void RBGUIMaterials::ClearPreviewTextures()
+    {
+        for (VkDescriptorSet descriptorSet : vecUIMaterialDescriptorSet)
+        {
+            if (descriptorSet != VK_NULL_HANDLE)
+            {
+                ImGui_ImplVulkan_RemoveTexture(descriptorSet);
+            }
+        }
+        vecUIMaterialDescriptorSet.clear();
+        vecUIMaterialImageViews.clear();
+    }
+
+    void RBGUIMaterials::RefreshPreviewTexture(int index)
+    {
+        if (currentMaterialDescriptors == nullptr || index < 0)
+        {
+            return;
+        }
+
+        const int imageCount = static_cast<int>(currentMaterialDescriptors->rbImageManager.imageBundles.size());
+        if (index >= imageCount)
+        {
+            return;
+        }
+
+        if (static_cast<int>(vecUIMaterialDescriptorSet.size()) <= index)
+        {
+            vecUIMaterialDescriptorSet.resize(index + 1, VK_NULL_HANDLE);
+            vecUIMaterialImageViews.resize(index + 1, VK_NULL_HANDLE);
+        }
+
+        auto& imageBundle = currentMaterialDescriptors->rbImageManager.imageBundles[index];
+        if (vecUIMaterialDescriptorSet[index] != VK_NULL_HANDLE && vecUIMaterialImageViews[index] == imageBundle.imageView)
+        {
+            return;
+        }
+
+        if (vecUIMaterialDescriptorSet[index] != VK_NULL_HANDLE)
+        {
+            ImGui_ImplVulkan_RemoveTexture(vecUIMaterialDescriptorSet[index]);
+        }
+
+        vecUIMaterialDescriptorSet[index] = ImGui_ImplVulkan_AddTexture(imageBundle.sampler, imageBundle.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        vecUIMaterialImageViews[index] = imageBundle.imageView;
+    }
+
     void RBGUIMaterials::SetMaterial(RBMaterial* material, int materialIndex)
     {
         std::vector<RBDescriptors*>* ptr_Descriptors = RBApplication::GetDescriptors();
         currentMaterialDescriptors = (*ptr_Descriptors)[materialIndex];
         int imageCount = currentMaterialDescriptors->rbImageManager.imageBundles.size();
-        vecUIMaterialDescriptorSet.clear();
-        vecUIMaterialDescriptorSet.reserve(imageCount);
+        ClearPreviewTextures();
+        vecUIMaterialDescriptorSet.resize(imageCount, VK_NULL_HANDLE);
+        vecUIMaterialImageViews.resize(imageCount, VK_NULL_HANDLE);
         for(int i = 0; i < imageCount; i++)
         {
-            vecUIMaterialDescriptorSet.push_back(ImGui_ImplVulkan_AddTexture(currentMaterialDescriptors->rbImageManager.imageBundles[i].sampler, (*ptr_Descriptors)[materialIndex]->rbImageManager.imageBundles[i].imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL));
+            RefreshPreviewTexture(i);
         }
         this->currentMaterial = material;
     }
@@ -176,6 +224,7 @@ namespace RottenBamboo
                                      | VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
                                      | VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE))
                 {
+                    RefreshPreviewTexture(i);
                     ImVec2 imagePos = ImGui::GetCursorScreenPos();
                     ImGui::Image((ImTextureID)vecUIMaterialDescriptorSet[i], imageVec);
                     
@@ -191,22 +240,43 @@ namespace RottenBamboo
                         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_FILE")) 
                         {
                             const char* filePath = (const char*)payload->Data;
-                            //std::string path(filePath, payload->DataSize);
-                            //RBLOG_INFO("relative path = " + fs::relative(filePath, GET_PROJECT_ROOT_DIR).string());
-                            itr->second.texturePath = NormalizePathString(fs::relative(filePath, GET_PROJECT_ROOT_DIR).string());
-                            //RBLOG_INFO("relative path = " + fs::relative(filePath, GET_PROJECT_ROOT_DIR).string());
-                            //RBLOG_INFO("image path = " + itr->second.texturePath);
+                            std::string path(filePath, payload->DataSize);
+                            itr->second.texturePath = GET_PROJECT_ROOT_DIR + NormalizePathString(path);
+                            RBLOG_INFO("drag image full path = " + itr->second.texturePath);
                             if(currentMaterialDescriptors != nullptr)
                             {
                                 ImageResourcePtr imageResource = currentMaterialDescriptors->getTextureImage(i);
-                                (*RBApplication::ptr_oldImageResources).push_back(imageResource);
+                                bool alreadyQueued = false;
+                                for (const ImageResourcePtr& oldImageResource : RBApplication::oldImageResourceVec)
+                                {
+                                    if (oldImageResource.imageView == imageResource.imageView)
+                                    {
+                                        alreadyQueued = true;
+                                        break;
+                                    }
+                                }
+                                if (!alreadyQueued)
+                                {
+                                    RBApplication::oldImageResourceVec.push_back(imageResource);
+                                }
 
                                 currentMaterialDescriptors->updateTextureImagePath(i, itr->second.texturePath);
-                                RBApplication::GetUpdatedDescriptors()->push_back(currentMaterialDescriptors);
-                                //vkDeviceWaitIdle(rbDevice.device);
-                                //currentMaterialDescriptors->refreshTextureImage(i, itr->second.texturePath);
-                                //currentMaterialDescriptors->updateDescriptorSetsTextureImage(i);
+                                bool alreadyUpdated = false;
+                                for (RBDescriptors* updatedDescriptor : *RBApplication::GetUpdatedDescriptors())
+                                {
+                                    if (updatedDescriptor == currentMaterialDescriptors)
+                                    {
+                                        alreadyUpdated = true;
+                                        break;
+                                    }
+                                }
+                                if (!alreadyUpdated)
+                                {
+                                    RBApplication::GetUpdatedDescriptors()->push_back(currentMaterialDescriptors);
+                                }
+                                
                                 RBApplication::descriptorSetsUpdate = true;
+                                RBLOG_INFO("descriptorSetsUpdate = true");
                             }
                             RBLOG_INFO("Dropped texture: %s", itr->second.texturePath.c_str());
                             ImGui::Text("Dropped: %s", filePath);

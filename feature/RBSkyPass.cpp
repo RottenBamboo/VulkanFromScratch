@@ -135,7 +135,6 @@ namespace RottenBamboo {
 
     RBSkyPass::~RBSkyPass()
     {
-        vkDestroyDescriptorSetLayout(rbDevice.device, rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout, nullptr);
         std::cout << "RBSkyPass::~RBSkyPass()" << std::endl;
     }
     void RBSkyPass::Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors& descriptors) 

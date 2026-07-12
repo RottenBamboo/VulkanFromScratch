@@ -87,6 +87,7 @@ namespace RottenBamboo
 
     RBGUI::~RBGUI()
     {
+        materialsGUI.ClearPreviewTextures();
         ImGui_ImplVulkan_Shutdown();
         ImGui_ImplSDL3_Shutdown();
         ImGui::DestroyContext();

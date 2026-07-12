@@ -27,6 +27,8 @@ namespace RottenBamboo
         virtual void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix) override;
 
         void SetMaterial(RBMaterial* material, int materialIndex = 0);
+        void RefreshPreviewTexture(int index);
+        void ClearPreviewTextures();
         
         RBMaterial* currentMaterial = nullptr;
         
@@ -36,6 +38,7 @@ namespace RottenBamboo
 
         const ImVec2 imageVec = ImVec2(64, 64);
         std::vector<VkDescriptorSet> vecUIMaterialDescriptorSet;
+        std::vector<VkImageView> vecUIMaterialImageViews;
         RBDescriptors* currentMaterialDescriptors = nullptr;
         RBDevice& rbDevice;
     };

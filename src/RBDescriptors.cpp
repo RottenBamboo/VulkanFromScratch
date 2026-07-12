@@ -186,6 +186,7 @@ namespace RottenBamboo{
         imageResourcePtr.image = rbImageManager.imageBundles[index].image;
         imageResourcePtr.imageMemory = rbImageManager.imageBundles[index].imageMemory;
         imageResourcePtr.imageView = rbImageManager.imageBundles[index].imageView;
+        imageResourcePtr.sampler = rbImageManager.imageBundles[index].sampler;
         return imageResourcePtr;
     }
     void RBDescriptors::refreshTextureImage(int index, const std::string& newTexturePath)
@@ -195,7 +196,7 @@ namespace RottenBamboo{
         //rbImageManager.releaseTextureImage(index);
         setTextureImage(index);
         setTextureImageView(index);
-        //setTextureSampler(index);
+        setTextureSampler(index);
     }
     void RBDescriptors::releaseTextureImage(ImageResourcePtr imageResourcePtr)
     {
@@ -376,7 +377,6 @@ namespace RottenBamboo{
 
     void RBDescriptors::setTextureImageView(int index)
     {
-        auto& imageBundle = rbImageManager.imageBundles[index];
         createTextureImageView(index);
     }
 
