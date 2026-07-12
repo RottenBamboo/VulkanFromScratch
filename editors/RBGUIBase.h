@@ -23,6 +23,8 @@ namespace RottenBamboo
         virtual void Initialize(VkRenderPass renderPass) = 0;
 
         virtual void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix) = 0;
+
+        virtual void SetLayout() = 0;
     };
 
 }

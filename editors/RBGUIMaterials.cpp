@@ -125,7 +125,32 @@ namespace RottenBamboo
         }
         this->currentMaterial = material;
     }
+    void RBGUIMaterials::SetLayout()
+    {
+        ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImVec2 workPos = viewport->WorkPos;
+        ImVec2 workSize = viewport->WorkSize;
 
+        // Material Editor: right side panel
+        float materialWidth = 360.0f;
+        ImGui::SetNextWindowPos(
+            ImVec2(workPos.x + workSize.x - materialWidth, workPos.y),
+            ImGuiCond_Always
+        );
+        ImGui::SetNextWindowSize(
+            ImVec2(materialWidth, workSize.y),
+            ImGuiCond_Always
+        );
+
+        ImGui::Begin(
+            "Material Editor",
+            nullptr,
+            ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoCollapse
+            );
+    }
+    
     void RBGUIMaterials::Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix)
     {
         if (currentMaterial == nullptr)
@@ -133,10 +158,10 @@ namespace RottenBamboo
             return;
         }
 
+        SetLayout();
+
         MaterialData& material = currentMaterial->GetData();
-
-        ImGui::Begin("Material Editor", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-
+        
         char filePathBuffer[512];
         CopyStringToBuffer(filePathBuffer, sizeof(filePathBuffer), currentMaterial->GetPath());
 

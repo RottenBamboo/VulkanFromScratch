@@ -25,8 +25,8 @@ namespace RottenBamboo
         ImGuizmo::SetOrthographic(false);
         ImGuizmo::BeginFrame();
         ImVec2 mouse = ImGui::GetMousePos();
-        ImGui::GetForegroundDrawList()->AddCircle(mouse, 5.0f, IM_COL32(255, 0, 0, 255), 32, 2.0f);
-        ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList());
+        ImGui::GetBackgroundDrawList()->AddCircle(mouse, 5.0f, IM_COL32(255, 0, 0, 255), 32, 2.0f);
+        ImGuizmo::SetDrawlist(ImGui::GetBackgroundDrawList());
         ImGuiIO &io = ImGui::GetIO();
         ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 

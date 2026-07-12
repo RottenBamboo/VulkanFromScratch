@@ -146,45 +146,52 @@ namespace RottenBamboo
         }
 
         std::error_code ec;
-        if (ImGui::BeginChild("AssetDirectoryList", ImVec2(0, 320), true))
+        std::vector<std::filesystem::directory_entry> directories;
+        std::vector<std::filesystem::directory_entry> files;
+
+        for (const auto& entry : std::filesystem::directory_iterator(currentDirectory, ec)) 
         {
-            std::vector<std::filesystem::directory_entry> directories;
-            std::vector<std::filesystem::directory_entry> files;
-
-            for (const auto& entry : std::filesystem::directory_iterator(currentDirectory, ec)) 
+            if (searchText[0] != '\0' && !ContainsCaseInsensitive(entry.path().filename().string(), searchText.data())) 
             {
-                if (searchText[0] != '\0' && !ContainsCaseInsensitive(entry.path().filename().string(), searchText.data())) 
-                {
-                    continue;
-                }
-
-                if (entry.is_directory(ec)) 
-                {
-                    directories.push_back(entry);
-                }
-                else {
-                    files.push_back(entry);
-                }
+                continue;
             }
 
-            std::sort(directories.begin(), directories.end(), [](const auto& lhs, const auto& rhs) 
+            if (entry.is_directory(ec)) 
             {
-                return lhs.path().filename().string() < rhs.path().filename().string();
-            });
-            std::sort(files.begin(), files.end(), [](const auto& lhs, const auto& rhs) 
+                directories.push_back(entry);
+            }
+            else 
             {
-                return lhs.path().filename().string() < rhs.path().filename().string();
-            });
+                files.push_back(entry);
+            }
+        }
 
+        std::sort(directories.begin(), directories.end(), [](const auto& lhs, const auto& rhs) 
+        {
+            return lhs.path().filename().string() < rhs.path().filename().string();
+        });
+        std::sort(files.begin(), files.end(), [](const auto& lhs, const auto& rhs) 
+        {
+            return lhs.path().filename().string() < rhs.path().filename().string();
+        });
+
+        constexpr float folderPaneWidth = 260.0f;
+        const float contentHeight = 220.0f;
+
+        if (ImGui::BeginChild("AssetFolderPane", ImVec2(folderPaneWidth, contentHeight), true))
+        {
             ImGui::TextUnformatted("Folders");
+            ImGui::Separator();
+
             fs::path relativePath;
             fs::path entryPath;
+
             for (const auto& entry : directories) 
             {
                 entryPath = entry.path();
                 relativePath = fs::relative(entryPath, GET_PROJECT_ROOT_DIR);
                 const bool selected = selectedPath == relativePath;
-                const std::string label = std::string("Folder: ") + relativePath.filename().string();
+                const std::string label = std::string("[Folder] ") + relativePath.filename().string();
                 ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 200, 80, 255));
                 if (ImGui::Selectable(label.c_str(), selected)) 
                 {
@@ -196,16 +203,26 @@ namespace RottenBamboo
                     NavigateTo(entryPath);
                 }
             }
+        }
+        ImGui::EndChild();
 
-            ImGui::Separator();
+        ImGui::SameLine();
+
+        if (ImGui::BeginChild("AssetFilePane", ImVec2(0, contentHeight), true))
+        {
             ImGui::TextUnformatted("Files");
+            ImGui::Separator();
+
+            fs::path relativePath;
+            fs::path entryPath;
             int i = 0;
+
             for (const auto& entry : files) 
             {
                 entryPath = entry.path();
                 relativePath = fs::relative(entryPath, GET_PROJECT_ROOT_DIR);
                 const bool selected = selectedPath == relativePath;
-                const std::string label = std::string("File: ") + NormalizePathString(relativePath.filename().string());
+                const std::string label = std::string("[File] ") + NormalizePathString(relativePath.filename().string());
                 ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(200, 200, 200, 255));
                 if (ImGui::Selectable(label.c_str(), selected)) 
                 {
@@ -352,13 +369,38 @@ namespace RottenBamboo
         // }
     }
 
+    void RBGUIAssets::SetLayout()
+    {
+        ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImVec2 workPos = viewport->WorkPos;
+        ImVec2 workSize = viewport->WorkSize;
+            
+        float assetsHeight = 360.0f;
+        ImGui::SetNextWindowPos(
+            ImVec2(workPos.x, workPos.y + workSize.y - assetsHeight),
+            ImGuiCond_Always
+        );
+        ImGui::SetNextWindowSize(
+            ImVec2(workSize.x, assetsHeight),
+            ImGuiCond_Always
+        );
+        
+        ImGui::Begin(
+            "Assets",
+            nullptr,
+            ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoCollapse
+        );
+    }
+
     void RBGUIAssets::Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix)
     {
         (void)commandBuffer;
         (void)uniformMatrix;
 
-        ImGui::Begin("Asset Manager", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-
+        SetLayout();
+        
         RenderQuickAccess();
         RenderDirectoryContents();
         RenderLoadedModels();
