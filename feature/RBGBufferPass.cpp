@@ -176,7 +176,7 @@ namespace RottenBamboo {
         std::cout << "RBGBufferPass::~RBGBufferPass()" << std::endl;
     }
 
-    void RBGBufferPass::Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, std::vector<RBDescriptors*> descriptorsGBuffersVec, ResourceManager& resourceManager) 
+    void RBGBufferPass::Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, std::vector<RBDescriptors*> pDescriptorsGBuffersVec, ResourceManager& resourceManager) 
     {
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
@@ -190,7 +190,7 @@ namespace RottenBamboo {
             VkBuffer vertexBuffers[] = {(*mesh).vertexBuffer.buffer};
             VkDeviceSize offsets[] = {0};
 
-            vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptorsGBuffersVec[it->first]->descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
+            vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, rbPipelineLayoutManager.pipelineLayout, 0, 1, &pDescriptorsGBuffersVec[it->first]->descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
         
             vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 

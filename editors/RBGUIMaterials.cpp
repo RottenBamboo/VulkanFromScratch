@@ -184,7 +184,6 @@ namespace RottenBamboo
             material.shaderPathName = NormalizePathString(shaderPathBuffer);
         }
         
-        ImGui::SameLine();
         if (ImGui::Button("Select Shader..."))
         {
             shaderList = CollectReflectedShaders();

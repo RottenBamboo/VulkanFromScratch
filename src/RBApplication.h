@@ -107,11 +107,13 @@ namespace RottenBamboo {
 
         RBPipelineConfig pipelineConfig{};
 
-        std::vector<RBDescriptors*> descriptorsGBuffersVec;
+        std::vector<RBDescriptors*> m_pDescriptorsGBuffersVec;
 
         std::vector<RBMaterial*> materialsVec;
 
         static std::vector<ImageResourcePtr> oldImageResourceVec;
+
+        std::vector<RBDescriptors> descriptorsGBuffersVecs;
 
         RBDescriptors descriptorsMech{device, commandBuffer};
 

@@ -92,7 +92,7 @@ namespace RottenBamboo {
         updatedDescriptors.clear();
         updatedDescriptors.reserve(0);
         InitializeDescriptors();
-        RBApplication::ptr_Descriptors = &descriptorsGBuffersVec;
+        RBApplication::ptr_Descriptors = &m_pDescriptorsGBuffersVec;
 
         InitializeSwapChain();
         InitializeGraphicPipeline();
@@ -205,8 +205,8 @@ namespace RottenBamboo {
         RBSwapChain::SetSwapChainExtent(device, windows);
 
         //GBuffer pass descriptors
-        descriptorsGBuffersVec.clear();
-        descriptorsGBuffersVec.reserve(materialsVec.size());
+        m_pDescriptorsGBuffersVec.clear();
+        m_pDescriptorsGBuffersVec.reserve(materialsVec.size());
 
         // for(int i = 0; i < materialsVec.size(); i++)
         // {
@@ -217,13 +217,13 @@ namespace RottenBamboo {
         descriptorsSamuri.SetResourcesInfos(uniformBuffers, samuriTex, false);
 
         descriptorsMech.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
-        descriptorsGBuffersVec.push_back(&descriptorsMech);
+        m_pDescriptorsGBuffersVec.push_back(&descriptorsMech);
 
         descriptorsSamuri.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
-        descriptorsGBuffersVec.push_back(&descriptorsSamuri);
+        m_pDescriptorsGBuffersVec.push_back(&descriptorsSamuri);
 
         descriptorsTerrain.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
-        descriptorsGBuffersVec.push_back(&descriptorsTerrain);
+        m_pDescriptorsGBuffersVec.push_back(&descriptorsTerrain);
 
         descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
         //after GBuffer pass descriptors
@@ -431,7 +431,7 @@ void RBApplication::processModelNode(
         
          //std::cout << "before gBufferPass::Execute()" << std::endl;
         // gbuffer pass pipeline
-        gBufferPass.Execute(commandBuffer, gbufferRenderPassInfo, descriptorsGBuffersVec, resourceManager);
+        gBufferPass.Execute(commandBuffer, gbufferRenderPassInfo, m_pDescriptorsGBuffersVec, resourceManager);
 
         //std::cout << "after gBufferPass::Execute()" << std::endl;
 
