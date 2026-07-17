@@ -244,9 +244,7 @@ namespace RottenBamboo
                 float temp = 0.5f;
                 const std::string &name = itr->second.name;
                 float value = itr->second.floatValue;
-                if(itr->second.type & (VK_DESCRIPTOR_TYPE_SAMPLER
-                                     | VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-                                     | VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE))
+                if(itr->second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER && itr->second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
                 {
                     RefreshPreviewTexture(i);
                     ImVec2 imagePos = ImGui::GetCursorScreenPos();

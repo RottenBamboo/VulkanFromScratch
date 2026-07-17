@@ -113,9 +113,7 @@ namespace RottenBamboo
                         continue;
                     }
                     const std::string& name = itr->second.name;
-                    if(itr->second.type & (VK_DESCRIPTOR_TYPE_SAMPLER
-                                         | VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-                                         | VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE))
+                    if(itr->second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER && itr->second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
                     {
                         std::string value;
                         FindStringValue(text, name, value);
@@ -173,9 +171,7 @@ namespace RottenBamboo
                     }
                     const std::string &name = itr->second.name;
                     std::string value = "";
-                    if(itr->second.type & (VK_DESCRIPTOR_TYPE_SAMPLER
-                                         | VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
-                                         | VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE))
+                    if(itr->second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER && itr->second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
                     {
                         value = itr->second.texturePath;
                     }

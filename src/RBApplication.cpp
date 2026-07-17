@@ -208,9 +208,23 @@ namespace RottenBamboo {
         m_pDescriptorsGBuffersVec.clear();
         m_pDescriptorsGBuffersVec.reserve(materialsVec.size());
 
-        // for(int i = 0; i < materialsVec.size(); i++)
+        // for(const auto& item : materialsVec)
         // {
-        //     materialsVec[i]->GetData();
+        //     int imageCount = item->GetData().shaderReflection->descriptorSets.size();
+        //     for(const auto& imageDesc : item->GetData().shaderReflection->descriptorSets)
+        //     {
+        //         //get image texture
+        //         if(imageDesc.second.bindings.size() > 0)
+        //         {
+        //             for(const auto& imageBindings : imageDesc.second.bindings)
+        //             {
+        //                 if(imageBindings.second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER && imageBindings.second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
+        //                 {
+                        
+        //                 }
+        //             }
+        //         }
+        //     }
         // }
         descriptorsMech.SetResourcesInfos(uniformBuffers, inputImageInfoMech, false);
         descriptorsTerrain.SetResourcesInfos(uniformBuffers, inputImageTerrain, false);
