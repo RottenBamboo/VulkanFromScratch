@@ -210,20 +210,32 @@ namespace RottenBamboo {
 
         for(const auto& item : materialsVec)
         {
-            int imageCount = item->GetData().shaderReflection->descriptorSets.size();
-            if(imageCount > 0)
+            int descriptorsCount = item->GetData().shaderReflection->descriptorSets.size();
+            if(descriptorsCount > 0)
             {
                 for(const auto& imageDesc : item->GetData().shaderReflection->descriptorSets)
                 {
                     //get image texture
+                    int imageCount = imageDesc.second.bindings.size();
                     if(imageDesc.second.bindings.size() > 0)
                     {
+                        std::vector<TexturesInfo> texturesInfo;
+                        texturesInfo.reserve(imageCount);
                         for(const auto& imageBindings : imageDesc.second.bindings)
                         {
+                            TexturesInfo info;
                             if(imageBindings.second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER && imageBindings.second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
                             {
-                            
+                                //check shaderDefinitiona map type.
+                                info.format = VK_FORMAT_R8G8B8A8_SRGB;
                             }
+                            //maybe depth bit as needed.
+                            info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
+                            info.isHDR = false;
+                            //check material map path
+                            info.path = "";
+                            //texturesInfo to replace inputImageInfoMech inputImageTerrain samuriTex.
+                            texturesInfo.push_back(info);
                         }
                     }
                 }
