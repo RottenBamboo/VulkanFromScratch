@@ -5,12 +5,13 @@
 
 #include "json.h"
 #include "RBResourceUtils.h"
+#include "RBShaderDefinition.h"
 
 namespace RottenBamboo {
 
     struct MaterialData {
         std::string name = "New Material";
-        std::string shaderPathName = "New Shader";
+        std::string shaderDefinationName = "New Shader";
         // std::array<float, 4> baseColor {1.0f, 1.0f, 1.0f, 1.0f};
         // std::array<float, 3> emissiveColor {0.0f, 0.0f, 0.0f};
         // float metallic = 0.0f;
@@ -21,6 +22,7 @@ namespace RottenBamboo {
         // std::string normalTexture;
         // std::string metallicRoughnessTexture;
         // std::string emissiveTexture;
+        RBShaderDefinition* shaderDefinition = nullptr;
         RBShaderReflection* shaderReflection = nullptr;
     };
 

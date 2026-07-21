@@ -11,7 +11,7 @@
 #include "json.h"
 
 namespace RottenBamboo
-{
+{    
     enum class RBShaderParamType
     {
         Float,
@@ -31,6 +31,14 @@ namespace RottenBamboo
         Compute,
     };
 
+    enum class RBShaderTextureType
+    {
+        Albedo,
+        Normal,
+        Cubemap,
+        Custom,
+    };
+
     struct RBShaderStageFile
     {
         RBShaderStageKind stage = RBShaderStageKind::Vertex;
@@ -41,6 +49,7 @@ namespace RottenBamboo
     {
         std::string name;
         RBShaderParamType type = RBShaderParamType::Float;
+        RBShaderTextureType textureType = RBShaderTextureType::Albedo;
         uint32_t set = 0;
         uint32_t binding = 0;
         std::vector<float> defaultFloatValues;
@@ -70,10 +79,11 @@ namespace RottenBamboo
         void Reset();
 
         static RBShaderParamType ParseParamType(const std::string& typeName);
+        static RBShaderTextureType ParseParamTextureType(const std::string& typeName);
         static std::string ToString(RBShaderParamType type);
+        static std::string ToString(RBShaderTextureType type);
         static RBShaderStageKind ParseStageKind(const std::string& stageName);
         static std::string ToString(RBShaderStageKind stageKind);
-
     private:
         std::string path;
         RBShaderDefinitionData data;

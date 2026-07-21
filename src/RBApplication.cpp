@@ -15,20 +15,32 @@ namespace RottenBamboo {
 
         RBGUI* RBApplication::ptr_gui = nullptr;
         RBResourceShader* RBApplication::ptr_resourceShader = nullptr;
+        std::unordered_map<std::string, RBShaderDefinition>* RBApplication::ptr_shaderDefinition = nullptr;
         std::vector<RBDescriptors*>* RBApplication::ptr_Descriptors = nullptr;
         std::vector<RBDescriptors*> RBApplication::updatedDescriptors{};
-        std::vector<RBMaterial*>* RBApplication::ptr_Materials = nullptr;
+        std::vector<RBMaterial>* RBApplication::ptr_Materials = nullptr;
         bool RBApplication::descriptorSetsUpdate = false;
         std::vector<ImageResourcePtr> RBApplication::oldImageResourceVec;
         
-        RBGUI* RBApplication::GetGUI() {
+        RBGUI* RBApplication::GetGUI() 
+        {
             return RBApplication::ptr_gui;
         }
 
-        RBResourceShader* RBApplication::GetResourceShader() {
+        RBResourceShader* RBApplication::GetResourceShader() 
+        {
             return RBApplication::ptr_resourceShader;
         }
 
+        std::unordered_map<std::string, RBShaderDefinition>* RBApplication::GetShaderDefinition() 
+        {
+            return RBApplication::ptr_shaderDefinition;
+        }
+        RBShaderDefinition* RBApplication::GetShaderDefinition(const std::string path) 
+        {
+            auto it = ptr_shaderDefinition->find(path);
+            return it != ptr_shaderDefinition->end() ? &ptr_shaderDefinition->at(path) : nullptr;
+        }
         std::vector<RBDescriptors*>* RBApplication::GetDescriptors()
         {
             return RBApplication::ptr_Descriptors;
@@ -39,7 +51,7 @@ namespace RottenBamboo {
             return &RBApplication::updatedDescriptors;
         }
 
-        std::vector<RBMaterial*>* RBApplication::GetMaterials()
+        std::vector<RBMaterial>* RBApplication::GetMaterials()
         {
             return RBApplication::ptr_Materials;
         }
@@ -62,6 +74,7 @@ namespace RottenBamboo {
         model_paths.insert({2, TERRAIN_PATH});
 
         InitializeShaderDefinition();
+        ptr_shaderDefinition = &shaderDefinitions;
         resourceManager.Load<RBModel>(model_paths);
 
         for(int i = 0; i < inputShader.size(); i++)
@@ -124,7 +137,7 @@ namespace RottenBamboo {
                 std::string relativePath = std::filesystem::relative(entry.path(), GET_PROJECT_ROOT_DIR).string();
                 relativePath = NormalizePathString(relativePath);
                 materialLoadItem.Load(relativePath);
-                materialsVec.push_back(&materialLoadItem);
+                materialsVec.push_back(materialLoadItem);
             }
         }
         RBLOG_INFO("RBApplication::InitializeMaterial()");
@@ -210,10 +223,10 @@ namespace RottenBamboo {
 
         for(const auto& item : materialsVec)
         {
-            int descriptorsCount = item->GetData().shaderReflection->descriptorSets.size();
+            int descriptorsCount = item.GetData().shaderReflection->descriptorSets.size();
             if(descriptorsCount > 0)
             {
-                for(const auto& imageDesc : item->GetData().shaderReflection->descriptorSets)
+                for(const auto& imageDesc : item.GetData().shaderReflection->descriptorSets)
                 {
                     //get image texture
                     int imageCount = imageDesc.second.bindings.size();
@@ -224,9 +237,14 @@ namespace RottenBamboo {
                         for(const auto& imageBindings : imageDesc.second.bindings)
                         {
                             TexturesInfo info;
-                            if(imageBindings.second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER && imageBindings.second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
+                            if(imageBindings.second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || imageBindings.second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
                             {
                                 //check shaderDefinitiona map type.
+                                
+                                // if(shaderDefinitions.find(item.GetData().shaderDefinationName))
+                                // {
+
+                                // }
                                 info.format = VK_FORMAT_R8G8B8A8_SRGB;
                             }
                             //maybe depth bit as needed.

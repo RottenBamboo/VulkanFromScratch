@@ -30,8 +30,8 @@ namespace RottenBamboo {
     class RBApplication {
 
     public:
-        static const uint32_t WIDTH = 1920;
-        static const uint32_t HEIGHT = 1080;
+        static const uint32_t WIDTH = 1280;
+        static const uint32_t HEIGHT = 720;
 
         void run();
 
@@ -109,7 +109,7 @@ namespace RottenBamboo {
 
         std::vector<RBDescriptors*> m_pDescriptorsGBuffersVec;
 
-        std::vector<RBMaterial*> materialsVec;
+        std::vector<RBMaterial> materialsVec;
 
         static std::vector<ImageResourcePtr> oldImageResourceVec;
 
@@ -155,6 +155,12 @@ namespace RottenBamboo {
 
         static RBResourceShader* GetResourceShader();
 
+        static std::unordered_map<std::string, RBShaderDefinition>* ptr_shaderDefinition;
+
+        static std::unordered_map<std::string, RBShaderDefinition>* GetShaderDefinition();
+
+        static RBShaderDefinition* GetShaderDefinition(const std::string path);
+
         static std::vector<RBDescriptors*>* ptr_Descriptors;
 
         static std::vector<RBDescriptors*>* GetDescriptors();
@@ -163,9 +169,9 @@ namespace RottenBamboo {
 
         static std::vector<RBDescriptors*>* GetUpdatedDescriptors();
 
-        static std::vector<RBMaterial*>* ptr_Materials;
+        static std::vector<RBMaterial>* ptr_Materials;
 
-        static std::vector<RBMaterial*>* GetMaterials();
+        static std::vector<RBMaterial>* GetMaterials();
 
         static std::vector<ImageResourcePtr>* GetOldImageResource();
 

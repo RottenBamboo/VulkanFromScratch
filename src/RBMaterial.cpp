@@ -101,8 +101,9 @@ namespace RottenBamboo
 
             MaterialData loaded{};
             FindStringValue(text, "name", loaded.name);
-            FindStringValue(text, "shaderPathName", loaded.shaderPathName);
-            loaded.shaderReflection = RBApplication::GetResourceShader()->GetCustomReflection(loaded.shaderPathName);
+            FindStringValue(text, "shaderDefinationName", loaded.shaderDefinationName);
+            std::string shaderPathName = RBApplication::GetShaderDefinition(loaded.shaderDefinationName)->GetData().stages[(int)RBShaderStageKind::Fragment].path;
+            loaded.shaderReflection = RBApplication::GetResourceShader()->GetCustomReflection(shaderPathName);
             if(loaded.shaderReflection && loaded.shaderReflection->descriptorSets.size() > 0)
             {
                 auto& descriptorSets = loaded.shaderReflection->descriptorSets.at(0);
@@ -113,7 +114,7 @@ namespace RottenBamboo
                         continue;
                     }
                     const std::string& name = itr->second.name;
-                    if(itr->second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER && itr->second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
+                    if(itr->second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || itr->second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
                     {
                         std::string value;
                         FindStringValue(text, name, value);
@@ -159,7 +160,7 @@ namespace RottenBamboo
             std::string materialFileData = "{\n";
             
             materialFileData += "    \"name\": \"" + data.name + "\",\n";
-            materialFileData += "    \"shaderPathName\": \"" + data.shaderPathName + "\",\n";
+            materialFileData += "    \"shaderDefinationName\": \"" + data.shaderDefinationName + "\",\n";
             if(materialData.shaderReflection && materialData.shaderReflection->descriptorSets.size() > 0)
             {
                 auto& descriptorSets = materialData.shaderReflection->descriptorSets.at(0);
@@ -171,7 +172,7 @@ namespace RottenBamboo
                     }
                     const std::string &name = itr->second.name;
                     std::string value = "";
-                    if(itr->second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER && itr->second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
+                    if(itr->second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || itr->second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
                     {
                         value = itr->second.texturePath;
                     }

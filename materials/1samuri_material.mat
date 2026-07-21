@@ -1,6 +1,6 @@
 {
     "name": "1samuri_material",
-    "shaderPathName": "shader/bin/gBufferFrag.spv",
+    "shaderDefinationName": "shaderDefinition/gBufferDefinition.shader",
     "normalMap": "textures/samuri_diffuse.jpeg",
     "albedoMap": "textures/samuri_normal.jpeg",
     "metallicRoughnessAOMap": "textures/samuri_specular_glossiness.png"

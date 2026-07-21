@@ -46,6 +46,21 @@ namespace RottenBamboo
         return out;
     }
     
+    static std::vector<std::string> CollectionShaderDefinition()
+    {
+        std::unordered_map<std::string, RBShaderDefinition>* shaderDefinition = RBApplication::GetShaderDefinition();
+        int shaderDefinitionCount = (*shaderDefinition).size();
+        std::vector<std::string> out;
+        out.resize(shaderDefinitionCount);
+        auto itr = shaderDefinition->begin();
+        for(int i = 0; itr != shaderDefinition->end(); itr++, i++)
+        {
+            out[i] = (*itr).first;
+        }
+        std::sort(out.begin(), out.end());
+        return out;
+    }
+
     static void CopyStringToBuffer(char* buffer, size_t bufferSize, const std::string& value)
     {
         if (bufferSize == 0) {
@@ -178,15 +193,15 @@ namespace RottenBamboo
 
         //ImGui::Text("Current Shader: %s", material.shaderName.empty() ? "<None>" : material.shaderName.c_str());
         char shaderPathBuffer[128];
-        CopyStringToBuffer(shaderPathBuffer, sizeof(shaderPathBuffer), material.shaderPathName);
-        if (ImGui::InputText("shaderPathName", shaderPathBuffer, sizeof(shaderPathBuffer)))
+        CopyStringToBuffer(shaderPathBuffer, sizeof(shaderPathBuffer), material.shaderDefinationName);
+        if (ImGui::InputText("shaderDefinationName", shaderPathBuffer, sizeof(shaderPathBuffer)))
         {
-            material.shaderPathName = NormalizePathString(shaderPathBuffer);
+            material.shaderDefinationName = NormalizePathString(shaderPathBuffer);
         }
         
         if (ImGui::Button("Select Shader..."))
         {
-            shaderList = CollectReflectedShaders();
+            shaderList = CollectionShaderDefinition();
             ImGui::OpenPopup("Shader Picker");
         }
 
@@ -194,7 +209,7 @@ namespace RottenBamboo
         {
             if (ImGui::Button("Refresh"))
             {
-                shaderList = CollectReflectedShaders();
+                shaderList = CollectionShaderDefinition();
             }
 
             ImGui::Separator();
@@ -213,8 +228,10 @@ namespace RottenBamboo
                      if (ImGui::Selectable(s.c_str(), isSelected))
                     {
                         currentSelectedShader = s;
-                        material.shaderReflection = RBApplication::GetResourceShader()->GetCustomReflection(s);
-                        material.shaderPathName = NormalizePathString(s);
+                        material.shaderDefinition = RBApplication::GetShaderDefinition(s);
+                        std::string shaderReflectionPath = material.shaderDefinition->GetData().stages[(int)RBShaderStageKind::Fragment].path;
+                        material.shaderReflection = RBApplication::GetResourceShader()->GetCustomReflection(shaderReflectionPath);
+                        material.shaderDefinationName = NormalizePathString(s);
                         ImGui::CloseCurrentPopup();
                     }
                 }
@@ -244,7 +261,7 @@ namespace RottenBamboo
                 float temp = 0.5f;
                 const std::string &name = itr->second.name;
                 float value = itr->second.floatValue;
-                if(itr->second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER && itr->second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
+                if(itr->second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || itr->second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
                 {
                     RefreshPreviewTexture(i);
                     ImVec2 imagePos = ImGui::GetCursorScreenPos();

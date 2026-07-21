@@ -111,6 +111,10 @@ namespace RottenBamboo
                     {
                         parameter.type = ParseParamType(parameterJson["type"].get<std::string>());
                     }
+                    if (parameterJson.contains("textureType"))
+                    {
+                        parameter.textureType = ParseParamTextureType(parameterJson["textureType"].get<std::string>());
+                    }
                     if (parameterJson.contains("set"))
                     {
                         parameter.set = parameterJson["set"].get<uint32_t>();
@@ -195,19 +199,39 @@ namespace RottenBamboo
         return RBShaderParamType::Float;
     }
 
+    RBShaderTextureType RBShaderDefinition::ParseParamTextureType(const std::string& typeName)
+    {
+        if (typeName == "Albedo") return RBShaderTextureType::Albedo;
+        if (typeName == "Normal") return RBShaderTextureType::Normal;
+        if (typeName == "Cubemap") return RBShaderTextureType::Cubemap;
+        if (typeName == "Custom") return RBShaderTextureType::Custom;
+        return RBShaderTextureType::Albedo;
+    }
     std::string RBShaderDefinition::ToString(RBShaderParamType type)
     {
         switch (type)
         {
-        case RBShaderParamType::Float: return "float";
-        case RBShaderParamType::Vec2: return "vec2";
-        case RBShaderParamType::Vec3: return "vec3";
-        case RBShaderParamType::Vec4: return "vec4";
-        case RBShaderParamType::Int: return "int";
-        case RBShaderParamType::Bool: return "bool";
-        case RBShaderParamType::Texture2D: return "texture2D";
-        case RBShaderParamType::Sampler: return "sampler";
-        default: return "float";
+            case RBShaderParamType::Float: return "float";
+            case RBShaderParamType::Vec2: return "vec2";
+            case RBShaderParamType::Vec3: return "vec3";
+            case RBShaderParamType::Vec4: return "vec4";
+            case RBShaderParamType::Int: return "int";
+            case RBShaderParamType::Bool: return "bool";
+            case RBShaderParamType::Texture2D: return "texture2D";
+            case RBShaderParamType::Sampler: return "sampler";
+            default: return "float";
+        }
+    }
+
+    std::string RBShaderDefinition::ToString(RBShaderTextureType type)
+    {
+        switch (type)
+        {
+            case RBShaderTextureType::Albedo: return "Albedo";
+            case RBShaderTextureType::Normal: return "Normal";
+            case RBShaderTextureType::Cubemap: return "Cubemap";
+            case RBShaderTextureType::Custom: return "Custom";
+            default: return "Albedo";
         }
     }
 
@@ -264,6 +288,7 @@ namespace RottenBamboo
         nlohmann::json jsonData;
         jsonData["name"] = parameter.name;
         jsonData["type"] = ToString(parameter.type);
+        jsonData["textureType"] = ToString(parameter.textureType);
         jsonData["set"] = parameter.set;
         jsonData["binding"] = parameter.binding;
 
