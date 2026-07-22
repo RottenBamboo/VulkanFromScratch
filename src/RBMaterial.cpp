@@ -102,14 +102,14 @@ namespace RottenBamboo
             MaterialData loaded{};
             FindStringValue(text, "name", loaded.name);
             FindStringValue(text, "shaderDefinationName", loaded.shaderDefinationName);
-            loaded.shaderDefinition = RBApplication::GetShaderDefinition(loaded.shaderDefinationName);
+            loaded.shaderDefinition = *RBApplication::GetShaderDefinition(loaded.shaderDefinationName);
             
             std::string shaderPathName = RBApplication::GetShaderDefinition(loaded.shaderDefinationName)->GetData().stages[(int)RBShaderStageKind::Fragment].path;
-            loaded.shaderReflection = RBApplication::GetResourceShader()->GetCustomReflection(shaderPathName);
+            loaded.shaderReflection = *RBApplication::GetResourceShader()->GetCustomReflection(shaderPathName);
             
-            if(loaded.shaderReflection && loaded.shaderReflection->descriptorSets.size() > 0)
+            if(loaded.shaderReflection.descriptorSets.size() > 0)
             {
-                auto& descriptorSets = loaded.shaderReflection->descriptorSets.at(0);
+                auto& descriptorSets = loaded.shaderReflection.descriptorSets.at(0);
                 for(auto itr = descriptorSets.bindings.begin(); itr != descriptorSets.bindings.end(); itr++)
                 {
                     if(itr->second.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
@@ -164,9 +164,9 @@ namespace RottenBamboo
             
             materialFileData += "    \"name\": \"" + data.name + "\",\n";
             materialFileData += "    \"shaderDefinationName\": \"" + data.shaderDefinationName + "\",\n";
-            if(materialData.shaderReflection && materialData.shaderReflection->descriptorSets.size() > 0)
+            if(materialData.shaderReflection.descriptorSets.size() > 0)
             {
-                auto& descriptorSets = materialData.shaderReflection->descriptorSets.at(0);
+                auto& descriptorSets = materialData.shaderReflection.descriptorSets.at(0);
                 for(auto itr = descriptorSets.bindings.begin(); itr != descriptorSets.bindings.end(); itr++)
                 {
                     if(itr->second.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)

@@ -226,12 +226,12 @@ namespace RottenBamboo{
 #else
         if(imageInfo.isHDR)
         {
-            pixels = (float*)stbi_loadf(imageInfo.path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+            pixels = (float*)stbi_loadf((GET_PROJECT_ROOT_DIR + imageInfo.path).c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
             typeSize = sizeof(float);
         }
         else
         {
-            pixels = (stbi_uc*)stbi_load(imageInfo.path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+            pixels = (stbi_uc*)stbi_load((GET_PROJECT_ROOT_DIR + imageInfo.path).c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
             typeSize = sizeof(stbi_uc);
         }
 

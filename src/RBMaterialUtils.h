@@ -22,8 +22,8 @@ namespace RottenBamboo {
         // std::string normalTexture;
         // std::string metallicRoughnessTexture;
         // std::string emissiveTexture;
-        RBShaderDefinition* shaderDefinition = nullptr;
-        RBShaderReflection* shaderReflection = nullptr;
+        RBShaderDefinition shaderDefinition;
+        RBShaderReflection shaderReflection;
     };
 
 }

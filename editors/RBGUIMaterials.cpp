@@ -228,9 +228,9 @@ namespace RottenBamboo
                      if (ImGui::Selectable(s.c_str(), isSelected))
                     {
                         currentSelectedShader = s;
-                        material.shaderDefinition = RBApplication::GetShaderDefinition(s);
-                        std::string shaderReflectionPath = material.shaderDefinition->GetData().stages[(int)RBShaderStageKind::Fragment].path;
-                        material.shaderReflection = RBApplication::GetResourceShader()->GetCustomReflection(shaderReflectionPath);
+                        material.shaderDefinition = *RBApplication::GetShaderDefinition(s);
+                        std::string shaderReflectionPath = material.shaderDefinition.GetData().stages[(int)RBShaderStageKind::Fragment].path;
+                        material.shaderReflection = *RBApplication::GetResourceShader()->GetCustomReflection(shaderReflectionPath);
                         material.shaderDefinationName = NormalizePathString(s);
                         ImGui::CloseCurrentPopup();
                     }
@@ -248,9 +248,9 @@ namespace RottenBamboo
         }
 
 
-        if(material.shaderReflection && material.shaderReflection->descriptorSets.size() > 0)
+        if(material.shaderReflection.descriptorSets.size() > 0)
         {
-            auto& descriptorSets = material.shaderReflection->descriptorSets.at(0);
+            auto& descriptorSets = material.shaderReflection.descriptorSets.at(0);
             int i = 0;
             for(auto itr = descriptorSets.bindings.begin(); itr != descriptorSets.bindings.end(); itr++)
             {
@@ -280,7 +280,7 @@ namespace RottenBamboo
                         {
                             const char* filePath = (const char*)payload->Data;
                             std::string path(filePath, payload->DataSize);
-                            itr->second.texturePath = GET_PROJECT_ROOT_DIR + NormalizePathString(path);
+                            itr->second.texturePath = NormalizePathString(path);
                             RBLOG_INFO("drag image full path = " + itr->second.texturePath);
                             if(currentMaterialDescriptors != nullptr)
                             {

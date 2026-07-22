@@ -45,7 +45,7 @@ namespace RottenBamboo {
 
     void RBImageManager::ReleaseAllResource() 
     {
-        for (int i = 0; i < imageCount; i++)
+        for (int i = 0; i < imageCount && i < imageBundles.size(); i++)
         {
             vkDestroyImageView(rbDevice.device, imageBundles[i].imageView, nullptr);
             vkDestroySampler(rbDevice.device, imageBundles[i].sampler, nullptr);
