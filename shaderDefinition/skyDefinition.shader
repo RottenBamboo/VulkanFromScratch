@@ -14,7 +14,7 @@
         {
             "name": "albedoMap",
             "type": "texture2D",
-	    	"textureType":"Albedo",
+	    "textureType": "Albedo",
             "set": 1,
             "binding": 1
         }

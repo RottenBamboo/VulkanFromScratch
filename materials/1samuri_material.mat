@@ -3,5 +3,6 @@
     "shaderDefinationName": "shaderDefinition/gBufferDefinition.shader",
     "normalMap": "textures/samuri_diffuse.jpeg",
     "albedoMap": "textures/samuri_normal.jpeg",
-    "metallicRoughnessAOMap": "textures/samuri_specular_glossiness.png"
+    "metallicRoughnessAOMap": "textures/samuri_specular_glossiness.png",
+    "emissionMap": "textures/Mech_Emission.jpeg"
 }

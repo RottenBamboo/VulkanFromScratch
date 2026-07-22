@@ -3,5 +3,6 @@
     "shaderDefinationName": "shaderDefinition/gBufferDefinition.shader",
     "normalMap": "textures/Mech_Normal.jpg",
     "albedoMap": "textures/Mech_BaseMap.jpg",
-    "metallicRoughnessAOMap": "textures/Mech_AO.jpeg"
+    "metallicRoughnessAOMap": "textures/Mech_AO.jpeg",
+    "emissionMap": "textures/Mech_Emission.jpeg"
 }

@@ -14,28 +14,28 @@
         {
             "name": "gPosition",
             "type": "texture2D",
-	    	"textureType":"Albedo",
+	    "textureType": "Albedo",
             "set": 1,
             "binding": 1
         },
         {
             "name": "gNormal",
             "type": "texture2D",
-            "textureType":"Normal",
+            "textureType": "Normal",
             "set": 1,
             "binding": 2
         },
         {
             "name": "gAlbedo",
             "type": "texture2D",
-	    	"textureType":"Albedo",
+	    "textureType": "Albedo",
             "set": 1,
             "binding": 3
         },
 	 {
             "name": "gMetallicRoughnessAO",
             "type": "texture2D",
-	    	"textureType":"Albedo",
+	    "textureType": "Albedo",
             "set": 1,
             "binding": 4
         }

@@ -102,8 +102,11 @@ namespace RottenBamboo
             MaterialData loaded{};
             FindStringValue(text, "name", loaded.name);
             FindStringValue(text, "shaderDefinationName", loaded.shaderDefinationName);
+            loaded.shaderDefinition = RBApplication::GetShaderDefinition(loaded.shaderDefinationName);
+            
             std::string shaderPathName = RBApplication::GetShaderDefinition(loaded.shaderDefinationName)->GetData().stages[(int)RBShaderStageKind::Fragment].path;
             loaded.shaderReflection = RBApplication::GetResourceShader()->GetCustomReflection(shaderPathName);
+            
             if(loaded.shaderReflection && loaded.shaderReflection->descriptorSets.size() > 0)
             {
                 auto& descriptorSets = loaded.shaderReflection->descriptorSets.at(0);

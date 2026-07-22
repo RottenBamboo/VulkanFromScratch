@@ -216,11 +216,8 @@ namespace RottenBamboo {
     {
 
         RBSwapChain::SetSwapChainExtent(device, windows);
-
+        m_descriptorsGBuffersVec.reserve(materialsVec.size());
         //GBuffer pass descriptors
-        m_pDescriptorsGBuffersVec.clear();
-        m_pDescriptorsGBuffersVec.reserve(materialsVec.size());
-
         for(const auto& item : materialsVec)
         {
             int descriptorsCount = item.GetData().shaderReflection->descriptorSets.size();
@@ -234,43 +231,76 @@ namespace RottenBamboo {
                     {
                         std::vector<TexturesInfo> texturesInfo;
                         texturesInfo.reserve(imageCount);
+                        int i = 0;
                         for(const auto& imageBindings : imageDesc.second.bindings)
                         {
                             TexturesInfo info;
+                            RBShaderParamType type;
+                            RBShaderTextureType textureType;
                             if(imageBindings.second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || imageBindings.second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
                             {
                                 //check shaderDefinitiona map type.
-                                
-                                // if(shaderDefinitions.find(item.GetData().shaderDefinationName))
-                                // {
-
-                                // }
-                                info.format = VK_FORMAT_R8G8B8A8_SRGB;
+                                type = item.GetData().shaderDefinition->GetData().parameters[i].type;
+                                textureType = item.GetData().shaderDefinition->GetData().parameters[i].textureType;
+                                if(type == RBShaderParamType::Texture2D)
+                                {
+                                    info.path = GET_PROJECT_ROOT_DIR + imageBindings.second.texturePath;
+                                    switch(textureType)
+                                    {
+                                        case RBShaderTextureType::Albedo:
+                                        {
+                                            info.format = VK_FORMAT_R8G8B8A8_SRGB;
+                                            info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
+                                            info.isHDR = false;
+			                                break;
+                                        }
+                                        case RBShaderTextureType::Normal:
+                                        {
+                                            info.format = VK_FORMAT_R8G8B8A8_UNORM;
+                                            info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
+                                            info.isHDR = false;
+			                                break;
+                                        }
+                                        default:
+                                        {
+                                            info.format = VK_FORMAT_R8G8B8A8_SRGB;
+                                            info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
+                                            info.isHDR = false;
+			                                break;
+                                        }
+                                    }
+                                }
                             }
-                            //maybe depth bit as needed.
-                            info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
-                            info.isHDR = false;
-                            //check material map path
-                            info.path = "";
-                            //texturesInfo to replace inputImageInfoMech inputImageTerrain samuriTex.
                             texturesInfo.push_back(info);
+                            i++;
                         }
+                        //RBDescriptors descriptor{device, commandBuffer};
+                        auto descriptor = std::make_unique<RBDescriptors>(device, commandBuffer);
+                        descriptor->SetResourcesInfos(uniformBuffers, texturesInfo, false);
+                        m_descriptorsGBuffersVec.push_back(std::move(descriptor));
                     }
                 }
             }
         }
-        descriptorsMech.SetResourcesInfos(uniformBuffers, inputImageInfoMech, false);
-        descriptorsTerrain.SetResourcesInfos(uniformBuffers, inputImageTerrain, false);
-        descriptorsSamuri.SetResourcesInfos(uniformBuffers, samuriTex, false);
+        
+        m_pDescriptorsGBuffersVec.reserve(materialsVec.size());
+        for(int i = 0; i < m_descriptorsGBuffersVec.size(); i++)
+        {
+            m_descriptorsGBuffersVec[i].get()->InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
+            m_pDescriptorsGBuffersVec.push_back(m_descriptorsGBuffersVec[i].get());
+        }
+        //  descriptorsMech.SetResourcesInfos(uniformBuffers, inputImageInfoMech, false);
+        //  descriptorsTerrain.SetResourcesInfos(uniformBuffers, inputImageTerrain, false);
+        //  descriptorsSamuri.SetResourcesInfos(uniformBuffers, samuriTex, false);
 
-        descriptorsMech.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
-        m_pDescriptorsGBuffersVec.push_back(&descriptorsMech);
+        //  descriptorsMech.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
+        //  m_pDescriptorsGBuffersVec.push_back(&descriptorsMech);
 
-        descriptorsSamuri.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
-        m_pDescriptorsGBuffersVec.push_back(&descriptorsSamuri);
+        //  descriptorsSamuri.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
+        //  m_pDescriptorsGBuffersVec.push_back(&descriptorsSamuri);
 
-        descriptorsTerrain.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
-        m_pDescriptorsGBuffersVec.push_back(&descriptorsTerrain);
+        //  descriptorsTerrain.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
+        //  m_pDescriptorsGBuffersVec.push_back(&descriptorsTerrain);
 
         descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
         //after GBuffer pass descriptors

@@ -31,7 +31,7 @@ const std::vector<TexturesInfo> lowPolyTerrainTex =
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, GET_PROJECT_ROOT_DIR + "textures/low_poly_terrain_basecolor.jpeg"},
     TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT, false, GET_PROJECT_ROOT_DIR + "textures/low_poly_terrain_normal.jpeg"},
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, GET_PROJECT_ROOT_DIR + "textures/low_poly_terrain_metal_roughness.png"},
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.png"}
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.jpeg"}
 };
 
 const std::vector<TexturesInfo> samuriTex = 
@@ -39,7 +39,7 @@ const std::vector<TexturesInfo> samuriTex =
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, GET_PROJECT_ROOT_DIR + "textures/samuri_diffuse.jpeg"},
     TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT, false, GET_PROJECT_ROOT_DIR + "textures/samuri_normal.jpeg"},
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, GET_PROJECT_ROOT_DIR + "textures/samuri_specular_glossiness.png"},
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.png"}
+    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, GET_PROJECT_ROOT_DIR + "textures/Mech_Emission.jpeg"}
 };
 
 const std::vector<TexturesInfo> inputImageInfoMech = 

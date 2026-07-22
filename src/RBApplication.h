@@ -112,8 +112,8 @@ namespace RottenBamboo {
         std::vector<RBMaterial> materialsVec;
 
         static std::vector<ImageResourcePtr> oldImageResourceVec;
-
-        std::vector<RBDescriptors> descriptorsGBuffersVecs;
+        
+        std::vector<std::unique_ptr<RBDescriptors>> m_descriptorsGBuffersVec;
 
         RBDescriptors descriptorsMech{device, commandBuffer};
 
