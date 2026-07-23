@@ -121,6 +121,10 @@ namespace RottenBamboo
                     {
                         std::string value;
                         FindStringValue(text, name, value);
+                        if(value.empty())
+                        {
+                            value = defaultWhiteImagePath;
+                        }
                         itr->second.texturePath = value;
                     }
                     else
@@ -143,19 +147,26 @@ namespace RottenBamboo
 
     bool RBMaterial::Save(const std::string& savePath, const MaterialData& materialData) const
     {
+        
+        RBLOG_INFO("RBMaterial::Save() savePath = " + savePath);
+
         const std::string& targetPath = savePath.empty() ? path : savePath;
+        RBLOG_INFO("RBMaterial::Save() targetPath : " + targetPath);
         if (targetPath.empty()) {
             return false;
         }
 
         try {
             std::filesystem::path filePath(GET_PROJECT_ROOT_DIR + targetPath);
+            RBLOG_INFO("RBMaterial::Save() filePath : " + filePath.string());
             if (filePath.has_parent_path()) {
                 std::filesystem::create_directories(filePath.parent_path());
+                RBLOG_INFO("RBMaterial::Save() create directories : " + filePath.parent_path().string());
             }
 
-            std::ofstream file(targetPath, std::ios::trunc);
+            std::ofstream file(filePath, std::ios::trunc);
             if (!file.is_open()) {
+                RBLOG_INFO("RBMaterial::Save() cannot open file : " + filePath.string());
                 return false;
             }
 
@@ -174,14 +185,27 @@ namespace RottenBamboo
                         continue;
                     }
                     const std::string &name = itr->second.name;
+                    RBLOG_INFO("RBMaterial::Save() name : " + itr->second.name);
                     std::string value = "";
                     if(itr->second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || itr->second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
                     {
                         value = itr->second.texturePath;
+                        if(value.empty())
+                        {
+                            value = defaultWhiteImagePath;
+                        }
+                    
+                        RBLOG_INFO("RBMaterial::Save() path : " + value);
                     }
                     else
                     {
                         value = std::to_string(itr->second.floatValue);
+                        if(value.empty())
+                        {
+                            value = "0";
+                        }
+
+                        RBLOG_INFO("RBMaterial::Save() float value : " + value);
                     }
 
                     if(itr != descriptorSets.bindings.begin())
@@ -194,7 +218,7 @@ namespace RottenBamboo
 
             materialFileData += "\n}\n";
             file << materialFileData;
-            RBLOG_INFO("RBMaterial::Save()");
+            RBLOG_INFO("RBMaterial::Save() material = " + materialFileData);
             return true;
         }
         catch (const std::exception& e) {

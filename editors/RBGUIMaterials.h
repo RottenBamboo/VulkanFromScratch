@@ -27,9 +27,10 @@ namespace RottenBamboo
         virtual void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix) override;
         void SetLayout() override;
         
-        void SetMaterial(RBMaterial* material, int materialIndex = 0);
+        void SetMaterial(RBMaterial* material, int descsriptorIndex = 0);
         void RefreshPreviewTexture(int index);
         void ClearPreviewTextures();
+        void RefreshPreviewTexture();
         
         RBMaterial* currentMaterial = nullptr;
         

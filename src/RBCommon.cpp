@@ -21,6 +21,7 @@ const std::string materialsFilePath = "materials/";
 const std::string modelsFilePath = GET_PROJECT_ROOT_DIR + "models/";
 const std::string texturesFilePath = GET_PROJECT_ROOT_DIR + "textures/";
 const std::string shaderFilePath = GET_PROJECT_ROOT_DIR + "shader/";
+const std::string defaultWhiteImagePath = "textures/default_white.jpeg";
 
 const std::vector<TexturesInfo> inputImagesInfo = {
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/Mech_BaseMap.jpg"}

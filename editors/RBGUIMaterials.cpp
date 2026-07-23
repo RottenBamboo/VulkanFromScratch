@@ -81,11 +81,14 @@ namespace RottenBamboo
 
     void RBGUIMaterials::ClearPreviewTextures()
     {
-        for (VkDescriptorSet descriptorSet : vecUIMaterialDescriptorSet)
+        if(vecUIMaterialDescriptorSet.size() > 0)
         {
-            if (descriptorSet != VK_NULL_HANDLE)
+            for (VkDescriptorSet descriptorSet : vecUIMaterialDescriptorSet)
             {
-                ImGui_ImplVulkan_RemoveTexture(descriptorSet);
+                if (descriptorSet != VK_NULL_HANDLE)
+                {
+                    ImGui_ImplVulkan_RemoveTexture(descriptorSet);
+                }
             }
         }
         vecUIMaterialDescriptorSet.clear();
@@ -126,10 +129,10 @@ namespace RottenBamboo
         vecUIMaterialImageViews[index] = imageBundle.imageView;
     }
 
-    void RBGUIMaterials::SetMaterial(RBMaterial* material, int materialIndex)
+    void RBGUIMaterials::SetMaterial(RBMaterial* material, int descsriptorIndex)
     {
         std::vector<RBDescriptors*>* ptr_Descriptors = RBApplication::GetDescriptors();
-        currentMaterialDescriptors = (*ptr_Descriptors)[materialIndex];
+        currentMaterialDescriptors = (*ptr_Descriptors)[descsriptorIndex];
         int imageCount = currentMaterialDescriptors->rbImageManager.imageBundles.size();
         ClearPreviewTextures();
         vecUIMaterialDescriptorSet.resize(imageCount, VK_NULL_HANDLE);
@@ -140,6 +143,17 @@ namespace RottenBamboo
         }
         this->currentMaterial = material;
     }
+
+    void RBGUIMaterials::RefreshPreviewTexture()
+    { 
+        int imageCount = currentMaterialDescriptors->rbImageManager.imageBundles.size();
+        ClearPreviewTextures();
+        for(int i = 0; i < imageCount; i++)
+        {
+            RefreshPreviewTexture(i);
+        }
+    }
+
     void RBGUIMaterials::SetLayout()
     {
         ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -198,7 +212,7 @@ namespace RottenBamboo
         {
             material.shaderDefinationName = NormalizePathString(shaderPathBuffer);
         }
-        
+        bool isChangedShaderRefresh = false;
         if (ImGui::Button("Select Shader..."))
         {
             shaderList = CollectionShaderDefinition();
@@ -210,6 +224,7 @@ namespace RottenBamboo
             if (ImGui::Button("Refresh"))
             {
                 shaderList = CollectionShaderDefinition();
+                isChangedShaderRefresh = true;
             }
 
             ImGui::Separator();
@@ -221,12 +236,17 @@ namespace RottenBamboo
             }
             else
             {
+                int index = 0;
                 for (const auto& s : shaderList)
                 {
                     const bool isSelected = (currentSelectedShader == s);
                     
                      if (ImGui::Selectable(s.c_str(), isSelected))
                     {
+                        if(isChangedShaderRefresh)
+                        {
+                            RBGUIMaterials::SetMaterial(currentMaterial, index);
+                        }
                         currentSelectedShader = s;
                         material.shaderDefinition = *RBApplication::GetShaderDefinition(s);
                         std::string shaderReflectionPath = material.shaderDefinition.GetData().stages[(int)RBShaderStageKind::Fragment].path;
@@ -234,6 +254,7 @@ namespace RottenBamboo
                         material.shaderDefinationName = NormalizePathString(s);
                         ImGui::CloseCurrentPopup();
                     }
+                    index++;
                 }
             }
 
