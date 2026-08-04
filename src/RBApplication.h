@@ -24,6 +24,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <chrono>
+#include "uuid.h"
 
 namespace RottenBamboo {
     

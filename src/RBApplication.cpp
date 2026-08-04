@@ -62,6 +62,8 @@ namespace RottenBamboo {
         }
 
         RBApplication::RBApplication() {
+        uuids::uuid empty;
+        assert(empty.is_nil());
         lastFrameTime = std::chrono::high_resolution_clock::now();
         cameraManager = std::make_unique<RBRuntimeCameraManager>();
         InitializeWindow();
