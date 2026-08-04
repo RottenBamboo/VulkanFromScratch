@@ -17,7 +17,7 @@ namespace RottenBamboo {
 
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 
-        VkPipelineLayout pipelineLayout;
+        VkPipelineLayout pipelineLayout = VK_NULL_HANDLE;
 
         RBPipelineLayoutManager(RBDevice &device);
 

@@ -29,7 +29,11 @@ done
 
 OS_NAME="$(uname)"
 
+if [ "$BUILD_ANDROID" = true ]; then
+INSTALL_DIR="$(pwd)/../thirdpartyAndroid/sdl3/lib"
+else
 INSTALL_DIR="$(pwd)/../thirdparty/sdl3/lib"
+fi
 SDL_DIR="$(pwd)/SDL"
 BUILD_DIR="$SDL_DIR/build"
 
@@ -66,14 +70,14 @@ fi
 mkdir -p "$INSTALL_DIR"
 
 if [ "$BUILD_ANDROID" = true ]; then
-    cp -vf "$BUILD_DIR"/libSDL3.so "$INSTALL_DIR"/libSDL3.0.so
+    cp -vf "$BUILD_DIR"/libSDL3.so "$INSTALL_DIR"/libSDL3.so
 elif [[ "$OS_NAME" == "Darwin" ]]; then
-    cp -vf "$BUILD_DIR"/libSDL3.dylib "$INSTALL_DIR"/libSDL3.0.dylib
+    cp -vf "$BUILD_DIR"/libSDL3.dylib "$INSTALL_DIR"/libSDL3.dylib
 elif [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then
-    cp -vf "$BUILD_DIR"/Debug/SDL3.dll "$INSTALL_DIR"/
-    cp -vf "$BUILD_DIR"/Debug/SDL3.lib "$INSTALL_DIR"/
+    cp -vf "$BUILD_DIR"/Debug/SDL3.dll "$INSTALL_DIR"/SDL3.dll
+    cp -vf "$BUILD_DIR"/Debug/SDL3.lib "$INSTALL_DIR"/SDL3.lib
 else
-    cp -vf "$BUILD_DIR"/libSDL3.dylib "$INSTALL_DIR"/libSDL3.0.dylib
+    cp -vf "$BUILD_DIR"/libSDL3.dylib "$INSTALL_DIR"/libSDL3.dylib
 fi
 
 echo "SDL3 build & copy complete: $INSTALL_DIR"

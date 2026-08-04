@@ -5,28 +5,161 @@
 #include "RBApplication.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-#define TINYOBJLOADER_IMPLEMENTATION
-#include <tiny_obj_loader.h>
 #include <thread>
+
+#include "json.h"
+#include <fstream>
+#include <string>
 
 namespace RottenBamboo {
 
-    RBApplication::RBApplication() {
+        RBGUI* RBApplication::ptr_gui = nullptr;
+        RBResourceShader* RBApplication::ptr_resourceShader = nullptr;
+        std::unordered_map<std::string, RBShaderDefinition>* RBApplication::ptr_shaderDefinition = nullptr;
+        std::vector<RBDescriptors*>* RBApplication::ptr_Descriptors = nullptr;
+        std::vector<RBDescriptors*> RBApplication::updatedDescriptors{};
+        std::vector<RBMaterial>* RBApplication::ptr_Materials = nullptr;
+        bool RBApplication::descriptorSetsUpdate = false;
+        std::vector<ImageResourcePtr> RBApplication::oldImageResourceVec;
+        
+        RBGUI* RBApplication::GetGUI() 
+        {
+            return RBApplication::ptr_gui;
+        }
+
+        RBResourceShader* RBApplication::GetResourceShader() 
+        {
+            return RBApplication::ptr_resourceShader;
+        }
+
+        std::unordered_map<std::string, RBShaderDefinition>* RBApplication::GetShaderDefinition() 
+        {
+            return RBApplication::ptr_shaderDefinition;
+        }
+        RBShaderDefinition* RBApplication::GetShaderDefinition(const std::string path) 
+        {
+            auto it = ptr_shaderDefinition->find(path);
+            return it != ptr_shaderDefinition->end() ? &ptr_shaderDefinition->at(path) : nullptr;
+        }
+        std::vector<RBDescriptors*>* RBApplication::GetDescriptors()
+        {
+            return RBApplication::ptr_Descriptors;
+        }
+
+        std::vector<RBDescriptors*>* RBApplication::GetUpdatedDescriptors()
+        {
+            return &RBApplication::updatedDescriptors;
+        }
+
+        std::vector<RBMaterial>* RBApplication::GetMaterials()
+        {
+            return RBApplication::ptr_Materials;
+        }
+        
+        std::vector<ImageResourcePtr>* RBApplication::GetOldImageResource()
+        {
+            return &oldImageResourceVec;
+        }
+
+        RBApplication::RBApplication() {
+        uuids::uuid empty;
+        assert(empty.is_nil());
         lastFrameTime = std::chrono::high_resolution_clock::now();
         cameraManager = std::make_unique<RBRuntimeCameraManager>();
         InitializeWindow();
         InitializeCamera();
         InitializeDevice();
         InitializeCommandBuffer();
-        resourceManager.Load<RBModel>(MODEL_PATH);
-        //resourceManager.LoadModels(MODEL_PATH);
+        
+        model_paths.insert({0, MODEL_PATH});
+        model_paths.insert({1, SAMURI_PATH});
+        model_paths.insert({2, TERRAIN_PATH});
+
+        InitializeShaderDefinition();
+        ptr_shaderDefinition = &shaderDefinitions;
+        resourceManager.Load<RBModel>(model_paths);
+
+        for(int i = 0; i < inputShader.size(); i++)
+        {
+            RBShaderDefinition& rbShaderDef = shaderDefinitions[inputShader[i].shaderDefinitionPath];
+            RBShaderDefinitionData* definitionData = &rbShaderDef.GetData();
+            std::string pathShader;
+
+            if(inputShader[i].pipelineStage == PipelineStage::PIPELINE_STAGE_VERTEX)
+            {
+                pathShader = GET_PROJECT_ROOT_DIR + definitionData->stages[(int)RBShaderStageKind::Vertex].path;
+            }
+            else if (inputShader[i].pipelineStage == PipelineStage::PIPELINE_STAGE_FRAGMENT)
+            {
+                pathShader = GET_PROJECT_ROOT_DIR + definitionData->stages[(int)RBShaderStageKind::Fragment].path;
+            }
+            
+            resourceShader.Load(inputShader[i].stage, pathShader);
+            resourceShader.Reflect(std::filesystem::relative(pathShader, GET_PROJECT_ROOT_DIR).string(), inputShader[i].stage, *resourceShader.Get(inputShader[i].stage));
+        }
+        RBApplication::ptr_resourceShader = &resourceShader;
+
         InitializeBuffers();
+        
+        InitializeMaterial();
+        RBApplication::ptr_Materials = &materialsVec;
+
+        updatedDescriptors.clear();
+        updatedDescriptors.reserve(0);
         InitializeDescriptors();
+        RBApplication::ptr_Descriptors = &m_pDescriptorsGBuffersVec;
+
         InitializeSwapChain();
         InitializeGraphicPipeline();
+        InitializeStaticPtr();
+
+        RBApplication::ptr_gui = &gui;
         InitializeGUI();
+        
         InitializeMatrix();
+        InitializeEditorMaterial();
         std::cout << "RBApplication::RBApplication()" << std::endl;
+            RBLOG_INFO("RBApplication::RBApplication()");
+    }
+    void RBApplication::InitializeEditorMaterial()
+    {
+        editorMaterial.Load(materialsFilePath + "0mech_material.mat");
+        RBLOG_INFO("RBApplication::InitializeEditorMaterial()");
+    }
+    void RBApplication::InitializeMaterial()
+    {
+        RBMaterial materialLoadItem{"", device, commandBuffer};
+        auto count = std::distance(std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + materialsFilePath), std::filesystem::directory_iterator{});
+        materialsVec.clear();
+        materialsVec.reserve(count);
+        for (const auto& entry : std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + materialsFilePath))
+        {
+            if (entry.is_regular_file())
+            {
+                std::string relativePath = std::filesystem::relative(entry.path(), GET_PROJECT_ROOT_DIR).string();
+                relativePath = NormalizePathString(relativePath);
+                materialLoadItem.Load(relativePath);
+                materialsVec.push_back(materialLoadItem);
+            }
+        }
+        RBLOG_INFO("RBApplication::InitializeMaterial()");
+    }
+    void RBApplication::InitializeShaderDefinition()
+    {
+        for (const auto& entry : std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + shaderDefinitionFilePath))
+        {
+            if (entry.is_regular_file())
+            {
+                RBShaderDefinition shaderDef;
+                std::string relativePath = std::filesystem::relative(entry.path(), GET_PROJECT_ROOT_DIR).string();
+                relativePath = NormalizePathString(relativePath);
+                shaderDef.Load(relativePath);
+                shaderDefinitions[relativePath] = shaderDef;
+            }
+        }
+    }
+    void RBApplication::InitializeStaticPtr()
+    {
     }
 
     RBApplication::~RBApplication() {
@@ -36,6 +169,7 @@ namespace RottenBamboo {
     {
         windows.InitializeWindow();
         std::cout << "RBApplication::InitializeWindow()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeWindow()");
     }
 
     void RBApplication::InitializeCamera()
@@ -46,23 +180,27 @@ namespace RottenBamboo {
             }
         });
         std::cout << "RBApplication::InitializeCamera()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeCamera()");
     }
     void RBApplication::InitializeDevice()
     {
         device.InitializeDevice();
         std::cout << "RBApplication::InitializeDevice()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeDevice()");
     }
     void RBApplication::InitializeCommandBuffer()
     {
         commandBuffer.InitializeCommandBuffer();
         std::cout << "RBApplication::InitializeCommandBuffer()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeCommandBuffer()");
     }
 
     void RBApplication::InitializeSwapChain()
     {
-        swapChain.SetDepthView(&(descriptorsAttachment.rbImageManager.imageBundles[TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT - 1].imageView));
+        swapChain.SetDepthView(&(descriptorsAttachment.rbImageManager.imageBundles[descriptorsAttachment.rbImageManager.getImageCount() - 1].imageView));
         swapChain.InitializeSwapChain();
         std::cout << "RBApplication::InitializeSwapChain()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeSwapChain()");
     }
 
     void RBApplication::InitializeBuffers()
@@ -72,23 +210,97 @@ namespace RottenBamboo {
             uniformBuffers[i].CreateBufferNoStageing();
         }
 
-        std::cout << "RBApplication::InitializeBuffers()" << std::endl;
+            std::cout << "RBApplication::InitializeBuffers()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeBuffers()");
     }
 
     void RBApplication::InitializeDescriptors()
     {
-        descriptorsGBuffer.InitializeDescriptors();
-
-        descriptors.InitializeDescriptors();
 
         RBSwapChain::SetSwapChainExtent(device, windows);
+        m_descriptorsGBuffersVec.reserve(materialsVec.size());
+        //GBuffer pass descriptors
+        for(const auto& item : materialsVec)
+        {
+            int descriptorsCount = item.GetData().shaderReflection.descriptorSets.size();
+            if(descriptorsCount > 0)
+            {
+                for(const auto& imageDesc : item.GetData().shaderReflection.descriptorSets)
+                {
+                    //get image texture
+                    int imageCount = imageDesc.second.bindings.size();
+                    if(imageDesc.second.bindings.size() > 0)
+                    {
+                        std::vector<TexturesInfo> texturesInfo;
+                        texturesInfo.reserve(imageCount);
+                        int i = 0;
+                        for(const auto& imageBindings : imageDesc.second.bindings)
+                        {
+                            TexturesInfo info;
+                            RBShaderParamType type;
+                            RBShaderTextureType textureType;
+                            if(imageBindings.second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || imageBindings.second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
+                            {
+                                //check shaderDefinitiona map type.
+                                type = item.GetData().shaderDefinition.GetData().parameters[i].type;
+                                textureType = item.GetData().shaderDefinition.GetData().parameters[i].textureType;
+                                if(type == RBShaderParamType::Texture2D)
+                                {
+                                    info.path = imageBindings.second.texturePath;
+                                    switch(textureType)
+                                    {
+                                        case RBShaderTextureType::Albedo:
+                                        {
+                                            info.format = VK_FORMAT_R8G8B8A8_SRGB;
+                                            info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
+                                            info.isHDR = false;
+			                                break;
+                                        }
+                                        case RBShaderTextureType::Normal:
+                                        {
+                                            info.format = VK_FORMAT_R8G8B8A8_UNORM;
+                                            info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
+                                            info.isHDR = false;
+			                                break;
+                                        }
+                                        default:
+                                        {
+                                            info.format = VK_FORMAT_R8G8B8A8_SRGB;
+                                            info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
+                                            info.isHDR = false;
+			                                break;
+                                        }
+                                    }
+                                }
+                            }
+                            texturesInfo.push_back(info);
+                            i++;
+                        }
+                        //RBDescriptors descriptor{device, commandBuffer};
+                        auto descriptor = std::make_unique<RBDescriptors>(device, commandBuffer);
+                        descriptor->SetResourcesInfos(uniformBuffers, texturesInfo, false);
+                        m_descriptorsGBuffersVec.push_back(std::move(descriptor));
+                    }
+                }
+            }
+        }
+        
+        m_pDescriptorsGBuffersVec.reserve(materialsVec.size());
+        for(int i = 0; i < m_descriptorsGBuffersVec.size(); i++)
+        {
+            m_descriptorsGBuffersVec[i].get()->InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
+            m_pDescriptorsGBuffersVec.push_back(m_descriptorsGBuffersVec[i].get());
+        }
 
-        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits, attahmentLayouts);
+        descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
+        //after GBuffer pass descriptors
+        descriptorsSkyBox.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_POST_PROCESSING_VERTEX), resourceShader.GetReflection(RENDER_STAGE_POST_PROCESSING_FRAGMENT));
 
-        descriptorsSkyBox.InitializeDescriptors();
-
-        descriptorsLighting.InitializeDescriptors();
-        std::cout << "RBApplication::InitializeDescriptors()" << std::endl;
+        descriptorsLighting.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(RENDER_STAGE_LIGHTING_FRAGMENT), true);
+        
+        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, attachmentParams, depthParams, resourceShader.GetReflection(RENDER_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(RENDER_STAGE_LIGHTING_FRAGMENT), true);
+        std::cout << "RBApplication::InitializeDescriptors(const RBResourceShader& resourceShader)" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeDescriptors(const RBResourceShader& resourceShader)");
     }
 
     void RBApplication::InitializeGraphicPipeline()
@@ -99,13 +311,18 @@ namespace RottenBamboo {
 
         skyPassManager.InitializeGraphicPipeline();
         std::cout << "RBApplication::InitializeGraphicPipeline()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeGraphicPipeline()");
     };
 
     void RBApplication::InitializeGUI()
     {
+        gui.SetResourceManager(&resourceManager);
         gui.Initialize(swapChain.renderPass);
+        gui.SetEditorMaterial(&editorMaterial);
         std::cout << "RBApplication::InitializeGUI()" << std::endl;
+            RBLOG_INFO("RBApplication::InitializeGUI()");
     };
+
 
     void RBApplication::transformModelVertex(
     aiMesh* meshPtr, 
@@ -210,7 +427,7 @@ void RBApplication::processModelNode(
         //                                 glm::vec3(0, 1, 0));
         //uniformShaderVariables.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 100.0f);
         //uniformShaderVariables.proj[1][1] *= -1;
-        uniformShaderVariables.model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f));
+        uniformShaderVariables.model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
         uniformShaderVariables.view = mainCamera.GetViewMatrix();
         float aspectRatio = static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
@@ -258,6 +475,7 @@ void RBApplication::processModelNode(
         beginInfo.flags = 0;
         beginInfo.pInheritanceInfo = nullptr;
         if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
+            RBLOG_FATAL("failed to begin recording command buffer!");
             throw std::runtime_error("failed to begin recording command buffer!");
         }
 
@@ -277,19 +495,12 @@ void RBApplication::processModelNode(
         gbufferRenderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
         gbufferRenderPassInfo.pClearValues = clearValues.data();
 
-        auto shared_ptr_model = resourceManager.Get<RBModel>(MODEL_PATH);
-        auto& mesh = shared_ptr_model->getMeshes(0);
-        VkBuffer vertexBuffers[] = {(*mesh).vertexBuffer.buffer};
-        VkDeviceSize offsets[] = {0};
         
-        vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-
-        vkCmdBindIndexBuffer(commandBuffer, (*mesh).indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
-        
-        //std::cout << "before gBufferPass::recordCommandBuffer()" << std::endl;
+         //std::cout << "before gBufferPass::Execute()" << std::endl;
         // gbuffer pass pipeline
-        gBufferPass.recordCommandBuffer(commandBuffer, gbufferRenderPassInfo, descriptorsGBuffer, *mesh);
-        //std::cout << "after gBufferPass::recordCommandBuffer()" << std::endl;
+        gBufferPass.Execute(commandBuffer, gbufferRenderPassInfo, m_pDescriptorsGBuffersVec, resourceManager);
+
+        //std::cout << "after gBufferPass::Execute()" << std::endl;
 
         // VkBuffer lightingVertexBuffers[] = {mesh.vertexBuffer.buffer};
         // VkDeviceSize lightingOffsets[] = {0};
@@ -334,9 +545,10 @@ void RBApplication::processModelNode(
 
             descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteBuffer(currentFrame, 0, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
 
-            for(int j = 0; j < 4; j++)
+            //set gbuffer attachment output as lighting pass input
+            for(int j = 0; j < gBufferPass.rbColorAttachmentDescriptors.rbImageManager.getImageCount(); j++)
             {
-                descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageLayout = attahmentLayouts[j];
+                descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageLayout = attachmentParams.layout;
                 descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.imageView = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].imageView;
                 descriptorsLighting.rbImageManager.imageBundles[j].imageInfo.sampler = gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].sampler;
                 descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteImage(currentFrame, j + 1, 0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &gBufferPass.rbColorAttachmentDescriptors.rbImageManager.imageBundles[j].imageInfo);
@@ -346,6 +558,20 @@ void RBApplication::processModelNode(
         }
 
         
+        // Sky pass: first render on the swap-chain image each frame — clears to black.
+        VkRenderPassBeginInfo skyRenderPassInfo{};
+        skyRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        skyRenderPassInfo.renderPass = swapChain.renderPassSky;
+        skyRenderPassInfo.framebuffer = swapChain.swapChainFrameBuffers[imageIndex];
+        skyRenderPassInfo.renderArea.offset = {0, 0};
+        skyRenderPassInfo.renderArea.extent = swapChainExtent;
+
+        VkClearValue skyClearValue{};
+        skyClearValue.color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+        skyRenderPassInfo.clearValueCount = 1;
+        skyRenderPassInfo.pClearValues = &skyClearValue;
+
+        // Lighting pass: loads the sky output and composites the deferred lighting result.
         VkRenderPassBeginInfo lightingRenderPassInfo{};
         lightingRenderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         lightingRenderPassInfo.renderPass = swapChain.renderPass;
@@ -353,55 +579,86 @@ void RBApplication::processModelNode(
         lightingRenderPassInfo.renderArea.offset = {0, 0};
         lightingRenderPassInfo.renderArea.extent = swapChainExtent;
 
-        std::array<VkClearValue, 2> lightingClearValues{};
-        lightingClearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
-        lightingClearValues[1].depthStencil = {1.0f, 0};
+        VkClearValue lightingClearValue{};
+        lightingClearValue.color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+        lightingRenderPassInfo.clearValueCount = 1;
+        lightingRenderPassInfo.pClearValues = &lightingClearValue;
 
-        lightingRenderPassInfo.clearValueCount = static_cast<uint32_t>(lightingClearValues.size());
-        lightingRenderPassInfo.pClearValues = lightingClearValues.data();
+        skyPassManager.Execute(commandBuffer, skyRenderPassInfo, descriptorsSkyBox);
 
-        //lighting pass pipeline
-        //std::cout << "before lightPassManager::recordCommandBuffer()" << std::endl;
-        //std::cout << "descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout = " << descriptorsLighting.rbImageManager.imageBundles[0].imageInfo.imageLayout << std::endl;
+        lightPassManager.Execute(commandBuffer, lightingRenderPassInfo, descriptorsLighting, gui, uniformShaderVariables);
 
-        skyPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsSkyBox, *mesh);
-
-        lightPassManager.recordCommandBuffer(commandBuffer, lightingRenderPassInfo, descriptorsLighting, *mesh, gui, uniformShaderVariables);
-
-        //std::cout << "after lightPassManager::recordCommandBuffer()" << std::endl;
+        //std::cout << "after lightPassManager::Execute()" << std::endl;
 
         VkResult result = vkEndCommandBuffer(commandBuffer);
         if (result != VK_SUCCESS) {
             std::cerr << "vkEndCommandBuffer failed: " << result << std::endl;
+            RBLOG_FATAL("failed to record command buffer!");
             throw std::runtime_error("failed to record command buffer!");
         }
-        //std::cout << "RBApplication::recordCommandBuffer()" << std::endl;
+        //std::cout << "RBApplication::Execute()" << std::endl;
+    }
+
+    void RBApplication::updateDirtyDescriptorSets()
+    {
+        if(descriptorSetsUpdate)
+        {
+            vkDeviceWaitIdle(device.device);
+
+            for(int i = 0; i < updatedDescriptors.size(); i++)
+            {
+                for(int j = 0; j < updatedDescriptors[i]->imagesInfo.size(); j++)
+                {
+                    if(updatedDescriptors[i]->imagesInfo[j].needUpdate)
+                    {
+                        updatedDescriptors[i]->refreshTextureImage(j, updatedDescriptors[i]->imagesInfo[j].path);
+                        updatedDescriptors[i]->updateDescriptorSetsTextureImage(j);
+                        updatedDescriptors[i]->imagesInfo[j].needUpdate = false;
+                    }
+                }
+            }
+
+            for (int i = 0; i < oldImageResourceVec.size(); i++)
+            {
+                oldImageResourceVec[i].Reset(&device);                    
+            }
+
+            updatedDescriptors.clear();
+            oldImageResourceVec.clear();
+            descriptorSetsUpdate = false;
+            deferredFrameCount = 0;
+        }
+        //RBLOG_INFO("updateDirtyDescriptorSets");
     }
 
     void RBApplication::drawFrame()
     {
         vkWaitForFences(device.device, 1, &swapChain.inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
+        vkResetFences(device.device, 1, &swapChain.inFlightFences[currentFrame]);
+
+        //update descriptor sets if needed
+        updateDirtyDescriptorSets();
+
         uint32_t imageIndex;
         VkResult result = vkAcquireNextImageKHR(device.device, swapChain.swapChain, UINT64_MAX, swapChain.imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
 
         if (result == VK_ERROR_OUT_OF_DATE_KHR)
         {
-            //swapChain.SetDepthView(&(descriptorsAttachment.rbImageManager.imageBundles[TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT - 1].imageView));
-            swapChain.recreateSwapChain(&(descriptorsAttachment.rbImageManager.imageBundles[TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT - 1].imageView));
+            swapChain.recreateSwapChain(&(descriptorsAttachment.rbImageManager.imageBundles[descriptorsAttachment.rbImageManager.getImageCount() - 1].imageView));
             return;
         }
         else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
         {
+            RBLOG_FATAL("failed to acquire swap chain image!");
             throw std::runtime_error("failed to acquire swap chain image!");
         }
 
         updateUniformBuffer(currentFrame);
 
-        vkResetFences(device.device, 1, &swapChain.inFlightFences[currentFrame]);
-
         result = vkResetCommandBuffer(commandBuffer.commandBuffers[currentFrame], /*vkCommandBufferResetFlagBits*/ 0);
         if (result != VK_SUCCESS) {
+            RBLOG_FATAL("failed to reset command buffer!");
             throw std::runtime_error("failed to reset command buffer!");
         }
 
@@ -426,6 +683,7 @@ void RBApplication::processModelNode(
         if (result != VK_SUCCESS)
         {
             std::cerr << "vkQueueSubmit failed with VkResult: " << result << std::endl;
+            RBLOG_FATAL("vkQueueSubmit failed with VkResult: %d", result);
             throw std::runtime_error("failed to submit draw command buffer!");
         }
 
@@ -440,24 +698,31 @@ void RBApplication::processModelNode(
         presentInfo.pImageIndices = &imageIndex;
 
         result = vkQueuePresentKHR(device.presentQueue, &presentInfo);
+        
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || windows.framebufferResized)
         {
             windows.framebufferResized = false;
 
+            vkDeviceWaitIdle(device.device);
+
             gBufferPass.clearFrameBuffers();
+
             descriptorsAttachment.ReleaseAllResource();
             RBSwapChain::SetSwapChainExtent(device, windows);
-            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, lightingImageFormats, lightingImageUsageFlags, lightingImageAspectFlagBits, attahmentLayouts);
+            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent,attachmentParams, depthParams, resourceShader.GetReflection(RENDER_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(RENDER_STAGE_LIGHTING_FRAGMENT), true);
 
             gBufferPass.createGraphicsPipeline();
 
             skyPassManager.createGraphicsPipeline();
 
             lightPassManager.createGraphicsPipeline();
-            //swapChain.SetDepthView(&(descriptorsAttachment.rbImageManager.imageBundles[TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT - 1].imageView));
-            swapChain.recreateSwapChain(&(descriptorsAttachment.rbImageManager.imageBundles[TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT - 1].imageView));
+
+            swapChain.recreateSwapChain(&(descriptorsAttachment.rbImageManager.imageBundles[descriptorsAttachment.rbImageManager.getImageCount() - 1].imageView));
+           
         }
-        else if (result != VK_SUCCESS) {
+        else if (result != VK_SUCCESS) 
+        {
+            RBLOG_FATAL("failed to present swap chain image!");
             throw std::runtime_error("failed to present swap chain image!");
         }
 

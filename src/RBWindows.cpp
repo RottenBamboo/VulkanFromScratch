@@ -7,7 +7,7 @@
 #include <iostream>
 #include <SDL3/SDL_init.h>
 #include <imgui_impl_sdl3.h>
-
+#include "RBLogger.h"
 namespace RottenBamboo {
 
     RBWindows::RBWindows(uint32_t width, uint32_t height, std::string name)
@@ -33,6 +33,7 @@ namespace RottenBamboo {
     if (!SDL_Init(SDL_INIT_VIDEO)) 
     {
         SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+        RBLOG_FATAL("Failed to initialize SDL!");
     }
 
     std::cout << "SDL Initialized successfully!\n";
@@ -45,6 +46,7 @@ namespace RottenBamboo {
         );
 
         if (!window) {
+            RBLOG_FATAL("Failed to create SDL window!");
             throw std::runtime_error("Failed to create SDL window!");
         }
 

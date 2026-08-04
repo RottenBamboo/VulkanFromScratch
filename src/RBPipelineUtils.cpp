@@ -4,6 +4,8 @@
 #include "RBPipelineUtils.h"
 #include <fstream>
 #include <stdexcept>
+#include "spirv_glsl.hpp"
+#include "spirv_cross.hpp"
 
 namespace RottenBamboo {
 
@@ -11,6 +13,7 @@ namespace RottenBamboo {
     std::vector<char> RBPipelineUtils::readFile(const std::string &filename) {
         std::ifstream file(filename, std::ios::ate | std::ios::binary);
         if (!file.is_open()) {
+            RBLOG_FATAL("Failed to open file!");
             throw std::runtime_error("failed to open file!");
         }
         size_t fileSize = (size_t) file.tellg();
@@ -34,6 +37,7 @@ namespace RottenBamboo {
             __android_log_print(ANDROID_LOG_ERROR, "RottenBamboo", 
                                "Failed to open shader file: %s, error: %s", 
                                filename.c_str(), SDL_GetError());
+            RBLOG_FATAL("Failed to open file!");
             throw std::runtime_error("failed to open file!");
         } else {
             __android_log_print(ANDROID_LOG_INFO, "RottenBamboo", 
@@ -45,6 +49,7 @@ namespace RottenBamboo {
     Sint64 fileSize = SDL_GetIOSize(file);
     if (fileSize <= 0) {
         SDL_CloseIO(file);
+        RBLOG_FATAL("Failed to get file size!");
         throw std::runtime_error("failed to get file size!");
     }
     
@@ -53,6 +58,7 @@ namespace RottenBamboo {
     SDL_CloseIO(file);
     
     if (bytesRead != static_cast<size_t>(fileSize)) {
+        RBLOG_FATAL("Failed to read entire file!");
         throw std::runtime_error("failed to read entire file!");
     }
     
@@ -63,4 +69,26 @@ namespace RottenBamboo {
     return buffer;
     }
 #endif
+
+    void RBPipelineUtils::ReflectShader(const uint32_t* spirv_code, size_t spirv_nbytes)
+    {
+        spirv_cross::Compiler compiler(spirv_code, spirv_nbytes);
+        spirv_cross::ShaderResources resources = compiler.get_shader_resources();
+        
+        for (const auto& resource : resources.uniform_buffers) 
+        {
+            uint32_t set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
+            uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
+            std::cout << "Uniform Buffer - Set: " << set << ", Binding: " << binding << ", Name: " << resource.name << std::endl;
+            RBLOG_INFO("Uniform Buffer - Set: %d, Binding: %d, Name: %s", set, binding, resource.name.c_str());
+        }
+
+        for (const auto& resource : resources.sampled_images) 
+        {
+            uint32_t set = compiler.get_decoration(resource.id, spv::DecorationDescriptorSet);
+            uint32_t binding = compiler.get_decoration(resource.id, spv::DecorationBinding);
+            std::cout << "Sampled Image - Set: " << set << ", Binding: " << binding << ", Name: " << resource.name << std::endl;
+            RBLOG_INFO("Sampled Image - Set: %d, Binding: %d, Name: %s", set, binding, resource.name.c_str());
+        }
+    }
 }

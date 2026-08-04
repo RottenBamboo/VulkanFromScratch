@@ -61,6 +61,7 @@ namespace RottenBamboo{
         imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
         if (vkCreateImage(refDevice.device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
+            RBLOG_FATAL("Failed to create image!");
             throw std::runtime_error("failed to create image!");
         }
 
@@ -73,6 +74,7 @@ namespace RottenBamboo{
         allocInfo.memoryTypeIndex = findMemoryType(refDevice.physicalDevice, memRequirements.memoryTypeBits, properties);
 
         if (vkAllocateMemory(refDevice.device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
+            RBLOG_FATAL("Failed to allocate image memory!");
             throw std::runtime_error("failed to allocate image memory!");
         }
 
@@ -96,6 +98,7 @@ namespace RottenBamboo{
         VkImageView imageView;
         if(vkCreateImageView(refDevice.device, &viewInfo, nullptr, &imageView) != VK_SUCCESS)
         {
+            RBLOG_FATAL("Failed to create image view!");
             throw std::runtime_error("failed to create texture image view!");
         }
         return imageView;
@@ -107,6 +110,8 @@ namespace RottenBamboo{
         VkFormat colorFormat = swapChainImageFormat;
         createImage(swapChainExtent.width, swapChainExtent.height, 1, msaaSamples, colorFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, colorImage, colorImageMemory);
         colorImageView = createImageView(colorImage, colorFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
+
+        RBLOG_INFO("RBSwapChain::createColorResources() - Created MSAA color image (samples: {}) and resolve image (samples: 1)", msaaSamples);
     }
 
     VkFormat RBSwapChain::findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
@@ -126,6 +131,7 @@ namespace RottenBamboo{
             }
         }
 
+        RBLOG_FATAL("Failed to find supported format!");
         throw std::runtime_error("failed to find supported format!");
 
     }
@@ -138,97 +144,124 @@ namespace RottenBamboo{
     void RBSwapChain::createDepthResources()
     {
         VkFormat depthFormat = findDepthFormat();
-        createImage(swapChainExtent.width, swapChainExtent.height, 1, msaaSamples, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
+        createImage(swapChainExtent.width, swapChainExtent.height, 1, msaaSamples, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
         depthImageView = createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
+        RBLOG_INFO("RBSwapChain::createDepthResources()");
     }
 
     void RBSwapChain::createRenderPass()
     {
-        VkAttachmentDescription depthAttachment{};
-        depthAttachment.format = findDepthFormat();
-        depthAttachment.samples = msaaSamples;
-        depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-        depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-        depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-        depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
-        depthAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-        depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        const bool useResolveAttachment = (msaaSamples != VK_SAMPLE_COUNT_1_BIT);
 
-
-        VkAttachmentDescription colorAttachment{};
-        colorAttachment.format = swapChainImageFormat;
-        colorAttachment.samples = msaaSamples;
-        colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-        colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-        colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        colorAttachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-
-
-        VkAttachmentDescription colorAttachmentResolve{};
-        colorAttachmentResolve.format = swapChainImageFormat;
-        colorAttachmentResolve.samples = VK_SAMPLE_COUNT_1_BIT;
-        colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-        colorAttachmentResolve.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-        colorAttachmentResolve.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        colorAttachmentResolve.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        colorAttachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-
-        VkAttachmentReference colorAttachmentResolveRef{};
-        colorAttachmentResolveRef.attachment = 2;
-        colorAttachmentResolveRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-        VkAttachmentReference colorAttachmentRef{};
-        colorAttachmentRef.attachment = 0;
-        colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-        VkAttachmentReference depthAttachmentRef{};
-        depthAttachmentRef.attachment = 1;
-        depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-        VkSubpassDescription subpass{};
-        subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-        subpass.colorAttachmentCount = 1;
-        subpass.pColorAttachments = &colorAttachmentRef;
-        subpass.pDepthStencilAttachment = &depthAttachmentRef;
-        subpass.pResolveAttachments = &colorAttachmentResolveRef;
-
-        VkSubpassDependency dependency{};
-        dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-        dependency.dstSubpass = 0;
-        dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-        dependency.srcAccessMask = 0;
-        dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-        dependency.dstAccessMask = 0;
-        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-
-        std::array<VkAttachmentDescription, 3> attachments = {colorAttachment, depthAttachment, colorAttachmentResolve};
-
-        VkRenderPassCreateInfo renderPassInfo{};
-        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-        renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-        renderPassInfo.pAttachments = attachments.data();
-        renderPassInfo.subpassCount = 1;
-        renderPassInfo.pSubpasses = &subpass;
-        renderPassInfo.dependencyCount = 1;
-        renderPassInfo.pDependencies = &dependency;
-
-        if(vkCreateRenderPass(refDevice.device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS)
+        // Helper: build a single-color (no depth) render pass for Sky/Lighting passes.
+        // Sky pass clears (UNDEFINED → COLOR_ATTACHMENT_OPTIMAL);
+        // Lighting pass loads sky output (COLOR_ATTACHMENT_OPTIMAL → PRESENT_SRC_KHR).
+        auto makeColorOnlyPass = [&](VkAttachmentLoadOp colorLoadOp,
+                                     VkImageLayout     colorInitialLayout,
+                                     VkImageLayout     colorFinalLayout,
+                                     VkRenderPass&     outPass)
         {
-            throw::std::runtime_error("failed to create render pass!");
-        }
+            VkAttachmentDescription colorAttachment{};
+            colorAttachment.format         = swapChainImageFormat;
+            colorAttachment.samples        = msaaSamples;
+            colorAttachment.loadOp         = colorLoadOp;
+            colorAttachment.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
+            colorAttachment.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+            colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+            colorAttachment.initialLayout  = colorInitialLayout;
+            colorAttachment.finalLayout    = useResolveAttachment
+                                             ? VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+                                             : colorFinalLayout;
+
+            VkAttachmentDescription colorResolve{};
+            colorResolve.format         = swapChainImageFormat;
+            colorResolve.samples        = VK_SAMPLE_COUNT_1_BIT;
+            colorResolve.loadOp         = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+            colorResolve.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
+            colorResolve.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+            colorResolve.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+            colorResolve.initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED;
+            colorResolve.finalLayout    = colorFinalLayout;
+
+            VkAttachmentReference colorRef{};
+            colorRef.attachment = 0;
+            colorRef.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+            VkAttachmentReference resolveRef{};
+            resolveRef.attachment = 1;
+            resolveRef.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+            VkSubpassDescription subpass{};
+            subpass.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS;
+            subpass.colorAttachmentCount = 1;
+            subpass.pColorAttachments    = &colorRef;
+            subpass.pDepthStencilAttachment = nullptr;
+            subpass.pResolveAttachments  = useResolveAttachment ? &resolveRef : nullptr;
+
+            VkSubpassDependency dependency{};
+            dependency.srcSubpass    = VK_SUBPASS_EXTERNAL;
+            dependency.dstSubpass    = 0;
+            dependency.srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+            dependency.srcAccessMask = 0;
+            dependency.dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+            dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+            std::vector<VkAttachmentDescription> attachments;
+            attachments.push_back(colorAttachment);
+            if (useResolveAttachment)
+                attachments.push_back(colorResolve);
+
+            VkRenderPassCreateInfo rpInfo{};
+            rpInfo.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+            rpInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+            rpInfo.pAttachments    = attachments.data();
+            rpInfo.subpassCount    = 1;
+            rpInfo.pSubpasses      = &subpass;
+            rpInfo.dependencyCount = 1;
+            rpInfo.pDependencies   = &dependency;
+
+            if (vkCreateRenderPass(refDevice.device, &rpInfo, nullptr, &outPass) != VK_SUCCESS)
+            {
+                RBLOG_FATAL("failed to create render pass!");
+                throw std::runtime_error("failed to create render pass!");
+            }
+        };
+
+        // Sky pass: clears the swap-chain image at the start of each frame.
+        makeColorOnlyPass(VK_ATTACHMENT_LOAD_OP_CLEAR,
+                          VK_IMAGE_LAYOUT_UNDEFINED,
+                          VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                          renderPassSky);
+
+        // Lighting pass: loads the sky output, then transitions to present.
+        makeColorOnlyPass(VK_ATTACHMENT_LOAD_OP_LOAD,
+                          VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                          VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+                          renderPass);
+
+        RBLOG_INFO("RBSwapChain::createRenderPass()");
     }
 
     void RBSwapChain::createFrameBuffers()
     {
+        const bool useResolveAttachment = (msaaSamples != VK_SAMPLE_COUNT_1_BIT);
+
         swapChainFrameBuffers.resize(swapChainImageViews.size());
         for(size_t i = 0; i < swapChainImageViews.size(); i++)
         {
-            std::array<VkImageView, 3> attachments = {swapChainImageViews[i], depthImageView, colorImageView};
+            // No depth attachment in the Sky/Lighting render passes.
+            std::vector<VkImageView> attachments{};
+            if (useResolveAttachment)
+            {
+                // MSAA: attachment 0 = MSAA color, attachment 1 = resolve (swapchain)
+                attachments.push_back(colorImageView);
+                attachments.push_back(swapChainImageViews[i]);
+            }
+            else
+            {
+                // Non-MSAA: attachment 0 = swapchain image
+                attachments.push_back(swapChainImageViews[i]);
+            }
 
             VkFramebufferCreateInfo framebufferInfo{};
             framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -241,8 +274,10 @@ namespace RottenBamboo{
 
             if(vkCreateFramebuffer(refDevice.device, &framebufferInfo, nullptr, &swapChainFrameBuffers[i]) != VK_SUCCESS)
             {
+                RBLOG_FATAL("failed to create framebuffer");
                 throw::std::runtime_error("failed to create framebuffer");
             }
+            RBLOG_INFO("RBSwapChain::createFrameBuffers()");
         }
     }
 
@@ -253,6 +288,7 @@ namespace RottenBamboo{
         {
             swapChainImageViews[i] = createImageView(swapChainImages[i], swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
         }
+        RBLOG_INFO("RBSwapChain::createImageView()");
     }
 
     void RBSwapChain::SetSwapChainExtent(RBDevice& rbDevice, RBWindows& window)
@@ -307,6 +343,7 @@ namespace RottenBamboo{
 
         if(vkCreateSwapchainKHR(refDevice.device, &createInfo, nullptr, &swapChain) != VK_SUCCESS)
         {
+            RBLOG_FATAL("Failed to create swap chain!");
             throw std::runtime_error("failed to create swap chain!");
             vkGetSwapchainImagesKHR(refDevice.device, swapChain, &imageCount, nullptr);
             swapChainImages.resize(imageCount);
@@ -318,6 +355,7 @@ namespace RottenBamboo{
         swapChainImageFormat = surfaceFormat.format;
 
         swapChainExtent = extent;
+        RBLOG_INFO("RBSwapChain::CreateSwapChain()");
     }
 
     void RBSwapChain::createSyncObjects()
@@ -337,9 +375,11 @@ namespace RottenBamboo{
             if (vkCreateSemaphore(refDevice.device, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS
                 || vkCreateSemaphore(refDevice.device, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS
                 || vkCreateFence(refDevice.device, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
+                RBLOG_FATAL("failed to create synchronization object for a frame!");
                 throw ::std::runtime_error("failed to create synchronization object for a frame!");
             }
         }
+        RBLOG_INFO("RBSwapChain::createSyncObjects()");
     }
 
     void RBSwapChain::InitializeSwapChain()
@@ -379,32 +419,63 @@ namespace RottenBamboo{
         createFrameBuffers();
     }
 
-    RBSwapChain::RBSwapChain(RBDevice& device, RBWindows& window, RBCommandBuffer& commandBuffer, RBDescriptors<1, 1> & descriptors) : refDevice(device), refWindow(window), refCommandBuffer(commandBuffer), refDescriptors(descriptors)
+    RBSwapChain::RBSwapChain(RBDevice& device, RBWindows& window, RBCommandBuffer& commandBuffer) : refDevice(device), refWindow(window), refCommandBuffer(commandBuffer)
     {
 
     }
 
     void RBSwapChain::cleanupSwapChain()
     {
+    if (colorImageView != VK_NULL_HANDLE) {
         vkDestroyImageView(refDevice.device, colorImageView, nullptr);
+        colorImageView = VK_NULL_HANDLE;
+    }
+    if (colorImage != VK_NULL_HANDLE) {
         vkDestroyImage(refDevice.device, colorImage, nullptr);
+        colorImage = VK_NULL_HANDLE;
+    }
+    if (colorImageMemory != VK_NULL_HANDLE) {
         vkFreeMemory(refDevice.device, colorImageMemory, nullptr);
-        //depthImageView = nullptr;
+        colorImageMemory = VK_NULL_HANDLE;
+    }
+    
+    if (depthImageView != VK_NULL_HANDLE) {
+        vkDestroyImageView(refDevice.device, depthImageView, nullptr);
+        depthImageView = VK_NULL_HANDLE;
+    }
+    if (depthImage != VK_NULL_HANDLE) {
+        vkDestroyImage(refDevice.device, depthImage, nullptr);
+        depthImage = VK_NULL_HANDLE;
+    }
+    if (depthImageMemory != VK_NULL_HANDLE) {
+        vkFreeMemory(refDevice.device, depthImageMemory, nullptr);
+        depthImageMemory = VK_NULL_HANDLE;
+    }
+    for(auto frameBuffer : swapChainFrameBuffers)
+    {
+        vkDestroyFramebuffer(refDevice.device, frameBuffer, nullptr);
+    }
+    swapChainFrameBuffers.clear();
 
-        for(auto frameBuffer : swapChainFrameBuffers)
-        {
-            vkDestroyFramebuffer(refDevice.device, frameBuffer, nullptr);
-        }
-
-        //vkDestroySwapchainKHR(refDevice.device, swapChain, nullptr);
-
+    if (renderPassSky != VK_NULL_HANDLE) {
+        vkDestroyRenderPass(refDevice.device, renderPassSky, nullptr);
+        renderPassSky = VK_NULL_HANDLE;
+    }
+    if (renderPass != VK_NULL_HANDLE) {
         vkDestroyRenderPass(refDevice.device, renderPass, nullptr);
+        renderPass = VK_NULL_HANDLE;
+    }
 
-        for(auto imageView : swapChainImageViews)
-        {
-            vkDestroyImageView(refDevice.device, imageView, nullptr);
-        }
+    for(auto imageView : swapChainImageViews)
+    {
+        vkDestroyImageView(refDevice.device, imageView, nullptr);
+    }
+    swapChainImageViews.clear();
+    
+    if (swapChain != VK_NULL_HANDLE) {
         vkDestroySwapchainKHR(refDevice.device, swapChain, nullptr);
+        swapChain = VK_NULL_HANDLE;
+    }
     }
 
     RBSwapChain::~RBSwapChain() 

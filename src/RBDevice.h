@@ -85,6 +85,7 @@ namespace RottenBamboo {
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
         bool checkDeviceExtensionSupport(VkPhysicalDevice device);
+        bool IsDeviceExtensionSupport(VkPhysicalDevice device, const char * checkExtensions);
 
         VkSampleCountFlagBits getMaxUsableSampleCount();
 

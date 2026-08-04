@@ -6,11 +6,11 @@ namespace RottenBamboo {
     class RBShaderModule 
     {
         RBDevice &device;
-        VkShaderModuleCreateInfo createInfo;
+        VkShaderModuleCreateInfo createInfo{};
 
     public:
     
-        VkShaderModule module;
+        VkShaderModule module = VK_NULL_HANDLE;
         RBShaderModule(RBDevice &device);
         ~RBShaderModule();
         void Destroy();

@@ -19,6 +19,11 @@ namespace RottenBamboo {
     public:
         void Load(const std::string& path) override;
 
+        size_t MeshCount() const
+        {
+            return meshes.size();
+        }
+
         void transformModelVertex(aiMesh* meshPtr, 
                                           std::vector<Vertex>& vertexBuffer, 
                                           int& vertexWriteIndex, 

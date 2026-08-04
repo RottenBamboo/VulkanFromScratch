@@ -21,11 +21,40 @@ namespace RottenBamboo {
         bool isHDR;
     };
 
-    template<int ImageCount>
+    struct ImageResourcePtr {
+        public:
+        VkImage image;
+        VkDeviceMemory imageMemory;
+        VkImageView imageView;
+        VkSampler sampler;
+        void Reset(RBDevice* rbDevice) 
+        {
+            if(imageView != VK_NULL_HANDLE)
+            {
+                vkDestroyImageView(rbDevice->device, imageView, nullptr);
+                imageView = VK_NULL_HANDLE;
+            }
+            
+            if(image != VK_NULL_HANDLE)
+            {
+                vkDestroyImage(rbDevice->device, image, nullptr);
+                image = VK_NULL_HANDLE;
+            }
+
+            if(imageMemory != VK_NULL_HANDLE)
+            {
+                vkFreeMemory(rbDevice->device, imageMemory, nullptr);
+                imageMemory = VK_NULL_HANDLE;
+            }
+            //samplerPtr = VK_NULL_HANDLE;
+        }
+    };
+    
     class RBImageManager {
 
     private:
         RBDevice &rbDevice;
+        uint32_t imageCount;
 
     public:
     
@@ -35,9 +64,11 @@ namespace RottenBamboo {
 
         void createImageView(VkImageViewCreateInfo &viewInfo, VkImageView &imageView);
 
-        void fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels);
+        void fillSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSamplerMipmapMode mipmapMode, VkCompareOp compareOp, uint32_t mipLevels, uint32_t imageCount);
 
         void createTextureSampler();
+
+        void createTextureSampler(VkSampler& sampler);
 
         void fillSamplerAddressMode(VkSamplerAddressMode addressMode);
 
@@ -55,11 +86,11 @@ namespace RottenBamboo {
 
         void fillViewInfo(VkImageViewCreateInfo &viewInfo, VkImage &image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
 
-        void transitionImageLayout(VkCommandBuffer &commandBuffer, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
+        void transitionImageLayout(VkCommandBuffer &commandBuffer, VkImage image, VkFormat format, VkImageAspectFlags aspectMask, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
 
-        void copyBufferToImage(VkCommandBuffer &commandBuffer, VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+        void copyBufferToImage(VkCommandBuffer &commandBuffer, VkBuffer buffer, VkImage image, VkImageAspectFlags aspectFlags, uint32_t width, uint32_t height);
 
-        void fillBufferImageCopy(VkBufferImageCopy &region, uint32_t width, uint32_t height);
+        void fillBufferImageCopy(VkBufferImageCopy &region, VkImageAspectFlags aspectFlags, uint32_t width, uint32_t height);
 
         void createImage(VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
 
@@ -67,6 +98,9 @@ namespace RottenBamboo {
         
         void fillAllocInfo(VkDeviceSize size, uint32_t memoryTypeIndex);
 
+        void setImageCount(uint32_t imageCount);
+
+        uint32_t getImageCount() const;
 
         //VkImage textureImage{};
 
@@ -78,9 +112,13 @@ namespace RottenBamboo {
 
         //RBImageBundle imageBundle{};
 
-        std::array<RBImageBundle, ImageCount> imageBundles{};
+        std::vector<RBImageBundle> imageBundles;
 
         VkSamplerCreateInfo samplerInfo{};
+
+        void releaseTextureImage(int index);
+        
+        void releaseTextureImage(ImageResourcePtr imageResourcePtr);
         
         void ReleaseAllResource();
 
@@ -90,7 +128,7 @@ namespace RottenBamboo {
 
         void createTextureImageView();
 
-        void fillImageMemoryBarrier(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout);
+        void fillImageMemoryBarrier(VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout, VkImageAspectFlags aspectMask);
 
 
         VkImageMemoryBarrier barrier{};
@@ -103,6 +141,3 @@ namespace RottenBamboo {
 
         };
 }
-
-// 包含实现文件
-#include "RBImageManager.impl.h"

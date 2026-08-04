@@ -13,8 +13,10 @@
 #include "RBLightingPass.h"
 #include "RBBuffer.h"
 #include "RBResourceManager.h"
+#include "RBResourceShader.h"
 #include "RBRuntimeCameraManager.h"
 #include "RBEditorCameraManager.h"
+#include "RBShaderDefinition.h"
 #include <stdexcept>
 #include <iostream>
 #include <string>
@@ -22,9 +24,10 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <chrono>
+#include "uuid.h"
 
 namespace RottenBamboo {
-    #define attachmentUsageFlagBits (VkImageUsageFlagBits)(VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
+    
     class RBApplication {
 
     public:
@@ -73,6 +76,13 @@ namespace RottenBamboo {
         void InitializeGUI();
 
         void InitializeMatrix();
+        
+        void InitializeMaterial();
+        void InitializeEditorMaterial();
+        
+        void InitializeShaderDefinition();
+
+        void updateDirtyDescriptorSets();
 
         std::chrono::high_resolution_clock::time_point lastFrameTime;
 
@@ -84,35 +94,43 @@ namespace RottenBamboo {
 
         RBDevice device{windows};
 
+        RBCommandBuffer commandBuffer{device};
+
         RBGUI gui{device, windows};
 
-        RBCommandBuffer commandBuffer{device};
+        std::unordered_map<std::string, RBShaderDefinition> shaderDefinitions;
+
+        RBMaterial editorMaterial{"", device, commandBuffer};
 
         ResourceManager resourceManager{device, commandBuffer};
 
+        RBResourceShader resourceShader{inputShader[0].path};
+
         RBPipelineConfig pipelineConfig{};
+
+        std::vector<RBDescriptors*> m_pDescriptorsGBuffersVec;
+
+        std::vector<RBMaterial> materialsVec;
+
+        static std::vector<ImageResourcePtr> oldImageResourceVec;
         
-        std::array<VkImageUsageFlagBits, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> lightingImageUsageFlags{attachmentUsageFlagBits, attachmentUsageFlagBits, attachmentUsageFlagBits, attachmentUsageFlagBits, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT};
+        std::vector<std::unique_ptr<RBDescriptors>> m_descriptorsGBuffersVec;
 
-        std::array<VkImageAspectFlagBits, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> lightingImageAspectFlagBits{VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_ASPECT_DEPTH_BIT};
+        RBDescriptors descriptorsMech{device, commandBuffer};
 
-        std::array<VkFormat, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> lightingImageFormats{VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_D32_SFLOAT};
+        RBDescriptors descriptorsTerrain{device, commandBuffer};
 
-        std::array<VkImageLayout, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> attahmentLayouts{VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL};
+        RBDescriptors descriptorsSamuri{device, commandBuffer};
 
-        std::array<VkImageLayout, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> gbufferLayouts{VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL};
-        
-        RBDescriptors<TEXTURE_PATHS_COUNT, 1> descriptors{device, commandBuffer, uniformBuffers, inputImagesInfo, false};
+        RBDescriptors descriptorsGBuffer{device, commandBuffer, uniformBuffers, inputImageInfoMech, false};
 
-        RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> descriptorsGBuffer{device, commandBuffer, uniformBuffers, inputImageInfoMech, false};
+        RBDescriptors descriptorsSkyBox{device, commandBuffer, uniformBuffers, inputImageInfoSkyBox, false};
 
-        RBDescriptors<TEXTURE_PATHS_SKYBOX_COUNT, 1> descriptorsSkyBox{device, commandBuffer, uniformBuffers, inputImageInfoSkyBox, false};
+        RBDescriptors descriptorsAttachment{device, commandBuffer, uniformBuffers, true};
 
-        RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> descriptorsAttachment{device, commandBuffer, uniformBuffers, true};
+        RBDescriptors descriptorsLighting{device, commandBuffer, uniformBuffers, inputImageInfoLighting, true};
 
-        RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> descriptorsLighting{device, commandBuffer, uniformBuffers, inputImageInfoLighting, true};
-
-        RBSwapChain swapChain{device, windows, commandBuffer, descriptors};
+        RBSwapChain swapChain{device, windows, commandBuffer};
         
         RBGBufferPass gBufferPass{gBufferPassAttachmentCount, false, true, device, descriptorsGBuffer, descriptorsAttachment, pipelineConfig, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
 
@@ -127,5 +145,39 @@ namespace RottenBamboo {
     private:
 
         void updateUniformBuffer(uint32_t currentImage);
+        void InitializeStaticPtr();
+
+    public:
+        static RBGUI* ptr_gui;
+
+        static RBGUI* GetGUI();
+
+        static RBResourceShader* ptr_resourceShader;
+
+        static RBResourceShader* GetResourceShader();
+
+        static std::unordered_map<std::string, RBShaderDefinition>* ptr_shaderDefinition;
+
+        static std::unordered_map<std::string, RBShaderDefinition>* GetShaderDefinition();
+
+        static RBShaderDefinition* GetShaderDefinition(const std::string path);
+
+        static std::vector<RBDescriptors*>* ptr_Descriptors;
+
+        static std::vector<RBDescriptors*>* GetDescriptors();
+
+        static std::vector<RBDescriptors*> updatedDescriptors;
+
+        static std::vector<RBDescriptors*>* GetUpdatedDescriptors();
+
+        static std::vector<RBMaterial>* ptr_Materials;
+
+        static std::vector<RBMaterial>* GetMaterials();
+
+        static std::vector<ImageResourcePtr>* GetOldImageResource();
+
+        static bool descriptorSetsUpdate;
+        
+        int deferredFrameCount = 0;
     };
 }

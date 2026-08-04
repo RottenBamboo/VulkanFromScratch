@@ -10,6 +10,7 @@ namespace RottenBamboo {
 
     std::shared_ptr<RBModel> ResourceManager::LoadModels(const std::string& path) {
         std::cout << "ResourceManager::LoadModels() Begin" << std::endl;
+        RBLOG_INFO("ResourceManager::LoadModels() Begin");
         auto it = models.find(path);
         if (it != models.end()) {
             return it->second;
@@ -19,11 +20,13 @@ namespace RottenBamboo {
         model->Load(path);
         models[path] = model;
         std::cout << "ResourceManager::LoadModels() End" << std::endl;
+        RBLOG_INFO("ResourceManager::LoadModels() End");
         return model;
     }
 
     std::shared_ptr<RBModel> ResourceManager::GetModel(const std::string& path) {
         std::cout << "ResourceManager::GetModel() Begin" << std::endl;
+        RBLOG_INFO("ResourceManager::GetModel() Begin");
         auto it = models.find(path);
         if (it != models.end()) {
             return it->second;

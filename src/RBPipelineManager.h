@@ -60,6 +60,8 @@ namespace RottenBamboo {
         
         virtual void setupAttachments() = 0;
 
+        virtual void setResourceCount() = 0;
+
         // Fill Pipeline States
         virtual void fillVertexInputStateCreateInfo();
 
@@ -176,9 +178,9 @@ namespace RottenBamboo {
 
         VkImageLayout imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         
-        VkRenderPass renderPass;
+        VkRenderPass renderPass = VK_NULL_HANDLE;
 
-        VkPipeline graphicsPipeline;
+        VkPipeline graphicsPipeline = VK_NULL_HANDLE;
 
         RBPipelineLayoutManager rbPipelineLayoutManager{rbDevice};
 

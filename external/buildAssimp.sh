@@ -29,7 +29,11 @@ done
 
 OS_NAME="$(uname)"
 
+if [ "$BUILD_ANDROID" = true ]; then
+INSTALL_DIR="$(pwd)/../thirdpartyAndroid/assimp/lib"
+else
 INSTALL_DIR="$(pwd)/../thirdparty/assimp/lib"
+fi
 # set the installation directory
 if [ "$BUILD_ANDROID" = true ]; then
     FROM_DIR="$(pwd)/assimp/lib"
@@ -60,7 +64,7 @@ if [ "$BUILD_ANDROID" = true ]; then
         -G "Unix Makefiles" \
         -DBUILD_SHARED_LIBS=OFF \
         -DASSIMP_BUILD_ZLIB=ON \
-        -DZLIB_LIBRARY="$(pwd)/../thirdparty/zlib/lib/libz.a" \
+        -DZLIB_LIBRARY="$(pwd)/../$INSTALL_DIR/zlib/lib/libz.a" \
         -DASSIMP_BUILD_ASSIMP_TOOLS=OFF \
 
 elif [[ "$OS_NAME" == "Darwin" ]]; then
@@ -91,7 +95,7 @@ if [ "$BUILD_ANDROID" = true ]; then
 elif [[ "$OS_NAME" == "Darwin" ]]; then
     cp -rf "$FROM_DIR"/libassimp.a "$INSTALL_DIR"/
 elif [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then
-    cp -rf "$FROM_DIR"/assimp-vc143-mtd.lib "$INSTALL_DIR"/
+    cp -rf "$FROM_DIR"/assimp-vc143-mtd.lib "$INSTALL_DIR"/libassimp.lib
 fi
 #cp -rf "$FROM_DIR"/build/include "$INSTALL_DIR"/include
 #cp -rf "$ZLIB_DIR" "$INSTALL_DIR"/lib

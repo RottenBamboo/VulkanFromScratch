@@ -16,15 +16,33 @@
 #include <iostream>
 #include <filesystem>
 #include "RBWindows.h"
+#include "RBResourceUtils.h"
+#include "RBLogger.h"
 
+//namespace fs = std::filesystem;
 #define GET_PROJECT_ROOT_DIR RottenBamboo::GetProjectRootPath()
 struct TexturesInfo
 {
     VkFormat format;
+    VkImageAspectFlags aspect;
+    
     bool isHDR;
     std::string path;
-    TexturesInfo() : format(VK_FORMAT_UNDEFINED), isHDR(false), path(""){}
-    TexturesInfo(VkFormat f, bool hdr, const std::string& p) : format(f), isHDR(hdr), path(p) {}
+    bool needUpdate = false;
+    TexturesInfo() : format(VK_FORMAT_UNDEFINED), aspect(0), isHDR(false), path(""), needUpdate(false) {}
+    TexturesInfo(VkFormat f, VkImageAspectFlags a, bool hdr, const std::string& p) : format(f), aspect(a), isHDR(hdr), path(p), needUpdate(false) {}
+};
+
+struct ShadersInfo
+{
+    RottenBamboo::RenderStage stage;
+    std::string path;
+
+    RottenBamboo::PipelineStage pipelineStage;
+    std::string shaderDefinitionPath;
+    ShadersInfo() : path(""), shaderDefinitionPath(""){}
+    //ShadersInfo(const std::string& p, const std::string& sd) : path(p), shaderDefinitionPath(sd) {}
+    ShadersInfo(RottenBamboo::RenderStage s, const std::string& p, RottenBamboo::PipelineStage ps, const std::string& sd) : stage(s), path(p), pipelineStage(ps), shaderDefinitionPath(sd) {}
 };
 
 struct FrameBuffersInfo
@@ -47,25 +65,55 @@ static const int skyBoxPassColorAttachmentCount = 1;
 #define DEPTH_ATTACHMENT_COUNT 1
 #define TEXTURE_PATHS_COUNT 1
 #define TEXTURE_PATHS_MECH_COUNT 4
+#define SHADER_PATHS_COUNT 6
 #define TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT (int)(4 + DEPTH_ATTACHMENT_COUNT)
 #define TEXTURE_PATHS_SKYBOX_COUNT 1
 
+extern std::unordered_map<int, std::string> model_paths;
 extern const std::string MODEL_PATH;
+extern const std::string TERRAIN_PATH;
+extern const std::string SAMURI_PATH;
+extern const std::string LOW_POLY_TERRAIN_PATH;
 extern const TexturesInfo fallBackFormat;
-extern const std::array<TexturesInfo, TEXTURE_PATHS_COUNT> inputImagesInfo;
-extern const std::array<TexturesInfo, TEXTURE_PATHS_MECH_COUNT> inputImageInfoMech;
-extern const std::array<TexturesInfo, TEXTURE_PATHS_SKYBOX_COUNT> inputImageInfoSkyBox;
-extern const std::array<TexturesInfo, TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT> inputImageInfoLighting;
+extern const std::string materialsFilePath;
+extern const std::string shaderDefinitionFilePath;
+extern const std::string modelsFilePath;
+extern const std::string texturesFilePath;
+extern const std::string shaderFilePath;
+extern const std::string defaultWhiteImagePath;
+extern const std::vector<ShadersInfo> inputShader;
+extern const std::vector<TexturesInfo> inputImagesInfo;
+extern const std::vector<TexturesInfo> inputImageInfoMech;
+extern const std::vector<TexturesInfo> inputImageInfoSkyBox;
+extern const std::vector<TexturesInfo> inputImageInfoLighting;
+extern const std::vector<TexturesInfo> inputImageTerrain;
+extern const std::vector<TexturesInfo> samuriTex;
+extern const std::vector<TexturesInfo> mineCraftTex;
+extern const std::vector<TexturesInfo> lowPolyTerrainTex;
 
 extern uint32_t mipLevels;
 
+#define attachmentUsageFlagBits (VkImageUsageFlags)(VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
+
 extern VkSampleCountFlagBits msaaSamples;
 extern VkSampleCountFlagBits msaaSamples2;
+extern VkSampleCountFlagBits msaaSamples4;
 extern VkExtent2D swapChainExtent;
 extern uint32_t currentFrame;
 extern bool checkbox;
 extern bool isDeviceSupportHDR;
 extern bool isDesiredHDR;
+
+struct TextureParams
+{
+    VkImageUsageFlags usage;
+    VkImageAspectFlags aspect;
+    VkFormat format;
+    VkImageLayout layout;
+};
+
+extern const TextureParams attachmentParams;
+extern const TextureParams depthParams;
 
 struct Vertex {
     glm::vec3 pos;
@@ -165,7 +213,42 @@ namespace RottenBamboo
         std::vector<VkSurfaceFormatKHR> formats;
         std::vector<VkPresentModeKHR> presentModes;
     };
+    
+    inline int countFiles(const std::string& dir) 
+    {
+        int count = 0;
+        for (const auto& entry : std::filesystem::directory_iterator(dir)) 
+        {
+            if (entry.is_regular_file()) 
+            {
+                ++count;
+            }
+        }
+        return count;
+    }
+    
+    inline std::vector<std::string> GetDirectoryFileNames(const std::string& dir)
+    {
+        std::vector<std::string> names;
+        names.reserve(countFiles(dir));
 
+        for (const auto& entry : std::filesystem::directory_iterator(dir))
+        {
+            if (entry.is_regular_file())
+            {
+                names.push_back(entry.path().filename().string());
+            }
+        }
+
+        return names;
+    }
+
+    static std::string NormalizePathString(std::string path)
+    {
+        std::replace(path.begin(), path.end(), '\\', '/');
+        return path;
+    }
+    
     inline std::string EnsureTrailingSlash(const std::string& path) 
     {
         if (!path.empty() && path.back() != '/')
@@ -321,6 +404,7 @@ namespace RottenBamboo
             }
         }
 
+        RBLOG_FATAL("failed to find suitable memory type!");
         throw std::runtime_error("failed to find suitable memory type!");
     }
 }

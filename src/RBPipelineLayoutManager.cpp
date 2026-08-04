@@ -7,6 +7,7 @@
 namespace RottenBamboo {
     RBPipelineLayoutManager::RBPipelineLayoutManager(RBDevice &device) : rbDevice(device) {
         std::cout << "RBPipelineLayoutManager::RBPipelineLayoutManager()" << std::endl;
+        RBLOG_INFO("RBPipelineLayoutManager::RBPipelineLayoutManager()");
     }
 
     void RBPipelineLayoutManager::fillPipelineLayoutInfo(const VkDescriptorSetLayout *descriptorSetLayout)
@@ -19,23 +20,33 @@ namespace RottenBamboo {
         pipelineLayoutInfo.pPushConstantRanges = nullptr;
         pipelineLayoutInfo.flags = 0;
         std::cout << "RBPipelineLayoutManager::fillPipelineLayoutInfo()" << std::endl;
-        
-        if (vkCreatePipelineLayout(rbDevice.device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
-            throw std::runtime_error("Failed to create pipeline layout!");
-        }
+        RBLOG_INFO("RBPipelineLayoutManager::fillPipelineLayoutInfo()");
     }
 
     void RBPipelineLayoutManager::createPipelineLayout()
     {
+        if (pipelineLayout != VK_NULL_HANDLE)
+        {
+            vkDestroyPipelineLayout(rbDevice.device, pipelineLayout, nullptr);
+            pipelineLayout = VK_NULL_HANDLE;
+        }
+
         if (vkCreatePipelineLayout(rbDevice.device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
+            RBLOG_FATAL("Failed to create pipeline layout");
             throw ::std::runtime_error("failed to create pipeline layout");
         }
         std::cout << "RBPipelineLayoutManager::createPipelineLayout()" << std::endl;
+        RBLOG_INFO("RBPipelineLayoutManager::createPipelineLayout()");
     }
 
     RBPipelineLayoutManager::~RBPipelineLayoutManager()
     {
-        vkDestroyPipelineLayout(rbDevice.device, pipelineLayout, nullptr);
+        if (pipelineLayout != VK_NULL_HANDLE)
+        {
+            vkDestroyPipelineLayout(rbDevice.device, pipelineLayout, nullptr);
+            pipelineLayout = VK_NULL_HANDLE;
+        }
         std::cout << "RBPipelineLayoutManager::~RBPipelineLayoutManager()" << std::endl;
+        RBLOG_INFO("RBPipelineLayoutManager::~RBPipelineLayoutManager()");
     }
 }

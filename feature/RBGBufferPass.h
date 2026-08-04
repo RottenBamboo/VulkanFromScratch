@@ -9,7 +9,7 @@
 #include "RBPipelineManager.h"
 #include "RBPipelineConfig.h"
 #include "RBShaderModule.h" // Added to define RBShaderModule
-#include "RBMesh.h"
+#include "RBResourceManager.h"
 #include <stdexcept>
 #include <iostream>
 
@@ -21,13 +21,15 @@ namespace RottenBamboo {
         RBPipelineConfig rbPipelineConfig;
 
         //input image
-        RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> &rbDescriptors;
+        RBDescriptors &rbDescriptors;
 
         void setupShaders() override;
 
         void setupPipelineStates() override;
 
         void setupAttachments() override;
+
+        void setResourceCount() override;
 
         void createFrameBuffers() override;
 
@@ -38,7 +40,7 @@ namespace RottenBamboo {
         VkFramebuffer gBufferFrameBuffers;
     
         //output image
-        RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> &rbColorAttachmentDescriptors;
+        RBDescriptors &rbColorAttachmentDescriptors;
 
         void createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo) override;
 
@@ -48,7 +50,7 @@ namespace RottenBamboo {
 
         void InitializeGraphicPipeline() override;
 
-        RBGBufferPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> &descriptors, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> &descriptorColorAttachment, const RBPipelineConfig &config, VkImageLayout layout);
+        RBGBufferPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors &descriptors, RBDescriptors &descriptorColorAttachment, const RBPipelineConfig &config, VkImageLayout layout);
 
         void fillGraphicsPipelineCreateInfo(uint32_t stageCount,
                                             const VkPipelineShaderStageCreateInfo* pStages,
@@ -71,7 +73,7 @@ namespace RottenBamboo {
 
         virtual void fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName, RBShaderModule &shaderModule);
 
-        virtual void recordCommandBuffer(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1>& descriptorsGBuffer, RBMesh &mesh);
+        virtual void Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, std::vector<RBDescriptors*> pDescriptorsGBuffersVec, ResourceManager& resourceManager);
     private:
 
         RBShaderModule vertShaderModule;

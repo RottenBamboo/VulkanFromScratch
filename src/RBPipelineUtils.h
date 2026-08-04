@@ -10,5 +10,7 @@ namespace RottenBamboo {
     class RBPipelineUtils {
     public:
         static std::vector<char> readFile(const std::string &filename);
+
+        static void ReflectShader(const uint32_t* spirv_code, size_t spirv_nbytes);
     };
 }

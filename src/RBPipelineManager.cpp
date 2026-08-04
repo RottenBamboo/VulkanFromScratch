@@ -10,20 +10,40 @@ namespace RottenBamboo {
             pureColorAttachmentCount = rbColorAttachmentCount - (isDepthAttachment ? 1 : 0);
             depthAttachmentCount = isDepthAttachment ? 1 : 0;
             ColorAttachKind = 1 + (isResolveAttachment ? 1 : 0);
+            RBLOG_INFO("RBPipelineManager::RBPipelineManager()");
         }
+    
 
     RBPipelineManager::~RBPipelineManager() 
     {
-        vkDestroyPipeline(rbDevice.device, graphicsPipeline, nullptr);
+        if (graphicsPipeline != VK_NULL_HANDLE)
+        {
+            vkDestroyPipeline(rbDevice.device, graphicsPipeline, nullptr);
+            graphicsPipeline = VK_NULL_HANDLE;
+        }
+        if (renderPass != VK_NULL_HANDLE)
+        {
+            vkDestroyRenderPass(rbDevice.device, renderPass, nullptr);
+            renderPass = VK_NULL_HANDLE;
+        }
         std::cout << "RBPipelineManager::~RBPipelineManager()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::~RBPipelineManager()");
     }
 
     void RBPipelineManager::createGraphicsPipelines(const VkGraphicsPipelineCreateInfo &pipelineInfo) 
     {
+        if (graphicsPipeline != VK_NULL_HANDLE)
+        {
+            vkDestroyPipeline(rbDevice.device, graphicsPipeline, nullptr);
+            graphicsPipeline = VK_NULL_HANDLE;
+        }
+
         if (vkCreateGraphicsPipelines(rbDevice.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) {
+            RBLOG_FATAL("Failed to create graphics pipeline");
             throw std::runtime_error("failed to create graphics pipeline!");
         }
         std::cout << "RBPipelineManager::createGraphicsPipelines()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::createGraphicsPipelines()");
     }
 
     void RBPipelineManager::fillVertexInputStateCreateInfo()
@@ -40,6 +60,7 @@ namespace RottenBamboo {
         vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
         vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
         std::cout << "RBPipelineManager::~fillVertexInputInfo()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::~fillVertexInputInfo()");
     }
 
     void RBPipelineManager::fillInputAssemblyStateCreateInfo(VkPrimitiveTopology typology, VkBool32 primitiveRestartEnable)
@@ -49,6 +70,7 @@ namespace RottenBamboo {
         inputAssembly.topology = typology;
         inputAssembly.primitiveRestartEnable = primitiveRestartEnable;
         std::cout << "RBPipelineManager::~fillInputAssembly()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::~fillInputAssembly()");
     }
 
     void RBPipelineManager::fillViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height, uint32_t minDepth, uint32_t maxDepth)
@@ -60,6 +82,7 @@ namespace RottenBamboo {
         viewport.minDepth = minDepth;
         viewport.maxDepth = maxDepth;
         std::cout << "RBPipelineManager::~fillViewport()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::~fillViewport()");
     }
 
     void RBPipelineManager::fillScissor(VkOffset2D offset, VkExtent2D extent)
@@ -67,6 +90,7 @@ namespace RottenBamboo {
         scissor.offset = offset;
         scissor.extent = extent;
         std::cout << "RBPipelineManager::fillScissor()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::fillScissor()");
     }
 
     void RBPipelineManager::fillViewportStateCreateInfo()
@@ -78,6 +102,7 @@ namespace RottenBamboo {
         viewportState.scissorCount = 1;
         viewportState.pScissors = &scissor;
         std::cout << "RBPipelineManager::fillViewportStateCreateInfo()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::fillViewportStateCreateInfo()");
     }
 
     void RBPipelineManager::fillRasterizerStateCreateInfo(VkBool32 depthClampEnable,
@@ -104,6 +129,7 @@ namespace RottenBamboo {
         rasterizer.depthBiasConstantFactor = depthBiasConstantFactor;
         rasterizer.depthBiasClamp = depthBiasClamp;
         std::cout << "RBPipelineManager::fillRasterizerStateCreateInfo()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::fillRasterizerStateCreateInfo()");
     }
 
     void RBPipelineManager::fillMultipleSampleStateCreateInfo(VkPipelineMultisampleStateCreateFlags flags,
@@ -124,6 +150,7 @@ namespace RottenBamboo {
         multisampling.alphaToCoverageEnable = alphaToCoverageEnable;
         multisampling.alphaToOneEnable = alphaToOneEnable;
         std::cout << "RBPipelineManager::fillMultipleSampleStateCreateInfo()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::fillMultipleSampleStateCreateInfo()");
     }
 
     void RBPipelineManager::fillColorBlendAttachmentState(VkBool32 blendEnable,
@@ -151,6 +178,7 @@ namespace RottenBamboo {
             colorBlendAttachments.push_back(colorBlendAttachment);
         }
         std::cout << "RBPipelineManager::fillColorBlendAttachmentState()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::fillColorBlendAttachmentState()");
     }
 
     void RBPipelineManager::fillPipelineColorBlendStateCreateInfo(VkBool32 logicOpEnable,
@@ -171,6 +199,7 @@ namespace RottenBamboo {
         colorBlending.blendConstants[2] = 0.0f;
         colorBlending.blendConstants[3] = 0.0f;
         std::cout << "RBPipelineManager::fillPipelineColorBlendStateCreateInfo()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::fillPipelineColorBlendStateCreateInfo()");
     }
 
     void RBPipelineManager::fillDynamicStateCrateInfo()
@@ -179,6 +208,7 @@ namespace RottenBamboo {
         dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
         dynamicState.pDynamicStates = dynamicStates.data();
         std::cout << "RBPipelineManager::fillDynamicStateCrateInfo()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::fillDynamicStateCrateInfo()");
 
     }
     
@@ -198,7 +228,7 @@ namespace RottenBamboo {
                 return format;
             }
         }
-
+        RBLOG_FATAL("Failed to find supported format");
         throw std::runtime_error("failed to find supported format!");
 
     }
@@ -226,6 +256,7 @@ namespace RottenBamboo {
             colorResolveAttachmentDescription.initialLayout = initialLayout;
             colorResolveAttachmentDescription.finalLayout = finalLayout;
             std::cout << "RBPipelineManager::fillColorResolveAttachment()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::fillColorResolveAttachment()");
         }
 
     void RBPipelineManager::fillColorAttachment(VkFormat format,
@@ -246,6 +277,7 @@ namespace RottenBamboo {
             colorAttachmentDescription.initialLayout = initialLayout;
             colorAttachmentDescription.finalLayout = finalLayout;
             std::cout << "RBPipelineManager::fillColorAttachment()" << std::endl;
+            RBLOG_INFO("RBPipelineManager::fillColorAttachment()");
         }
 
     void RBPipelineManager::fillDepthAttachment(VkFormat format,
@@ -266,18 +298,23 @@ namespace RottenBamboo {
             depthAttachmentDescription.initialLayout = initialLayout;
             depthAttachmentDescription.finalLayout = finalLayout;
             std::cout << "RBPipelineManager::fillColorAttachment()" << std::endl;
+            RBLOG_INFO("RBPipelineManager::fillColorAttachment()");
         }
 
     void RBPipelineManager::addColorAttachment(VkAttachmentDescription attachment)
     {
         attachmentDescriptions.push_back(attachment);
         std::cout << "RBPipelineManager::addColorAttachment()" << std::endl;
+            RBLOG_INFO("RBPipelineManager::addColorAttachment()");
     }
 
     void RBPipelineManager::fillRenderPass(VkImageLayout layout, int attachmentCount = 1)
     {
+        const bool useResolveAttachment = isResolveAttachment && (colorAttachmentDescription.samples != VK_SAMPLE_COUNT_1_BIT);
+        const int colorAttachKind = 1 + (useResolveAttachment ? 1 : 0);
+
         attachmentDescriptions.clear();
-        attachmentDescriptions.reserve(depthAttachmentCount + pureColorAttachmentCount * ColorAttachKind);
+        attachmentDescriptions.reserve(depthAttachmentCount + pureColorAttachmentCount * colorAttachKind);
 
 
         for(int i = 0; i < pureColorAttachmentCount; i++)
@@ -288,14 +325,15 @@ namespace RottenBamboo {
         
         for(int i = 0; i < pureColorAttachmentCount; i++)
         {
-            if(isResolveAttachment)
+            if(useResolveAttachment)
             {
                 addColorAttachment(colorResolveAttachmentDescription);
             }
         }
         std::cout << "isResolveAttachment = " << isResolveAttachment << std::endl;
-
         std::cout << "rbColorAttachmentCount = " << pureColorAttachmentCount << std::endl;
+        RBLOG_INFO("isResolveAttachment = %d", isResolveAttachment);
+        RBLOG_INFO("rbColorAttachmentCount = %d", pureColorAttachmentCount);
         //addColorAttachment(surfaceFormat.format, msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
         if(isDepthAttachment)
@@ -303,6 +341,7 @@ namespace RottenBamboo {
             addColorAttachment(depthAttachmentDescription);
         }        
         std::cout << "isDepthAttachment = " << isDepthAttachment << std::endl;
+        RBLOG_INFO("isDepthAttachment = %d", isDepthAttachment);
 
         //VkAttachmentReference colorAttachmentRef{};
         //colorAttachmentRef.attachment = 0;
@@ -317,7 +356,7 @@ namespace RottenBamboo {
 
         std::vector<VkAttachmentReference> colorAttachmentResolveRef(pureColorAttachmentCount);
 
-        if(isResolveAttachment)
+        if(useResolveAttachment)
         {
             for(int i = 0; i < pureColorAttachmentCount; i++)
             {
@@ -327,15 +366,15 @@ namespace RottenBamboo {
         }
 
         VkAttachmentReference depthAttachmentRef{};
-        depthAttachmentRef.attachment = pureColorAttachmentCount * ColorAttachKind;
-        depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        depthAttachmentRef.attachment = pureColorAttachmentCount * colorAttachKind;
+        depthAttachmentRef.layout = depthAttachmentDescription.finalLayout;
 
         VkSubpassDescription subpass{};
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
         subpass.colorAttachmentCount = pureColorAttachmentCount;
         subpass.pColorAttachments = colorAttachmentRefs.data();
         subpass.pDepthStencilAttachment = isDepthAttachment ? &depthAttachmentRef : nullptr;
-        subpass.pResolveAttachments = isResolveAttachment ? colorAttachmentResolveRef.data() : nullptr;
+        subpass.pResolveAttachments = useResolveAttachment ? colorAttachmentResolveRef.data() : nullptr;
 
         VkSubpassDependency dependency{};
         dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -360,6 +399,7 @@ namespace RottenBamboo {
             throw::std::runtime_error("failed to create render pass!");
         }
         std::cout << "RBPipelineManager::fillRenderPass()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::fillRenderPass()");
     }
 
     void RBPipelineManager::fillGraphicsPipelineCreateInfo(uint32_t stageCount,
@@ -397,11 +437,13 @@ namespace RottenBamboo {
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
         pipelineInfo.basePipelineIndex = -1;
         std::cout << "RBPipelineManager::fillGraphicsPipelineCreateInfo()" << std::endl;
+        RBLOG_INFO("RBPipelineManager::fillGraphicsPipelineCreateInfo()");
     
     }
     
     void RBPipelineManager::setupPipelineStates()
     {
+        setResourceCount();
         fillVertexInputStateCreateInfo();
         fillInputAssemblyStateCreateInfo(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE);
         fillViewport(0, 0, swapChainExtent.width, swapChainExtent.height, 0, 1);
@@ -426,5 +468,6 @@ namespace RottenBamboo {
         dynamicStates.push_back(VK_DYNAMIC_STATE_VIEWPORT);
         dynamicStates.push_back(VK_DYNAMIC_STATE_LINE_WIDTH);
         fillDynamicStateCrateInfo();
+        RBLOG_INFO("RBPipelineManager::setupPipelineStates");
     }
 }

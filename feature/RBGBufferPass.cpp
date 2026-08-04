@@ -9,6 +9,9 @@ namespace RottenBamboo {
 
     void RBGBufferPass::setupShaders()
     {
+        shaderStageInfos.clear();
+        auto shaderCode = RBPipelineUtils::readFile(GET_PROJECT_ROOT_DIR + "shader/bin/gBufferVert.spv");
+        //RBPipelineUtils::ReflectShader(reinterpret_cast<const uint32_t*>(shaderCode.data()), shaderCode.size() / sizeof(uint32_t));
         fillShaderModule(GET_PROJECT_ROOT_DIR + "shader/bin/gBufferVert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main", vertShaderModule);
         fillShaderModule(GET_PROJECT_ROOT_DIR + "shader/bin/gBufferFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main", fragShaderModule);
     }
@@ -50,12 +53,14 @@ namespace RottenBamboo {
         std::cout << "RBGBufferPass::refreFrameBuffers()" << std::endl;
     }
     void RBGBufferPass::createFrameBuffers() {
-        std::vector<VkImageView> attachments(rbColorAttachmentCount);
+        int attachmentCount = rbColorAttachmentDescriptors.rbImageManager.imageBundles.size();
+        std::vector<VkImageView> attachments;
+        attachments.reserve(attachmentCount);
         
         std::cout << "gBufferFrameBuffers.resize(" << MAX_FRAMES_IN_FLIGHT << ")"<< std::endl;
         
-        for (int i = 0; i < rbColorAttachmentCount; ++i) {
-            attachments[i] = rbColorAttachmentDescriptors.rbImageManager.imageBundles[i].imageView; // GBuffer colorAttachment imageView
+        for (int i = 0; i < attachmentCount; ++i) {
+            attachments.push_back(rbColorAttachmentDescriptors.rbImageManager.imageBundles[i].imageView); // GBuffer colorAttachment imageView
         }
 
         
@@ -69,8 +74,18 @@ namespace RottenBamboo {
         framebufferInfo.layers = 1;
     
         if (vkCreateFramebuffer(rbDevice.device, &framebufferInfo, nullptr, &gBufferFrameBuffers) != VK_SUCCESS) {
+            RBLOG_FATAL("failed to create GBuffer framebuffer!");
             throw std::runtime_error("failed to create GBuffer framebuffer!");
         }
+    }
+
+    void RBGBufferPass::setResourceCount()
+    {
+        isDepthAttachment = rbColorAttachmentDescriptors.DepthEnabled() ? true : false;
+        rbColorAttachmentCount = rbColorAttachmentDescriptors.rbImageManager.getImageCount();
+        pureColorAttachmentCount = rbColorAttachmentCount - (isDepthAttachment ? 1 : 0);
+        depthAttachmentCount = isDepthAttachment ? 1 : 0;
+        ColorAttachKind = 1 + (isResolveAttachment ? 1 : 0);
     }
 
     void RBGBufferPass::setupAttachments()
@@ -79,9 +94,9 @@ namespace RottenBamboo {
         surfaceFormat.format = VK_FORMAT_R8G8B8A8_UNORM;
         surfaceFormat.colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 
-        fillColorAttachment(surfaceFormat.format, msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+        fillColorAttachment(surfaceFormat.format, msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-        fillColorResolveAttachment(surfaceFormat.format, msaaSamples, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
+        fillColorResolveAttachment(surfaceFormat.format, VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
 
         fillDepthAttachment(findDepthFormat(), msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_UNDEFINED,VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
@@ -125,7 +140,7 @@ namespace RottenBamboo {
         std::cout << "RBGBufferPass::createGraphicsPipeline()" << std::endl;
     }
 
-    RBGBufferPass::RBGBufferPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1> &descriptors, RBDescriptors<TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT, 1> &descriptorColorAttachment, const RBPipelineConfig &config, VkImageLayout layout)
+    RBGBufferPass::RBGBufferPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors &descriptors, RBDescriptors &descriptorColorAttachment, const RBPipelineConfig &config, VkImageLayout layout)
         : RBPipelineManager(colorAttachmentCount, bResolveAttachment, bDephAttament, device, layout), rbPipelineConfig(config),
         vertShaderModule(device), fragShaderModule(device), rbDescriptors(descriptors), rbColorAttachmentDescriptors(descriptorColorAttachment)
     {
@@ -161,15 +176,28 @@ namespace RottenBamboo {
         std::cout << "RBGBufferPass::~RBGBufferPass()" << std::endl;
     }
 
-    void RBGBufferPass::recordCommandBuffer(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_MECH_COUNT, 1>& descriptorsGBuffer, RBMesh &mesh) 
+    void RBGBufferPass::Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, std::vector<RBDescriptors*> pDescriptorsGBuffersVec, ResourceManager& resourceManager) 
     {
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, rbPipelineLayoutManager.pipelineLayout, 0, 1, &descriptorsGBuffer.descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
+        
+        for(auto it = model_paths.cbegin(); it != model_paths.cend(); ++it)
+        {
+            auto shared_ptr_model = resourceManager.Get<RBModel>(it->second);
+            auto& mesh = shared_ptr_model->getMeshes(0);
+            VkBuffer vertexBuffers[] = {(*mesh).vertexBuffer.buffer};
+            VkDeviceSize offsets[] = {0};
 
-        vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(mesh.indexBuffer.data.size()), 1, 0, 0, 0);
+            vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, rbPipelineLayoutManager.pipelineLayout, 0, 1, &pDescriptorsGBuffersVec[it->first]->descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
+        
+            vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+
+            vkCmdBindIndexBuffer(commandBuffer, (*mesh).indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+
+            vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>((*mesh).indexBuffer.data.size()), 1, 0, 0, 0);
+        }
 
         vkCmdEndRenderPass(commandBuffer);
     }

@@ -9,6 +9,7 @@ namespace RottenBamboo {
 
     void RBSkyPass::setupShaders()
     {
+        shaderStageInfos.clear();
         fillShaderModule(GET_PROJECT_ROOT_DIR + "shader/bin/skyVert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main", vertShaderModule);
         fillShaderModule(GET_PROJECT_ROOT_DIR + "shader/bin/skyFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main", fragShaderModule);
     }
@@ -46,6 +47,11 @@ namespace RottenBamboo {
  
     }
 
+    void RBSkyPass::setResourceCount()
+    {
+
+    }
+    
     void RBSkyPass::setupAttachments()
     {
         SwapChainSupportDetails swapChainSupport = querySwapChainSupport(rbDevice.physicalDevice, rbDevice.surface);
@@ -56,7 +62,7 @@ namespace RottenBamboo {
 
         fillColorResolveAttachment(surfaceFormat.format, VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
-        fillDepthAttachment(findDepthFormat(), msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+        fillDepthAttachment(findDepthFormat(), msaaSamples, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE, VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
         std::cout << "RBSkyPass::setupAttachments()" << std::endl;
     }
@@ -98,7 +104,7 @@ namespace RottenBamboo {
         std::cout << "RBSkyPass::createGraphicsPipeline()" << std::endl;
     }
 
-    RBSkyPass::RBSkyPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors<TEXTURE_PATHS_SKYBOX_COUNT, 1> &descriptors, const RBPipelineConfig &config, VkImageLayout layout)
+    RBSkyPass::RBSkyPass(int colorAttachmentCount, bool bResolveAttachment, bool bDephAttament, RBDevice &device, RBDescriptors &descriptors, const RBPipelineConfig &config, VkImageLayout layout)
     : RBPipelineManager(colorAttachmentCount, bResolveAttachment, bDephAttament, device, layout), rbPipelineConfig(config),
       vertShaderModule(device), fragShaderModule(device), rbDescriptors(descriptors)
     {
@@ -129,10 +135,9 @@ namespace RottenBamboo {
 
     RBSkyPass::~RBSkyPass()
     {
-        vkDestroyDescriptorSetLayout(rbDevice.device, rbDescriptors.descriptorSetManager.descriptorSetLayoutManager.descriptorSetLayout, nullptr);
         std::cout << "RBSkyPass::~RBSkyPass()" << std::endl;
     }
-    void RBSkyPass::recordCommandBuffer(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors<TEXTURE_PATHS_SKYBOX_COUNT, 1>& descriptors, RBMesh &mesh) 
+    void RBSkyPass::Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, RBDescriptors& descriptors) 
     {
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 

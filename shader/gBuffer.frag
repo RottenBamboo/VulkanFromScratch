@@ -41,5 +41,6 @@ void main()
     gNormal = vec4(worldNormal * 0.5 + 0.5, 1);
     
     gAlbedo = texture(albedoMap, fragTexCoord);
+    gAlbedo.rgb += texture(emissionMap, fragTexCoord).rgb * 0.001f;
     gmetallicRoughnessAO = texture(metallicRoughnessAOMap, fragTexCoord);
 }
