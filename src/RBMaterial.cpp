@@ -98,10 +98,12 @@ namespace RottenBamboo
             std::stringstream buffer;
             buffer << file.rdbuf();
             const std::string text = buffer.str();
-
+            std::string uuidString;
             MaterialData loaded{};
             FindStringValue(text, "name", loaded.name);
             FindStringValue(text, "shaderDefinationName", loaded.shaderDefinationName);
+            FindStringValue(text, "uuid", uuidString);
+            loaded.uuid = uuids::uuid::from_string(uuidString).value();
             loaded.shaderDefinition = *RBApplication::GetShaderDefinition(loaded.shaderDefinationName);
             
             std::string shaderPathName = RBApplication::GetShaderDefinition(loaded.shaderDefinationName)->GetData().stages[(int)RBShaderStageKind::Fragment].path;
@@ -156,10 +158,13 @@ namespace RottenBamboo
             return false;
         }
 
+        bool fileExists;
+
         try {
             std::filesystem::path filePath(GET_PROJECT_ROOT_DIR + targetPath);
             RBLOG_INFO("RBMaterial::Save() filePath : " + filePath.string());
             if (filePath.has_parent_path()) {
+                fileExists = std::filesystem::exists(filePath);
                 std::filesystem::create_directories(filePath.parent_path());
                 RBLOG_INFO("RBMaterial::Save() create directories : " + filePath.parent_path().string());
             }
@@ -170,11 +175,23 @@ namespace RottenBamboo
                 return false;
             }
 
-            
             std::string materialFileData = "{\n";
             
             materialFileData += "    \"name\": \"" + data.name + "\",\n";
             materialFileData += "    \"shaderDefinationName\": \"" + data.shaderDefinationName + "\",\n";
+
+            std::string uuidStrting;
+            if(data.uuid.is_nil())
+            {
+                generateUUID(uuidStrting);
+            }
+            else
+            {
+                uuidStrting = uuids::to_string(data.uuid);
+            }
+            
+            materialFileData += "    \"uuid\": \"" + uuidStrting + "\",\n";
+
             if(materialData.shaderReflection.descriptorSets.size() > 0)
             {
                 auto& descriptorSets = materialData.shaderReflection.descriptorSets.at(0);
