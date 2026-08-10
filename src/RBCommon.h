@@ -69,6 +69,9 @@ static const int skyBoxPassColorAttachmentCount = 1;
 #define TEXTURE_PATHS_MECH_GBUFFER_OUTPUT_COUNT (int)(4 + DEPTH_ATTACHMENT_COUNT)
 #define TEXTURE_PATHS_SKYBOX_COUNT 1
 
+extern const std::string META_EXTENSION;
+extern const std::string MAT_EXTENSION;
+
 extern std::unordered_map<int, std::string> model_paths;
 extern const std::string MODEL_PATH;
 extern const std::string TERRAIN_PATH;
@@ -249,6 +252,15 @@ namespace RottenBamboo
         return path;
     }
     
+    static void RemoveExtension(std::string& path)
+    {
+        size_t pos = path.find_last_of('.');
+        if (pos != std::string::npos) 
+        {
+            path = path.substr(0, pos);
+        }
+    }
+
     inline std::string EnsureTrailingSlash(const std::string& path) 
     {
         if (!path.empty() && path.back() != '/')

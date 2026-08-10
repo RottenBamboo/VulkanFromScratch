@@ -134,7 +134,7 @@ namespace RottenBamboo {
         materialsVec.reserve(count);
         for (const auto& entry : std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + materialsFilePath))
         {
-            if (entry.is_regular_file())
+            if (entry.is_regular_file() && entry.path().extension() == ".mat")
             {
                 std::string relativePath = std::filesystem::relative(entry.path(), GET_PROJECT_ROOT_DIR).string();
                 relativePath = NormalizePathString(relativePath);

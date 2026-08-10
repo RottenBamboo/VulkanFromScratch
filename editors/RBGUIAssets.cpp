@@ -244,8 +244,8 @@ namespace RottenBamboo
 
                 ImGui::PopStyleColor();
 
-                 if (doubleClicked) 
-                 {
+                if (doubleClicked) 
+                {
                      selectedPath = fs::relative(entryPath, GET_PROJECT_ROOT_DIR);
 
                     if (IsMaterialFile(entryPath) && resourceManager != nullptr) 
@@ -256,7 +256,10 @@ namespace RottenBamboo
                         material->Load(path);
                     }
                 }
-                i++;
+                if(entryPath.extension() == MAT_EXTENSION)
+                {
+                    i++;
+                }
             }
         }
         ImGui::EndChild();

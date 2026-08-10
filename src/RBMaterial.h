@@ -16,7 +16,7 @@ namespace RottenBamboo {
 
         RBMaterial(const std::string &path, RBDevice &device, RBCommandBuffer &commandBuffer);
 
-        void Load(const std::string& path) override;
+        void Load(const std::string& loadPath) override;
 
         bool Save(const std::string& savePath, RBMaterialData& materialData);
 

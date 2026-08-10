@@ -6,6 +6,9 @@
 
 std::unordered_map<int, std::string> model_paths;
 
+const std::string META_EXTENSION = ".meta";
+const std::string MAT_EXTENSION = ".mat";
+
 const std::string MODEL_PATH = GET_PROJECT_ROOT_DIR + "models/mach.gltf";
 
 const std::string TERRAIN_PATH = GET_PROJECT_ROOT_DIR + "models/CraterCityMesh.fbx";

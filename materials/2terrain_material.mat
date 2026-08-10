@@ -1,7 +1,6 @@
 {
     "name": "2terrain_material",
     "shaderDefinationName": "shaderDefinition/gBufferDefinition.shader",
-    "uuid": "b79fb0ba-536a-4438-9671-b90323437561",
     "normalMap": "textures/AlienPlanet1_Diffuse.jpg",
     "albedoMap": "textures/AlienPlanet1_FinalBump1.png",
     "emissionMap": "textures/AlienPlanet1_Wetness.png",

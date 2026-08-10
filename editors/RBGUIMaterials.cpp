@@ -381,12 +381,12 @@ namespace RottenBamboo
         ImGui::SameLine();
         if (ImGui::Button("Load"))
         {
-            currentMaterial->Load(currentMaterial->GetPath() + material.name + ".mat");
+            currentMaterial->Load(currentMaterial->GetPath() + material.name);
         }
         ImGui::SameLine();
         if (ImGui::Button("Save"))
         {
-            currentMaterial->Save(currentMaterial->GetPath() + material.name + ".mat", material);
+            currentMaterial->Save(currentMaterial->GetPath() + material.name, material);
         }
 
         ImGui::TextWrapped("Edit the material properties and save them as .mat files.");
