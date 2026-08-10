@@ -1,5 +1,7 @@
 #pragma once
 
+#define LIBUUID_CPP20_OR_GREATER
+
 #include <string>
 #include "uuid.h"
 
