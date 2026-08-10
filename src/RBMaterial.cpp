@@ -89,7 +89,9 @@ namespace RottenBamboo
         }
 
         std::ifstream file(GET_PROJECT_ROOT_DIR + this->path);
-        if (!file.is_open()) {
+        if (!file.is_open()) 
+        {
+            RBLOG_INFO("RBMaterial::Load() could not open: " + this->path);
             std::cout << "RBMaterial::Load() could not open: " << this->path << std::endl;
             return;
         }
@@ -103,7 +105,14 @@ namespace RottenBamboo
             FindStringValue(text, "name", loaded.name);
             FindStringValue(text, "shaderDefinationName", loaded.shaderDefinationName);
             FindStringValue(text, "uuid", uuidString);
-            loaded.uuid = uuids::uuid::from_string(uuidString).value();
+            if(!loaded.GenerateGUIDFromString(uuidString))
+            {
+                loaded.GenerateGUID();
+                std::string logGUID;
+                loaded.GUIDToString(logGUID);
+                RBLOG_INFO("There is no valid UUID in :" + this->path + ". Regenerate UUID : " + logGUID);
+                std::cout << "There is no valid UUID in :" << this->path << ". Regenerate UUID : " << logGUID << std::endl;
+            }
             loaded.shaderDefinition = *RBApplication::GetShaderDefinition(loaded.shaderDefinationName);
             
             std::string shaderPathName = RBApplication::GetShaderDefinition(loaded.shaderDefinationName)->GetData().stages[(int)RBShaderStageKind::Fragment].path;
@@ -141,13 +150,15 @@ namespace RottenBamboo
             data = std::move(loaded);
             RBLOG_INFO("RBMaterial::Load()");
         }
-        catch (const std::exception& e) {
+        catch (const std::exception& e) 
+        {
+            RBLOG_INFO("RBMaterial::Load() failed for " + this->path + ": " + std::string(e.what()));
             std::cout << "RBMaterial::Load() failed for " << this->path << ": " << e.what() << std::endl;
             Reset();
         }
     }
 
-    bool RBMaterial::Save(const std::string& savePath, const MaterialData& materialData) const
+    bool RBMaterial::Save(const std::string& savePath, MaterialData& materialData)
     {
         
         RBLOG_INFO("RBMaterial::Save() savePath = " + savePath);
@@ -160,10 +171,12 @@ namespace RottenBamboo
 
         bool fileExists;
 
-        try {
+        try 
+        {
             std::filesystem::path filePath(GET_PROJECT_ROOT_DIR + targetPath);
             RBLOG_INFO("RBMaterial::Save() filePath : " + filePath.string());
-            if (filePath.has_parent_path()) {
+            if (filePath.has_parent_path()) 
+            {
                 fileExists = std::filesystem::exists(filePath);
                 std::filesystem::create_directories(filePath.parent_path());
                 RBLOG_INFO("RBMaterial::Save() create directories : " + filePath.parent_path().string());
@@ -181,13 +194,13 @@ namespace RottenBamboo
             materialFileData += "    \"shaderDefinationName\": \"" + data.shaderDefinationName + "\",\n";
 
             std::string uuidStrting;
-            if(data.uuid.is_nil())
+            if(data.IsGUIDNil())
             {
-                generateUUID(uuidStrting);
+                data.GenerateGUID();
             }
             else
             {
-                uuidStrting = uuids::to_string(data.uuid);
+                data.GUIDToString(uuidStrting);
             }
             
             materialFileData += "    \"uuid\": \"" + uuidStrting + "\",\n";
@@ -238,7 +251,8 @@ namespace RottenBamboo
             RBLOG_INFO("RBMaterial::Save() material = " + materialFileData);
             return true;
         }
-        catch (const std::exception& e) {
+        catch (const std::exception& e) 
+        {
             std::cout << "RBMaterial::Save() failed for " << targetPath << ": " << e.what() << std::endl;
             return false;
         }

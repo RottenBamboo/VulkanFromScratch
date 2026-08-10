@@ -5,7 +5,7 @@
 #pragma once
 #include "RBDevice.h"
 #include "RBResource.h"
-#include "RBMaterialUtils.h"
+#include "RBMaterialData.h"
 #include "RBCommandBuffer.h"
 
 namespace RottenBamboo {
@@ -18,7 +18,9 @@ namespace RottenBamboo {
 
         void Load(const std::string& path) override;
 
-        bool Save(const std::string& path = "", const MaterialData& material = MaterialData{}) const;
+        bool Save(const std::string& savePath, MaterialData& materialData);
+
+        //bool SaveMeta(const std::string& saveMetaPath) const;
 
         MaterialData& GetData();
         const MaterialData& GetData() const;
