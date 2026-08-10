@@ -9,7 +9,7 @@
 
 namespace RottenBamboo 
 {
-    struct MaterialData : public RBData 
+    struct RBMaterialData : public RBData 
     {
         std::string name = "New Material";
         std::string shaderDefinationName = "New Shader";

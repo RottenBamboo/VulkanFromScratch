@@ -18,19 +18,19 @@ namespace RottenBamboo {
 
         void Load(const std::string& path) override;
 
-        bool Save(const std::string& savePath, MaterialData& materialData);
+        bool Save(const std::string& savePath, RBMaterialData& materialData);
 
         //bool SaveMeta(const std::string& saveMetaPath) const;
 
-        MaterialData& GetData();
-        const MaterialData& GetData() const;
+        RBMaterialData& GetData();
+        const RBMaterialData& GetData() const;
 
         void Reset();
 
     private:
         RBDevice &device;
         RBCommandBuffer &commandBuffer;
-        MaterialData data;
+        RBMaterialData data;
     };
 
 } // Rottenbamboo

@@ -189,7 +189,7 @@ namespace RottenBamboo
 
         SetLayout();
 
-        MaterialData& material = currentMaterial->GetData();
+        RBMaterialData& material = currentMaterial->GetData();
         
         char filePathBuffer[512];
         CopyStringToBuffer(filePathBuffer, sizeof(filePathBuffer), currentMaterial->GetPath());

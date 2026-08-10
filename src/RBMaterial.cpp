@@ -73,7 +73,7 @@ namespace RottenBamboo
     void RBMaterial::Reset()
     {
         RBLOG_INFO("RBMaterial::Reset()");
-        data = MaterialData{};
+        data = RBMaterialData{};
     }
 
     void RBMaterial::Load(const std::string& path) 
@@ -101,7 +101,7 @@ namespace RottenBamboo
             buffer << file.rdbuf();
             const std::string text = buffer.str();
             std::string uuidString;
-            MaterialData loaded{};
+            RBMaterialData loaded{};
             FindStringValue(text, "name", loaded.name);
             FindStringValue(text, "shaderDefinationName", loaded.shaderDefinationName);
             FindStringValue(text, "uuid", uuidString);
@@ -158,7 +158,7 @@ namespace RottenBamboo
         }
     }
 
-    bool RBMaterial::Save(const std::string& savePath, MaterialData& materialData)
+    bool RBMaterial::Save(const std::string& savePath, RBMaterialData& materialData)
     {
         
         RBLOG_INFO("RBMaterial::Save() savePath = " + savePath);
@@ -258,12 +258,12 @@ namespace RottenBamboo
         }
     }
 
-    MaterialData& RBMaterial::GetData()
+    RBMaterialData& RBMaterial::GetData()
     {
         return data;
     }
 
-    const MaterialData& RBMaterial::GetData() const
+    const RBMaterialData& RBMaterial::GetData() const
     {
         return data;
     }
