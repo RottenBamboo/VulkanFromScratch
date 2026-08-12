@@ -442,7 +442,7 @@ std::string RBModel::Base64Encode(const std::vector<uint8_t>& data) {
     return encoded;
 }
 #else
-// 桌面端原有代码保持不变
+// desktop platform
 void RBModel::Load(const std::string& path) {
         std::cout << "RBModel::Load() Begin" << std::endl;
         RBLOG_INFO("RBModel::Load() Begin");

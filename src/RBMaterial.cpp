@@ -109,12 +109,13 @@ namespace RottenBamboo
             return;
         }
 
+        RBMaterialData loaded{};
+
         try {
             std::stringstream buffer;
             buffer << materialfile.rdbuf();
             const std::string text = buffer.str();
             std::string uuidString;
-            RBMaterialData loaded{};
             FindStringValue(text, "name", loaded.name);
             FindStringValue(text, "shaderDefinationName", loaded.shaderDefinationName);
             loaded.shaderDefinition = *RBApplication::GetShaderDefinition(loaded.shaderDefinationName);
@@ -190,7 +191,7 @@ namespace RottenBamboo
                 data.GenerateGUID();
             }
             data.GUIDToString(uuidStrting);
-            materialMetaFileData += "    \"uuid\": \"" + uuidStrting;
+            materialMetaFileData += "    \"uuid\": \"" + uuidStrting + "\"";
 
             materialMetaFileData += "\n}\n";
             outFile << materialMetaFileData;
@@ -204,7 +205,6 @@ namespace RottenBamboo
             buffer << metafile.rdbuf();
             const std::string text = buffer.str();
             std::string uuidString;
-            RBMaterialData loaded{};
             FindStringValue(text, "uuid", uuidString);
             if(!loaded.GenerateGUIDFromString(uuidString))
             {
@@ -347,7 +347,7 @@ namespace RottenBamboo
                 data.GenerateGUID();
             }
             data.GUIDToString(uuidStrting);
-            materialMetaFileData += "    \"uuid\": \"" + uuidStrting;
+            materialMetaFileData += "    \"uuid\": \"" + uuidStrting + "\"";
 
             materialMetaFileData += "\n}\n";
             file << materialMetaFileData;
