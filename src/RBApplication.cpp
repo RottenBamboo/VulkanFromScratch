@@ -254,6 +254,10 @@ namespace RottenBamboo {
                             RBShaderParamType type;
                             RBShaderTextureType textureType;
                             //const auto it = imageDesc.second.bindings.find(i + 1);
+                            if(imageDesc.second.bindings.find(i + 1) == imageDesc.second.bindings.end())
+                            {
+                                continue;
+                            }
                             const RBDescriptorBinding& imageBindings = imageDesc.second.bindings.find(i + 1)->second;
                             //const RBDescriptorBinding& imageBindings = imageDesc.second.bindings.at(i + 1);
                             if(imageBindings.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || imageBindings.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)

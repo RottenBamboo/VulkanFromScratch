@@ -128,6 +128,11 @@ namespace RottenBamboo
                 auto& descriptorSets = loaded.shaderReflection.descriptorSets.at(0);
                 for(int i = 0; i < descriptorSets.bindings.size(); i++)
                 {
+                    if(descriptorSets.bindings.find(i + 1) == descriptorSets.bindings.end())
+                    {
+                        continue;
+                    }
+
                     RBDescriptorBinding& binding = descriptorSets.bindings.find(i + 1)->second;
                     if(binding.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
                     {

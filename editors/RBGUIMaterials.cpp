@@ -278,9 +278,17 @@ namespace RottenBamboo
             auto& descriptorSets = material.shaderReflection.descriptorSets.at(0);
             for(int i = 0; i < descriptorSets.bindings.size(); )
             {
+                if(descriptorSets.bindings.find(i + 1) == descriptorSets.bindings.end())
+                {
+                    i++;
+                    continue;
+                }
+
                 RBDescriptorBinding& binding = descriptorSets.bindings.find(i + 1)->second;
+
                 if(binding.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
                 {
+                    i++;
                     continue;
                 }
                 float temp = 0.5f;
@@ -367,7 +375,6 @@ namespace RottenBamboo
 
                     ImGui::SameLine();
                     ImGui::Text(name.c_str());
-
                     i++;
                 }
                 else
