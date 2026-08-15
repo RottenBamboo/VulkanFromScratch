@@ -276,17 +276,17 @@ namespace RottenBamboo
         if(material.shaderReflection.descriptorSets.size() > 0)
         {
             auto& descriptorSets = material.shaderReflection.descriptorSets.at(0);
-            int i = 0;
-            for(auto itr = descriptorSets.bindings.begin(); itr != descriptorSets.bindings.end(); itr++)
+            for(int i = 0; i < descriptorSets.bindings.size(); )
             {
-                if(itr->second.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+                RBDescriptorBinding& binding = descriptorSets.bindings.find(i + 1)->second;
+                if(binding.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
                 {
                     continue;
                 }
                 float temp = 0.5f;
-                const std::string &name = itr->second.name;
-                float value = itr->second.floatValue;
-                if(itr->second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || itr->second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
+                const std::string &name = binding.name;
+                float value = binding.floatValue;
+                if(binding.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || binding.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
                 {
                     RefreshPreviewTexture(i);
                     ImVec2 imagePos = ImGui::GetCursorScreenPos();
@@ -305,8 +305,8 @@ namespace RottenBamboo
                         {
                             const char* filePath = (const char*)payload->Data;
                             std::string path(filePath, payload->DataSize);
-                            itr->second.texturePath = NormalizePathString(path);
-                            RBLOG_INFO("drag image full path = " + itr->second.texturePath);
+                            binding.texturePath = NormalizePathString(path);
+                            RBLOG_INFO("drag image full path = " + binding.texturePath);
                             if(currentMaterialDescriptors != nullptr)
                             {
                                 ImageResourcePtr imageResource = currentMaterialDescriptors->getTextureImage(i);
@@ -324,7 +324,7 @@ namespace RottenBamboo
                                     RBApplication::oldImageResourceVec.push_back(imageResource);
                                 }
 
-                                currentMaterialDescriptors->updateTextureImagePath(i, itr->second.texturePath);
+                                currentMaterialDescriptors->updateTextureImagePath(i, binding.texturePath);
                                 bool alreadyUpdated = false;
                                 for (RBDescriptors* updatedDescriptor : *RBApplication::GetUpdatedDescriptors())
                                 {
@@ -342,7 +342,7 @@ namespace RottenBamboo
                                 RBApplication::descriptorSetsUpdate = true;
                                 RBLOG_INFO("descriptorSetsUpdate = true");
                             }
-                            RBLOG_INFO("Dropped texture: %s", itr->second.texturePath.c_str());
+                            RBLOG_INFO("Dropped texture: %s", binding.texturePath.c_str());
                             ImGui::Text("Dropped: %s", filePath);
                         }
                         ImGui::EndDragDropTarget();
@@ -373,7 +373,7 @@ namespace RottenBamboo
                 else
                 {
                     ImGui::SliderFloat(name.c_str(), &value, 0, 1);
-                    itr->second.floatValue = value;
+                    binding.floatValue = value;
                 }
             }
         }

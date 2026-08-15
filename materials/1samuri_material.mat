@@ -1,8 +1,8 @@
 {
     "name": "1samuri_material",
     "shaderDefinationName": "shaderDefinition/gBufferDefinition.shader",
-    "normalMap": "textures/samuri_diffuse.jpeg",
-    "albedoMap": "textures/samuri_normal.jpeg",
+    "albedoMap": "textures/samuri_diffuse.jpeg",
+    "normalMap": "textures/samuri_normal.jpeg",
     "emissionMap": "textures/samuri_specular_glossiness.png",
     "metallicRoughnessAOMap": "textures/samuri_specular_glossiness.png"
 }

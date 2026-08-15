@@ -146,6 +146,21 @@ namespace RottenBamboo {
     }
     void RBApplication::InitializeShaderDefinition()
     {
+        std::vector<std::filesystem::directory_entry> entries;
+        // for (const auto& entry : std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + shaderDefinitionFilePath)) 
+        // {
+        //     if (entry.is_regular_file()) 
+        //     {
+        //         entries.push_back(entry);
+        //     }
+        // }
+        // std::sort(entries.begin(), entries.end(),[](const std::filesystem::directory_entry& a,const std::filesystem::directory_entry& b) 
+        // {
+        //     return a.path().filename().string() < b.path().filename().string();
+        // });
+
+        //for (const auto& entry : entries) 
+
         for (const auto& entry : std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + shaderDefinitionFilePath))
         {
             if (entry.is_regular_file())
@@ -233,20 +248,22 @@ namespace RottenBamboo {
                     {
                         std::vector<TexturesInfo> texturesInfo;
                         texturesInfo.reserve(imageCount);
-                        int i = 0;
-                        for(const auto& imageBindings : imageDesc.second.bindings)
+                        for(int i = 0; i < imageDesc.second.bindings.size(); i++)
                         {
                             TexturesInfo info;
                             RBShaderParamType type;
                             RBShaderTextureType textureType;
-                            if(imageBindings.second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || imageBindings.second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
+                            //const auto it = imageDesc.second.bindings.find(i + 1);
+                            const RBDescriptorBinding& imageBindings = imageDesc.second.bindings.find(i + 1)->second;
+                            //const RBDescriptorBinding& imageBindings = imageDesc.second.bindings.at(i + 1);
+                            if(imageBindings.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || imageBindings.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
                             {
                                 //check shaderDefinitiona map type.
                                 type = item.GetData().shaderDefinition.GetData().parameters[i].type;
                                 textureType = item.GetData().shaderDefinition.GetData().parameters[i].textureType;
                                 if(type == RBShaderParamType::Texture2D)
                                 {
-                                    info.path = imageBindings.second.texturePath;
+                                    info.path = imageBindings.texturePath;
                                     switch(textureType)
                                     {
                                         case RBShaderTextureType::Albedo:
@@ -274,7 +291,6 @@ namespace RottenBamboo {
                                 }
                             }
                             texturesInfo.push_back(info);
-                            i++;
                         }
                         //RBDescriptors descriptor{device, commandBuffer};
                         auto descriptor = std::make_unique<RBDescriptors>(device, commandBuffer);

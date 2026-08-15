@@ -126,14 +126,15 @@ namespace RottenBamboo
             if(loaded.shaderReflection.descriptorSets.size() > 0)
             {
                 auto& descriptorSets = loaded.shaderReflection.descriptorSets.at(0);
-                for(auto itr = descriptorSets.bindings.begin(); itr != descriptorSets.bindings.end(); itr++)
+                for(int i = 0; i < descriptorSets.bindings.size(); i++)
                 {
-                    if(itr->second.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
+                    RBDescriptorBinding& binding = descriptorSets.bindings.find(i + 1)->second;
+                    if(binding.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
                     {
                         continue;
                     }
-                    const std::string& name = itr->second.name;
-                    if(itr->second.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || itr->second.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
+                    const std::string& name = binding.name;
+                    if(binding.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || binding.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
                     {
                         std::string value;
                         FindStringValue(text, name, value);
@@ -141,13 +142,13 @@ namespace RottenBamboo
                         {
                             value = defaultWhiteImagePath;
                         }
-                        itr->second.texturePath = value;
+                        binding.texturePath = value;
                     }
                     else
                     {
                         float value;
                         FindFloatValue(text, name, value);
-                        itr->second.floatValue = value;
+                        binding.floatValue = value;
                     }
                 }
             }

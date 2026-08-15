@@ -1,8 +1,8 @@
 {
     "name": "0mech_material",
     "shaderDefinationName": "shaderDefinition/gBufferDefinition.shader",
-    "normalMap": "textures/Substance_texture_baseColor.jpeg",
-    "albedoMap": "textures/Substance_texture_normal.jpeg",
+    "albedoMap": "textures/Substance_texture_baseColor.jpeg",
+    "normalMap": "textures/Substance_texture_normal.jpeg",
     "emissionMap": "textures/Substance_texture_metallicRoughness.png",
     "metallicRoughnessAOMap": "textures/Substance_texture_metallicRoughness.png"
 }
