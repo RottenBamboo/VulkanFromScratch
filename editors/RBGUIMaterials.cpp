@@ -134,12 +134,12 @@ namespace RottenBamboo
         std::vector<RBDescriptors*>* ptr_Descriptors = RBApplication::GetDescriptors();
         currentMaterialDescriptors = (*ptr_Descriptors)[descsriptorIndex];
         int imageCount = currentMaterialDescriptors->rbImageManager.imageBundles.size();
-#ifdef __WINDOWS__
+#ifdef _WIN32
         ClearPreviewTextures();
 #endif
         vecUIMaterialDescriptorSet.resize(imageCount, VK_NULL_HANDLE);
         vecUIMaterialImageViews.resize(imageCount, VK_NULL_HANDLE);
-#ifdef __WINDOWS__
+#ifdef _WIN32
         for(int i = 0; i < imageCount; i++)
         {
             RefreshPreviewTexture(i);

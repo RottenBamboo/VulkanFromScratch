@@ -271,7 +271,7 @@ namespace RottenBamboo
             std::string materialFileData = "{\n";
             
             materialFileData += "    \"name\": \"" + data.name + "\",\n";
-            materialFileData += "    \"shaderDefinationName\": \"" + data.shaderDefinationName + "\",\n";
+            materialFileData += "    \"shaderDefinationName\": \"" + data.shaderDefinationName + "\"";
 
             if(materialData.shaderReflection.descriptorSets.size() > 0)
             {
@@ -306,11 +306,7 @@ namespace RottenBamboo
                         RBLOG_INFO("RBMaterial::Save() float value : " + value);
                     }
 
-                    if(itr != descriptorSets.bindings.begin())
-                    {
-                        materialFileData += ",\n";
-                    }
-                    materialFileData += "    \"" + name + "\": " + "\"" + value + "\"";
+                    materialFileData += ",\n    \"" + name + "\": " + "\"" + value + "\"";
                 }
             }
 
