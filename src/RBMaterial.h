@@ -7,6 +7,7 @@
 #include "RBResource.h"
 #include "RBMaterialData.h"
 #include "RBCommandBuffer.h"
+#include "RBMetaFile.h"
 
 namespace RottenBamboo {
 
@@ -31,6 +32,7 @@ namespace RottenBamboo {
         RBDevice &device;
         RBCommandBuffer &commandBuffer;
         RBMaterialData data;
+        RBMetaFile metaFile;
     };
 
 } // Rottenbamboo

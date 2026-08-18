@@ -9,6 +9,7 @@
 #include <spirv_glsl.hpp>
 #include "RBResource.h"
 #include "RBResourceUtils.h"
+#include "RBMetaFile.h"
 namespace RottenBamboo {
 
     using ShaderReflectionMap = std::unordered_map<RenderStage, RBShaderReflection>;
@@ -53,5 +54,7 @@ namespace RottenBamboo {
 
         ShaderReflectionMap shaderReflection;
         CustomShaderReflectionMap customShaderReflection;
+        RBMetaFile metaFile;
+
     };
 }

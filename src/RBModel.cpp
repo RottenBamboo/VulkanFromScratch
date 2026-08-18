@@ -500,6 +500,9 @@ void RBModel::Load(const std::string& path) {
         RBLOG_INFO("RBModel::Load() Before push_back()");
         meshes.push_back(std::move(mesh));
 
+        RBData data{};
+        metaFile.Load(path, data);
+
         //std::cout << "Mesh vertex count: " << mesh->vertexBuffer.data.size() << std::endl;
         //std::cout << "Mesh index count: " << mesh->indexBuffer.data.size() << std::endl;
         std::cout << "RBModel::loadModel() - model loaded using Assimp" << std::endl;

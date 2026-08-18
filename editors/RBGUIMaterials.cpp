@@ -1,3 +1,4 @@
+#pragma once
 #include "RBGUIMaterials.h"
 #include "RBApplication.h"
 #include <glm/gtc/type_ptr.hpp>

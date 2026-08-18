@@ -7,6 +7,7 @@
 #include "RBResource.h"
 #include "RBDevice.h"
 #include "RBBuffer.h"
+#include "RBMetaFile.h"
 
 namespace RottenBamboo {
 
@@ -17,6 +18,7 @@ namespace RottenBamboo {
     private:
         RBDevice &device;
         RBCommandBuffer &commandBuffer;
+        RBMetaFile metaFile;
 
     public:
         RBBuffer<Vertex> vertexBuffer{device, commandBuffer, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT};

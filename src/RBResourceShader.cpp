@@ -258,6 +258,8 @@ VkFormat RBResourceShader::SpirvImageFormatToVkFormat(spv::ImageFormat format)
         size_t wordCount = codeSize / sizeof(uint32_t);
         shaderSPIRV[stage] = std::vector<uint32_t>(wordCount);
         std::memcpy(shaderSPIRV[stage].data(), shaderCode.data(), codeSize);
+        RBData data{};
+        metaFile.Load(path, data);
     }
 
     const std::vector<uint32_t>* RBResourceShader::Get(RenderStage shaderStage) const

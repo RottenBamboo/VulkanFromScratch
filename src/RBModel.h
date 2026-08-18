@@ -8,6 +8,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include "RBMetaFile.h"
 
 #ifdef __ANDROID__
 #include <SDL3/SDL_iostream.h>
@@ -43,6 +44,7 @@ namespace RottenBamboo {
         RBDevice &device;
         RBCommandBuffer &commandBuffer;
         std::vector<std::unique_ptr<RBMesh>> meshes;
+        RBMetaFile metaFile;
 
 
     public:

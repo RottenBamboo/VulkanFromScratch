@@ -15,6 +15,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <filesystem>
+#include <regex>
 #include "RBWindows.h"
 #include "RBResourceUtils.h"
 #include "RBLogger.h"
@@ -244,6 +245,53 @@ namespace RottenBamboo
         }
 
         return names;
+    }
+
+    inline bool FindStringValue(const std::string& text, const std::string& key, std::string& out)
+    {
+        const std::string pattern = "\\\"" + key + "\\\"\\s*:\\s*\\\"([^\\\"]*)\\\"";
+        std::regex regexPattern(pattern);
+        std::smatch match;
+        if (std::regex_search(text, match, regexPattern) && match.size() >= 2)
+        {
+            out = match[1].str();
+            return true;
+        }
+        return false;
+    }
+
+    inline bool FindFloatValue(const std::string& text, const std::string& key, float& out)
+    {
+        const std::string pattern = "\\\"" + key + "\\\"\\s*:\\s*([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)";
+        std::regex regexPattern(pattern);
+        std::smatch match;
+        if (std::regex_search(text, match, regexPattern) && match.size() >= 2)
+        {
+            out = std::stof(match[1].str());
+            return true;
+        }
+        return false;
+    }
+
+    template <size_t N>
+    inline bool FindArrayValue(const std::string& text, const std::string& key, std::array<float, N>& out)
+    {
+        const std::string pattern = "\\\"" + key + "\\\"\\s*:\\s*\\[(.*?)\\]";
+        std::regex regexPattern(pattern);
+        std::smatch match;
+        if (!std::regex_search(text, match, regexPattern) || match.size() < 2)
+        {
+            return false;
+        }
+
+        std::stringstream ss(match[1].str());
+        std::string token;
+        size_t index = 0;
+        while (std::getline(ss, token, ',') && index < N)
+        {
+            out[index++] = std::stof(token);
+        }
+        return index == N;
     }
 
     static std::string NormalizePathString(std::string path)
