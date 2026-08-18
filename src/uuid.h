@@ -1,6 +1,8 @@
 #ifndef STDUUID_H
 #define STDUUID_H
 
+#define LIBUUID_CPP20_OR_GREATER
+
 #include <cstring>
 #include <string>
 #include <sstream>
