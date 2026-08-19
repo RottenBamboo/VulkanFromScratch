@@ -7,6 +7,7 @@
 #include <stb_image.h>
 #include "RBCommon.h"
 #include "RBDescriptors.h"
+#include "RBMetaFile.h"
 
 namespace RottenBamboo{
 
@@ -209,6 +210,9 @@ namespace RottenBamboo{
         auto& imageInfo = imagesInfo[index];
         int texWidth, texHeight, texChannels, typeSize;
             void* pixels = nullptr;
+            
+        std::string pathString = (GET_PROJECT_ROOT_DIR + imageInfo.path);
+        std::string metaPath = pathString + META_EXTENSION;
 #ifdef __ANDROID__
         std::vector<uint8_t> buffer;
         LoadFromMemoryAndroid(imageInfo.path, imageInfo.isHDR, buffer);
@@ -216,22 +220,26 @@ namespace RottenBamboo{
         if(imageInfo.isHDR)
         {
             pixels = (float*)stbi_loadf_from_memory(buffer.data(), buffer.size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+            imageBundle.metaFile.Load(metaPath, imageBundle);
             typeSize = sizeof(float);
         }
         else
         {
             pixels = (stbi_uc*)stbi_load_from_memory(buffer.data(), buffer.size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+            imageBundle.metaFile.Load(metaPath, imageBundle);
             typeSize = sizeof(stbi_uc);
         }
 #else
         if(imageInfo.isHDR)
         {
-            pixels = (float*)stbi_loadf((GET_PROJECT_ROOT_DIR + imageInfo.path).c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+            pixels = (float*)stbi_loadf(pathString.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+            imageBundle.metaFile.Load(metaPath, imageBundle);
             typeSize = sizeof(float);
         }
         else
         {
             pixels = (stbi_uc*)stbi_load((GET_PROJECT_ROOT_DIR + imageInfo.path).c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+            imageBundle.metaFile.Load(metaPath, imageBundle);
             typeSize = sizeof(stbi_uc);
         }
 

@@ -123,7 +123,7 @@ namespace RottenBamboo {
     }
     void RBApplication::InitializeEditorMaterial()
     {
-        editorMaterial.Load(materialsFilePath + "0mech_material.mat");
+        editorMaterial.Load(materialsFilePath + "0mech_material" + MAT_EXTENSION);
         RBLOG_INFO("RBApplication::InitializeEditorMaterial()");
     }
     void RBApplication::InitializeMaterial()
@@ -134,7 +134,7 @@ namespace RottenBamboo {
         materialsVec.reserve(count);
         for (const auto& entry : std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + materialsFilePath))
         {
-            if (entry.is_regular_file() && entry.path().extension() == ".mat")
+            if (entry.is_regular_file() && entry.path().extension() == MAT_EXTENSION)
             {
                 std::string relativePath = std::filesystem::relative(entry.path(), GET_PROJECT_ROOT_DIR).string();
                 relativePath = NormalizePathString(relativePath);
@@ -163,7 +163,7 @@ namespace RottenBamboo {
 
         for (const auto& entry : std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + shaderDefinitionFilePath))
         {
-            if (entry.is_regular_file())
+            if (entry.is_regular_file() && entry.path().extension() == SHADER_EXTENSION)
             {
                 RBShaderDefinition shaderDef;
                 std::string relativePath = std::filesystem::relative(entry.path(), GET_PROJECT_ROOT_DIR).string();

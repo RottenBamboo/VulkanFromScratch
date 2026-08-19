@@ -502,7 +502,7 @@ void RBModel::Load(const std::string& path) {
         meshes.push_back(std::move(mesh));
 
         RBData data{};
-        std::string pathMeta = RemoveFileExtension(path);
+        std::string pathMeta = path;
         pathMeta += META_EXTENSION;
         metaFile.Load(pathMeta, data);
 

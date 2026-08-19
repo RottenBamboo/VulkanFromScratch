@@ -136,7 +136,7 @@ namespace RottenBamboo
             Reset();
             return false;
         }
-        std::string pathMeta = RemoveFileExtension(absolutePath);
+        std::string pathMeta = path;
         pathMeta += META_EXTENSION;
         metaFile.Load(pathMeta, data);
         return true;

@@ -50,7 +50,6 @@ namespace RottenBamboo
         //load material file
         this->path = currentPath;
         
-        RemoveExtension(currentPath);
         std::ifstream materialfile(GET_PROJECT_ROOT_DIR + this->path);
         if (!materialfile.is_open()) 
         {
@@ -217,7 +216,7 @@ namespace RottenBamboo
         }
 
         //save material mate file
-        std::string matMetaPath = currentPath + META_EXTENSION;
+        std::string matMetaPath = matPath + META_EXTENSION;
         RBLOG_INFO("RBMaterial::Save() targetMetaPath : " + matMetaPath);
 
         if(!metaFile.Save(matMetaPath, materialData))

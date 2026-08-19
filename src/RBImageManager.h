@@ -7,10 +7,13 @@
 
 #include <vulkan/vulkan.h>
 #include "RBDevice.h"
+#include "RBData.h"
+#include "RBMetaFile.h"
 
 namespace RottenBamboo {
     
-    struct RBImageBundle {
+    struct RBImageBundle : RBData
+    {
         VkImageViewCreateInfo viewInfo{};
         VkDescriptorImageInfo imageInfo{};
         VkImage image;
@@ -18,6 +21,7 @@ namespace RottenBamboo {
         VkImageView imageView;
         VkSampler sampler;
         VkFormat format;
+        RBMetaFile metaFile;
         bool isHDR;
     };
 

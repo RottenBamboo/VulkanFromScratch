@@ -259,7 +259,7 @@ VkFormat RBResourceShader::SpirvImageFormatToVkFormat(spv::ImageFormat format)
         shaderSPIRV[stage] = std::vector<uint32_t>(wordCount);
         std::memcpy(shaderSPIRV[stage].data(), shaderCode.data(), codeSize);
         RBData data{};
-        std::string pathMeta = RemoveFileExtension(path);
+        std::string pathMeta = path;
         pathMeta += META_EXTENSION;
         metaFile.Load(pathMeta, data);
     }
