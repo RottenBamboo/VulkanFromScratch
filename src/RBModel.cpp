@@ -118,7 +118,8 @@ namespace RottenBamboo {
 #ifdef __ANDROID__
 void RBModel::Load(const std::string& filepath) {
     __android_log_print(ANDROID_LOG_INFO, "RottenBamboo", "RBModel::Load called for: %s", filepath.c_str());
-    std::string extension = GetFileExtension(filepath);
+    std::string extension;
+    GetFileExtension(filepath, extension);
     
     // 如果是 GLTF 文件，尝试手动加载 BIN 文件
     if (extension == "gltf") {
@@ -501,7 +502,9 @@ void RBModel::Load(const std::string& path) {
         meshes.push_back(std::move(mesh));
 
         RBData data{};
-        metaFile.Load(path, data);
+        std::string pathMeta = RemoveFileExtension(path);
+        pathMeta += META_EXTENSION;
+        metaFile.Load(pathMeta, data);
 
         //std::cout << "Mesh vertex count: " << mesh->vertexBuffer.data.size() << std::endl;
         //std::cout << "Mesh index count: " << mesh->indexBuffer.data.size() << std::endl;

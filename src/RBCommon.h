@@ -247,6 +247,33 @@ namespace RottenBamboo
         return names;
     }
 
+    inline std::string RemoveFileExtension(std::filesystem::path filePath) 
+    {
+        return filePath.stem().string();
+    }
+
+    inline std::string RemoveFileExtension(const std::string& filePath) 
+    {
+        size_t dotPos = filePath.find_last_of('.');
+        if (dotPos == std::string::npos) {
+            return filePath;
+        }
+        return filePath.substr(0, dotPos);
+    }
+
+    inline void GetFileExtension(std::filesystem::path filePath, std::string& out) 
+    {
+        out = filePath.extension().string();
+    }
+
+    inline void GetFileExtension(const std::string& filename, std::string& out) 
+    {
+        size_t dotPos = filename.find_last_of(".");
+        if (dotPos != std::string::npos && dotPos < filename.length() - 1) {
+            out = filename.substr(dotPos + 1);
+        }
+        out = "";
+    }
     inline bool FindStringValue(const std::string& text, const std::string& key, std::string& out)
     {
         const std::string pattern = "\\\"" + key + "\\\"\\s*:\\s*\\\"([^\\\"]*)\\\"";

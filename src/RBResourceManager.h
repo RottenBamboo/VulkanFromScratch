@@ -3,6 +3,7 @@
 //
 
 #pragma once
+
 #include "RBModel.h"
 #include <unordered_map>
 #include <typeindex>

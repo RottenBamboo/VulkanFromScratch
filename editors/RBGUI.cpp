@@ -1,6 +1,7 @@
 //
 // Created by rottenbamboo on 2025/6/6.
 //
+#pragma once
 
 #include "RBGUI.h"
 #include <glm/gtc/type_ptr.hpp>

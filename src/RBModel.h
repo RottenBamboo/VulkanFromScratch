@@ -53,14 +53,6 @@ namespace RottenBamboo {
         ~RBModel() = default;
 
     private:
-    // file extension check
-    std::string GetFileExtension(const std::string& filename) {
-        size_t dotPos = filename.find_last_of(".");
-        if (dotPos != std::string::npos && dotPos < filename.length() - 1) {
-            return filename.substr(dotPos + 1);
-        }
-        return "";
-    }
 
 #ifdef __ANDROID__
     std::string Base64Encode(const std::vector<uint8_t>& data);
