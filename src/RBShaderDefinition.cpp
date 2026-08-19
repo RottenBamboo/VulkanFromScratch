@@ -130,14 +130,16 @@ namespace RottenBamboo
                     data.parameters.push_back(parameter);
                 }
             }
-
-            return true;
         }
         catch (...)
         {
             Reset();
             return false;
         }
+        std::string pathMeta = RemoveFileExtension(absolutePath);
+        pathMeta += META_EXTENSION;
+        metaFile.Load(pathMeta, data);
+        return true;
     }
 
     bool RBShaderDefinition::Save(const std::string& filePath) const

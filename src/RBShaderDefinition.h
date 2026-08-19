@@ -7,7 +7,7 @@
 #include <array>
 #include <string>
 #include <vector>
-
+#include "RBMetaFile.h"
 #include "json.h"
 
 namespace RottenBamboo
@@ -57,7 +57,7 @@ namespace RottenBamboo
         bool defaultBoolValue = false;
     };
 
-    struct RBShaderDefinitionData
+    struct RBShaderDefinitionData : public RBData
     {
         std::string name = "New Shader";
         std::vector<RBShaderStageFile> stages;
@@ -87,6 +87,7 @@ namespace RottenBamboo
     private:
         std::string path;
         RBShaderDefinitionData data;
+        RBMetaFile metaFile;
 
         static void FillDefaultValues(const nlohmann::json& valueJson, RBShaderParameter& parameter);
         static nlohmann::json ParameterToJson(const RBShaderParameter& parameter);
