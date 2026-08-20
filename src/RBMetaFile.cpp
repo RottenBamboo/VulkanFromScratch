@@ -55,8 +55,8 @@ namespace RottenBamboo
                 data.GenerateGUID();
                 std::string logGUID;
                 data.GUIDToString(logGUID);
-                //RBLOG_INFO("There is no valid UUID in :" + this->path + ". Regenerate UUID : " + logGUID);
-                //std::cout << "There is no valid UUID in :" << this->path << ". Regenerate UUID : " << logGUID << std::endl;
+                RBLOG_INFO("There is no valid UUID in :" + currentPath + ". Regenerate UUID : " + logGUID);
+                std::cout << "There is no valid UUID in :" << currentPath << ". Regenerate UUID : " << logGUID << std::endl;
             }
             //data.m_GUID = loaded.m_GUID;
             RBLOG_INFO("RBMaterial::Load()");
@@ -64,9 +64,8 @@ namespace RottenBamboo
         }
         catch (const std::exception& e) 
         {
-            //RBLOG_INFO("RBMaterial::Load() failed for " + this->path + ": " + std::string(e.what()));
-            //std::cout << "RBMaterial::Load() failed for " << this->path << ": " << e.what() << std::endl;
-            //Reset();
+            RBLOG_INFO("RBMaterial::Load() failed for " + currentPath + ": " + std::string(e.what()));
+            std::cout << "RBMaterial::Load() failed for " << currentPath << ": " << e.what() << std::endl;
         }
         
         return false;

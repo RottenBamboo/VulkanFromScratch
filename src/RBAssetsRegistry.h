@@ -26,9 +26,13 @@ namespace RottenBamboo
             {
                 
             }
-        };
+
+            bool ScanDirectory(const std::string& rootPath) 
+            {
+                return true;
+            };
 
         std::unordered_map<uuids::uuid, std::string> m_GuidToPath;
         std::unordered_map<std::string, uuids::uuid> m_PathToGuid;
     };
-}
+};
