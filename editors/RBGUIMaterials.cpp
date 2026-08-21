@@ -314,6 +314,13 @@ namespace RottenBamboo
                         {
                             const char* filePath = (const char*)payload->Data;
                             std::string path(filePath, payload->DataSize);
+                            if(path.find("textures") == std::string::npos)
+                            {
+                                RBLOG_INFO("Dropped file is not a texture: %s", path.c_str());
+                                ImGui::Text("Dropped file is not a texture: %s", filePath);
+                                ImGui::EndDragDropTarget();
+                                continue;
+                            }
                             binding.texturePath = NormalizePathString(path);
                             RBLOG_INFO("drag image full path = " + binding.texturePath);
                             if(currentMaterialDescriptors != nullptr)

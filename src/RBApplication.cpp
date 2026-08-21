@@ -61,7 +61,8 @@ namespace RottenBamboo {
             return &oldImageResourceVec;
         }
 
-        RBApplication::RBApplication() {
+        RBApplication::RBApplication() 
+        {
         uuids::uuid empty;
         assert(empty.is_nil());
         lastFrameTime = std::chrono::high_resolution_clock::now();
@@ -71,6 +72,10 @@ namespace RottenBamboo {
         InitializeDevice();
         InitializeCommandBuffer();
         
+        std::string rootPath = GET_PROJECT_ROOT_DIR + "/resource";
+        std::string cachePath = GET_RESOURCE_ROOT_DIR + "Cache/AssetsRegistry.bin";
+        assetsRegistry.Initialize(rootPath, cachePath);
+
         model_paths.insert({0, MODEL_PATH});
         model_paths.insert({1, SAMURI_PATH});
         model_paths.insert({2, TERRAIN_PATH});

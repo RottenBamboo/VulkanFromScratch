@@ -11,7 +11,8 @@
 #include <iostream>
 #include <stdexcept>
 
-namespace RottenBamboo {
+namespace RottenBamboo 
+{
     RBResourceShader::RBResourceShader(const std::string &path) : RBResource(path)
     {
 

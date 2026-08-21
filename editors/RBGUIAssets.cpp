@@ -1,3 +1,4 @@
+#pragma once
 #include "RBGUIAssets.h"
 #include "RBApplication.h"
 
@@ -10,33 +11,6 @@ namespace fs = std::filesystem;
 
 namespace RottenBamboo
 {
-    namespace
-    {
-        std::string ToLowerCopy(std::string value)
-        {
-            std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) 
-            {
-                return static_cast<char>(std::tolower(c));
-            });
-            return value;
-        }
-
-        bool ContainsCaseInsensitive(const std::string& value, const std::string& query)
-        {
-            if (query.empty()) 
-            {
-                return true;
-            }
-            return ToLowerCopy(value).find(ToLowerCopy(query)) != std::string::npos;
-        }
-
-        bool IsMaterialFile(const std::filesystem::path& path)
-        {
-           const std::string ext = ToLowerCopy(path.extension().string());
-           return ext == ".mat" || ext == ".material";
-        }
-    }
-
     RBGUIAssets::RBGUIAssets()
         : resourceManager(nullptr), currentDirectory(GET_RESOURCE_ROOT_DIR)
     {
@@ -151,7 +125,7 @@ namespace RottenBamboo
 
         for (const auto& entry : std::filesystem::directory_iterator(currentDirectory, ec)) 
         {
-            if (searchText[0] != '\0' && !ContainsCaseInsensitive(entry.path().filename().string(), searchText.data())) 
+            if (searchText[0] != '\0' && !ContainsCaseInsensitive(entry.path().filename().string(), searchText.data()) || (entry.path().has_extension() && entry.path().extension() == ".meta"))
             {
                 continue;
             }

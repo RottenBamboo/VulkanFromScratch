@@ -1,3 +1,7 @@
+//
+// Create by rottenbamboo on 2026/8/20.
+//
+#pragma once
 #include "uuid.h"
 #include "RBData.h"
 namespace RottenBamboo 

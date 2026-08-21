@@ -25,10 +25,13 @@
 #include <assimp/postprocess.h>
 #include <chrono>
 #include "uuid.h"
+#include "RBAssetsRegistry.h"
 
-namespace RottenBamboo {
+namespace RottenBamboo 
+{
     
-    class RBApplication {
+    class RBApplication 
+    {
 
     public:
         static const uint32_t WIDTH = 1920;
@@ -148,6 +151,9 @@ namespace RottenBamboo {
         void InitializeStaticPtr();
 
     public:
+    
+        RBAssetsRegistry assetsRegistry;
+
         static RBGUI* ptr_gui;
 
         static RBGUI* GetGUI();

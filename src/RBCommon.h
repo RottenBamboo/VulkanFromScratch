@@ -358,6 +358,30 @@ namespace RottenBamboo
         std::filesystem::path cwd = std::filesystem::current_path();
         std::cout << "Current working directory: " << cwd.string() << std::endl;
     }
+    
+    inline std::string ToLowerCopy(std::string value)
+    {
+        std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) 
+        {
+            return static_cast<char>(std::tolower(c));
+        });
+        return value;
+    }
+
+    inline bool ContainsCaseInsensitive(const std::string& value, const std::string& query)
+    {
+        if (query.empty()) 
+        {
+            return true;
+        }
+        return ToLowerCopy(value).find(ToLowerCopy(query)) != std::string::npos;
+    }
+
+    inline bool IsMaterialFile(const std::filesystem::path& path)
+    {
+       const std::string ext = ToLowerCopy(path.extension().string());
+       return ext == ".mat" || ext == ".material";
+    }
 
     inline std::string GetRootPath(RootPathType type) 
     {
