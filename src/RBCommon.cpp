@@ -10,21 +10,21 @@ const std::string META_EXTENSION = ".meta";
 const std::string MAT_EXTENSION = ".mat";
 const std::string SHADER_EXTENSION = ".shader";
 
-const std::string MODEL_PATH = GET_PROJECT_ROOT_DIR + "models/mach.gltf";
+const std::string MODEL_PATH = GET_RESOURCE_ROOT_DIR + "models/mach.gltf";
 
-const std::string TERRAIN_PATH = GET_PROJECT_ROOT_DIR + "models/CraterCityMesh.fbx";
+const std::string TERRAIN_PATH = GET_RESOURCE_ROOT_DIR + "models/CraterCityMesh.fbx";
 
-const std::string SAMURI_PATH = GET_PROJECT_ROOT_DIR + "models/samuri.gltf";
+const std::string SAMURI_PATH = GET_RESOURCE_ROOT_DIR + "models/samuri.gltf";
 
-const std::string LOW_POLY_TERRAIN_PATH = GET_PROJECT_ROOT_DIR + "models/low_poly_terrain.gltf";
+const std::string LOW_POLY_TERRAIN_PATH = GET_RESOURCE_ROOT_DIR + "models/low_poly_terrain.gltf";
 
 const TexturesInfo fallBackFormat{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, ""};
 
 const std::string shaderDefinitionFilePath = "shaderDefinition/";
 const std::string materialsFilePath = "materials/";
-const std::string modelsFilePath = GET_PROJECT_ROOT_DIR + "models/";
-const std::string texturesFilePath = GET_PROJECT_ROOT_DIR + "textures/";
-const std::string shaderFilePath = GET_PROJECT_ROOT_DIR + "shader/";
+const std::string modelsFilePath = GET_RESOURCE_ROOT_DIR + "models/";
+const std::string texturesFilePath = GET_RESOURCE_ROOT_DIR + "textures/";
+const std::string shaderFilePath = GET_RESOURCE_ROOT_DIR + "shader/";
 const std::string defaultWhiteImagePath = "textures/default_white.jpeg";
 
 const std::vector<TexturesInfo> inputImagesInfo = {
@@ -75,12 +75,12 @@ const std::vector<TexturesInfo> inputImageTerrain =
 
 const std::vector<ShadersInfo> inputShader = 
 {
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_GBUFFER_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/gBufferFrag.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_FRAGMENT, "shaderDefinition/gBufferDefinition.shader"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_LIGHTING_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/lightingFrag.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_FRAGMENT, "shaderDefinition/lightingDefinition.shader"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_POST_PROCESSING_FRAGMENT, GET_PROJECT_ROOT_DIR + "shader/bin/skyFrag.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_FRAGMENT, "shaderDefinition/skyDefinition.shader"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_POST_PROCESSING_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/skyVert.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_VERTEX, "shaderDefinition/skyDefinition.shader"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_GBUFFER_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/gBufferVert.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_VERTEX, "shaderDefinition/gBufferDefinition.shader"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_LIGHTING_VERTEX, GET_PROJECT_ROOT_DIR + "shader/bin/lightingVert.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_VERTEX, "shaderDefinition/lightingDefinition.shader"}
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_GBUFFER_FRAGMENT, GET_RESOURCE_ROOT_DIR + "shader/bin/gBufferFrag.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_FRAGMENT, "shaderDefinition/gBufferDefinition.shader"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_LIGHTING_FRAGMENT, GET_RESOURCE_ROOT_DIR + "shader/bin/lightingFrag.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_FRAGMENT, "shaderDefinition/lightingDefinition.shader"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_POST_PROCESSING_FRAGMENT, GET_RESOURCE_ROOT_DIR + "shader/bin/skyFrag.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_FRAGMENT, "shaderDefinition/skyDefinition.shader"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_POST_PROCESSING_VERTEX, GET_RESOURCE_ROOT_DIR + "shader/bin/skyVert.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_VERTEX, "shaderDefinition/skyDefinition.shader"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_GBUFFER_VERTEX, GET_RESOURCE_ROOT_DIR + "shader/bin/gBufferVert.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_VERTEX, "shaderDefinition/gBufferDefinition.shader"},
+    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_LIGHTING_VERTEX, GET_RESOURCE_ROOT_DIR + "shader/bin/lightingVert.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_VERTEX, "shaderDefinition/lightingDefinition.shader"}
 };
 
 

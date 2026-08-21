@@ -10,10 +10,10 @@ namespace RottenBamboo {
     void RBGBufferPass::setupShaders()
     {
         shaderStageInfos.clear();
-        auto shaderCode = RBPipelineUtils::readFile(GET_PROJECT_ROOT_DIR + "shader/bin/gBufferVert.spv");
+        auto shaderCode = RBPipelineUtils::readFile(GET_RESOURCE_ROOT_DIR + "shader/bin/gBufferVert.spv");
         //RBPipelineUtils::ReflectShader(reinterpret_cast<const uint32_t*>(shaderCode.data()), shaderCode.size() / sizeof(uint32_t));
-        fillShaderModule(GET_PROJECT_ROOT_DIR + "shader/bin/gBufferVert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main", vertShaderModule);
-        fillShaderModule(GET_PROJECT_ROOT_DIR + "shader/bin/gBufferFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main", fragShaderModule);
+        fillShaderModule(GET_RESOURCE_ROOT_DIR + "shader/bin/gBufferVert.spv", VK_SHADER_STAGE_VERTEX_BIT, "main", vertShaderModule);
+        fillShaderModule(GET_RESOURCE_ROOT_DIR + "shader/bin/gBufferFrag.spv", VK_SHADER_STAGE_FRAGMENT_BIT, "main", fragShaderModule);
     }
 
     void RBGBufferPass::fillShaderModule(const std::string& shaderName, VkShaderStageFlagBits stage, const char* pName, RBShaderModule &shaderModule)

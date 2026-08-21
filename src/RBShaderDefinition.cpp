@@ -65,7 +65,7 @@ namespace RottenBamboo
             return false;
         }
 
-        const std::string absolutePath = std::filesystem::path(GET_PROJECT_ROOT_DIR).string() + "/" + path;
+        const std::string absolutePath = std::filesystem::path(GET_RESOURCE_ROOT_DIR).string() + "/" + path;
         std::string text;
         if (!ReadTextFile(absolutePath, text))
         {
@@ -136,8 +136,7 @@ namespace RottenBamboo
             Reset();
             return false;
         }
-        std::string pathMeta = path;
-        pathMeta += META_EXTENSION;
+        std::string pathMeta = absolutePath + META_EXTENSION;
         metaFile.Load(pathMeta, data);
         return true;
     }
@@ -153,7 +152,7 @@ namespace RottenBamboo
         std::filesystem::path absolutePath = targetPath;
         if (absolutePath.is_relative())
         {
-            absolutePath = std::filesystem::path(GET_PROJECT_ROOT_DIR) / absolutePath;
+            absolutePath = std::filesystem::path(GET_RESOURCE_ROOT_DIR) / absolutePath;
         }
 
         if (absolutePath.has_parent_path())

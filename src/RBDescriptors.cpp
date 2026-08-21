@@ -211,7 +211,7 @@ namespace RottenBamboo{
         int texWidth, texHeight, texChannels, typeSize;
             void* pixels = nullptr;
             
-        std::string pathString = (GET_PROJECT_ROOT_DIR + imageInfo.path);
+        std::string pathString = (GET_RESOURCE_ROOT_DIR + imageInfo.path);
         std::string metaPath = pathString + META_EXTENSION;
 #ifdef __ANDROID__
         std::vector<uint8_t> buffer;
@@ -238,7 +238,7 @@ namespace RottenBamboo{
         }
         else
         {
-            pixels = (stbi_uc*)stbi_load((GET_PROJECT_ROOT_DIR + imageInfo.path).c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+            pixels = (stbi_uc*)stbi_load((GET_RESOURCE_ROOT_DIR + imageInfo.path).c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
             imageBundle.metaFile.Load(metaPath, imageBundle);
             typeSize = sizeof(stbi_uc);
         }

@@ -38,7 +38,7 @@ namespace RottenBamboo
     }
 
     RBGUIAssets::RBGUIAssets()
-        : resourceManager(nullptr), currentDirectory(GET_PROJECT_ROOT_DIR)
+        : resourceManager(nullptr), currentDirectory(GET_RESOURCE_ROOT_DIR)
     {
     }
 
@@ -97,7 +97,7 @@ namespace RottenBamboo
     {
         ImGui::TextUnformatted("Quick Access");
 
-        const std::filesystem::path root = GET_PROJECT_ROOT_DIR;
+        const std::filesystem::path root = GET_RESOURCE_ROOT_DIR;
         if (ImGui::Button("Project Root")) 
         {
             NavigateTo(root);
@@ -189,7 +189,7 @@ namespace RottenBamboo
             for (const auto& entry : directories) 
             {
                 entryPath = entry.path();
-                relativePath = fs::relative(entryPath, GET_PROJECT_ROOT_DIR);
+                relativePath = fs::relative(entryPath, GET_RESOURCE_ROOT_DIR);
                 const bool selected = selectedPath == relativePath;
                 const std::string label = std::string("[Folder] ") + relativePath.filename().string();
                 ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 200, 80, 255));
@@ -220,7 +220,7 @@ namespace RottenBamboo
             for (const auto& entry : files) 
             {
                 entryPath = entry.path();
-                relativePath = fs::relative(entryPath, GET_PROJECT_ROOT_DIR);
+                relativePath = fs::relative(entryPath, GET_RESOURCE_ROOT_DIR);
                 const bool selected = selectedPath == relativePath;
                 const std::string label = std::string("[File] ") + NormalizePathString(relativePath.filename().string());
                 ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(200, 200, 200, 255));
@@ -246,7 +246,7 @@ namespace RottenBamboo
 
                 if (doubleClicked) 
                 {
-                     selectedPath = fs::relative(entryPath, GET_PROJECT_ROOT_DIR);
+                     selectedPath = fs::relative(entryPath, GET_RESOURCE_ROOT_DIR);
 
                     if (IsMaterialFile(entryPath) && resourceManager != nullptr) 
                     {

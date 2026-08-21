@@ -124,6 +124,7 @@ else()
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC PROJECT_ROOT_DIR=\"${CMAKE_SOURCE_DIR}\")
+target_compile_definitions(${PROJECT_NAME} PUBLIC RESOURCE_ROOT_DIR=\"${CMAKE_SOURCE_DIR}/resource/\")
 
 # Debug macro for logging
 if(CMAKE_GENERATOR MATCHES "Visual Studio" OR CMAKE_GENERATOR MATCHES "Xcode" OR CMAKE_GENERATOR MATCHES "Multi-Config")

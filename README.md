@@ -96,9 +96,9 @@ cmake -G "Visual Studio 17 2022" -S . -B build
 
 ## Windows Platform Build:
 ```
-cd shader
+cd resource/shader
 ./compile.sh debug
-cd ..
+cd ../..
 cmake -S . -B build
 cd build
 cmake --build . --config Debug
@@ -109,9 +109,9 @@ cd Debug
 ## MacOS Platform Build:
 
 ```
-cd shader
+cd resource/shader
 ./compile.sh debug
-cd ..
+cd ../..
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cd build
 cmake --build .
@@ -131,9 +131,9 @@ xcodebuild -runFirstLaunch
 ## MacOS Platform Android Build
 
 ```
-cd shader
+cd resource/shader
 ./compile.sh android
-cd ..
+cd ../..
 cmake -B buildAndroid -S . \
 -DCMAKE_CXX_STANDARD=17 \
 -DCMAKE_BUILD_TYPE=Release \
@@ -147,9 +147,9 @@ cmake --build .
 ## Windows Platform Android Build
 
 ```
-cd shader
+cd resource/shader
 ./compile.sh android
-cd ..
+cd ../..
 cmake -B buildAndroid -S . \
 -DCMAKE_CXX_STANDARD=17 \
 -DCMAKE_BUILD_TYPE=Release \

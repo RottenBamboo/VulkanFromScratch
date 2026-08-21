@@ -20,8 +20,15 @@
 #include "RBResourceUtils.h"
 #include "RBLogger.h"
 
+enum RootPathType
+{
+    PROJECT_ROOT,
+    RESOURCE_ROOT
+};
+
 //namespace fs = std::filesystem;
-#define GET_PROJECT_ROOT_DIR RottenBamboo::GetProjectRootPath()
+#define GET_PROJECT_ROOT_DIR RottenBamboo::GetRootPath(PROJECT_ROOT)
+#define GET_RESOURCE_ROOT_DIR RottenBamboo::GetRootPath(RESOURCE_ROOT)
 struct TexturesInfo
 {
     VkFormat format;
@@ -352,18 +359,32 @@ namespace RottenBamboo
         std::cout << "Current working directory: " << cwd.string() << std::endl;
     }
 
-    inline std::string GetProjectRootPath() {
+    inline std::string GetRootPath(RootPathType type) 
+    {
 #ifdef __ANDROID__    
     return "";  // Android return empty
 #else
-    #ifdef PROJECT_ROOT_DIR
+
+#if defined(PROJECT_ROOT_DIR) || defined(RESOURCE_ROOT_DIR)
+    if (type == PROJECT_ROOT) 
+    {
         return EnsureTrailingSlash(PROJECT_ROOT_DIR);
-    #else
+    }
+    else if (type == RESOURCE_ROOT)
+    {
+        return EnsureTrailingSlash(RESOURCE_ROOT_DIR);
+    }
+    else
+    {
         const char* fallback = std::getenv("PROJECT_ROOT_FALLBACK");
         return EnsureTrailingSlash(fallback ? std::string(fallback) : "./");
-    #endif
+    }
+#endif
+    const char* fallback = std::getenv("PROJECT_ROOT_FALLBACK");
+    return EnsureTrailingSlash(fallback ? std::string(fallback) : "./");
 #endif
     }
+    
     inline SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice& device, VkSurfaceKHR& surface)
     {
         SwapChainSupportDetails details;

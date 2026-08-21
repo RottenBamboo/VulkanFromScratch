@@ -87,15 +87,15 @@ namespace RottenBamboo {
 
             if(inputShader[i].pipelineStage == PipelineStage::PIPELINE_STAGE_VERTEX)
             {
-                pathShader = GET_PROJECT_ROOT_DIR + definitionData->stages[(int)RBShaderStageKind::Vertex].path;
+                pathShader = GET_RESOURCE_ROOT_DIR + definitionData->stages[(int)RBShaderStageKind::Vertex].path;
             }
             else if (inputShader[i].pipelineStage == PipelineStage::PIPELINE_STAGE_FRAGMENT)
             {
-                pathShader = GET_PROJECT_ROOT_DIR + definitionData->stages[(int)RBShaderStageKind::Fragment].path;
+                pathShader = GET_RESOURCE_ROOT_DIR + definitionData->stages[(int)RBShaderStageKind::Fragment].path;
             }
             
             resourceShader.Load(inputShader[i].stage, pathShader);
-            resourceShader.Reflect(std::filesystem::relative(pathShader, GET_PROJECT_ROOT_DIR).string(), inputShader[i].stage, *resourceShader.Get(inputShader[i].stage));
+            resourceShader.Reflect(std::filesystem::relative(pathShader, GET_RESOURCE_ROOT_DIR).string(), inputShader[i].stage, *resourceShader.Get(inputShader[i].stage));
         }
         RBApplication::ptr_resourceShader = &resourceShader;
 
@@ -129,14 +129,14 @@ namespace RottenBamboo {
     void RBApplication::InitializeMaterial()
     {
         RBMaterial materialLoadItem{"", device, commandBuffer};
-        auto count = std::distance(std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + materialsFilePath), std::filesystem::directory_iterator{});
+        auto count = std::distance(std::filesystem::directory_iterator(GET_RESOURCE_ROOT_DIR + materialsFilePath), std::filesystem::directory_iterator{});
         materialsVec.clear();
         materialsVec.reserve(count);
-        for (const auto& entry : std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + materialsFilePath))
+        for (const auto& entry : std::filesystem::directory_iterator(GET_RESOURCE_ROOT_DIR + materialsFilePath))
         {
             if (entry.is_regular_file() && entry.path().extension() == MAT_EXTENSION)
             {
-                std::string relativePath = std::filesystem::relative(entry.path(), GET_PROJECT_ROOT_DIR).string();
+                std::string relativePath = std::filesystem::relative(entry.path(), GET_RESOURCE_ROOT_DIR).string();
                 relativePath = NormalizePathString(relativePath);
                 materialLoadItem.Load(relativePath);
                 materialsVec.push_back(materialLoadItem);
@@ -147,7 +147,7 @@ namespace RottenBamboo {
     void RBApplication::InitializeShaderDefinition()
     {
         std::vector<std::filesystem::directory_entry> entries;
-        // for (const auto& entry : std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + shaderDefinitionFilePath)) 
+        // for (const auto& entry : std::filesystem::directory_iterator(GET_RESOURCE_ROOT_DIR + shaderDefinitionFilePath)) 
         // {
         //     if (entry.is_regular_file()) 
         //     {
@@ -161,12 +161,12 @@ namespace RottenBamboo {
 
         //for (const auto& entry : entries) 
 
-        for (const auto& entry : std::filesystem::directory_iterator(GET_PROJECT_ROOT_DIR + shaderDefinitionFilePath))
+        for (const auto& entry : std::filesystem::directory_iterator(GET_RESOURCE_ROOT_DIR + shaderDefinitionFilePath))
         {
             if (entry.is_regular_file() && entry.path().extension() == SHADER_EXTENSION)
             {
                 RBShaderDefinition shaderDef;
-                std::string relativePath = std::filesystem::relative(entry.path(), GET_PROJECT_ROOT_DIR).string();
+                std::string relativePath = std::filesystem::relative(entry.path(), GET_RESOURCE_ROOT_DIR).string();
                 relativePath = NormalizePathString(relativePath);
                 shaderDef.Load(relativePath);
                 shaderDefinitions[relativePath] = shaderDef;

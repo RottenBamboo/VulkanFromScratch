@@ -50,7 +50,7 @@ namespace RottenBamboo
         //load material file
         this->path = currentPath;
         
-        std::ifstream materialfile(GET_PROJECT_ROOT_DIR + this->path);
+        std::ifstream materialfile(GET_RESOURCE_ROOT_DIR + this->path);
         if (!materialfile.is_open()) 
         {
             RBLOG_INFO("RBMaterial::Load() could not open: " + this->path);
@@ -122,7 +122,7 @@ namespace RottenBamboo
         }
 
         //load meta file
-        currentPath = GET_PROJECT_ROOT_DIR + currentPath + META_EXTENSION;
+        currentPath = GET_RESOURCE_ROOT_DIR + currentPath + META_EXTENSION;
         metaFile.Load(currentPath, data);
     }
 
@@ -148,7 +148,7 @@ namespace RottenBamboo
 
         try 
         {
-            std::filesystem::path matFilePath(GET_PROJECT_ROOT_DIR + matPath);
+            std::filesystem::path matFilePath(GET_RESOURCE_ROOT_DIR + matPath);
             RBLOG_INFO("RBMaterial::Save() matFilePath : " + matFilePath.string());
             if (matFilePath.has_parent_path()) 
             {

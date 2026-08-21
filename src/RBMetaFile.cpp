@@ -76,7 +76,7 @@ namespace RottenBamboo
         bool fileExists;
         try
         {
-            std::filesystem::path matMetaFilePath(GET_PROJECT_ROOT_DIR + savePath);
+            std::filesystem::path matMetaFilePath(GET_RESOURCE_ROOT_DIR + savePath);
             RBLOG_INFO("RBMaterial::Save() matMetaFilePath : " + matMetaFilePath.string());
             if (matMetaFilePath.has_parent_path()) 
             {
