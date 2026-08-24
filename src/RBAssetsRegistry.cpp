@@ -1,5 +1,6 @@
 
 #include "RBAssetsRegistry.h"
+#include <efsw/efsw.hpp>
 namespace RottenBamboo
 {
     RBAssetsRegistry::RBAssetsRegistry()

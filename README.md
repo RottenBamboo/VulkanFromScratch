@@ -30,6 +30,7 @@ git config --file .gitmodules submodule.external/SDL.url https://github.com/libs
 git config --file .gitmodules submodule.external/ImGuizmo.url https://github.com/CedricGuillemet/ImGuizmo.git
 git config --file .gitmodules submodule.external/SPIRV-Reflect.url https://github.com/KhronosGroup/SPIRV-Reflect.git
 git config --file .gitmodules submodule.external/SPIRV-Cross.url https://github.com/KhronosGroup/SPIRV-Cross.git
+git config --file .gitmodules submodule.external/efsw.url https://github.com/SpartanJ/efsw.git
 git submodule sync
 ```
 then clone all submodule one more time
@@ -46,6 +47,7 @@ chmod +x external/buildZlib.sh
 chmod +x external/buildAssimp.sh 
 chmod +x external/buildSDL3.sh 
 chmod +x external/buildSPIRV-Cross.sh 
+chmod +x external/buildEfsw.sh 
 ```
 
 ## MacOS Windows Platform Build Library
@@ -56,6 +58,7 @@ cd external
 ./buildAssimp.sh
 ./buildSDL3.sh
 ./buildSPIRV-Cross.sh
+./buildEfsw.sh
 ```
 
 ## MacOS Platform Android Build Library

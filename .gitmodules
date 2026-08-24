@@ -19,3 +19,6 @@
 [submodule "external/SPIRV-Cross"]
 	path = external/SPIRV-Cross
 	url = git@github.com:KhronosGroup/SPIRV-Cross.git
+[submodule "external/efsw"]
+	path = external/efsw
+	url = git@github.com:SpartanJ/efsw.git

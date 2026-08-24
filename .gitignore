@@ -19,3 +19,8 @@ thirdparty/
 /external/SDL/
 /external/imgui/
 /external/ImGuizmo/
+/external/SPIRV-Cross/
+/external/efsw/
+
+#resource
+/resource/Cache/

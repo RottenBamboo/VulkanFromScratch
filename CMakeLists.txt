@@ -36,7 +36,6 @@ endif()
 # set GLM path
 set(GLM_PATH "${CMAKE_SOURCE_DIR}/external/glm/0.9.9.8/include")
 include_directories(${GLM_PATH})
-# set GLM path
 
 set(FEATURE_PATH "${CMAKE_SOURCE_DIR}/feature")
 include_directories(${FEATURE_PATH})
@@ -52,6 +51,7 @@ if(CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "android.toolchain.cmak
     set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui")
     set(IMGUIZMO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo")
     set(SPIRV_CROSS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdpartyAndroid/SPIRV-Cross/lib")
+    set(EFSW_LIB_DIR "${CMAKE_SOURCE_DIR}/thirdpartyAndroid/efsw/lib")  
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
@@ -59,6 +59,7 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui")
     set(IMGUIZMO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo")
     set(SPIRV_CROSS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/SPIRV-Cross/lib")
+    set(EFSW_LIB_DIR "${CMAKE_SOURCE_DIR}/thirdparty/efsw/lib")     
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     set(ASSIMP_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/assimp/lib")
     set(ZLIB_LIB_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/zlib/lib")
@@ -66,6 +67,7 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui")
     set(IMGUIZMO_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ImGuizmo")
     set(SPIRV_CROSS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/SPIRV-Cross/lib")
+    set(EFSW_LIB_DIR "${CMAKE_SOURCE_DIR}/thirdparty/efsw/lib")   
 endif()
 
 # set third party include path
@@ -75,6 +77,7 @@ set(ASSIMP_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/external/assimp/include")
 set(SDL_INCLUDE_DIRS "external/SDL/include")
 set(SDL_SPIRV_CROSS_INCLUDE_DIRS "external/SPIRV-Cross")
 set(SDL_SPIRV_CROSS_INCLUDE_DIRS1 "external/SPIRV-Cross/include")
+set(EFSW_INCLUDE_DIRS "external/efsw/include")
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # add source files from src folder
@@ -184,6 +187,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUI_DIR}/backends)
 target_include_directories(${PROJECT_NAME} PUBLIC ${IMGUIZMO_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_SPIRV_CROSS_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_SPIRV_CROSS_INCLUDE_DIRS1})
+target_include_directories(${PROJECT_NAME} PUBLIC ${EFSW_INCLUDE_DIRS})
 
 # find Vulkan SDK
 find_package(Vulkan REQUIRED)
@@ -205,6 +209,7 @@ if(CMAKE_TOOLCHAIN_FILE AND CMAKE_TOOLCHAIN_FILE MATCHES "android.toolchain.cmak
     target_link_libraries(${PROJECT_NAME} ${SPIRV_CROSS_DIR}/libspirv-cross-c.a)
     target_link_libraries(${PROJECT_NAME} ${SPIRV_CROSS_DIR}/libspirv-cross-core.a)
     target_link_libraries(${PROJECT_NAME} ${SPIRV_CROSS_DIR}/libspirv-cross-glsl.a)
+    target_link_libraries(${PROJECT_NAME} ${EFSW_LIB_DIR}/libefsw.a)
     target_link_libraries(${PROJECT_NAME} log)
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     target_compile_definitions(${PROJECT_NAME} PRIVATE __MACOS__=1)
@@ -214,6 +219,7 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     target_link_libraries(${PROJECT_NAME} ${SPIRV_CROSS_DIR}/libspirv-cross-c.a)
     target_link_libraries(${PROJECT_NAME} ${SPIRV_CROSS_DIR}/libspirv-cross-core.a)
     target_link_libraries(${PROJECT_NAME} ${SPIRV_CROSS_DIR}/libspirv-cross-glsl.a)
+    target_link_libraries(${PROJECT_NAME} ${EFSW_LIB_DIR}/libefsw.a)
 
 elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     target_compile_definitions(${PROJECT_NAME} PRIVATE __WINDOWS__=1)
@@ -223,6 +229,7 @@ elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     target_link_libraries(${PROJECT_NAME} ${SPIRV_CROSS_DIR}/libspirv-cross-c.lib)
     target_link_libraries(${PROJECT_NAME} ${SPIRV_CROSS_DIR}/libspirv-cross-core.lib)
     target_link_libraries(${PROJECT_NAME} ${SPIRV_CROSS_DIR}/libspirv-cross-glsl.lib)
+    target_link_libraries(${PROJECT_NAME} ${EFSW_LIB_DIR}/libefsw.lib)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E echo "Executable built at: $<TARGET_FILE:${PROJECT_NAME}>"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
