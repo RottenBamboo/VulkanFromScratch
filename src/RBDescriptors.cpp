@@ -2,8 +2,6 @@
 // Created by rottenbamboo on 2023/6/15.
 //
 
-#pragma once
-
 #include <stb_image.h>
 #include "RBCommon.h"
 #include "RBDescriptors.h"

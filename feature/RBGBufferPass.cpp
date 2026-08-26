@@ -1,7 +1,6 @@
 //
 // Created by rottenbamboo on 2023/5/22.
 //
-#pragma once
 #include "RBPipelineUtils.h"
 #include "RBGBufferPass.h"
 

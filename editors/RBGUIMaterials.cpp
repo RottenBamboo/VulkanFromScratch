@@ -1,4 +1,6 @@
-#pragma once
+//
+// Created by rottenbamboo on 2026/5/17.
+//
 #include "RBGUIMaterials.h"
 #include "RBApplication.h"
 #include <glm/gtc/type_ptr.hpp>

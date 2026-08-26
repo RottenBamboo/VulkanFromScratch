@@ -1,4 +1,6 @@
-#pragma once
+//
+// Created by rottenbamboo on 2026/8/27.
+//
 #include <iostream>
 #include "RBAssetsRegistryListener.h"
 #include "RBApplication.h"

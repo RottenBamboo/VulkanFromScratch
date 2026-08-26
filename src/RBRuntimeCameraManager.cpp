@@ -1,3 +1,6 @@
+//
+// Created by rottenbamboo on 2025/7/6.
+//
 #include "RBRuntimeCameraManager.h"
 #include <glm/gtx/hash.hpp>
 RBRuntimeCameraManager::RBRuntimeCameraManager() {}

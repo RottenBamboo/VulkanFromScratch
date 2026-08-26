@@ -1,4 +1,4 @@
-// 在您的桌面工程源码目录中创建 AndroidMain.cpp
+
 #ifdef __ANDROID__
 
 #include "RBApplication.h"

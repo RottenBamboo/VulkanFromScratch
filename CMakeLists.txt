@@ -220,6 +220,8 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     target_link_libraries(${PROJECT_NAME} ${SPIRV_CROSS_DIR}/libspirv-cross-core.a)
     target_link_libraries(${PROJECT_NAME} ${SPIRV_CROSS_DIR}/libspirv-cross-glsl.a)
     target_link_libraries(${PROJECT_NAME} ${EFSW_LIB_DIR}/libefsw.a)
+    target_link_libraries(${PROJECT_NAME} "-framework CoreFoundation")
+    target_link_libraries(${PROJECT_NAME} "-framework CoreServices")
 
 elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     target_compile_definitions(${PROJECT_NAME} PRIVATE __WINDOWS__=1)

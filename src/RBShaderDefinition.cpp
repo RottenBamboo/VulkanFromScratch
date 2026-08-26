@@ -1,7 +1,6 @@
 //
 // Created by rottenbamboo on 2026/6/2.
 //
-#pragma once
 #include "RBShaderDefinition.h"
 
 #include <fstream>

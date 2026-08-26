@@ -83,7 +83,7 @@ mkdir -p "$INSTALL_DIR"
 if [ "$BUILD_ANDROID" = true ]; then
     cp -vf "$BUILD_DIR"/libefsw.a "$INSTALL_DIR"/libefsw.a
 elif [[ "$OS_NAME" == "Darwin" ]]; then
-    cp -vf "$BUILD_DIR"/libefsw.a "$INSTALL_DIR"/libefsw.a
+    cp -vf "$BUILD_DIR"/libefsw-static.a "$INSTALL_DIR"/libefsw.a
 elif [[ "$OS_NAME" == "MINGW"* || "$OS_NAME" == "MSYS"* || "$OS_NAME" == "CYGWIN"* ]]; then
     cp -vf "$BUILD_DIR"/Debug/efsw-static.lib "$INSTALL_DIR"/libefsw.lib
 else
