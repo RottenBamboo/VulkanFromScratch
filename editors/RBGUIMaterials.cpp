@@ -136,6 +136,10 @@ namespace RottenBamboo
     {
         std::vector<RBDescriptors*>* ptr_Descriptors = RBApplication::GetDescriptors();
         currentMaterialDescriptors = (*ptr_Descriptors)[descsriptorIndex];
+        if(currentMaterialDescriptors == nullptr)
+        {
+            return;
+        }
         int imageCount = currentMaterialDescriptors->rbImageManager.imageBundles.size();
 #ifdef _WIN32
         ClearPreviewTextures();

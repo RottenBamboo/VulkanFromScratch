@@ -59,10 +59,14 @@ namespace RottenBamboo
 
         void Register(const uuids::uuid& guid, const std::string& path) 
         {
-            std::string normalizedPath = NormalizePathString(path);
-            m_GuidToPath[guid] = normalizedPath;
-            m_PathToGuid[normalizedPath] = guid;
-            m_IsDirty = true;
+            auto it = m_GuidToPath.find(guid);
+            if (it == m_GuidToPath.end()) 
+            {
+                std::string normalizedPath = NormalizePathString(path);
+                m_GuidToPath[guid] = normalizedPath;
+                m_PathToGuid[normalizedPath] = guid;
+                m_IsDirty = true;
+            }
         }
 
         void Unregister(const uuids::uuid& guid) 
@@ -182,9 +186,10 @@ namespace RottenBamboo
                 {
                     const std::string path = NormalizePathString(entry.path().string());
                     auto result = ParseMetaFile(path);
-                    if (result.has_value()) {
+                    if (result.has_value()) 
+                    {
                         auto& [guid, assetPath] = result.value();
-                        std::string normalizedPath = NormalizePathString(assetPath);
+                        std::string normalizedPath = NormalizePathString(std::filesystem::relative(assetPath, GET_RESOURCE_ROOT_DIR).string());
                         newGuidToPath[guid] = normalizedPath;
                         newPathToGuid[normalizedPath] = guid;
                     }

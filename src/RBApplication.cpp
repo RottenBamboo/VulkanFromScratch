@@ -78,8 +78,7 @@ namespace RottenBamboo {
         InitializeDevice();
         InitializeCommandBuffer();
         
-        std::string rootPath = GET_PROJECT_ROOT_DIR + "/resource";
-        std::string cachePath = GET_RESOURCE_ROOT_DIR + "Cache/AssetsRegistry.bin";
+        std::string rootPath = GET_PROJECT_ROOT_DIR + "resource";
         assetsRegistry.Initialize(rootPath, cachePath);
         RBApplication::ptr_assetsRegistry = &assetsRegistry;
 
@@ -191,7 +190,9 @@ namespace RottenBamboo {
     {
     }
 
-    RBApplication::~RBApplication() {
+    RBApplication::~RBApplication() 
+    {
+        GetAssetRegistry()->SaveCache(cachePath);
     }
 
     void RBApplication::InitializeWindow()

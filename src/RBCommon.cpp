@@ -20,6 +20,8 @@ const std::string LOW_POLY_TERRAIN_PATH = GET_RESOURCE_ROOT_DIR + "models/low_po
 
 const TexturesInfo fallBackFormat{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, ""};
 
+const std::string cachePath = GET_RESOURCE_ROOT_DIR + "Cache/AssetsRegistry.bin";
+
 const std::string shaderDefinitionFilePath = "shaderDefinition/";
 const std::string materialsFilePath = "materials/";
 const std::string modelsFilePath = GET_RESOURCE_ROOT_DIR + "models/";
