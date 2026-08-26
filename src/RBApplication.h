@@ -20,12 +20,15 @@
 #include <stdexcept>
 #include <iostream>
 #include <string>
+#include <queue>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <chrono>
 #include "uuid.h"
+#include <efsw/efsw.hpp>
 #include "RBAssetsRegistry.h"
+#include "RBAssetsRegistryListener.h"
 
 namespace RottenBamboo 
 {
@@ -57,6 +60,8 @@ namespace RottenBamboo
 
         void InitializeSwapChain();
 
+        void InitializeFileListener();
+
         void transformModelVertex(aiMesh* meshPtr, 
                                           std::vector<Vertex>& vertexBuffer, 
                                           int& vertexWriteIndex, 
@@ -86,6 +91,8 @@ namespace RottenBamboo
         void InitializeShaderDefinition();
 
         void updateDirtyDescriptorSets();
+        
+        void processFileEvents();
 
         std::chrono::high_resolution_clock::time_point lastFrameTime;
 
@@ -146,13 +153,22 @@ namespace RottenBamboo
         UniformBufferShaderVariables uniformShaderVariables{};
 
     private:
+        //file event
+        std::unique_ptr<efsw::FileWatcher> m_FileWatcher;
+        std::unique_ptr<RBAssetsRegistryListener> m_FileListener;
+        std::queue<std::string> m_FileEventQueue;
+        std::mutex m_EventMutex;
 
         void updateUniformBuffer(uint32_t currentImage);
         void InitializeStaticPtr();
 
     public:
     
+        static RBAssetsRegistry* ptr_assetsRegistry;
+
         RBAssetsRegistry assetsRegistry;
+
+        static RBAssetsRegistry* GetAssetRegistry();
 
         static RBGUI* ptr_gui;
 

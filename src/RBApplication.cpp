@@ -21,6 +21,12 @@ namespace RottenBamboo {
         std::vector<RBMaterial>* RBApplication::ptr_Materials = nullptr;
         bool RBApplication::descriptorSetsUpdate = false;
         std::vector<ImageResourcePtr> RBApplication::oldImageResourceVec;
+        RBAssetsRegistry* RBApplication::ptr_assetsRegistry;
+        
+        RBAssetsRegistry* RBApplication::GetAssetRegistry()
+        {
+            return RBApplication::ptr_assetsRegistry;
+        }
         
         RBGUI* RBApplication::GetGUI() 
         {
@@ -75,6 +81,7 @@ namespace RottenBamboo {
         std::string rootPath = GET_PROJECT_ROOT_DIR + "/resource";
         std::string cachePath = GET_RESOURCE_ROOT_DIR + "Cache/AssetsRegistry.bin";
         assetsRegistry.Initialize(rootPath, cachePath);
+        RBApplication::ptr_assetsRegistry = &assetsRegistry;
 
         model_paths.insert({0, MODEL_PATH});
         model_paths.insert({1, SAMURI_PATH});
@@ -123,6 +130,8 @@ namespace RottenBamboo {
         
         InitializeMatrix();
         InitializeEditorMaterial();
+        InitializeFileListener();
+        
         std::cout << "RBApplication::RBApplication()" << std::endl;
             RBLOG_INFO("RBApplication::RBApplication()");
     }
@@ -221,6 +230,18 @@ namespace RottenBamboo {
         swapChain.InitializeSwapChain();
         std::cout << "RBApplication::InitializeSwapChain()" << std::endl;
             RBLOG_INFO("RBApplication::InitializeSwapChain()");
+    }
+
+    void RBApplication::InitializeFileListener()
+    {
+        m_FileListener = std::make_unique<RBAssetsRegistryListener>(m_FileEventQueue, m_EventMutex);
+        m_FileWatcher = std::make_unique<efsw::FileWatcher>();
+        
+        std::string watchPath = std::filesystem::absolute(GET_RESOURCE_ROOT_DIR).string();
+        m_FileWatcher->addWatch(watchPath, m_FileListener.get(), true);
+        m_FileWatcher->watch();
+    
+    RBLOG_INFO("File watcher started on: " + watchPath);
     }
 
     void RBApplication::InitializeBuffers()
@@ -658,6 +679,9 @@ void RBApplication::processModelNode(
 
     void RBApplication::drawFrame()
     {
+        //for function 
+        processFileEvents();
+
         vkWaitForFences(device.device, 1, &swapChain.inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
         vkResetFences(device.device, 1, &swapChain.inFlightFences[currentFrame]);
@@ -752,6 +776,17 @@ void RBApplication::processModelNode(
         }
 
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+    }
+
+    void RBApplication::processFileEvents()
+    {
+        std::lock_guard<std::mutex> lock(m_EventMutex);
+        while (!m_FileEventQueue.empty()) 
+        {
+            std::string path = m_FileEventQueue.front();
+            m_FileEventQueue.pop();
+            std::cout << "[DrawFrame] File event: " << path << std::endl;
+        }
     }
 
 }

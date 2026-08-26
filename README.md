@@ -68,6 +68,7 @@ cd external
 ./buildAssimp.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 ./buildSDL3.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 ./buildSPIRV-Cross.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
+./buildEfsw.sh -android -ndk ${HOME}/Library/Android/sdk/ndk/29.0.14206865
 ```
 
 ## Windows Platform Android Build Library
@@ -77,6 +78,7 @@ cd external
 ./buildAssimp.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 ./buildSDL3.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 ./buildSPIRV-Cross.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
+./buildEfsw.sh -android -ndk ${HOME}\\AppData\\Local\\Android\\Sdk\\ndk\\29.0.14206865
 ```
 
 ## Varies Platform Shader compile
