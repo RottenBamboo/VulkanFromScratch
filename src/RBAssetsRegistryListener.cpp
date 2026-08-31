@@ -20,7 +20,6 @@ namespace RottenBamboo
         bool isMetaFile = false;
         if(metaPath.has_extension() && metaPath.extension() == ".meta")
         {
-            m_metaFile.Load(fullPath, data);
             isMetaFile = true;
         }
         switch (action) 
@@ -28,6 +27,7 @@ namespace RottenBamboo
             case efsw::Actions::Add:
                 if(isMetaFile)
                 {
+                    m_metaFile.Load(fullPath, data);
                     RBApplication::GetAssetRegistry()->Register(data.m_GUID, fullPath);
                 }
                 std::cout << "[Add] " << fullPath << std::endl;
@@ -44,6 +44,7 @@ namespace RottenBamboo
             case efsw::Actions::Modified:
                 if(isMetaFile)
                 {
+                    m_metaFile.Load(fullPath, data);
                     RBApplication::GetAssetRegistry()->Register(data.m_GUID, fullPath);
                 }
                 std::cout << "[Modified] " << fullPath << std::endl;
@@ -52,6 +53,7 @@ namespace RottenBamboo
             case efsw::Actions::Moved:
                 if(isMetaFile)
                 {
+                    m_metaFile.Load(fullPath, data);
                     RBApplication::GetAssetRegistry()->Register(data.m_GUID, fullPath);
                 }
                 std::cout << "[Moved] " << oldFilename << " -> " << fullPath << std::endl;

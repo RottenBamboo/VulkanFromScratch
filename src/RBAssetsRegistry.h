@@ -5,6 +5,7 @@
 #pragma once
 #include "uuid.h"
 #include "RBMetaFile.h"
+namespace fs = std::filesystem;
 
 namespace RottenBamboo
 {
@@ -31,6 +32,10 @@ namespace RottenBamboo
 
         std::optional<std::string> GetPath(const uuids::uuid& guid) const 
         {
+            if(m_GuidToPath.empty())
+            {
+                return std::nullopt;
+            }
             auto it = m_GuidToPath.find(guid);
             if (it != m_GuidToPath.end()) 
             {
@@ -42,6 +47,10 @@ namespace RottenBamboo
         std::optional<uuids::uuid> GetGuid(const std::string& path) const 
         {
             std::string normalizedPath = NormalizePathString(path);
+            if(m_PathToGuid.empty())
+            {
+                return std::nullopt;
+            }
             auto it = m_PathToGuid.find(normalizedPath);
             if (it != m_PathToGuid.end()) 
             {
@@ -59,21 +68,24 @@ namespace RottenBamboo
 
         void Register(const uuids::uuid& guid, const std::string& path) 
         {
-            auto it_guid = m_GuidToPath.find(guid);
-            auto it_path = m_PathToGuid.find(path);
+            std::string normalizedPath = NormalizePathString(path);
+            std::string relativePath = fs::relative(normalizedPath, GET_RESOURCE_ROOT_DIR);
+            RemoveExtension(relativePath);
+
+            auto it_path = m_GuidToPath.find(guid);
+            auto it_guid = m_PathToGuid.find(relativePath);
             
-            if(it_guid != m_GuidToPath.end())
+            if(it_path != m_GuidToPath.end())
             {
-                m_GuidToPath.erase(it_guid);
+                m_GuidToPath.erase(it_path);
             }
-            if(it_path != m_PathToGuid.end())
+            if(it_guid != m_PathToGuid.end())
             {
-                m_PathToGuid.erase(it_path);
+                m_PathToGuid.erase(it_guid);
             }
 
-            std::string normalizedPath = NormalizePathString(path);
-            m_GuidToPath[guid] = normalizedPath;
-            m_PathToGuid[normalizedPath] = guid;
+            m_GuidToPath[guid] = relativePath;
+            m_PathToGuid[relativePath] = guid;
             m_IsDirty = true;
         }
 

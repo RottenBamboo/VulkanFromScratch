@@ -7,6 +7,8 @@
 #include <iostream>
 #include <regex>
 #include <sstream>
+#include "RBApplication.h"
+namespace fs = std::filesystem;
 
 namespace RottenBamboo
 {
@@ -15,7 +17,11 @@ namespace RottenBamboo
         const std::string currentPath = loadPath;
         std::ifstream metafile(currentPath);
 
-        if (!metafile.is_open()) 
+        
+        std::filesystem::path matMetaFilePath(currentPath);
+        fs::path relativePath = fs::relative(matMetaFilePath, GET_RESOURCE_ROOT_DIR);
+        std::optional<uuids::uuid> guid = RBApplication::GetAssetRegistry()->GetGuid(relativePath.string());
+        if (!metafile.is_open() && !guid.has_value()) 
         {
             RBLOG_INFO("RBMaterial::Load() could not open meta file: " + currentPath);
             std::cout << "RBMaterial::Load() could not open meta file: " << currentPath << std::endl;
@@ -24,7 +30,6 @@ namespace RottenBamboo
             std::cout << "RBMaterial::Load() Regenerate meta file  " << currentPath << std::endl;
             
             //regenerate meta file
-            std::filesystem::path matMetaFilePath(currentPath);
             std::filesystem::create_directories(matMetaFilePath.parent_path());
 
             std::ofstream outFile(matMetaFilePath, std::ios::trunc);

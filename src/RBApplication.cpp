@@ -21,7 +21,7 @@ namespace RottenBamboo {
         std::vector<RBMaterial>* RBApplication::ptr_Materials = nullptr;
         bool RBApplication::descriptorSetsUpdate = false;
         std::vector<ImageResourcePtr> RBApplication::oldImageResourceVec;
-        RBAssetsRegistry* RBApplication::ptr_assetsRegistry;
+        RBAssetsRegistry* RBApplication::ptr_assetsRegistry = new RBAssetsRegistry();
         
         RBAssetsRegistry* RBApplication::GetAssetRegistry()
         {
@@ -193,6 +193,8 @@ namespace RottenBamboo {
     RBApplication::~RBApplication() 
     {
         GetAssetRegistry()->SaveCache(cachePath);
+        ptr_assetsRegistry->~RBAssetsRegistry();
+        ptr_assetsRegistry = nullptr;
     }
 
     void RBApplication::InitializeWindow()

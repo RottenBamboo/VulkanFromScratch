@@ -94,6 +94,16 @@ namespace RottenBamboo
         
         void processFileEvents();
 
+    private:
+        //file event
+        std::unique_ptr<efsw::FileWatcher> m_FileWatcher;
+        std::unique_ptr<RBAssetsRegistryListener> m_FileListener;
+        std::queue<std::string> m_FileEventQueue;
+        std::mutex m_EventMutex;
+    public:
+
+        RBAssetsRegistry assetsRegistry;
+        
         std::chrono::high_resolution_clock::time_point lastFrameTime;
 
         RBWindows windows{WIDTH, HEIGHT, "Vulkan"};
@@ -152,21 +162,12 @@ namespace RottenBamboo
 
         UniformBufferShaderVariables uniformShaderVariables{};
 
-    private:
-        //file event
-        std::unique_ptr<efsw::FileWatcher> m_FileWatcher;
-        std::unique_ptr<RBAssetsRegistryListener> m_FileListener;
-        std::queue<std::string> m_FileEventQueue;
-        std::mutex m_EventMutex;
-
         void updateUniformBuffer(uint32_t currentImage);
         void InitializeStaticPtr();
 
     public:
     
         static RBAssetsRegistry* ptr_assetsRegistry;
-
-        RBAssetsRegistry assetsRegistry;
 
         static RBAssetsRegistry* GetAssetRegistry();
 
