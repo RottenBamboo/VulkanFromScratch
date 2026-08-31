@@ -59,14 +59,22 @@ namespace RottenBamboo
 
         void Register(const uuids::uuid& guid, const std::string& path) 
         {
-            auto it = m_GuidToPath.find(guid);
-            if (it == m_GuidToPath.end()) 
+            auto it_guid = m_GuidToPath.find(guid);
+            auto it_path = m_PathToGuid.find(path);
+            
+            if(it_guid != m_GuidToPath.end())
             {
-                std::string normalizedPath = NormalizePathString(path);
-                m_GuidToPath[guid] = normalizedPath;
-                m_PathToGuid[normalizedPath] = guid;
-                m_IsDirty = true;
+                m_GuidToPath.erase(it_guid);
             }
+            if(it_path != m_PathToGuid.end())
+            {
+                m_PathToGuid.erase(it_path);
+            }
+
+            std::string normalizedPath = NormalizePathString(path);
+            m_GuidToPath[guid] = normalizedPath;
+            m_PathToGuid[normalizedPath] = guid;
+            m_IsDirty = true;
         }
 
         void Unregister(const uuids::uuid& guid) 
@@ -74,8 +82,12 @@ namespace RottenBamboo
             auto it = m_GuidToPath.find(guid);
             if (it != m_GuidToPath.end()) 
             {
-                m_PathToGuid.erase(it->second);
                 m_GuidToPath.erase(it);
+                auto it_path = m_PathToGuid.find(it->second);
+                if (it_path != m_PathToGuid.end()) 
+                {
+                    m_PathToGuid.erase(it_path);
+                }
                 m_IsDirty = true;
             }
         }
