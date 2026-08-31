@@ -15,7 +15,7 @@ namespace RottenBamboo {
 
         RBGUI* RBApplication::ptr_gui = nullptr;
         RBResourceShader* RBApplication::ptr_resourceShader = nullptr;
-        std::unordered_map<std::string, RBShaderDefinition>* RBApplication::ptr_shaderDefinition = nullptr;
+        std::unordered_map<uuids::uuid, RBShaderDefinition>* RBApplication::ptr_shaderDefinition = nullptr;
         std::vector<RBDescriptors*>* RBApplication::ptr_Descriptors = nullptr;
         std::vector<RBDescriptors*> RBApplication::updatedDescriptors{};
         std::vector<RBMaterial>* RBApplication::ptr_Materials = nullptr;
@@ -38,14 +38,14 @@ namespace RottenBamboo {
             return RBApplication::ptr_resourceShader;
         }
 
-        std::unordered_map<std::string, RBShaderDefinition>* RBApplication::GetShaderDefinition() 
+        std::unordered_map<uuids::uuid, RBShaderDefinition>* RBApplication::GetShaderDefinition() 
         {
             return RBApplication::ptr_shaderDefinition;
         }
-        RBShaderDefinition* RBApplication::GetShaderDefinition(const std::string path) 
+        RBShaderDefinition* RBApplication::GetShaderDefinition(const uuids::uuid& guid) 
         {
-            auto it = ptr_shaderDefinition->find(path);
-            return it != ptr_shaderDefinition->end() ? &ptr_shaderDefinition->at(path) : nullptr;
+            auto it = ptr_shaderDefinition->find(guid);
+            return it != ptr_shaderDefinition->end() ? &ptr_shaderDefinition->at(guid) : nullptr;
         }
         std::vector<RBDescriptors*>* RBApplication::GetDescriptors()
         {
@@ -69,8 +69,7 @@ namespace RottenBamboo {
 
         RBApplication::RBApplication() 
         {
-        uuids::uuid empty;
-        assert(empty.is_nil());
+        InitializeFileListener();
         lastFrameTime = std::chrono::high_resolution_clock::now();
         cameraManager = std::make_unique<RBRuntimeCameraManager>();
         InitializeWindow();
@@ -92,7 +91,8 @@ namespace RottenBamboo {
 
         for(int i = 0; i < inputShader.size(); i++)
         {
-            RBShaderDefinition& rbShaderDef = shaderDefinitions[inputShader[i].shaderDefinitionPath];
+            std::optional<uuids::uuid> shaderDefGuid = GetAssetRegistry()->GetGuid(inputShader[i].shaderDefinitionPath);
+            RBShaderDefinition& rbShaderDef = shaderDefinitions[shaderDefGuid.value()];
             RBShaderDefinitionData* definitionData = &rbShaderDef.GetData();
             std::string pathShader;
 
@@ -129,7 +129,6 @@ namespace RottenBamboo {
         
         InitializeMatrix();
         InitializeEditorMaterial();
-        InitializeFileListener();
         
         std::cout << "RBApplication::RBApplication()" << std::endl;
             RBLOG_INFO("RBApplication::RBApplication()");
@@ -182,7 +181,8 @@ namespace RottenBamboo {
                 std::string relativePath = std::filesystem::relative(entry.path(), GET_RESOURCE_ROOT_DIR).string();
                 relativePath = NormalizePathString(relativePath);
                 shaderDef.Load(relativePath);
-                shaderDefinitions[relativePath] = shaderDef;
+                std::optional<uuids::uuid> shaderDefGuid = GetAssetRegistry()->GetGuid(relativePath);
+                shaderDefinitions[shaderDefGuid.value()] = shaderDef;
             }
         }
     }

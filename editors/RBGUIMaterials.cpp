@@ -51,14 +51,16 @@ namespace RottenBamboo
     
     static std::vector<std::string> CollectionShaderDefinition()
     {
-        std::unordered_map<std::string, RBShaderDefinition>* shaderDefinition = RBApplication::GetShaderDefinition();
+        std::unordered_map<uuids::uuid, RBShaderDefinition>* shaderDefinition = RBApplication::GetShaderDefinition();
         int shaderDefinitionCount = (*shaderDefinition).size();
         std::vector<std::string> out;
         out.resize(shaderDefinitionCount);
         auto itr = shaderDefinition->begin();
         for(int i = 0; itr != shaderDefinition->end(); itr++, i++)
         {
-            out[i] = (*itr).first;
+            uuids::uuid shaderDefGuid = (*itr).first;
+            std::string shaderDefPath = RBApplication::GetAssetRegistry()->GetPath(shaderDefGuid).value();
+            out[i] = shaderDefPath;
         }
         std::sort(out.begin(), out.end());
         return out;
@@ -218,10 +220,12 @@ namespace RottenBamboo
 
         //ImGui::Text("Current Shader: %s", material.shaderName.empty() ? "<None>" : material.shaderName.c_str());
         char shaderPathBuffer[128];
-        CopyStringToBuffer(shaderPathBuffer, sizeof(shaderPathBuffer), material.shaderDefinationName);
+        std::string shaderDefPath = RBApplication::GetAssetRegistry()->GetPath(material.shaderDefinitionGuid).value();
+        CopyStringToBuffer(shaderPathBuffer, sizeof(shaderPathBuffer), shaderDefPath);
+        
         if (ImGui::InputText("shaderDefinationName", shaderPathBuffer, sizeof(shaderPathBuffer)))
         {
-            material.shaderDefinationName = NormalizePathString(shaderPathBuffer);
+            //material.shaderDefinationName = RBApplication::GetAssetRegistry()->GetPath(material.shaderDefinitionGuid).value();
         }
         bool isChangedShaderRefresh = false;
         if (ImGui::Button("Select Shader..."))
@@ -259,10 +263,12 @@ namespace RottenBamboo
                             RBGUIMaterials::SetMaterial(currentMaterial, index);
                         }
                         currentSelectedShader = s;
-                        material.shaderDefinition = *RBApplication::GetShaderDefinition(s);
+                        std::string shaderDefPath = NormalizePathString(s);
+                        uuids::uuid shaderDefGuid = RBApplication::GetAssetRegistry()->GetGuid(shaderDefPath).value();
+                        material.shaderDefinition = *RBApplication::GetShaderDefinition(shaderDefGuid);
                         std::string shaderReflectionPath = material.shaderDefinition.GetData().stages[(int)RBShaderStageKind::Fragment].path;
                         material.shaderReflection = *RBApplication::GetResourceShader()->GetCustomReflection(shaderReflectionPath);
-                        material.shaderDefinationName = NormalizePathString(s);
+                        material.shaderDefinitionGuid = shaderDefGuid;
                         ImGui::CloseCurrentPopup();
                     }
                     index++;

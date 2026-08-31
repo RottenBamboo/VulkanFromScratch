@@ -15,7 +15,7 @@ namespace RottenBamboo
     struct RBMaterialData : public RBData 
     {
         std::string name = "New Material";
-        std::string shaderDefinationName = "New Shader";
+        uuids::uuid shaderDefinitionGuid;
         RBShaderDefinition shaderDefinition;
         RBShaderReflection shaderReflection;
     };

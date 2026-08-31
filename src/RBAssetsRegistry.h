@@ -15,10 +15,10 @@ namespace RottenBamboo
         ~RBAssetsRegistry();
         bool Initialize(const std::string& rootPath, const std::string& cachePath) 
         {            
-            if (LoadCache(cachePath)) 
-            {
-                return true;
-            }
+            // if (LoadCache(cachePath)) 
+            // {
+            //     return true;
+            // }
 
             if (!ScanDirectory(rootPath)) 
             {
@@ -188,6 +188,7 @@ namespace RottenBamboo
                     auto result = ParseMetaFile(path);
                     if (result.has_value()) 
                     {
+                        RemoveExtension(result.value().second);
                         auto& [guid, assetPath] = result.value();
                         std::string normalizedPath = NormalizePathString(std::filesystem::relative(assetPath, GET_RESOURCE_ROOT_DIR).string());
                         newGuidToPath[guid] = normalizedPath;

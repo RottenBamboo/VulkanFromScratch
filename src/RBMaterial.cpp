@@ -65,35 +65,30 @@ namespace RottenBamboo
             const std::string text = buffer.str();
             std::string shaderDefinitionGUID = "";
             FindStringValue(text, "name", loaded.name);
-            FindStringValue(text, "shaderDefinationName", shaderDefinitionGUID);
+            FindStringValue(text, "shaderDefinitionGuid", shaderDefinitionGUID);
             std::optional<uuids::uuid> id  = uuids::uuid::from_string(shaderDefinitionGUID);
             if(id.has_value())
             {
-                std::optional<std::string> shaderDefinitionPath = RBApplication::GetAssetRegistry()->GetPath(id.value());
-                if(shaderDefinitionPath.has_value())
-                {
-                    std::string path = shaderDefinitionPath.value();
-                    RemoveExtension(path);
-                    loaded.shaderDefinationName = path;
-                }
+                loaded.shaderDefinitionGuid = id.value();
             }
             else
             {
-                std::unordered_map<std::string, RBShaderDefinition>* ptr_shaderDefinition = RBApplication::GetShaderDefinition();
+                std::unordered_map<uuids::uuid, RBShaderDefinition>* ptr_shaderDefinition = RBApplication::GetShaderDefinition();
                 if(ptr_shaderDefinition && !ptr_shaderDefinition->empty())
                 {
-                    loaded.shaderDefinationName = RBApplication::GetShaderDefinition()->begin()->first;
+                    uuids::uuid guid = RBApplication::GetShaderDefinition()->begin()->first;
+                    loaded.shaderDefinitionGuid = guid;
                 }
             }
 
-            RBShaderDefinition* shaderDef = RBApplication::GetShaderDefinition(loaded.shaderDefinationName);
+            RBShaderDefinition* shaderDef = RBApplication::GetShaderDefinition(loaded.shaderDefinitionGuid);
             if(shaderDef == nullptr)
             {
                 return;
             }
             loaded.shaderDefinition = *shaderDef;
             
-            std::string shaderPathName = RBApplication::GetShaderDefinition(loaded.shaderDefinationName)->GetData().stages[(int)RBShaderStageKind::Fragment].path;
+            std::string shaderPathName = RBApplication::GetShaderDefinition(loaded.shaderDefinitionGuid)->GetData().stages[(int)RBShaderStageKind::Fragment].path;
             loaded.shaderReflection = *RBApplication::GetResourceShader()->GetCustomReflection(shaderPathName);
             
             if(loaded.shaderReflection.descriptorSets.size() > 0)
@@ -133,7 +128,7 @@ namespace RottenBamboo
 
             //data. = std::move(loaded);
             data.name = loaded.name;
-            data.shaderDefinationName = loaded.shaderDefinationName;
+            data.shaderDefinitionGuid = loaded.shaderDefinitionGuid;
             data.shaderDefinition = loaded.shaderDefinition;
             data.shaderReflection = loaded.shaderReflection;
             RBLOG_INFO("RBMaterial::Load()");
@@ -188,14 +183,13 @@ namespace RottenBamboo
             }
 
             std::string materialFileData = "{\n";
-            std::string shaderDefinitionName = "";
-            std::optional<uuids::uuid> result = RBApplication::GetAssetRegistry()->GetGuid(GET_RESOURCE_ROOT_DIR + data.shaderDefinationName + META_EXTENSION);
-            if(result.has_value())
+            std::string guidStr = "";
+            if(!data.shaderDefinitionGuid.is_nil())
             {
-                shaderDefinitionName = uuids::to_string(result.value());
+                guidStr = uuids::to_string(data.shaderDefinitionGuid);
             }
             materialFileData += "    \"name\": \"" + data.name + "\",\n";
-            materialFileData += "    \"shaderDefinationName\": \"" + shaderDefinitionName + "\"";
+            materialFileData += "    \"shaderDefinitionGuid\": \"" + guidStr + "\"";
 
             if(materialData.shaderReflection.descriptorSets.size() > 0)
             {

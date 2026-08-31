@@ -1,6 +1,6 @@
 {
     "name": "2terrain_material",
-    "shaderDefinationName": "ce60d2f1-45ba-4357-8ebc-b90cf7a02c48",
+    "shaderDefinitionGuid": "ce60d2f1-45ba-4357-8ebc-b90cf7a02c48",
     "normalMap": "textures/AlienPlanet1_FinalBump1.png",
     "albedoMap": "textures/AlienPlanet1_Diffuse.jpg",
     "emissionMap": "textures/AlienPlanet1_Wetness.png",

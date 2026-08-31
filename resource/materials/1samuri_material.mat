@@ -1,6 +1,6 @@
 {
     "name": "1samuri_material",
-    "shaderDefinationName": "ce60d2f1-45ba-4357-8ebc-b90cf7a02c48",
+    "shaderDefinitionGuid": "ce60d2f1-45ba-4357-8ebc-b90cf7a02c48",
     "normalMap": "textures/samuri_normal.jpeg",
     "albedoMap": "textures/samuri_diffuse.jpeg",
     "emissionMap": "textures/samuri_specular_glossiness.png",

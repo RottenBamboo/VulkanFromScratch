@@ -108,7 +108,7 @@ namespace RottenBamboo
 
         RBGUI gui{device, windows};
 
-        std::unordered_map<std::string, RBShaderDefinition> shaderDefinitions;
+        std::unordered_map<uuids::uuid, RBShaderDefinition> shaderDefinitions;
 
         RBMaterial editorMaterial{"", device, commandBuffer};
 
@@ -178,11 +178,11 @@ namespace RottenBamboo
 
         static RBResourceShader* GetResourceShader();
 
-        static std::unordered_map<std::string, RBShaderDefinition>* ptr_shaderDefinition;
+        static std::unordered_map<uuids::uuid, RBShaderDefinition>* ptr_shaderDefinition;
 
-        static std::unordered_map<std::string, RBShaderDefinition>* GetShaderDefinition();
+        static std::unordered_map<uuids::uuid, RBShaderDefinition>* GetShaderDefinition();
 
-        static RBShaderDefinition* GetShaderDefinition(const std::string path);
+        static RBShaderDefinition* GetShaderDefinition(const uuids::uuid& guid);
 
         static std::vector<RBDescriptors*>* ptr_Descriptors;
 
