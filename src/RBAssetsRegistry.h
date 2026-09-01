@@ -69,7 +69,7 @@ namespace RottenBamboo
         void Register(const uuids::uuid& guid, const std::string& path) 
         {
             std::string normalizedPath = NormalizePathString(path);
-            std::string relativePath = fs::relative(normalizedPath, GET_RESOURCE_ROOT_DIR);
+            std::string relativePath = fs::relative(normalizedPath, GET_RESOURCE_ROOT_DIR).string();
             RemoveExtension(relativePath);
 
             auto it_path = m_GuidToPath.find(guid);
@@ -177,8 +177,12 @@ namespace RottenBamboo
     private:
         std::optional<std::pair<uuids::uuid, std::string>> ParseMetaFile(const std::string& metaPath) 
         {
+            RBData dataSave{};
             std::ifstream file(metaPath);
-            if (!file.is_open()) return std::nullopt;
+            if (!file.is_open())
+            {
+                m_MetaFile.Save(metaPath, dataSave);
+            }
 
             std::filesystem::path metaPathFs(metaPath);
             if (metaPathFs.has_extension() && metaPathFs.extension() != ".meta") 
@@ -186,10 +190,10 @@ namespace RottenBamboo
                 return std::nullopt;
             }
 
-            RBData data{};
-            m_MetaFile.Load(metaPath, data);
+            RBData dataLoad{};
+            m_MetaFile.Load(metaPath, dataLoad);
 
-            return std::make_pair(data.GetGUID(), metaPath);
+            return std::make_pair(dataLoad.GetGUID(), metaPath);
         }
         
         bool ScanDirectory(const std::string& rootPath) 
@@ -206,9 +210,10 @@ namespace RottenBamboo
             
             for (const auto& entry : std::filesystem::recursive_directory_iterator(rootPath)) 
             {
-                if (entry.path().extension() == ".meta") 
+                if (entry.path().extension() != ".meta") 
                 {
-                    const std::string path = NormalizePathString(entry.path().string());
+                    std::string metaPath = entry.path().string() + META_EXTENSION;
+                    const std::string path = NormalizePathString(metaPath);
                     auto result = ParseMetaFile(path);
                     if (result.has_value()) 
                     {

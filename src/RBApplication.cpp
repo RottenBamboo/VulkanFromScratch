@@ -193,7 +193,6 @@ namespace RottenBamboo {
     RBApplication::~RBApplication() 
     {
         GetAssetRegistry()->SaveCache(cachePath);
-        ptr_assetsRegistry->~RBAssetsRegistry();
         ptr_assetsRegistry = nullptr;
     }
 

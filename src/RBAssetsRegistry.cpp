@@ -11,7 +11,13 @@ namespace RottenBamboo
     }
     RBAssetsRegistry::~RBAssetsRegistry()
     {
-        m_GuidToPath.clear();
-        m_PathToGuid.clear();
+        if(!m_GuidToPath.empty())
+        {
+            m_GuidToPath.clear();
+        }
+        if(!m_PathToGuid.empty())
+        {
+            m_PathToGuid.clear();
+        }
     }
 }
