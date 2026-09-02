@@ -3,6 +3,7 @@
 //
 #include "RBResourceShader.h"
 #include "RBPipelineUtils.h"
+#include "RBApplication.h"
 
 #include <vector>
 #include <unordered_map>
@@ -18,7 +19,7 @@ namespace RottenBamboo
 
     }
 
-    void RBResourceShader::Reflect(const std::string& path, const RenderStage shaderPipelineStage, const std::vector<uint32_t>& spirv)
+    void RBResourceShader::Reflect(const std::string& path, const uuids::uuid guid, const std::vector<uint32_t>& spirv)
     {
         if (spirv.size() < 5 || spirv[0] != 0x07230203u)
             return;
@@ -110,7 +111,7 @@ namespace RottenBamboo
 
             if (descType != VK_DESCRIPTOR_TYPE_MAX_ENUM)
             {
-                auto& setInfo = shaderReflection[shaderPipelineStage].descriptorSets[set];
+                auto& setInfo = shaderReflection[guid].descriptorSets[set];
                 setInfo.set = set;
 
                 auto& bindingInfo = setInfo.bindings[binding];
@@ -128,11 +129,10 @@ namespace RottenBamboo
             if (storage == spv::StorageClassPushConstant)
             {
                 VkPushConstantRange range{};
-                //range.stageFlags = stage;
                 range.offset = 0;
                 range.size = compiler.get_declared_struct_size(baseType);
 
-                shaderReflection[shaderPipelineStage].pushConstants.push_back(range);
+                shaderReflection[guid].pushConstants.push_back(range);
                 std::cout << "constant offset " << range.offset << ", constant size " << range.size << std::endl;
                 RBLOG_INFO("constant offset %d, constant size %d", range.offset, range.size);
                 continue;
@@ -198,9 +198,9 @@ namespace RottenBamboo
                     }
                 }
                 const std::string normalizedPath = NormalizePathString(path);
-                shaderReflection[shaderPipelineStage].vertexInputs.push_back(inputAttr);
-                shaderReflection[shaderPipelineStage].shaderPath = normalizedPath;
-                customShaderReflection[normalizedPath] = &shaderReflection[shaderPipelineStage];
+                shaderReflection[guid].vertexInputs.push_back(inputAttr);
+                shaderReflection[guid].shaderPath = normalizedPath;
+                customShaderReflection[normalizedPath] = &shaderReflection[guid];
                 std::cout << "Location:: Binding: " << binding << ", Type: " << typeName << ", Offset: " << currentOffset << std::endl;
                 RBLOG_INFO("Location:: Binding: %d, Type: %s, Offset: %d", binding, typeName.c_str(), currentOffset);
             }
@@ -245,8 +245,9 @@ VkFormat RBResourceShader::SpirvImageFormatToVkFormat(spv::ImageFormat format)
     default:                         return VK_FORMAT_UNDEFINED;
     }
 }
-    void RBResourceShader::Load(RenderStage stage, const std::string& path)
+    void RBResourceShader::Load(uuids::uuid guid)
     {
+        std::string path = GET_RESOURCE_ROOT_DIR + RBApplication::GetAssetRegistry()->GetPath(guid).value();
         auto shaderCode = RBPipelineUtils::readFile(path);
         std::cout << "Loaded shader code from : " << path << std::endl;
         RBLOG_INFO("Loaded shader code from : %s", path.c_str());
@@ -257,19 +258,19 @@ VkFormat RBResourceShader::SpirvImageFormatToVkFormat(spv::ImageFormat format)
             throw std::runtime_error("Char vector size is not aligned to 4 bytes");
         }
         size_t wordCount = codeSize / sizeof(uint32_t);
-        shaderSPIRV[stage] = std::vector<uint32_t>(wordCount);
-        std::memcpy(shaderSPIRV[stage].data(), shaderCode.data(), codeSize);
+        shaderSPIRV[guid] = std::vector<uint32_t>(wordCount);
+        std::memcpy(shaderSPIRV[guid].data(), shaderCode.data(), codeSize);
         RBData data{};
         std::string pathMeta = path;
         pathMeta += META_EXTENSION;
         metaFile.Load(pathMeta, data);
     }
 
-    const std::vector<uint32_t>* RBResourceShader::Get(RenderStage shaderStage) const
+    const std::vector<uint32_t>* RBResourceShader::Get(uuids::uuid guid) const
     {
-        if (shaderSPIRV.find(shaderStage) != shaderSPIRV.end())
+        if (shaderSPIRV.find(guid) != shaderSPIRV.end())
         {
-            return &shaderSPIRV.at(shaderStage);
+            return &shaderSPIRV.at(guid);
         }
         else
         {
@@ -287,16 +288,16 @@ VkFormat RBResourceShader::SpirvImageFormatToVkFormat(spv::ImageFormat format)
         return shaderReflection;
     }
     
-    const RBShaderReflection* RBResourceShader::GetReflection(RenderStage shaderPipelineStage) const
+    const RBShaderReflection* RBResourceShader::GetReflection(uuids::uuid guid) const
     {
-        auto it = shaderReflection.find(shaderPipelineStage);
-        return it != shaderReflection.end() ? &shaderReflection.at(shaderPipelineStage) : nullptr;
+        auto it = shaderReflection.find(guid);
+        return it != shaderReflection.end() ? &shaderReflection.at(guid) : nullptr;
     }
 
-    RBShaderReflection* RBResourceShader::GetReflection(RenderStage shaderPipelineStage)
+    RBShaderReflection* RBResourceShader::GetReflection(uuids::uuid guid)
     {
-        auto it = shaderReflection.find(shaderPipelineStage);
-        return it != shaderReflection.end() ? &shaderReflection[shaderPipelineStage] : nullptr;
+        auto it = shaderReflection.find(guid);
+        return it != shaderReflection.end() ? &shaderReflection[guid] : nullptr;
     }
     
     

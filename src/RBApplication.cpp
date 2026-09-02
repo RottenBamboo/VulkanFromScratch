@@ -10,6 +10,7 @@
 #include "json.h"
 #include <fstream>
 #include <string>
+namespace fs = std::filesystem;
 
 namespace RottenBamboo {
 
@@ -77,54 +78,51 @@ namespace RottenBamboo {
         InitializeDevice();
         InitializeCommandBuffer();
         
+        RBApplication::ptr_assetsRegistry = &assetsRegistry;
+        ptr_shaderDefinition = &shaderDefinitions;
+        ptr_resourceShader = &resourceShader;
+        ptr_Materials = &materialsVec;
+        ptr_Descriptors = &m_pDescriptorsGBuffersVec;
+        ptr_gui = &gui;
+
         std::string rootPath = GET_PROJECT_ROOT_DIR + "resource";
         assetsRegistry.Initialize(rootPath, cachePath);
-        RBApplication::ptr_assetsRegistry = &assetsRegistry;
 
         model_paths.insert({0, MODEL_PATH});
         model_paths.insert({1, SAMURI_PATH});
         model_paths.insert({2, TERRAIN_PATH});
 
         InitializeShaderDefinition();
-        ptr_shaderDefinition = &shaderDefinitions;
         resourceManager.Load<RBModel>(model_paths);
 
-        for(int i = 0; i < inputShader.size(); i++)
+        for(auto it = GetShaderDefinition()->begin(); it != GetShaderDefinition()->end(); it++)
         {
-            std::optional<uuids::uuid> shaderDefGuid = GetAssetRegistry()->GetGuid(inputShader[i].shaderDefinitionPath);
-            RBShaderDefinition& rbShaderDef = shaderDefinitions[shaderDefGuid.value()];
+            RBShaderDefinition& rbShaderDef = shaderDefinitions[it->first];
             RBShaderDefinitionData* definitionData = &rbShaderDef.GetData();
             std::string pathShader;
 
-            if(inputShader[i].pipelineStage == PipelineStage::PIPELINE_STAGE_VERTEX)
+            for(auto itt : definitionData->stages)
             {
-                pathShader = GET_RESOURCE_ROOT_DIR + definitionData->stages[(int)RBShaderStageKind::Vertex].path;
+                pathShader = itt.path;
+
+                auto guid = GetAssetRegistry()->GetGuid(pathShader);
+                resourceShader.Load(guid.value());
+                resourceShader.Reflect(pathShader, guid.value(), *resourceShader.Get(guid.value()));
             }
-            else if (inputShader[i].pipelineStage == PipelineStage::PIPELINE_STAGE_FRAGMENT)
-            {
-                pathShader = GET_RESOURCE_ROOT_DIR + definitionData->stages[(int)RBShaderStageKind::Fragment].path;
-            }
-            
-            resourceShader.Load(inputShader[i].stage, pathShader);
-            resourceShader.Reflect(std::filesystem::relative(pathShader, GET_RESOURCE_ROOT_DIR).string(), inputShader[i].stage, *resourceShader.Get(inputShader[i].stage));
         }
-        RBApplication::ptr_resourceShader = &resourceShader;
 
         InitializeBuffers();
         
         InitializeMaterial();
-        RBApplication::ptr_Materials = &materialsVec;
 
         updatedDescriptors.clear();
         updatedDescriptors.reserve(0);
         InitializeDescriptors();
-        RBApplication::ptr_Descriptors = &m_pDescriptorsGBuffersVec;
 
         InitializeSwapChain();
         InitializeGraphicPipeline();
         InitializeStaticPtr();
 
-        RBApplication::ptr_gui = &gui;
         InitializeGUI();
         
         InitializeMatrix();
@@ -141,14 +139,14 @@ namespace RottenBamboo {
     void RBApplication::InitializeMaterial()
     {
         RBMaterial materialLoadItem{"", device, commandBuffer};
-        auto count = std::distance(std::filesystem::directory_iterator(GET_RESOURCE_ROOT_DIR + materialsFilePath), std::filesystem::directory_iterator{});
+        auto count = std::distance(fs::directory_iterator(GET_RESOURCE_ROOT_DIR + materialsFilePath), fs::directory_iterator{});
         materialsVec.clear();
         materialsVec.reserve(count);
-        for (const auto& entry : std::filesystem::directory_iterator(GET_RESOURCE_ROOT_DIR + materialsFilePath))
+        for (const auto& entry : fs::directory_iterator(GET_RESOURCE_ROOT_DIR + materialsFilePath))
         {
             if (entry.is_regular_file() && entry.path().extension() == MAT_EXTENSION)
             {
-                std::string relativePath = std::filesystem::relative(entry.path(), GET_RESOURCE_ROOT_DIR).string();
+                std::string relativePath = fs::relative(entry.path(), GET_RESOURCE_ROOT_DIR).string();
                 relativePath = NormalizePathString(relativePath);
                 materialLoadItem.Load(relativePath);
                 materialsVec.push_back(materialLoadItem);
@@ -158,32 +156,13 @@ namespace RottenBamboo {
     }
     void RBApplication::InitializeShaderDefinition()
     {
-        std::vector<std::filesystem::directory_entry> entries;
-        // for (const auto& entry : std::filesystem::directory_iterator(GET_RESOURCE_ROOT_DIR + shaderDefinitionFilePath)) 
-        // {
-        //     if (entry.is_regular_file()) 
-        //     {
-        //         entries.push_back(entry);
-        //     }
-        // }
-        // std::sort(entries.begin(), entries.end(),[](const std::filesystem::directory_entry& a,const std::filesystem::directory_entry& b) 
-        // {
-        //     return a.path().filename().string() < b.path().filename().string();
-        // });
-
-        //for (const auto& entry : entries) 
-
-        for (const auto& entry : std::filesystem::directory_iterator(GET_RESOURCE_ROOT_DIR + shaderDefinitionFilePath))
+        int shaderDefSize = GetShaderDefinition()->size();
+        for(auto it = GetShaderDefinition()->begin(); it != GetShaderDefinition()->end(); it++)
         {
-            if (entry.is_regular_file() && entry.path().extension() == SHADER_EXTENSION)
-            {
-                RBShaderDefinition shaderDef;
-                std::string relativePath = std::filesystem::relative(entry.path(), GET_RESOURCE_ROOT_DIR).string();
-                relativePath = NormalizePathString(relativePath);
-                shaderDef.Load(relativePath);
-                std::optional<uuids::uuid> shaderDefGuid = GetAssetRegistry()->GetGuid(relativePath);
-                shaderDefinitions[shaderDefGuid.value()] = shaderDef;
-            }
+            RBShaderDefinition shaderDef;
+            std::string relativePath = GetAssetRegistry()->GetPath(it->first).value();
+            shaderDef.Load(relativePath);
+            it->second = shaderDef;
         }
     }
     void RBApplication::InitializeStaticPtr()
@@ -239,7 +218,7 @@ namespace RottenBamboo {
         m_FileListener = std::make_unique<RBAssetsRegistryListener>(m_FileEventQueue, m_EventMutex);
         m_FileWatcher = std::make_unique<efsw::FileWatcher>();
         
-        std::string watchPath = std::filesystem::absolute(GET_RESOURCE_ROOT_DIR).string();
+        std::string watchPath = fs::absolute(GET_RESOURCE_ROOT_DIR).string();
         m_FileWatcher->addWatch(watchPath, m_FileListener.get(), true);
         m_FileWatcher->watch();
     
@@ -334,19 +313,52 @@ namespace RottenBamboo {
         }
         
         m_pDescriptorsGBuffersVec.reserve(materialsVec.size());
+        
+        uuids::uuid guidVertex;
+        uuids::uuid guidFragment;
+        std::string pathShader;
         for(int i = 0; i < m_descriptorsGBuffersVec.size(); i++)
         {
-            m_descriptorsGBuffersVec[i].get()->InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
+            RBShaderDefinition* shaderDef = GetShaderDefinition(materialsVec[i].GetData().shaderDefinitionGuid);
+            for(int i = 0; i < shaderDef->GetData().stages.size(); i++)
+            {
+                pathShader = shaderDef->GetData().stages[i].path;
+                
+                switch(shaderDef->GetData().stages[i].stage)
+                {
+                    case RBShaderStageKind::Vertex:
+                        guidVertex = GetAssetRegistry()->GetGuid(pathShader).value();
+                        break;
+                    case RBShaderStageKind::Fragment:
+                        guidFragment = GetAssetRegistry()->GetGuid(pathShader).value();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            m_descriptorsGBuffersVec[i].get()->InitializeDescriptors(resourceShader.GetReflection(guidVertex), resourceShader.GetReflection(guidFragment));
             m_pDescriptorsGBuffersVec.push_back(m_descriptorsGBuffersVec[i].get());
         }
 
-        descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_GBUFFER_VERTEX), resourceShader.GetReflection(RENDER_STAGE_GBUFFER_FRAGMENT));
+        descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(guidVertex), resourceShader.GetReflection(guidFragment));
         //after GBuffer pass descriptors
-        descriptorsSkyBox.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_POST_PROCESSING_VERTEX), resourceShader.GetReflection(RENDER_STAGE_POST_PROCESSING_FRAGMENT));
+        auto skyShaderGuid = GetAssetRegistry()->GetGuid(SKY_SHADER_PATH);
+        RBShaderDefinition* shaderDefSky = GetShaderDefinition(skyShaderGuid.value());
+        std::string pathShaderVertex = shaderDefSky->GetData().stages[0].path;
+        guidVertex = GetAssetRegistry()->GetGuid(pathShaderVertex).value();
+        std::string pathShaderFragment = shaderDefSky->GetData().stages[1].path;
+        guidFragment = GetAssetRegistry()->GetGuid(pathShaderFragment).value();
+        descriptorsSkyBox.InitializeDescriptors(resourceShader.GetReflection(guidVertex), resourceShader.GetReflection(guidFragment));
 
-        descriptorsLighting.InitializeDescriptors(resourceShader.GetReflection(RENDER_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(RENDER_STAGE_LIGHTING_FRAGMENT), true);
+        auto lightingShaderGuid = GetAssetRegistry()->GetGuid(LIGHTING_SHADER_PATH);
+        RBShaderDefinition* shaderDefLighting = GetShaderDefinition(lightingShaderGuid.value());
+        pathShaderVertex = shaderDefLighting->GetData().stages[0].path;
+        guidVertex = GetAssetRegistry()->GetGuid(pathShaderVertex).value();
+        pathShaderFragment = shaderDefLighting->GetData().stages[1].path;
+        guidFragment = GetAssetRegistry()->GetGuid(pathShaderFragment).value();
+        descriptorsLighting.InitializeDescriptors(resourceShader.GetReflection(guidVertex), resourceShader.GetReflection(guidFragment), true);
         
-        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, attachmentParams, depthParams, resourceShader.GetReflection(RENDER_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(RENDER_STAGE_LIGHTING_FRAGMENT), true);
+        descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent, attachmentParams, depthParams, resourceShader.GetReflection(guidVertex), resourceShader.GetReflection(guidFragment), true);
         std::cout << "RBApplication::InitializeDescriptors(const RBResourceShader& resourceShader)" << std::endl;
             RBLOG_INFO("RBApplication::InitializeDescriptors(const RBResourceShader& resourceShader)");
     }
@@ -760,7 +772,17 @@ void RBApplication::processModelNode(
 
             descriptorsAttachment.ReleaseAllResource();
             RBSwapChain::SetSwapChainExtent(device, windows);
-            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent,attachmentParams, depthParams, resourceShader.GetReflection(RENDER_STAGE_LIGHTING_VERTEX), resourceShader.GetReflection(RENDER_STAGE_LIGHTING_FRAGMENT), true);
+            
+            uuids::uuid guidVertex;
+            uuids::uuid guidFragment;
+            auto lightingShaderGuid = GetAssetRegistry()->GetGuid(LIGHTING_SHADER_PATH);
+            RBShaderDefinition* shaderDefLighting = GetShaderDefinition(lightingShaderGuid.value());
+            std::string pathShaderVertex = shaderDefLighting->GetData().stages[0].path;
+            guidVertex = GetAssetRegistry()->GetGuid(pathShaderVertex).value();
+            std::string pathShaderFragment = shaderDefLighting->GetData().stages[1].path;
+            guidFragment = GetAssetRegistry()->GetGuid(pathShaderFragment).value();
+
+            descriptorsAttachment.InitializeDescriptorsFrameBuffer(swapChainExtent,attachmentParams, depthParams, resourceShader.GetReflection(guidVertex), resourceShader.GetReflection(guidFragment), true);
 
             gBufferPass.createGraphicsPipeline();
 

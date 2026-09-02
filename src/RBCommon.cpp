@@ -28,6 +28,8 @@ const std::string modelsFilePath = GET_RESOURCE_ROOT_DIR + "models/";
 const std::string texturesFilePath = GET_RESOURCE_ROOT_DIR + "textures/";
 const std::string shaderFilePath = GET_RESOURCE_ROOT_DIR + "shader/";
 const std::string defaultWhiteImagePath = "textures/default_white.jpeg";
+const std::string SKY_SHADER_PATH = "shaderDefinition/skyDefinition.shader";
+const std::string LIGHTING_SHADER_PATH = "shaderDefinition/lightingDefinition.shader";
 
 const std::vector<TexturesInfo> inputImagesInfo = {
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/Mech_BaseMap.jpg"}

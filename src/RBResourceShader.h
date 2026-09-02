@@ -12,7 +12,7 @@
 #include "RBMetaFile.h"
 namespace RottenBamboo {
 
-    using ShaderReflectionMap = std::unordered_map<RenderStage, RBShaderReflection>;
+    using ShaderReflectionMap = std::unordered_map<uuids::uuid, RBShaderReflection>;
     using CustomShaderReflectionMap = std::unordered_map<std::string, RBShaderReflection*>;
 
     class RBResourceShader : public RBResource {
@@ -21,23 +21,23 @@ namespace RottenBamboo {
         RBResourceShader(const std::string &path);
         ~RBResourceShader() = default;
 
-        void Load(RenderStage stage, const std::string& path);
+        void Load(uuids::uuid guid);
 
         void Load(const std::string& path) override {};
 
-        void Reflect(const std::string& path, const RenderStage shaderPipelineStage, const std::vector<uint32_t>& spirv);
+        void Reflect(const std::string& path, const uuids::uuid guid, const std::vector<uint32_t>& spirv);
         
         VkFormat SpirvImageFormatToVkFormat(spv::ImageFormat format);
         
-        const std::vector<uint32_t>* Get(RenderStage shaderStage) const;
+        const std::vector<uint32_t>* Get(uuids::uuid guid) const;
 
         const ShaderReflectionMap& GetReflection() const;
 
         ShaderReflectionMap& GetReflection();
 
-        const RBShaderReflection* GetReflection(RenderStage shaderPipelineStage) const;
+        const RBShaderReflection* GetReflection(uuids::uuid guid) const;
 
-        RBShaderReflection* GetReflection(RenderStage shaderPipelineStage);
+        RBShaderReflection* GetReflection(uuids::uuid guid);
         
 
         const CustomShaderReflectionMap& GetCustomReflection() const;
@@ -50,7 +50,7 @@ namespace RottenBamboo {
         
     private:
 
-        std::unordered_map<RenderStage, std::vector<uint32_t>> shaderSPIRV;
+        std::unordered_map<uuids::uuid, std::vector<uint32_t>> shaderSPIRV;
 
         ShaderReflectionMap shaderReflection;
         CustomShaderReflectionMap customShaderReflection;

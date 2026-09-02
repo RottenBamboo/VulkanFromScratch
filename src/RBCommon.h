@@ -94,6 +94,8 @@ extern const std::string modelsFilePath;
 extern const std::string texturesFilePath;
 extern const std::string shaderFilePath;
 extern const std::string defaultWhiteImagePath;
+extern const std::string SKY_SHADER_PATH;
+extern const std::string LIGHTING_SHADER_PATH;
 extern const std::vector<ShadersInfo> inputShader;
 extern const std::vector<TexturesInfo> inputImagesInfo;
 extern const std::vector<TexturesInfo> inputImageInfoMech;

@@ -2,6 +2,7 @@
 // Created by rottenbamboo on 2026/8/20.
 //
 #include "RBAssetsRegistry.h"
+#include "RBApplication.h"
 namespace RottenBamboo
 {
     RBAssetsRegistry::RBAssetsRegistry()
@@ -20,4 +21,221 @@ namespace RottenBamboo
             m_PathToGuid.clear();
         }
     }
+    bool RBAssetsRegistry::Initialize(const std::string& rootPath, const std::string& cachePath) 
+    {            
+        // if (LoadCache(cachePath)) 
+        // {
+        //     return true;
+        // }
+
+        if (!ScanDirectory(rootPath)) 
+        {
+            return false;
+        }
+
+        SaveCache(cachePath);
+        return true;
+    }
+
+    std::optional<std::string> RBAssetsRegistry::GetPath(const uuids::uuid& guid) const 
+    {
+        if(m_GuidToPath.empty())
+        {
+            return std::nullopt;
+        }
+        auto it = m_GuidToPath.find(guid);
+        if (it != m_GuidToPath.end()) 
+        {
+            return it->second;
+        }
+        return std::nullopt;
+    }
+
+      
+    std::optional<uuids::uuid> RBAssetsRegistry::GetGuid(const std::string& path) const 
+    {
+        std::string normalizedPath = NormalizePathString(path);
+        if(m_PathToGuid.empty())
+        {
+            return std::nullopt;
+        }
+        auto it = m_PathToGuid.find(normalizedPath);
+        if (it != m_PathToGuid.end()) 
+        {
+            return it->second;
+        }
+        return std::nullopt;
+    }
+
+    bool RBAssetsRegistry::Contains(const uuids::uuid& guid) const 
+    {
+        return m_GuidToPath.find(guid) != m_GuidToPath.end();
+    }
+
+    size_t RBAssetsRegistry::Size() const { return m_GuidToPath.size(); }
+
+    void RBAssetsRegistry::Register(const uuids::uuid& guid, const std::string& path) 
+    {
+        std::string normalizedPath = NormalizePathString(path);
+        std::string relativePath = fs::relative(normalizedPath, GET_RESOURCE_ROOT_DIR).string();
+        RemoveExtension(relativePath);
+
+        auto it_path = m_GuidToPath.find(guid);
+        auto it_guid = m_PathToGuid.find(relativePath);
+        
+        if(it_path != m_GuidToPath.end())
+        {
+            m_GuidToPath.erase(it_path);
+        }
+        if(it_guid != m_PathToGuid.end())
+        {
+            m_PathToGuid.erase(it_guid);
+        }
+
+        m_GuidToPath[guid] = relativePath;
+        m_PathToGuid[relativePath] = guid;
+        m_IsDirty = true;
+    }
+
+    void RBAssetsRegistry::Unregister(const uuids::uuid& guid) 
+    {
+        auto it = m_GuidToPath.find(guid);
+        if (it != m_GuidToPath.end()) 
+        {
+            m_GuidToPath.erase(it);
+            auto it_path = m_PathToGuid.find(it->second);
+            if (it_path != m_PathToGuid.end()) 
+            {
+                m_PathToGuid.erase(it_path);
+            }
+            m_IsDirty = true;
+        }
+    }
+    bool RBAssetsRegistry::SaveCache(const std::string& cachePath) 
+    {
+        std::filesystem::path filePath(cachePath);
+        auto parentPath = filePath.parent_path();
+        if (!parentPath.empty() && !std::filesystem::exists(parentPath)) 
+        {
+            std::filesystem::create_directories(parentPath);
+        }
+        
+        std::ofstream file(cachePath, std::ios::binary);
+        if (!file.is_open()) 
+        {
+            return false;
+        }
+        
+        uint32_t count = static_cast<uint32_t>(m_GuidToPath.size());
+        file.write(reinterpret_cast<const char*>(&count), sizeof(count));
+        
+        for (const auto& [guid, path] : m_GuidToPath) 
+        {
+            // write GUID 16 byte
+            auto bytes = guid.as_bytes();
+            file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+
+            // write path length and path string
+            uint32_t pathLen = static_cast<uint32_t>(path.size());
+            file.write(reinterpret_cast<const char*>(&pathLen), sizeof(pathLen));
+            file.write(path.data(), pathLen);
+        }
+
+        m_IsDirty = false;
+        return true;
+    }
+
+    bool RBAssetsRegistry::LoadCache(const std::string& cachePath) 
+    {
+        std::ifstream file(cachePath, std::ios::binary);
+        if (!file.is_open()) return false;
+        uint32_t count = 0;
+        file.read(reinterpret_cast<char*>(&count), sizeof(count));
+        if (count == 0) return false;
+        std::unordered_map<uuids::uuid, std::string> newGuidToPath;
+        std::unordered_map<std::string, uuids::uuid> newPathToGuid;
+        newGuidToPath.reserve(count);
+        newPathToGuid.reserve(count);
+        for (uint32_t i = 0; i < count; ++i) 
+        {
+            // read GUID
+            std::array<unsigned char, 16> bytes;
+            file.read(reinterpret_cast<char*>(bytes.data()), bytes.size());
+            uuids::uuid guid(bytes);
+            // read path
+            uint32_t pathLen = 0;
+            file.read(reinterpret_cast<char*>(&pathLen), sizeof(pathLen));
+            std::string path(pathLen, '\0');
+            file.read(path.data(), pathLen);
+            newGuidToPath[guid] = path;
+            newPathToGuid[path] = guid;
+        }
+        m_GuidToPath.swap(newGuidToPath);
+        m_PathToGuid.swap(newPathToGuid);
+        m_IsDirty = false;
+        return true;
+    }
+        
+    std::optional<std::pair<uuids::uuid, std::string>> RBAssetsRegistry::ParseMetaFile(const std::string& metaPath) 
+    {
+        RBData dataSave{};
+        std::ifstream file(metaPath);
+        if (!file.is_open())
+        {
+            m_MetaFile.Save(metaPath, dataSave);
+        }
+
+        std::filesystem::path metaPathFs(metaPath);
+        if (metaPathFs.has_extension() && metaPathFs.extension() != ".meta") 
+        {
+            return std::nullopt;
+        }
+
+        RBData dataLoad{};
+        m_MetaFile.Load(metaPath, dataLoad);
+
+        return std::make_pair(dataLoad.GetGUID(), metaPath);
+    }
+        
+    bool RBAssetsRegistry::ScanDirectory(const std::string& rootPath) 
+    {
+        if (!std::filesystem::exists(rootPath)) 
+        {
+            return false;
+        }
+    
+        std::unordered_map<uuids::uuid, std::string> newGuidToPath;
+        std::unordered_map<std::string, uuids::uuid> newPathToGuid;
+        newGuidToPath.reserve(10000);
+        newPathToGuid.reserve(10000);
+        
+        for (const auto& entry : std::filesystem::recursive_directory_iterator(rootPath)) 
+        {
+            if (entry.path().extension() != ".meta") 
+            {
+                std::string metaPath = entry.path().string() + META_EXTENSION;
+                const std::string path = NormalizePathString(metaPath);
+                auto result = ParseMetaFile(path);
+                if (result.has_value()) 
+                {
+                    RemoveExtension(result.value().second);
+                    auto& [guid, assetPath] = result.value();
+                    std::string normalizedPath = NormalizePathString(std::filesystem::relative(assetPath, GET_RESOURCE_ROOT_DIR).string());
+                    newGuidToPath[guid] = normalizedPath;
+                    newPathToGuid[normalizedPath] = guid;
+                }
+                if(entry.path().extension() == ".shader")
+                {
+                    if(result.has_value())
+                    {
+                        (*RBApplication::GetShaderDefinition())[result.value().first] = RBShaderDefinition{};
+                    }
+                }
+            }
+        }
+        
+        m_GuidToPath.swap(newGuidToPath);
+        m_PathToGuid.swap(newPathToGuid);
+        return true;
+    };
 }
