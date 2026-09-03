@@ -96,15 +96,11 @@ extern const std::string shaderFilePath;
 extern const std::string defaultWhiteImagePath;
 extern const std::string SKY_SHADER_PATH;
 extern const std::string LIGHTING_SHADER_PATH;
-extern const std::vector<ShadersInfo> inputShader;
-extern const std::vector<TexturesInfo> inputImagesInfo;
+extern const std::string DEFAULT_SHADER_REFLECTION;
 extern const std::vector<TexturesInfo> inputImageInfoMech;
 extern const std::vector<TexturesInfo> inputImageInfoSkyBox;
 extern const std::vector<TexturesInfo> inputImageInfoLighting;
-extern const std::vector<TexturesInfo> inputImageTerrain;
-extern const std::vector<TexturesInfo> samuriTex;
 extern const std::vector<TexturesInfo> mineCraftTex;
-extern const std::vector<TexturesInfo> lowPolyTerrainTex;
 
 extern uint32_t mipLevels;
 

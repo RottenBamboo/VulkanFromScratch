@@ -91,10 +91,9 @@ namespace RottenBamboo {
         model_paths.insert({0, MODEL_PATH});
         model_paths.insert({1, SAMURI_PATH});
         model_paths.insert({2, TERRAIN_PATH});
-
-        InitializeShaderDefinition();
         resourceManager.Load<RBModel>(model_paths);
 
+        InitializeShaderDefinition();
         for(auto it = GetShaderDefinition()->begin(); it != GetShaderDefinition()->end(); it++)
         {
             RBShaderDefinition& rbShaderDef = shaderDefinitions[it->first];

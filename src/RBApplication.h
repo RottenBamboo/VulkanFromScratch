@@ -124,7 +124,7 @@ namespace RottenBamboo
 
         ResourceManager resourceManager{device, commandBuffer};
 
-        RBResourceShader resourceShader{inputShader[0].path};
+        RBResourceShader resourceShader{DEFAULT_SHADER_REFLECTION};
 
         RBPipelineConfig pipelineConfig{};
 
@@ -135,12 +135,6 @@ namespace RottenBamboo
         static std::vector<ImageResourcePtr> oldImageResourceVec;
         
         std::vector<std::unique_ptr<RBDescriptors>> m_descriptorsGBuffersVec;
-
-        RBDescriptors descriptorsMech{device, commandBuffer};
-
-        RBDescriptors descriptorsTerrain{device, commandBuffer};
-
-        RBDescriptors descriptorsSamuri{device, commandBuffer};
 
         RBDescriptors descriptorsGBuffer{device, commandBuffer, uniformBuffers, inputImageInfoMech, false};
 

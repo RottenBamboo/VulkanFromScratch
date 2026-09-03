@@ -30,26 +30,7 @@ const std::string shaderFilePath = GET_RESOURCE_ROOT_DIR + "shader/";
 const std::string defaultWhiteImagePath = "textures/default_white.jpeg";
 const std::string SKY_SHADER_PATH = "shaderDefinition/skyDefinition.shader";
 const std::string LIGHTING_SHADER_PATH = "shaderDefinition/lightingDefinition.shader";
-
-const std::vector<TexturesInfo> inputImagesInfo = {
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/Mech_BaseMap.jpg"}
-};
-
-const std::vector<TexturesInfo> lowPolyTerrainTex = 
-{
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/low_poly_terrain_basecolor.jpeg"},
-    TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/low_poly_terrain_normal.jpeg"},
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/low_poly_terrain_metal_roughness.png"},
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/Mech_Emission.jpeg"}
-};
-
-const std::vector<TexturesInfo> samuriTex = 
-{
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/samuri_diffuse.jpeg"},
-    TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/samuri_normal.jpeg"},
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/samuri_specular_glossiness.png"},
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/Mech_Emission.jpeg"}
-};
+const std::string DEFAULT_SHADER_REFLECTION = "shader/bin/gBufferFrag.spv";
 
 const std::vector<TexturesInfo> inputImageInfoMech = 
 {
@@ -67,26 +48,6 @@ const std::vector<TexturesInfo> inputImageInfoLighting =
     TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/Mech_Emission.jpeg"},  // Emission
     TexturesInfo{VK_FORMAT_D32_SFLOAT, VK_IMAGE_ASPECT_DEPTH_BIT, false, "textures/Mech_Emission.jpeg"}  // Emission
 };
-
-const std::vector<TexturesInfo> inputImageTerrain = 
-{
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/AlienPlanet1_Diffuse.jpg"}, // BaseMap
-    TexturesInfo{VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/AlienPlanet1_FinalBump1.png"}, // Normal
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/AlienPlanet1_Wetness.png"}, // AO
-    TexturesInfo{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, "textures/Mech_Emission.jpeg"},  // Emission
-    TexturesInfo{VK_FORMAT_D32_SFLOAT, VK_IMAGE_ASPECT_DEPTH_BIT, false, "textures/Mech_Emission.jpeg"}  // Emission
-};
-
-const std::vector<ShadersInfo> inputShader = 
-{
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_GBUFFER_FRAGMENT, GET_RESOURCE_ROOT_DIR + "shader/bin/gBufferFrag.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_FRAGMENT, "shaderDefinition/gBufferDefinition.shader"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_LIGHTING_FRAGMENT, GET_RESOURCE_ROOT_DIR + "shader/bin/lightingFrag.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_FRAGMENT, "shaderDefinition/lightingDefinition.shader"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_POST_PROCESSING_FRAGMENT, GET_RESOURCE_ROOT_DIR + "shader/bin/skyFrag.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_FRAGMENT, "shaderDefinition/skyDefinition.shader"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_POST_PROCESSING_VERTEX, GET_RESOURCE_ROOT_DIR + "shader/bin/skyVert.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_VERTEX, "shaderDefinition/skyDefinition.shader"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_GBUFFER_VERTEX, GET_RESOURCE_ROOT_DIR + "shader/bin/gBufferVert.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_VERTEX, "shaderDefinition/gBufferDefinition.shader"},
-    ShadersInfo{RottenBamboo::RenderStage::RENDER_STAGE_LIGHTING_VERTEX, GET_RESOURCE_ROOT_DIR + "shader/bin/lightingVert.spv", RottenBamboo::PipelineStage::PIPELINE_STAGE_VERTEX, "shaderDefinition/lightingDefinition.shader"}
-};
-
 
 const TextureParams attachmentParams
 {
