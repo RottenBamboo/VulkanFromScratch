@@ -5,7 +5,8 @@
 #include <string>
 #include <vulkan/vulkan_core.h>
 
-struct RBPipelineConfig {
+struct RBPipelineConfig 
+{
     std::string vertShaderPath;
     std::string fragShaderPath;
     VkPrimitiveTopology topology;

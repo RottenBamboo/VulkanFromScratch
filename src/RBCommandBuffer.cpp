@@ -6,7 +6,8 @@
 
 namespace RottenBamboo {
 
-    QueueFamilyIndices RBCommandBuffer::findQueueFamilies(VkPhysicalDevice &device, VkSurfaceKHR *surface) {
+    QueueFamilyIndices RBCommandBuffer::findQueueFamilies(VkPhysicalDevice &device, VkSurfaceKHR *surface) 
+    {
         QueueFamilyIndices indices;
 
         uint32_t queueFamilyCount = 0;
@@ -16,19 +17,23 @@ namespace RottenBamboo {
         vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
         int i = 0;
-        for (const auto &queueFamily: queueFamilies) {
-            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+        for (const auto &queueFamily: queueFamilies) 
+        {
+            if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) 
+            {
                 indices.graphicsFamily = i;
             }
 
             VkBool32 presentSupport = false;
             vkGetPhysicalDeviceSurfaceSupportKHR(device, i, *surface, &presentSupport);
 
-            if (presentSupport) {
+            if (presentSupport) 
+            {
                 indices.presentFamily = i;
             }
 
-            if (indices.isComplete()) {
+            if (indices.isComplete()) 
+            {
                 break;
             }
 
@@ -39,7 +44,8 @@ namespace RottenBamboo {
         return indices;
     }
 
-    RBCommandBuffer::RBCommandBuffer(RBDevice &device) : rbDevice(device) {
+    RBCommandBuffer::RBCommandBuffer(RBDevice &device) : rbDevice(device) 
+    {
         std::cout << "RBCommandBuffer::RBCommandBuffer()" << std::endl;
             RBLOG_INFO("RBCommandBuffer::RBCommandBuffer()");
     }
@@ -98,7 +104,8 @@ namespace RottenBamboo {
         commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
         allocInfo.commandBufferCount = (uint32_t) commandBuffers.size();
 
-        if (vkAllocateCommandBuffers(rbDevice.device, &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
+        if (vkAllocateCommandBuffers(rbDevice.device, &allocInfo, commandBuffers.data()) != VK_SUCCESS) 
+        {
             RBLOG_FATAL("failed to allocate command buffers!");
             throw std::runtime_error("failed to allocate command buffers!");
         }
@@ -106,14 +113,16 @@ namespace RottenBamboo {
             RBLOG_INFO("RBCommandBuffer::createCommandBuffers()");
     }
 
-    void RBCommandBuffer::createCommandPool() {
+    void RBCommandBuffer::createCommandPool() 
+    {
         QueueFamilyIndices queueFamilyIndices = findQueueFamilies(rbDevice.physicalDevice, &rbDevice.surface);
 
         VkCommandPoolCreateInfo poolInfo{};
         poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
         poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
         poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
-        if (vkCreateCommandPool(rbDevice.device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
+        if (vkCreateCommandPool(rbDevice.device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) 
+        {
             RBLOG_FATAL("failed to create command pool!");
             throw std::runtime_error("failed to create command pool!");
         }

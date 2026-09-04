@@ -25,11 +25,13 @@
     #endif
 #endif
 
-inline std::string RBLogMakeMessage(const std::string& message) {
+inline std::string RBLogMakeMessage(const std::string& message) 
+{
     return message;
 }
 
-inline std::string RBLogMakeMessage(const char* message) {
+inline std::string RBLogMakeMessage(const char* message) 
+{
     return message != nullptr ? std::string(message) : std::string();
 }
 
@@ -69,7 +71,8 @@ public:
         return logger;
     }
 
-    void setLogFile(const std::string& filename) {
+    void setLogFile(const std::string& filename) 
+    {
         std::lock_guard<std::mutex> lock(m_mutex);
         if (m_file.is_open()) m_file.close();
         m_file.open(filename, std::ios::app);
@@ -78,7 +81,8 @@ public:
     void setMinLevel(Level level) { m_minLevel = level; }
 
     void log(Level level, const std::string& message, 
-             const char* file = nullptr, int line = 0) {
+             const char* file = nullptr, int line = 0) 
+    {
         if (level < m_minLevel) return;
         
         std::lock_guard<std::mutex> lock(m_mutex);
@@ -121,7 +125,8 @@ public:
     }
 
 private:
-    Logger() : m_minLevel(Level::RB_DEBUG) {
+    Logger() : m_minLevel(Level::RB_DEBUG) 
+    {
         // default log file
         //setLogFile("vulkan_app.log");
     }
@@ -131,7 +136,8 @@ private:
     std::mutex m_mutex;
     Level m_minLevel;
     
-    std::string levelToString(Level level) {
+    std::string levelToString(Level level) 
+    {
         switch(level) {
             case Level::RB_DEBUG:   return "DEBUG";
             case Level::RB_INFO:    return "INFO";

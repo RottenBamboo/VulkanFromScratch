@@ -38,7 +38,8 @@ namespace RottenBamboo
 
     void RBBufferManager::createBuffer()
     {
-        if (vkCreateBuffer(rbDevice.device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
+        if (vkCreateBuffer(rbDevice.device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) 
+        {
             RBLOG_FATAL("failed to create buffer!");
             throw std::runtime_error("failed to create buffer!");
         }
@@ -60,7 +61,8 @@ namespace RottenBamboo
 
     void RBBufferManager::allocateMemory()
     {
-        if (vkAllocateMemory(rbDevice.device, &memoryallocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
+        if (vkAllocateMemory(rbDevice.device, &memoryallocInfo, nullptr, &bufferMemory) != VK_SUCCESS) 
+        {
             RBLOG_FATAL("failed to allocate buffer memory!");
             throw std::runtime_error("failed to allocate buffer memory!");
         }
@@ -70,7 +72,8 @@ namespace RottenBamboo
 
     void RBBufferManager::BindBufferMemory()
     {
-        if (vkBindBufferMemory(rbDevice.device, buffer, bufferMemory, 0) != VK_SUCCESS) {
+        if (vkBindBufferMemory(rbDevice.device, buffer, bufferMemory, 0) != VK_SUCCESS) 
+        {
             RBLOG_FATAL("failed to bind buffer memory!");
             throw std::runtime_error("failed to bind buffer memory!");
         }

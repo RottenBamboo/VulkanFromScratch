@@ -5,7 +5,8 @@
 #include "RBPipelineLayoutManager.h"
 
 namespace RottenBamboo {
-    RBPipelineLayoutManager::RBPipelineLayoutManager(RBDevice &device) : rbDevice(device) {
+    RBPipelineLayoutManager::RBPipelineLayoutManager(RBDevice &device) : rbDevice(device) 
+    {
         std::cout << "RBPipelineLayoutManager::RBPipelineLayoutManager()" << std::endl;
         RBLOG_INFO("RBPipelineLayoutManager::RBPipelineLayoutManager()");
     }
@@ -31,7 +32,8 @@ namespace RottenBamboo {
             pipelineLayout = VK_NULL_HANDLE;
         }
 
-        if (vkCreatePipelineLayout(rbDevice.device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
+        if (vkCreatePipelineLayout(rbDevice.device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) 
+        {
             RBLOG_FATAL("Failed to create pipeline layout");
             throw ::std::runtime_error("failed to create pipeline layout");
         }

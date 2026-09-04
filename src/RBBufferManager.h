@@ -9,8 +9,10 @@
 #include <stb_image.h>
 #include "RBDevice.h"
 
-namespace RottenBamboo {
-    class RBBufferManager {
+namespace RottenBamboo 
+{
+    class RBBufferManager 
+    {
 
     private:
         RBDevice &rbDevice;

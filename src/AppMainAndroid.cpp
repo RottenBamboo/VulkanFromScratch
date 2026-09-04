@@ -9,14 +9,17 @@
 
 extern "C" {
 
-int SDL_main(int argc, char* argv[]) {
+int SDL_main(int argc, char* argv[]) 
+{
     __android_log_print(ANDROID_LOG_INFO, "RottenBamboo", "Starting Vulkan application");
     
     RottenBamboo::RBApplication app{};
-    try {
+    try 
+    {
         app.run();
     }
-    catch (const std::exception &e) {
+    catch (const std::exception &e) 
+    {
         __android_log_print(ANDROID_LOG_ERROR, "RottenBamboo", "Exception: %s", e.what());
         return -1;
     }

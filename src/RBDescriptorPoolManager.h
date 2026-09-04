@@ -7,8 +7,10 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include "RBDevice.h"
-namespace RottenBamboo {
-    class RBDescriptorPoolManager {
+namespace RottenBamboo 
+{
+    class RBDescriptorPoolManager 
+    {
 
     private:
         RBDevice &rbDevice;

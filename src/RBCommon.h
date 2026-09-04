@@ -126,14 +126,16 @@ struct TextureParams
 extern const TextureParams attachmentParams;
 extern const TextureParams depthParams;
 
-struct Vertex {
+struct Vertex 
+{
     glm::vec3 pos;
     glm::vec3 color;
     glm::vec2 texCoord;
     glm::vec3 normal;
     glm::vec3 tangent;
 
-    static VkVertexInputBindingDescription getBindingDescription() {
+    static VkVertexInputBindingDescription getBindingDescription() 
+    {
         VkVertexInputBindingDescription bindingDescription{};
         bindingDescription.binding = 0;
         bindingDescription.stride = sizeof(Vertex);
@@ -142,7 +144,8 @@ struct Vertex {
         return bindingDescription;
     }
 
-    static std::array<VkVertexInputAttributeDescription, 5> getAttributeDescriptions() {
+    static std::array<VkVertexInputAttributeDescription, 5> getAttributeDescriptions() 
+    {
         std::array<VkVertexInputAttributeDescription, 5> attributeDescriptions{};
 
         attributeDescriptions[0].binding = 0;
@@ -173,21 +176,26 @@ struct Vertex {
         return attributeDescriptions;
     }
 
-    bool operator==(const Vertex &other) const {
+    bool operator==(const Vertex &other) const 
+    {
         return pos == other.pos && color == other.color && texCoord == other.texCoord;
     }
 };
 
-namespace std {
+namespace std 
+{
     template<>
-    struct hash<Vertex> {
-        size_t operator()(Vertex const &vertex) const {
+    struct hash<Vertex> 
+    {
+        size_t operator()(Vertex const &vertex) const 
+        {
             return ((hash<glm::vec3>()(vertex.pos) ^ (hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^ (hash<glm::vec2>()(vertex.texCoord) << 1);
         }
     };
 }
 
-struct UniformBufferShaderVariables {
+struct UniformBufferShaderVariables 
+{
     glm::mat4 model;
     glm::mat4 view;
     glm::mat4 proj;
@@ -204,11 +212,13 @@ public:
     }
 };
 
-struct QueueFamilyIndices {
+struct QueueFamilyIndices 
+{
     std::optional<uint32_t> graphicsFamily;
     std::optional<uint32_t> presentFamily;
 
-    bool isComplete() {
+    bool isComplete() 
+    {
         return graphicsFamily.has_value() && presentFamily.has_value();
     }
 };
@@ -219,7 +229,8 @@ struct QueueFamilyIndices {
 
 namespace RottenBamboo 
 {
-    struct SwapChainSupportDetails {
+    struct SwapChainSupportDetails 
+    {
         VkSurfaceCapabilitiesKHR capabilities{};
         std::vector<VkSurfaceFormatKHR> formats;
         std::vector<VkPresentModeKHR> presentModes;
@@ -276,7 +287,8 @@ namespace RottenBamboo
     inline void GetFileExtension(const std::string& filename, std::string& out) 
     {
         size_t dotPos = filename.find_last_of(".");
-        if (dotPos != std::string::npos && dotPos < filename.length() - 1) {
+        if (dotPos != std::string::npos && dotPos < filename.length() - 1) 
+        {
             out = filename.substr(dotPos + 1);
         }
         out = "";
@@ -527,11 +539,14 @@ namespace RottenBamboo
         }
     }
 
-    static uint32_t findMemoryType(VkPhysicalDevice &physicalDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties) {
+    static uint32_t findMemoryType(VkPhysicalDevice &physicalDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties) 
+    {
         VkPhysicalDeviceMemoryProperties memProperties;
         vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
-        for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-            if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+        for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) 
+        {
+            if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) 
+            {
                 return i;
             }
         }

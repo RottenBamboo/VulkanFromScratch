@@ -7,9 +7,11 @@
 #include <vulkan/vulkan.h>
 #include "RBDevice.h"
 
-namespace RottenBamboo {
+namespace RottenBamboo 
+{
 
-    class RBDescriptorSetLayoutManager {
+    class RBDescriptorSetLayoutManager 
+    {
 
     public:
         VkDescriptorSetLayout descriptorSetLayout{};

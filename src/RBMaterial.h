@@ -11,7 +11,8 @@
 
 namespace RottenBamboo {
 
-    class RBMaterial : public RBResource {
+    class RBMaterial : public RBResource 
+    {
     public:
         //explicit RBMaterial(const std::string& path = "");
 

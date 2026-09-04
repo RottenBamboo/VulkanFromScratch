@@ -8,9 +8,11 @@
 #include "RBCommandBuffer.h"
 #include <vector>
 
-namespace RottenBamboo {
+namespace RottenBamboo 
+{
     template<typename T>
-    class RBBuffer {
+    class RBBuffer 
+    {
     private:
         RBDevice &rbDevice;
         RBCommandBuffer &rbCommandBuffer;
@@ -91,7 +93,8 @@ namespace RottenBamboo {
             std::cout << "RBBuffer::beginSingleTimeCommands()" << std::endl;
         }
 
-        void endSingleTimeCommands(VkCommandBuffer commandBuffer) {
+        void endSingleTimeCommands(VkCommandBuffer commandBuffer) 
+        {
             vkEndCommandBuffer(commandBuffer);
 
             VkSubmitInfo submitInfo{};
@@ -106,7 +109,8 @@ namespace RottenBamboo {
             std::cout << "RBBuffer::endSingleTimeCommands()" << std::endl;
         }
 
-        void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
+        void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) 
+        {
             VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
             VkBufferCopy copyRegion{};
@@ -118,14 +122,16 @@ namespace RottenBamboo {
             std::cout << "RBBuffer::copyBuffer()" << std::endl;
         }
 
-        void createBufferMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
+        void createBufferMemory(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) 
+        {
             VkBufferCreateInfo bufferInfo{};
             bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
             bufferInfo.size = size;
             bufferInfo.usage = usage;
             bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-            if (vkCreateBuffer(rbDevice.device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
+            if (vkCreateBuffer(rbDevice.device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) 
+            {
                 RBLOG_FATAL("failed to create buffer!");
                 throw std::runtime_error("failed to create buffer!");
             }
@@ -138,7 +144,8 @@ namespace RottenBamboo {
             allocInfo.allocationSize = memRequirements.size;
             allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties, rbDevice.physicalDevice);
 
-            if (vkAllocateMemory(rbDevice.device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
+            if (vkAllocateMemory(rbDevice.device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) 
+            {
                 RBLOG_FATAL("failed to allocate buffer memory!");
                 throw std::runtime_error("failed to allocate buffer memory!");
             }
@@ -152,8 +159,10 @@ namespace RottenBamboo {
             std::cout << "RBBuffer::findMemoryType()" << std::endl;
             VkPhysicalDeviceMemoryProperties memProperties;
             vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
-            for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-                if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+            for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) 
+            {
+                if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) 
+                {
                     return i;
                 }
             }

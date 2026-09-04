@@ -17,7 +17,8 @@
 #include "RBCommon.h"
 #include "RBWindows.h"
 
-namespace RottenBamboo {
+namespace RottenBamboo 
+{
 
 #ifdef NDEBUG
     const bool enableValidationLayers = false;

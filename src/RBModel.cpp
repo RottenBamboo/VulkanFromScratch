@@ -444,7 +444,8 @@ std::string RBModel::Base64Encode(const std::vector<uint8_t>& data) {
 }
 #else
 // desktop platform
-void RBModel::Load(const std::string& path) {
+void RBModel::Load(const std::string& path) 
+{
         std::cout << "RBModel::Load() Begin" << std::endl;
         RBLOG_INFO("RBModel::Load() Begin");
         printCurrentWorkingDirectory();

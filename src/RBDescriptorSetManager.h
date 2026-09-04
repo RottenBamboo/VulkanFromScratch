@@ -10,8 +10,10 @@
 #include "RBDescriptorPoolManager.h"
 #include "RBDescriptorSetLayoutManager.h"
 
-namespace RottenBamboo {
-    class RBDescriptorSetManager {
+namespace RottenBamboo 
+{
+    class RBDescriptorSetManager 
+    {
 
     private:
         RBDevice &rbDevice;

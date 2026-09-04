@@ -7,10 +7,12 @@
 #include "spirv_glsl.hpp"
 #include "spirv_cross.hpp"
 
-namespace RottenBamboo {
+namespace RottenBamboo 
+{
 
 #ifndef __ANDROID__
-    std::vector<char> RBPipelineUtils::readFile(const std::string &filename) {
+    std::vector<char> RBPipelineUtils::readFile(const std::string &filename) 
+    {
         std::ifstream file(filename, std::ios::ate | std::ios::binary);
         if (!file.is_open()) {
             RBLOG_FATAL("Failed to open file!");

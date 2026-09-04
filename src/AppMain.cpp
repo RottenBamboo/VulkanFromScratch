@@ -12,16 +12,19 @@
 #include <filesystem>
 #endif
 #include "RBLogger.h"
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[]) 
+{
 
     Logger::instance().setLogFile("app.log");
     RBLOG_INFO("========================================");
     RottenBamboo::RBApplication app{};
-    try {
+    try 
+    {
         app.run();
         RBLOG_INFO("Application exited normally");
     }
-    catch (const std::exception &e) {
+    catch (const std::exception &e) 
+    {
         std::cerr << e.what() << std::endl;
         RBLOG_FATAL(std::string("Fatal error: ") + e.what());
         RBLOG_FATAL("%s", e.what());

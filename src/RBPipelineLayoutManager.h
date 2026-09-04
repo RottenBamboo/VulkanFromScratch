@@ -8,7 +8,8 @@
 
 namespace RottenBamboo {
 
-    class RBPipelineLayoutManager {
+    class RBPipelineLayoutManager 
+    {
 
     private:
         RBDevice &rbDevice;

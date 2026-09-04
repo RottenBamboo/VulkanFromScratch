@@ -9,7 +9,8 @@
 #include <vector>
 
 namespace RottenBamboo {
-    class RBPipelineManager {
+    class RBPipelineManager 
+    {
     protected:
 
         bool isResolveAttachment = false;

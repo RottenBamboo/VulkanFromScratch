@@ -20,8 +20,10 @@
 #ifdef __ANDROID__
 #include <SDL3/SDL_iostream.h>
 #endif
-namespace RottenBamboo {
-    class RBDescriptors {
+namespace RottenBamboo 
+{
+    class RBDescriptors 
+    {
     private:
 
         bool isColorAttachment;

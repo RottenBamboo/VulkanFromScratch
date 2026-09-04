@@ -4,6 +4,7 @@
 #pragma once
 
 namespace RottenBamboo {
-    class RBRenderer {
+    class RBRenderer 
+    {
     };
 }

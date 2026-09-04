@@ -14,9 +14,11 @@
 #include <SDL3/SDL_iostream.h>
 #endif
 
-namespace RottenBamboo {
+namespace RottenBamboo 
+{
     
-    class RBModel : public RBResource {
+    class RBModel : public RBResource 
+    {
     public:
         void Load(const std::string& path) override;
 

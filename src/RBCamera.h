@@ -20,17 +20,20 @@ struct RBCamera
     float nearPlane = 0.1f;
     float farPlane = 100.0f;
 
-    glm::mat4 GetViewMatrix() const {
+    glm::mat4 GetViewMatrix() const 
+    {
         return glm::lookAt(position, position + front, up);
     }
 
-    glm::mat4 GetProjectionMatrix(float aspect) const {
+    glm::mat4 GetProjectionMatrix(float aspect) const 
+    {
         glm::mat4 proj = glm::perspective(glm::radians(fov), aspect, nearPlane, farPlane);
         proj[1][1] *= -1; // Vulkan clip space correction
         return proj;
     }
 
-    void UpdateDirectionFromYawPitch() {
+    void UpdateDirectionFromYawPitch() 
+    {
         glm::vec3 dir;
         dir.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
         dir.y = sin(glm::radians(pitch));

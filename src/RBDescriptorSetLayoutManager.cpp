@@ -4,7 +4,8 @@
 
 #include "RBDescriptorSetLayoutManager.h"
 
-namespace RottenBamboo {
+namespace RottenBamboo 
+{
     RBDescriptorSetLayoutManager::RBDescriptorSetLayoutManager(RBDevice &device) : rbDevice(device)
     {
         std::cout << "RBDescriptorSetLayoutManager::RBDescriptorSetLayoutManager()" << std::endl;
@@ -43,7 +44,8 @@ namespace RottenBamboo {
             RBLOG_INFO("RBDescriptorSetLayoutManager::Destroy()");
     }
 
-    void RBDescriptorSetLayoutManager::createDescriptorSetLayout() {
+    void RBDescriptorSetLayoutManager::createDescriptorSetLayout() 
+    {
         VkDescriptorSetLayoutCreateInfo layoutInfo{};
         layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
         layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());

@@ -6,7 +6,8 @@
 #include <SDL3/SDL_scancode.h>
 #include "RBCameraManager.h"
 
-class RBEditorCameraManager : public RBCameraManager {
+class RBEditorCameraManager : public RBCameraManager 
+{
 public:
     RBEditorCameraManager();
 

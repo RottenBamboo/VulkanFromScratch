@@ -25,7 +25,8 @@ namespace RottenBamboo {
         bool isHDR;
     };
 
-    struct ImageResourcePtr {
+    struct ImageResourcePtr 
+    {
         public:
         VkImage image;
         VkDeviceMemory imageMemory;
@@ -54,7 +55,8 @@ namespace RottenBamboo {
         }
     };
     
-    class RBImageManager {
+    class RBImageManager 
+    {
 
     private:
         RBDevice &rbDevice;
@@ -143,5 +145,5 @@ namespace RottenBamboo {
 
         VkMemoryAllocateInfo allocInfo{};
 
-        };
+    };
 }

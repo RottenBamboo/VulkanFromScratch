@@ -6,8 +6,10 @@
 
 #include "RBDevice.h"
 
-namespace RottenBamboo {
-    class RBPipelineUtils {
+namespace RottenBamboo 
+{
+    class RBPipelineUtils 
+    {
     public:
         static std::vector<char> readFile(const std::string &filename);
 

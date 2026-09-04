@@ -10,8 +10,10 @@
 #include <vulkan/vulkan.h>
 #include "RBDevice.h"
 
-namespace RottenBamboo {
-    class RBCommandBuffer {
+namespace RottenBamboo 
+{
+    class RBCommandBuffer 
+    {
     public:
         VkCommandPool commandPool;
         std::vector<VkCommandBuffer> commandBuffers;

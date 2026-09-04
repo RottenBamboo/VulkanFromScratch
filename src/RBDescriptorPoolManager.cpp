@@ -4,7 +4,8 @@
 
 #include "RBDescriptorPoolManager.h"
 
-namespace RottenBamboo {
+namespace RottenBamboo 
+{
 
     RBDescriptorPoolManager::RBDescriptorPoolManager(RBDevice &device) : rbDevice(device)
     {

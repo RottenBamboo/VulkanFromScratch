@@ -15,7 +15,8 @@ namespace RottenBamboo {
     using ShaderReflectionMap = std::unordered_map<uuids::uuid, RBShaderReflection>;
     using CustomShaderReflectionMap = std::unordered_map<std::string, RBShaderReflection*>;
 
-    class RBResourceShader : public RBResource {
+    class RBResourceShader : public RBResource 
+    {
     public:
     
         RBResourceShader(const std::string &path);

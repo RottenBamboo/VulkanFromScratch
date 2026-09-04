@@ -3,7 +3,8 @@
 //
 //
 #include "RBDescriptorSetManager.h"
-namespace RottenBamboo{
+namespace RottenBamboo
+{
     RBDescriptorSetManager::RBDescriptorSetManager(RBDevice &device) : rbDevice(device)
     {
         std::cout << "RBDescriptorSetManager::RBDescriptorSetManager()" << std::endl;

@@ -8,7 +8,8 @@ namespace RottenBamboo {
     ResourceManager::ResourceManager(RBDevice& device, RBCommandBuffer& commandBuffer)
         : device(device), commandBuffer(commandBuffer) {}
 
-    std::shared_ptr<RBModel> ResourceManager::LoadModels(const std::string& path) {
+    std::shared_ptr<RBModel> ResourceManager::LoadModels(const std::string& path) 
+    {
         std::cout << "ResourceManager::LoadModels() Begin" << std::endl;
         RBLOG_INFO("ResourceManager::LoadModels() Begin");
         auto it = models.find(path);
@@ -24,7 +25,8 @@ namespace RottenBamboo {
         return model;
     }
 
-    std::shared_ptr<RBModel> ResourceManager::GetModel(const std::string& path) {
+    std::shared_ptr<RBModel> ResourceManager::GetModel(const std::string& path) 
+    {
         std::cout << "ResourceManager::GetModel() Begin" << std::endl;
         RBLOG_INFO("ResourceManager::GetModel() Begin");
         auto it = models.find(path);

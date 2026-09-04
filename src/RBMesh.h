@@ -11,7 +11,8 @@
 
 namespace RottenBamboo {
 
-    class RBMesh : public RBResource{
+    class RBMesh : public RBResource
+    {
     public:
         void Load(const std::string& path) override;
         
