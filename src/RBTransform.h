@@ -13,18 +13,19 @@ using quat = glm::quat;
 
 namespace RottenBamboo
 {
+    struct TransformData
+    {
+        vector3 offset = vector3(0, 0, 0);
+        vector3 scale = {1, 1, 1};
+        quat myQuat = quat(offset);
+        vector3 euler = {0, 0, 0};
+        matrix4x4 model;
+    };
+    
     class Transform
     {
-        struct Data
-        {
-            vector3 offset = vector3(0, 0, 0);
-            vector3 scale = {1, 1, 1};
-            quat myQuat = quat(offset);
-            vector3 euler = {0, 0, 0};
-            matrix4x4 model;
-        };
 
-        Data transformData;
+        TransformData data;
         void SetScale(const vector3& scale);
         vector3 GetScale() const;
         void SetPosition(const vector3& pos);

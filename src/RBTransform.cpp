@@ -2,50 +2,50 @@
 
 vector3 RottenBamboo::Transform::GetScale() const
 {
-    return transformData.scale;
+    return data.scale;
 }
 
 void RottenBamboo::Transform::SetScale(const vector3& scale)
 {
-    transformData.scale = scale;
+    data.scale = scale;
 }
 
 vector3 RottenBamboo::Transform::GetPosition() const
 {
-    return transformData.offset;
+    return data.offset;
 }
 
 void RottenBamboo::Transform::SetPosition(const vector3& pos)
 {
-    transformData.offset = pos;
+    data.offset = pos;
 }
 
 quat RottenBamboo::Transform::GetRotation() const
 {
-    return transformData.myQuat;
+    return data.myQuat;
 }
 
 void RottenBamboo::Transform::SetRotation(const quat& rot)
 {
-    transformData.myQuat = rot;
+    data.myQuat = rot;
 }
 
 vector3 RottenBamboo::Transform::GetEuler() const
 {
-    return transformData.euler;
+    return data.euler;
 }
 
 void RottenBamboo::Transform::SetEuler(const vector3& euler)
 {
-    transformData.euler = euler;
+    data.euler = euler;
 }
 
 matrix4x4 RottenBamboo::Transform::GetModelMatrix() const
 {
-    return transformData.model;
+    return data.model;
 }
 
 void RottenBamboo::Transform::SetModelMatrix(const matrix4x4* modelMatrix)
 {
-    transformData.model = *modelMatrix;
+    data.model = *modelMatrix;
 }

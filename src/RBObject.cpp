@@ -5,5 +5,12 @@
 #include "uuid.h"
 namespace RottenBamboo
 {
+    RBObject::RBObject()
+    {
+        
+    }
+    RBObject::~RBObject()
+    {
 
+    }
 }
