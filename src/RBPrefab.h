@@ -17,10 +17,10 @@ namespace RottenBamboo
         RBPrefab(const std::string &path, const RBObjectData& data);
         ~RBPrefab();
         virtual void Load(const std::string& path) override;
-        bool Save(const std::string& savePath, RBObjectData& prefabData);
+        bool Save(const std::string& savePath, RBObjectData& data);
 
     private:
         RBObjectData prefabData;
-        //RBMetaFile metaFile;
+        RBMetaFile metaFile;
     };
 }
