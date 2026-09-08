@@ -14,7 +14,8 @@ namespace RottenBamboo
     RBMaterial::RBMaterial(const std::string& path, RBDevice &device, RBCommandBuffer &commandBuffer)
         : RBResource(path), device(device), commandBuffer(commandBuffer)
     {
-        if (!path.empty()) {
+        if (!path.empty()) 
+        {
             Load(path);
         }
     }

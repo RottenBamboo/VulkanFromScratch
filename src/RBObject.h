@@ -5,14 +5,14 @@
 #include "RBTransform.h"
 #include <string>
 #include "uuid.h"
+#include "RBData.h"
 
 namespace RottenBamboo
 {
-    struct RBObjectData
+    struct RBObjectData : public RBData 
     {
         Transform tranform;
         std::string name;
-        uuids::uuid guid;
     };
 
     class RBObject

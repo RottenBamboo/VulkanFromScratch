@@ -5,12 +5,23 @@
 #include "uuid.h"
 namespace RottenBamboo
 {
-    RBPrefab::RBPrefab()
+    RBPrefab::RBPrefab(const std::string& path, const RBObjectData& data)
+        : RBResource(path), prefabData(data)
     {
-        
     }
+
     RBPrefab::~RBPrefab()
     {
+
+    }
+     void RBPrefab::Load(const std::string& path)
+     {
+
+     }
+
+    bool RBPrefab::Save(const std::string& savePath, RBObjectData& prefabData)
+    {
         
+        return false;
     }
 }
