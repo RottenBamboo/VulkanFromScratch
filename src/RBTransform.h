@@ -24,8 +24,12 @@ namespace RottenBamboo
     
     class Transform
     {
+    public:
+        Transform() = default;
+        Transform(const TransformData& data);
+        Transform(const vector3& pos, const vector3& scale, const quat& rot);
 
-        TransformData data;
+        TransformData transformData;
         void SetScale(const vector3& scale);
         vector3 GetScale() const;
         void SetPosition(const vector3& pos);
