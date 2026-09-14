@@ -21,7 +21,6 @@ namespace RottenBamboo
     void RBGUI::RenderGizmo(UniformBufferShaderVariables &uniformMatrix)
     {
         ImGuizmo::Enable(true);
-
         ImGuizmo::SetOrthographic(false);
         ImGuizmo::BeginFrame();
         ImVec2 mouse = ImGui::GetMousePos();
@@ -159,6 +158,12 @@ namespace RottenBamboo
         {
             materialsGUI.Render(commandBuffer, uniformMatrix);
         }
+
+        if(hierarchyEditorActive)
+        {
+            hierarchyGUI.Render(commandBuffer, uniformMatrix);
+        }
+
         if(assetsActive)
         {
             assetsGUI.Render(commandBuffer, uniformMatrix);

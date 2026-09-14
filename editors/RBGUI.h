@@ -5,6 +5,7 @@
 #pragma once
 
 #include "RBGUIMaterials.h"
+#include "RBHierarchy.h"
 #include "RBGUIAssets.h"
 namespace RottenBamboo 
 {
@@ -36,7 +37,9 @@ namespace RottenBamboo
         RBDevice &rbDevice;
         RBWindows &rbWindows;
         RBGUIMaterials materialsGUI{rbDevice};
+        RBHierarchy hierarchyGUI{rbDevice};
         RBGUIAssets assetsGUI;
+        bool hierarchyEditorActive = true;
         bool materialEditorActive = true;
         bool gizmoActive = true;
         bool assetsActive = true;
