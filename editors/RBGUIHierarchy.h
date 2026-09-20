@@ -9,25 +9,24 @@
 #include "RBShaderDefinition.h"
 #include "RBDescriptors.h"
 #include <iostream>
-// #include <imgui.h>
-// #include <imgui_impl_sdl3.h>
-// #include <imgui_impl_vulkan.h>
-// #include <ImGuizmo.h>
 namespace RottenBamboo 
 {
-    class RBHierarchy : public RBGUIBase 
+    class RBGUIHierarchy : public RBGUIBase 
     {
     public:
-        RBHierarchy(RBDevice& device);
+        RBGUIHierarchy();
 
-        virtual ~RBHierarchy() override = default;
+        virtual ~RBGUIHierarchy() override = default;
 
         virtual void Initialize(VkRenderPass renderPass) override;
 
         virtual void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix) override;
 
         void SetLayout() override;
-        
-        RBDevice& rbDevice;
+
+        private:
+        void RenderHierarchy();
+
+                
     };
 }

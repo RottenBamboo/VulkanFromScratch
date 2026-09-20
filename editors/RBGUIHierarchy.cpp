@@ -3,20 +3,20 @@
 // Created by rottenbamboo on 2026/9/11.
 //
 
-#include "RBHierarchy.h"
+#include "RBGUIHierarchy.h"
 namespace RottenBamboo 
 {
-    RBHierarchy::RBHierarchy(RBDevice& device) : rbDevice(device)
+    RBGUIHierarchy::RBGUIHierarchy()
     {
 
     }
 
-    void RBHierarchy::Initialize(VkRenderPass renderPass)
+    void RBGUIHierarchy::Initialize(VkRenderPass renderPass)
     {
         (void)renderPass;
     }
 
-    void RBHierarchy::SetLayout()
+    void RBGUIHierarchy::SetLayout()
     {
 
         ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -43,12 +43,19 @@ namespace RottenBamboo
             );
     }
 
-    void RBHierarchy::Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix)
+    void RBGUIHierarchy::Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix)
     {
         (void)commandBuffer;
         (void)uniformMatrix;
 
+        RenderHierarchy();
+
         SetLayout();
         ImGui::End();
+    }
+
+    void RBGUIHierarchy::RenderHierarchy()
+    {
+        
     }
 }
