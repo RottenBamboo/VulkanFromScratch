@@ -106,7 +106,8 @@ namespace RottenBamboo
     {
         ImGui::Text("Directory: %s", currentDirectory.string().c_str());
 
-        if (ImGui::Button("Up One Level")) {
+        if (ImGui::Button("Up One Level")) 
+        {
             NavigateTo(currentDirectory.parent_path());
         }
 
@@ -116,7 +117,8 @@ namespace RottenBamboo
 
         ImGui::Separator();
 
-        if (!std::filesystem::exists(currentDirectory)) {
+        if (!std::filesystem::exists(currentDirectory)) 
+        {
             ImGui::TextUnformatted("Current directory does not exist.");
             return;
         }
