@@ -8,6 +8,7 @@
 #include "RBGUIBase.h"
 #include "RBShaderDefinition.h"
 #include "RBDescriptors.h"
+#include "RBSimplePrimitive.h"
 #include <iostream>
 namespace RottenBamboo 
 {
@@ -27,6 +28,6 @@ namespace RottenBamboo
         private:
         void RenderHierarchy();
 
-                
+        //RBSimplePrimitive m_Primitive;     
     };
 }

@@ -48,14 +48,26 @@ namespace RottenBamboo
         (void)commandBuffer;
         (void)uniformMatrix;
 
+        SetLayout();
+
         RenderHierarchy();
 
-        SetLayout();
         ImGui::End();
     }
 
     void RBGUIHierarchy::RenderHierarchy()
     {
-        
+        if (ImGui::BeginPopupContextWindow("HierarchyContext", ImGuiPopupFlags_MouseButtonRight))
+        {
+            if (ImGui::MenuItem("Create Cube"))
+            {
+                // 调用 RBSimplePrimitive
+            }
+            if (ImGui::MenuItem("Create Sphere"))
+            {
+                // 创建 sphere
+            }
+            ImGui::EndPopup();
+        }
     }
 }
