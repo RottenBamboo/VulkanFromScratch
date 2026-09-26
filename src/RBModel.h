@@ -42,6 +42,9 @@ namespace RottenBamboo
 
         std::unique_ptr<RBMesh>& getMeshes(int index);
 
+        void setMeshes(int index, std::unique_ptr<RBMesh> mesh);
+
+        size_t getMeshCount() const;
     private:
         RBDevice &device;
         RBCommandBuffer &commandBuffer;

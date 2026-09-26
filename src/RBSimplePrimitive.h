@@ -15,7 +15,6 @@ namespace RottenBamboo
         std::unique_ptr<RBMesh> CreateCylinder(float radius = 0.5f, float height = 1.0f, uint32_t segments = 32);
         std::unique_ptr<RBMesh> CreateCapsule(float radius = 0.5f, float height = 1.0f, uint32_t segments = 32, uint32_t rings = 16);
         std::unique_ptr<RBMesh> CreatePlane(float width = 1.0f, float height = 1.0f);
-
         const std::unique_ptr<RBMesh>& GetMesh() const { return m_mesh; }
 
     private:

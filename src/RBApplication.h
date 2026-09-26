@@ -128,6 +128,8 @@ namespace RottenBamboo
 
         RBPipelineConfig pipelineConfig{};
 
+        RBSimplePrimitive m_simplePrimitive{device, commandBuffer};
+
         std::vector<RBDescriptors*> m_pDescriptorsGBuffersVec;
 
         std::vector<RBMaterial> materialsVec;
@@ -160,6 +162,14 @@ namespace RottenBamboo
         void InitializeStaticPtr();
 
     public:
+    
+        static RBSimplePrimitive* ptr_simplePrimitive;
+
+        static RBSimplePrimitive* GetSimplePrimitive();
+    
+        static ResourceManager* ptr_resourceManager;
+
+        static ResourceManager* GetResourceManager();
     
         static RBAssetsRegistry* ptr_assetsRegistry;
 

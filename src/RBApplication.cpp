@@ -23,7 +23,19 @@ namespace RottenBamboo {
         bool RBApplication::descriptorSetsUpdate = false;
         std::vector<ImageResourcePtr> RBApplication::oldImageResourceVec;
         RBAssetsRegistry* RBApplication::ptr_assetsRegistry = new RBAssetsRegistry();
+        ResourceManager* RBApplication::ptr_resourceManager = nullptr;
+        RBSimplePrimitive* RBApplication::ptr_simplePrimitive = nullptr;
         
+        RBSimplePrimitive* RBApplication::GetSimplePrimitive()
+        {
+            return RBApplication::ptr_simplePrimitive;
+        }
+
+        ResourceManager* RBApplication::GetResourceManager()
+        {
+            return RBApplication::ptr_resourceManager;
+        }
+
         RBAssetsRegistry* RBApplication::GetAssetRegistry()
         {
             return RBApplication::ptr_assetsRegistry;
@@ -80,6 +92,7 @@ namespace RottenBamboo {
         
         RBApplication::ptr_assetsRegistry = &assetsRegistry;
         ptr_shaderDefinition = &shaderDefinitions;
+        ptr_simplePrimitive = &m_simplePrimitive;
         ptr_resourceShader = &resourceShader;
         ptr_Materials = &materialsVec;
         ptr_Descriptors = &m_pDescriptorsGBuffersVec;
@@ -92,6 +105,7 @@ namespace RottenBamboo {
         model_paths.insert({1, SAMURI_PATH});
         model_paths.insert({2, TERRAIN_PATH});
         resourceManager.Load<RBModel>(model_paths);
+        ptr_resourceManager = &resourceManager;
 
         InitializeShaderDefinition();
         for(auto it = GetShaderDefinition()->begin(); it != GetShaderDefinition()->end(); it++)

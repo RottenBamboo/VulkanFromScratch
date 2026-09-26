@@ -37,7 +37,7 @@ namespace RottenBamboo
         RBDevice &rbDevice;
         RBWindows &rbWindows;
         RBGUIMaterials materialsGUI{rbDevice};
-        RBGUIHierarchy hierarchyGUI{};
+        RBGUIHierarchy hierarchyGUI{rbDevice};
         RBGUIAssets assetsGUI;
         bool hierarchyEditorActive = true;
         bool materialEditorActive = true;

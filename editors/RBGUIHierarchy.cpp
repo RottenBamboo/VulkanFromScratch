@@ -4,9 +4,13 @@
 //
 
 #include "RBGUIHierarchy.h"
+#include "RBApplication.h"
+#include <filesystem>
+namespace fs = std::filesystem;
 namespace RottenBamboo 
 {
-    RBGUIHierarchy::RBGUIHierarchy()
+    RBGUIHierarchy::RBGUIHierarchy(RBDevice& device)
+        : rbDevice(device)
     {
 
     }
@@ -61,11 +65,27 @@ namespace RottenBamboo
         {
             if (ImGui::MenuItem("Create Cube"))
             {
-                // 调用 RBSimplePrimitive
+                auto mesh = RBApplication::GetSimplePrimitive()->CreateCube(5);
+                std::string modelPath = GET_RESOURCE_ROOT_DIR + "models/mach.gltf";
+                modelPath = NormalizePathString(modelPath);
+                std::shared_ptr<RBModel> model = RBApplication::GetResourceManager()->Get<RBModel>(modelPath);
+                if(model)
+                {
+                    int meshCount = model->getMeshCount();
+                    for(int i = 0; i < meshCount; i++)
+                    {
+                        std::unique_ptr<RBMesh>& meshes = model->getMeshes(i);
+                        if(meshes)
+                        {
+                            model->setMeshes(i, std::move(mesh));
+                        }
+                    }
+                }
+                
             }
             if (ImGui::MenuItem("Create Sphere"))
             {
-                // 创建 sphere
+
             }
             ImGui::EndPopup();
         }

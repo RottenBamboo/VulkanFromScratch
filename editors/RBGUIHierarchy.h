@@ -15,7 +15,7 @@ namespace RottenBamboo
     class RBGUIHierarchy : public RBGUIBase 
     {
     public:
-        RBGUIHierarchy();
+        RBGUIHierarchy(RBDevice& device);
 
         virtual ~RBGUIHierarchy() override = default;
 
@@ -26,8 +26,7 @@ namespace RottenBamboo
         void SetLayout() override;
 
         private:
-        void RenderHierarchy();
-
-        //RBSimplePrimitive m_Primitive;     
+        void RenderHierarchy();  
+        RBDevice& rbDevice;
     };
 }

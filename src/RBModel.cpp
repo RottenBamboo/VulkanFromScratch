@@ -107,12 +107,24 @@ namespace RottenBamboo {
         }
     }
 
+    size_t RBModel::getMeshCount() const
+    {
+        return meshes.size();
+    }
+
     std::unique_ptr<RBMesh>& RBModel::getMeshes(int index) 
     {
         if(index < 0 || index >= meshes.size()) {
             throw std::out_of_range("Index out of range in RBModel::getMeshes");
         }
         return meshes[index];
+    }
+    void RBModel::setMeshes(int index, std::unique_ptr<RBMesh> mesh) 
+    {
+        if(index < 0 || index >= meshes.size()) {
+            throw std::out_of_range("Index out of range in RBModel::SetMeshes");
+        }
+        meshes[index] = std::move(mesh);
     }
 
 #ifdef __ANDROID__
