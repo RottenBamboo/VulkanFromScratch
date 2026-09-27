@@ -181,17 +181,17 @@ namespace RottenBamboo {
 
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-        
-        for(auto it = model_paths.cbegin(); it != model_paths.cend(); ++it)
+        auto resourceMap = resourceManager.GetResources<RBModel>();
+        int i = 0;
+        for(auto it = resourceMap->begin(); it != resourceMap->end(); it++, i++)
         {
-            auto shared_ptr_model = resourceManager.Get<RBModel>(it->second);
-            auto& mesh = shared_ptr_model->getMeshes(0);
-            VkBuffer vertexBuffers[] = {(*mesh).vertexBuffer.buffer};
+            auto model = std::dynamic_pointer_cast<RBModel>(it->second);
+            auto& mesh = model->getMeshes(0);
             VkDeviceSize offsets[] = {0};
-
-            vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, rbPipelineLayoutManager.pipelineLayout, 0, 1, &pDescriptorsGBuffersVec[it->first]->descriptorSetManager.descriptorSets[currentFrame], 0, nullptr);
+            
+            vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, rbPipelineLayoutManager.pipelineLayout, 0, 1, &(pDescriptorsGBuffersVec[i]->descriptorSetManager.descriptorSets[currentFrame]), 0, nullptr);
         
-            vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+            vkCmdBindVertexBuffers(commandBuffer, 0, 1, &(mesh->vertexBuffer.buffer), offsets);
 
             vkCmdBindIndexBuffer(commandBuffer, (*mesh).indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
 

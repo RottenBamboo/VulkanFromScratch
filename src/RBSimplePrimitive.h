@@ -5,6 +5,26 @@
 
 namespace RottenBamboo
 {
+
+    enum SimplePrimitiveType
+    {
+        TYPE_CUBE,
+        TYPE_SPHERE,
+        TYPE_CYLINDER,
+        TYPE_CAPSULE,
+        TYPE_PLANE,
+        TYPE_MAX
+    };
+    struct SimplePrimitiveData
+    {
+        SimplePrimitiveType type;
+        float width;
+        float height;
+        float radius;
+        float segments;
+        float rings;
+    };
+
     class RBSimplePrimitive
     {
     public:
@@ -15,6 +35,7 @@ namespace RottenBamboo
         std::unique_ptr<RBMesh> CreateCylinder(float radius = 0.5f, float height = 1.0f, uint32_t segments = 32);
         std::unique_ptr<RBMesh> CreateCapsule(float radius = 0.5f, float height = 1.0f, uint32_t segments = 32, uint32_t rings = 16);
         std::unique_ptr<RBMesh> CreatePlane(float width = 1.0f, float height = 1.0f);
+        std::unique_ptr<RBMesh> CreateSimplePrimitive(SimplePrimitiveData* data);
         const std::unique_ptr<RBMesh>& GetMesh() const { return m_mesh; }
 
     private:

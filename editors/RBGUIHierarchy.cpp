@@ -9,8 +9,8 @@
 namespace fs = std::filesystem;
 namespace RottenBamboo 
 {
-    RBGUIHierarchy::RBGUIHierarchy(RBDevice& device)
-        : rbDevice(device)
+    RBGUIHierarchy::RBGUIHierarchy(RBDevice& device, RBCommandBuffer& commandBuffer)
+        : rbDevice(device), rbCommandBuffer(commandBuffer)
     {
 
     }
@@ -54,38 +54,64 @@ namespace RottenBamboo
 
         SetLayout();
 
-        RenderHierarchy();
+        RenderHierarchy(commandBuffer);
 
         ImGui::End();
     }
 
-    void RBGUIHierarchy::RenderHierarchy()
+    void RBGUIHierarchy::CreatePrimitive(SimplePrimitiveData* data, const std::string& path)
+    {
+        auto mesh = RBApplication::GetSimplePrimitive()->CreateSimplePrimitive(data);
+        ResourceManager* resourceManager = RBApplication::GetResourceManager();
+        std::string modelPath = GET_RESOURCE_ROOT_DIR + path + std::to_string(resourceManager->Count<RBModel>());
+        modelPath = NormalizePathString(modelPath);
+        auto res = resourceManager->Add<RBModel>(modelPath);
+        res->addMesh(std::move(mesh));
+    }
+    void RBGUIHierarchy::RenderHierarchy(VkCommandBuffer& commandBuffer)
     {
         if (ImGui::BeginPopupContextWindow("HierarchyContext", ImGuiPopupFlags_MouseButtonRight))
         {
             if (ImGui::MenuItem("Create Cube"))
             {
-                auto mesh = RBApplication::GetSimplePrimitive()->CreateCube(5);
-                std::string modelPath = GET_RESOURCE_ROOT_DIR + "models/mach.gltf";
-                modelPath = NormalizePathString(modelPath);
-                std::shared_ptr<RBModel> model = RBApplication::GetResourceManager()->Get<RBModel>(modelPath);
-                if(model)
-                {
-                    int meshCount = model->getMeshCount();
-                    for(int i = 0; i < meshCount; i++)
-                    {
-                        std::unique_ptr<RBMesh>& meshes = model->getMeshes(i);
-                        if(meshes)
-                        {
-                            model->setMeshes(i, std::move(mesh));
-                        }
-                    }
-                }
-                
+                SimplePrimitiveData data;
+                data.type = SimplePrimitiveType::TYPE_CUBE;
+                data.width = 1;
+                data.height = 1;
+                CreatePrimitive(&data, "models/cube.gltf");
             }
             if (ImGui::MenuItem("Create Sphere"))
             {
-
+                SimplePrimitiveData data;
+                data.type = SimplePrimitiveType::TYPE_SPHERE;
+                data.radius = 1;
+                data.segments = 50;
+                data.rings = 50;
+                CreatePrimitive(&data, "models/sphere.gltf");
+            }
+            if (ImGui::MenuItem("Create Cylinder"))
+            {
+                SimplePrimitiveData data;
+                data.type = SimplePrimitiveType::TYPE_CYLINDER;
+                data.width = 1;
+                data.height = 2;
+                CreatePrimitive(&data, "models/cylinder.gltf");
+            }
+            if (ImGui::MenuItem("Create Capsule"))
+            {
+                SimplePrimitiveData data;
+                data.type = SimplePrimitiveType::TYPE_CAPSULE;
+                data.width = 1;
+                data.height = 2;
+                CreatePrimitive(&data, "models/capsule.gltf");
+            }
+            if (ImGui::MenuItem("Create Plane"))
+            {
+                SimplePrimitiveData data;
+                data.type = SimplePrimitiveType::TYPE_PLANE;
+                data.width = 2;
+                data.height = 2;
+                CreatePrimitive(&data, "models/plane.gltf");
             }
             ImGui::EndPopup();
         }

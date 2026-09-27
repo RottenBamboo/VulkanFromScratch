@@ -72,7 +72,10 @@ namespace RottenBamboo
         assetsGUI.SetResourceManager(resourceManager);
     }
 
-    RBGUI::RBGUI(RBDevice &device, RBWindows &window) : rbDevice(device), rbWindows(window)
+    RBGUI::RBGUI(RBDevice &device, RBWindows &window, RBCommandBuffer &commandBuffer)
+     : rbDevice(device)
+     , rbWindows(window)
+     , rbCommandBuffer(commandBuffer)
     {
         checkbox = false;
         std::cout << "RBGUI::RBGUI()" << std::endl;

@@ -16,7 +16,7 @@ namespace RottenBamboo
 
         VkDescriptorPool imguiDescriptorPool;    
 
-        RBGUI(RBDevice &device, RBWindows &windows);
+        RBGUI(RBDevice &device, RBWindows &windows, RBCommandBuffer &commandBuffer);
 
         virtual ~RBGUI();
 
@@ -36,8 +36,9 @@ namespace RottenBamboo
     private:
         RBDevice &rbDevice;
         RBWindows &rbWindows;
+        RBCommandBuffer rbCommandBuffer;
         RBGUIMaterials materialsGUI{rbDevice};
-        RBGUIHierarchy hierarchyGUI{rbDevice};
+        RBGUIHierarchy hierarchyGUI{rbDevice, rbCommandBuffer};
         RBGUIAssets assetsGUI;
         bool hierarchyEditorActive = true;
         bool materialEditorActive = true;

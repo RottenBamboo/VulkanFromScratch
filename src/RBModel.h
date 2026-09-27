@@ -44,6 +44,8 @@ namespace RottenBamboo
 
         void setMeshes(int index, std::unique_ptr<RBMesh> mesh);
 
+        void addMesh(std::unique_ptr<RBMesh> mesh);
+
         size_t getMeshCount() const;
     private:
         RBDevice &device;

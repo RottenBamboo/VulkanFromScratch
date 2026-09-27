@@ -53,6 +53,15 @@ namespace RottenBamboo {
         }
 
         template<typename T>
+        std::shared_ptr<T> Add(const std::string& path)
+        {
+            auto resourceMap = GetResources<T>();
+            auto res = std::make_shared<T>(path, device, commandBuffer);
+            resourceMap->insert(std::make_pair(path, res));
+            return res;
+        }
+
+        template<typename T>
         std::shared_ptr<T> Get(const std::string& path) 
         {
             auto typeId = std::type_index(typeid(T));
@@ -61,6 +70,17 @@ namespace RottenBamboo {
                 auto& table = itType->second;
                 if (table.count(path))
                     return std::static_pointer_cast<T>(table[path]);
+            }
+            return nullptr;
+        }
+
+        template<typename T>
+        std::unordered_map<std::string, std::shared_ptr<RBResource>>* GetResources()
+        {
+            auto typeId = std::type_index(typeid(T));
+            auto itType = resources.find(typeId);
+            if (itType != resources.end()) {
+                return &(itType->second);
             }
             return nullptr;
         }

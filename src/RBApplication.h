@@ -116,7 +116,7 @@ namespace RottenBamboo
 
         RBCommandBuffer commandBuffer{device};
 
-        RBGUI gui{device, windows};
+        RBGUI gui{device, windows, commandBuffer};
 
         std::unordered_map<uuids::uuid, RBShaderDefinition> shaderDefinitions;
 

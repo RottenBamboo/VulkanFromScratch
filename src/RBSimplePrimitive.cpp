@@ -65,6 +65,25 @@ namespace RottenBamboo
     {
     }
 
+    std::unique_ptr<RBMesh> RBSimplePrimitive::CreateSimplePrimitive(SimplePrimitiveData* data)
+    {
+        switch (data->type)
+        {
+        case SimplePrimitiveType::TYPE_CUBE:
+            return CreateCube(data->width);
+        case SimplePrimitiveType::TYPE_SPHERE:
+            return CreateSphere(data->radius, data->segments, data->rings);
+        case SimplePrimitiveType::TYPE_CYLINDER:
+            return CreateCylinder(data->width, data->height);
+        case SimplePrimitiveType::TYPE_CAPSULE:
+            return CreateCapsule(data->radius, data->height, data->segments, data->rings);
+        case SimplePrimitiveType::TYPE_PLANE:
+            return CreatePlane(data->width, data->height);
+        default:
+            return nullptr;
+        }
+    }
+
     std::unique_ptr<RBMesh> RBSimplePrimitive::CreateCube(float size)
     {
         const float half = size * 0.5f;
@@ -295,6 +314,7 @@ namespace RottenBamboo
         m_mesh = std::move(mesh);
         return std::move(m_mesh);
     }
+
 
     std::unique_ptr<RBMesh> RBSimplePrimitive::CreatePlane(float width, float height)
     {

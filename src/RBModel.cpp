@@ -127,6 +127,11 @@ namespace RottenBamboo {
         meshes[index] = std::move(mesh);
     }
 
+    void RBModel::addMesh(std::unique_ptr<RBMesh> mesh)
+    {
+        meshes.push_back(std::move(mesh));
+    }
+    
 #ifdef __ANDROID__
 void RBModel::Load(const std::string& filepath) {
     __android_log_print(ANDROID_LOG_INFO, "RottenBamboo", "RBModel::Load called for: %s", filepath.c_str());

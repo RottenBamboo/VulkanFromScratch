@@ -101,9 +101,9 @@ namespace RottenBamboo {
         std::string rootPath = GET_PROJECT_ROOT_DIR + "resource";
         assetsRegistry.Initialize(rootPath, cachePath);
 
-        model_paths.insert({0, MODEL_PATH});
-        model_paths.insert({1, SAMURI_PATH});
-        model_paths.insert({2, TERRAIN_PATH});
+        //model_paths.insert({0, MODEL_PATH});
+        //model_paths.insert({1, SAMURI_PATH});
+        //model_paths.insert({2, TERRAIN_PATH});
         resourceManager.Load<RBModel>(model_paths);
         ptr_resourceManager = &resourceManager;
 
