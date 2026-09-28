@@ -513,7 +513,9 @@ void RBApplication::processModelNode(
     {
         
         //uniformShaderVariables.model = glm::scale(glm::mat4(1.0f), glm::vec3(0.25f));
-
+        for(int i = 0; i < resourceManager.Count<RBModel>(); i++)
+        {
+        }
         uniformShaderVariables.view = mainCamera.GetViewMatrix();
         float aspectRatio = static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
         uniformShaderVariables.proj = mainCamera.GetProjectionMatrix(aspectRatio);

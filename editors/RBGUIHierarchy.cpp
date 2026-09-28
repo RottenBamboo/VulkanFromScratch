@@ -72,46 +72,51 @@ namespace RottenBamboo
     {
         if (ImGui::BeginPopupContextWindow("HierarchyContext", ImGuiPopupFlags_MouseButtonRight))
         {
-            if (ImGui::MenuItem("Create Cube"))
+            if (ImGui::BeginMenu("Create Primitive"))
             {
-                SimplePrimitiveData data;
-                data.type = SimplePrimitiveType::TYPE_CUBE;
-                data.width = 1;
-                data.height = 1;
-                CreatePrimitive(&data, "models/cube.gltf");
-            }
-            if (ImGui::MenuItem("Create Sphere"))
-            {
-                SimplePrimitiveData data;
-                data.type = SimplePrimitiveType::TYPE_SPHERE;
-                data.radius = 1;
-                data.segments = 50;
-                data.rings = 50;
-                CreatePrimitive(&data, "models/sphere.gltf");
-            }
-            if (ImGui::MenuItem("Create Cylinder"))
-            {
-                SimplePrimitiveData data;
-                data.type = SimplePrimitiveType::TYPE_CYLINDER;
-                data.width = 1;
-                data.height = 2;
-                CreatePrimitive(&data, "models/cylinder.gltf");
-            }
-            if (ImGui::MenuItem("Create Capsule"))
-            {
-                SimplePrimitiveData data;
-                data.type = SimplePrimitiveType::TYPE_CAPSULE;
-                data.width = 1;
-                data.height = 2;
-                CreatePrimitive(&data, "models/capsule.gltf");
-            }
-            if (ImGui::MenuItem("Create Plane"))
-            {
-                SimplePrimitiveData data;
-                data.type = SimplePrimitiveType::TYPE_PLANE;
-                data.width = 2;
-                data.height = 2;
-                CreatePrimitive(&data, "models/plane.gltf");
+                if (ImGui::MenuItem("Create Cube"))
+                {
+                    SimplePrimitiveData data;
+                    data.type = SimplePrimitiveType::TYPE_CUBE;
+                    data.width = 1;
+                    data.height = 1;
+                    CreatePrimitive(&data, "models/cube.gltf");
+                }
+                if (ImGui::MenuItem("Create Sphere"))
+                {
+                    SimplePrimitiveData data;
+                    data.type = SimplePrimitiveType::TYPE_SPHERE;
+                    data.radius = 1;
+                    data.segments = 50;
+                    data.rings = 50;
+                    CreatePrimitive(&data, "models/sphere.gltf");
+                }
+                if (ImGui::MenuItem("Create Cylinder"))
+                {
+                    SimplePrimitiveData data;
+                    data.type = SimplePrimitiveType::TYPE_CYLINDER;
+                    data.width = 1;
+                    data.height = 2;
+                    CreatePrimitive(&data, "models/cylinder.gltf");
+                }
+                if (ImGui::MenuItem("Create Capsule"))
+                {
+                    SimplePrimitiveData data;
+                    data.type = SimplePrimitiveType::TYPE_CAPSULE;
+                    data.width = 1;
+                    data.height = 2;
+                    CreatePrimitive(&data, "models/capsule.gltf");
+                }
+                if (ImGui::MenuItem("Create Plane"))
+                {
+                    SimplePrimitiveData data;
+                    data.type = SimplePrimitiveType::TYPE_PLANE;
+                    data.width = 2;
+                    data.height = 2;
+                    CreatePrimitive(&data, "models/plane.gltf");
+                }
+                
+                ImGui::EndMenu();
             }
             ImGui::EndPopup();
         }
