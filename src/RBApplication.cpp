@@ -26,6 +26,12 @@ namespace RottenBamboo {
         RBAssetsRegistry* RBApplication::ptr_assetsRegistry = new RBAssetsRegistry();
         ResourceManager* RBApplication::ptr_resourceManager = nullptr;
         RBSimplePrimitive* RBApplication::ptr_simplePrimitive = nullptr;
+        RBScene* RBApplication::ptr_scene = nullptr;
+        
+        RBScene* RBApplication::GetScene()
+        {
+            return RBApplication::ptr_scene;
+        }
         
         RBSimplePrimitive* RBApplication::GetSimplePrimitive()
         {
@@ -140,7 +146,7 @@ namespace RottenBamboo {
         InitializeStaticPtr();
 
         InitializeGUI();
-        
+        InitializeScene();
         InitializeMatrix();
         InitializeEditorMaterial();
         
@@ -213,6 +219,7 @@ namespace RottenBamboo {
         descriptorSetsUpdate = false;
         ptr_resourceManager = nullptr;
         ptr_simplePrimitive = nullptr;
+        ptr_scene = nullptr;
     }
 
     void RBApplication::InitializeWindow()
@@ -297,13 +304,11 @@ namespace RottenBamboo {
                             TexturesInfo info;
                             RBShaderParamType type;
                             RBShaderTextureType textureType;
-                            //const auto it = imageDesc.second.bindings.find(i + 1);
                             if(imageDesc.second.bindings.find(i + 1) == imageDesc.second.bindings.end())
                             {
                                 continue;
                             }
                             const RBDescriptorBinding& imageBindings = imageDesc.second.bindings.find(i + 1)->second;
-                            //const RBDescriptorBinding& imageBindings = imageDesc.second.bindings.at(i + 1);
                             if(imageBindings.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER || imageBindings.type == VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)
                             {
                                 //check shaderDefinitiona map type.
@@ -340,7 +345,6 @@ namespace RottenBamboo {
                             }
                             texturesInfo.push_back(info);
                         }
-                        //RBDescriptors descriptor{device, commandBuffer};
                         auto descriptor = std::make_unique<RBDescriptors>(device, commandBuffer);
                         descriptor->SetResourcesInfos(uniformBuffers, texturesInfo, false);
                         m_descriptorsGBuffersVec.push_back(std::move(descriptor));
@@ -431,6 +435,11 @@ namespace RottenBamboo {
             RBLOG_INFO("RBApplication::InitializeGUI()");
     };
 
+    void RBApplication::InitializeScene()
+    {
+        scene.SetRoot(std::make_unique<RBSceneNode>("Root", nullptr, uuids::uuid()));
+        ptr_scene = &scene;
+    }
 
     void RBApplication::transformModelVertex(
     aiMesh* meshPtr, 

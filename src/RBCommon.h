@@ -92,6 +92,8 @@ extern const std::string cachePath;
 extern const std::string shaderDefinitionFilePath;
 extern const std::string materialsFilePath;
 extern const std::string defaultMaterialPath;
+extern const std::string defaultSceneName;
+extern const std::string defaultScenePath;
 extern const std::string modelsFilePath;
 extern const std::string texturesFilePath;
 extern const std::string shaderFilePath;

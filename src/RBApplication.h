@@ -29,6 +29,7 @@
 #include <efsw/efsw.hpp>
 #include "RBAssetsRegistry.h"
 #include "RBAssetsRegistryListener.h"
+#include "RBScene.h"
 
 namespace RottenBamboo 
 {
@@ -86,6 +87,8 @@ namespace RottenBamboo
 
         void InitializeGUI();
 
+        void InitializeScene();
+
         void InitializeMatrix();
         
         void InitializeMaterial();
@@ -125,6 +128,8 @@ namespace RottenBamboo
         RBGUI gui{device, windows, commandBuffer};
 
         std::unordered_map<uuids::uuid, RBShaderDefinition> shaderDefinitions;
+
+        RBScene scene{defaultSceneName};
 
         RBMaterial editorMaterial{"", device, commandBuffer};
 
@@ -168,6 +173,10 @@ namespace RottenBamboo
         void InitializeStaticPtr();
 
     public:
+    
+        static RBScene* ptr_scene;
+
+        static RBScene* GetScene();
     
         static RBSimplePrimitive* ptr_simplePrimitive;
 

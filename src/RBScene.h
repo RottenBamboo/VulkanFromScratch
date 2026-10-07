@@ -11,8 +11,9 @@ namespace RottenBamboo
     {
     public:
         explicit RBScene(const std::string& name = "Scene", const uuids::uuid& guid = uuids::uuid());
-
         RBScene();
+        void SetRoot(std::unique_ptr<RBSceneNode> root);
+        RBSceneNode* GetRoot() const;
     private:
         std::unique_ptr<RBSceneNode> m_Root;
     };

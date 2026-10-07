@@ -29,6 +29,7 @@ namespace RottenBamboo
 
         private:
         void RenderHierarchy(VkCommandBuffer& commandBuffer);  
+        void RenderScene(VkCommandBuffer& commandBuffer);  
         RBDevice& rbDevice;
         RBCommandBuffer& rbCommandBuffer;
     };

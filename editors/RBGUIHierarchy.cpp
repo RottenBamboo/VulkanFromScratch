@@ -1,4 +1,3 @@
-
 //
 // Created by rottenbamboo on 2026/9/11.
 //
@@ -6,6 +5,7 @@
 #include "RBGUIHierarchy.h"
 #include "RBApplication.h"
 #include <filesystem>
+#include <functional>
 namespace fs = std::filesystem;
 namespace RottenBamboo 
 {
@@ -55,7 +55,7 @@ namespace RottenBamboo
         SetLayout();
 
         RenderHierarchy(commandBuffer);
-
+        RenderScene(commandBuffer);
         ImGui::End();
     }
 
@@ -68,6 +68,48 @@ namespace RottenBamboo
         auto res = resourceManager->Add<RBModel>(modelPath);
         res->addMesh(std::move(mesh));
     }
+    void RBGUIHierarchy::RenderScene(VkCommandBuffer& commandBuffer)
+    {
+        (void)commandBuffer;
+
+        auto* scene = RBApplication::GetScene();
+        if (!scene) return;
+
+        RBSceneNode* root = scene->GetRoot();
+        if (!root) return;
+
+        std::function<void(RBSceneNode*)> drawNode = [&](RBSceneNode* node)
+        {
+            if (!node) return;
+
+            ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
+                                       ImGuiTreeNodeFlags_SpanAvailWidth;
+
+            if (node->m_Children.empty())
+                flags |= ImGuiTreeNodeFlags_Leaf;
+
+            const bool opened = ImGui::TreeNodeEx(
+                node,
+                flags,
+                "%s",
+                node->GetName().c_str()
+            );
+
+            if (opened)
+            {
+                for (auto& child : node->m_Children)
+                {
+                    if (child)
+                        drawNode(child.get());
+                }
+
+                ImGui::TreePop();
+            }
+        };
+
+        drawNode(root);
+    }
+
     void RBGUIHierarchy::RenderHierarchy(VkCommandBuffer& commandBuffer)
     {
         if (ImGui::BeginPopupContextWindow("HierarchyContext", ImGuiPopupFlags_MouseButtonRight))
