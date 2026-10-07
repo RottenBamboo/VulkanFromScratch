@@ -25,6 +25,7 @@ const std::string cachePath = GET_RESOURCE_ROOT_DIR + "Cache/AssetsRegistry.bin"
 
 const std::string shaderDefinitionFilePath = "shaderDefinition/";
 const std::string materialsFilePath = "materials/";
+const std::string defaultMaterialPath = "default/default.mat";
 const std::string modelsFilePath = GET_RESOURCE_ROOT_DIR + "models/";
 const std::string texturesFilePath = GET_RESOURCE_ROOT_DIR + "textures/";
 const std::string shaderFilePath = GET_RESOURCE_ROOT_DIR + "shader/";

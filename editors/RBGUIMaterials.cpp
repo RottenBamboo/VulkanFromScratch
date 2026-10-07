@@ -136,7 +136,7 @@ namespace RottenBamboo
 
     void RBGUIMaterials::SetMaterial(RBMaterial* material, int descsriptorIndex)
     {
-        std::vector<RBDescriptors*>* ptr_Descriptors = RBApplication::GetDescriptors();
+        std::unordered_map<int, RBDescriptors*>* ptr_Descriptors = RBApplication::GetDescriptors();
         currentMaterialDescriptors = (*ptr_Descriptors)[descsriptorIndex];
         if(currentMaterialDescriptors == nullptr)
         {

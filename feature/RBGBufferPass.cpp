@@ -175,7 +175,7 @@ namespace RottenBamboo {
         std::cout << "RBGBufferPass::~RBGBufferPass()" << std::endl;
     }
 
-    void RBGBufferPass::Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, std::vector<RBDescriptors*> pDescriptorsGBuffersVec, ResourceManager& resourceManager) 
+    void RBGBufferPass::Execute(VkCommandBuffer commandBuffer, VkRenderPassBeginInfo renderPassInfo, std::unordered_map<int, RBDescriptors*> pDescriptorsGBuffersVec, ResourceManager& resourceManager) 
     {
         vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 

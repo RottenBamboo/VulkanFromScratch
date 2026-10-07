@@ -6,6 +6,8 @@
 #include <string>
 #include "uuid.h"
 #include "RBData.h"
+//#include "RBModel.h"
+//#include "RBMaterial.h"
 
 namespace RottenBamboo
 {
@@ -22,5 +24,7 @@ namespace RottenBamboo
         ~RBObject();
     public:
         RBObjectData objectData;
+        //RBModel* model;
+        //RBMaterial* material;
     };
 }

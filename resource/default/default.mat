@@ -1,0 +1,8 @@
+{
+    "name": "0mech_material",
+    "shaderDefinitionGuid": "ce60d2f1-45ba-4357-8ebc-b90cf7a02c48",
+    "normalMap": "textures/default_white.jpeg",
+    "albedoMap": "textures/default_white.jpeg",
+    "emissionMap": "textures/default_white.jpeg",
+    "metallicRoughnessAOMap": "textures/default_white.jpeg"
+}

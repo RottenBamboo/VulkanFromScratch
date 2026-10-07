@@ -81,6 +81,7 @@ namespace RottenBamboo
                     data.width = 1;
                     data.height = 1;
                     CreatePrimitive(&data, "models/cube.gltf");
+                    RBApplication::instance->AddDefaultMaterial();
                 }
                 if (ImGui::MenuItem("Create Sphere"))
                 {
@@ -90,6 +91,7 @@ namespace RottenBamboo
                     data.segments = 50;
                     data.rings = 50;
                     CreatePrimitive(&data, "models/sphere.gltf");
+                    RBApplication::instance->AddDefaultMaterial();
                 }
                 if (ImGui::MenuItem("Create Cylinder"))
                 {
@@ -98,14 +100,18 @@ namespace RottenBamboo
                     data.width = 1;
                     data.height = 2;
                     CreatePrimitive(&data, "models/cylinder.gltf");
+                    RBApplication::instance->AddDefaultMaterial();
                 }
                 if (ImGui::MenuItem("Create Capsule"))
                 {
                     SimplePrimitiveData data;
                     data.type = SimplePrimitiveType::TYPE_CAPSULE;
-                    data.width = 1;
+                    data.radius = 1;
                     data.height = 2;
+                    data.segments = 50;
+                    data.rings = 50;
                     CreatePrimitive(&data, "models/capsule.gltf");
+                    RBApplication::instance->AddDefaultMaterial();
                 }
                 if (ImGui::MenuItem("Create Plane"))
                 {
@@ -114,6 +120,7 @@ namespace RottenBamboo
                     data.width = 2;
                     data.height = 2;
                     CreatePrimitive(&data, "models/plane.gltf");
+                    RBApplication::instance->AddDefaultMaterial();
                 }
                 
                 ImGui::EndMenu();

@@ -37,6 +37,7 @@ namespace RottenBamboo
     {
 
     public:
+        static RBApplication* instance;
         static const uint32_t WIDTH = 1920;
         static const uint32_t HEIGHT = 1080;
 
@@ -79,6 +80,8 @@ namespace RottenBamboo
 
         void InitializeDescriptors();
 
+        void CreateNewDescriptors(const std::vector<RBMaterial>& materials, uuids::uuid& guidVertex, uuids::uuid& guidFragment);
+
         void InitializeGraphicPipeline();
 
         void InitializeGUI();
@@ -86,6 +89,9 @@ namespace RottenBamboo
         void InitializeMatrix();
         
         void InitializeMaterial();
+
+        void AddDefaultMaterial();
+        
         void InitializeEditorMaterial();
         
         void InitializeShaderDefinition();
@@ -130,9 +136,9 @@ namespace RottenBamboo
 
         RBSimplePrimitive m_simplePrimitive{device, commandBuffer};
 
-        std::vector<RBDescriptors*> m_pDescriptorsGBuffersVec;
-
+        std::unordered_map<int, RBDescriptors*> m_pDescriptorsGBuffersVec;
         std::vector<RBMaterial> materialsVec;
+        std::vector<RBMaterial> appendMaterialsVec;
 
         static std::vector<ImageResourcePtr> oldImageResourceVec;
         
@@ -189,9 +195,9 @@ namespace RottenBamboo
 
         static RBShaderDefinition* GetShaderDefinition(const uuids::uuid& guid);
 
-        static std::vector<RBDescriptors*>* ptr_Descriptors;
+        static std::unordered_map<int, RBDescriptors*>* ptr_Descriptors;
 
-        static std::vector<RBDescriptors*>* GetDescriptors();
+        static std::unordered_map<int, RBDescriptors*>* GetDescriptors();
 
         static std::vector<RBDescriptors*> updatedDescriptors;
 

@@ -19,7 +19,6 @@
 #include "RBWindows.h"
 #include "RBResourceUtils.h"
 #include "RBLogger.h"
-#include "RBObject.h"
 
 enum RootPathType
 {
@@ -92,6 +91,7 @@ extern const TexturesInfo fallBackFormat;
 extern const std::string cachePath;
 extern const std::string shaderDefinitionFilePath;
 extern const std::string materialsFilePath;
+extern const std::string defaultMaterialPath;
 extern const std::string modelsFilePath;
 extern const std::string texturesFilePath;
 extern const std::string shaderFilePath;

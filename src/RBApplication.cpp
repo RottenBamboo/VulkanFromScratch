@@ -14,10 +14,11 @@ namespace fs = std::filesystem;
 
 namespace RottenBamboo {
 
+        RBApplication* RBApplication::instance = nullptr;
         RBGUI* RBApplication::ptr_gui = nullptr;
         RBResourceShader* RBApplication::ptr_resourceShader = nullptr;
         std::unordered_map<uuids::uuid, RBShaderDefinition>* RBApplication::ptr_shaderDefinition = nullptr;
-        std::vector<RBDescriptors*>* RBApplication::ptr_Descriptors = nullptr;
+        std::unordered_map<int, RBDescriptors*>* RBApplication::ptr_Descriptors = nullptr;
         std::vector<RBDescriptors*> RBApplication::updatedDescriptors{};
         std::vector<RBMaterial>* RBApplication::ptr_Materials = nullptr;
         bool RBApplication::descriptorSetsUpdate = false;
@@ -60,7 +61,7 @@ namespace RottenBamboo {
             auto it = ptr_shaderDefinition->find(guid);
             return it != ptr_shaderDefinition->end() ? &ptr_shaderDefinition->at(guid) : nullptr;
         }
-        std::vector<RBDescriptors*>* RBApplication::GetDescriptors()
+        std::unordered_map<int, RBDescriptors*>* RBApplication::GetDescriptors()
         {
             return RBApplication::ptr_Descriptors;
         }
@@ -82,6 +83,8 @@ namespace RottenBamboo {
 
         RBApplication::RBApplication() 
         {
+
+        instance = this;
         InitializeFileListener();
         lastFrameTime = std::chrono::high_resolution_clock::now();
         cameraManager = std::make_unique<RBRuntimeCameraManager>();
@@ -101,9 +104,9 @@ namespace RottenBamboo {
         std::string rootPath = GET_PROJECT_ROOT_DIR + "resource";
         assetsRegistry.Initialize(rootPath, cachePath);
 
-        //model_paths.insert({0, MODEL_PATH});
-        //model_paths.insert({1, SAMURI_PATH});
-        //model_paths.insert({2, TERRAIN_PATH});
+        model_paths.insert({0, MODEL_PATH});
+        model_paths.insert({1, SAMURI_PATH});
+        model_paths.insert({2, TERRAIN_PATH});
         resourceManager.Load<RBModel>(model_paths);
         ptr_resourceManager = &resourceManager;
 
@@ -167,6 +170,18 @@ namespace RottenBamboo {
         }
         RBLOG_INFO("RBApplication::InitializeMaterial()");
     }
+
+    void RBApplication::AddDefaultMaterial()
+    {
+        RBMaterial materialLoadItem{"", device, commandBuffer};
+        materialLoadItem.Load(defaultMaterialPath);
+        appendMaterialsVec.push_back(materialLoadItem);
+        uuids::uuid guidVertex;
+        uuids::uuid guidFragment;
+        CreateNewDescriptors(appendMaterialsVec, guidVertex, guidFragment);
+        appendMaterialsVec.clear();
+    }
+
     void RBApplication::InitializeShaderDefinition()
     {
         int shaderDefSize = GetShaderDefinition()->size();
@@ -185,7 +200,19 @@ namespace RottenBamboo {
     RBApplication::~RBApplication() 
     {
         GetAssetRegistry()->SaveCache(cachePath);
+        materialsVec.clear();
+        appendMaterialsVec.clear();
         ptr_assetsRegistry = nullptr;
+
+        instance = nullptr;
+        ptr_gui = nullptr;
+        ptr_resourceShader = nullptr;
+        ptr_shaderDefinition = nullptr;
+        ptr_Descriptors = nullptr;
+        ptr_Materials = nullptr;
+        descriptorSetsUpdate = false;
+        ptr_resourceManager = nullptr;
+        ptr_simplePrimitive = nullptr;
     }
 
     void RBApplication::InitializeWindow()
@@ -249,13 +276,10 @@ namespace RottenBamboo {
             RBLOG_INFO("RBApplication::InitializeBuffers()");
     }
 
-    void RBApplication::InitializeDescriptors()
+    void RBApplication::CreateNewDescriptors(const std::vector<RBMaterial>& materials, uuids::uuid& guidVertex, uuids::uuid& guidFragment)
     {
-
-        RBSwapChain::SetSwapChainExtent(device, windows);
-        m_descriptorsGBuffersVec.reserve(materialsVec.size());
-        //GBuffer pass descriptors
-        for(const auto& item : materialsVec)
+        int descriptorIndex = m_descriptorsGBuffersVec.size();
+       for(const auto& item : materials)
         {
             int descriptorsCount = item.GetData().shaderReflection.descriptorSets.size();
             if(descriptorsCount > 0)
@@ -325,14 +349,14 @@ namespace RottenBamboo {
             }
         }
         
-        m_pDescriptorsGBuffersVec.reserve(materialsVec.size());
+        m_pDescriptorsGBuffersVec.reserve(m_descriptorsGBuffersVec.size());
         
-        uuids::uuid guidVertex;
-        uuids::uuid guidFragment;
+        int materialCount = materials.size();
         std::string pathShader;
-        for(int i = 0; i < m_descriptorsGBuffersVec.size(); i++)
+        for(int index = descriptorIndex; index < descriptorIndex + materialCount; index++)
         {
-            RBShaderDefinition* shaderDef = GetShaderDefinition(materialsVec[i].GetData().shaderDefinitionGuid);
+            int materialIndex = index - descriptorIndex;
+            RBShaderDefinition* shaderDef = GetShaderDefinition(materials[materialIndex].GetData().shaderDefinitionGuid);
             for(int i = 0; i < shaderDef->GetData().stages.size(); i++)
             {
                 pathShader = shaderDef->GetData().stages[i].path;
@@ -349,9 +373,20 @@ namespace RottenBamboo {
                         break;
                 }
             }
-            m_descriptorsGBuffersVec[i].get()->InitializeDescriptors(resourceShader.GetReflection(guidVertex), resourceShader.GetReflection(guidFragment));
-            m_pDescriptorsGBuffersVec.push_back(m_descriptorsGBuffersVec[i].get());
-        }
+            m_descriptorsGBuffersVec[index].get()->InitializeDescriptors(resourceShader.GetReflection(guidVertex), resourceShader.GetReflection(guidFragment));
+            m_pDescriptorsGBuffersVec[index] = m_descriptorsGBuffersVec[index].get();
+        } 
+    }
+    
+    void RBApplication::InitializeDescriptors()
+    {
+
+        RBSwapChain::SetSwapChainExtent(device, windows);
+        m_descriptorsGBuffersVec.reserve(materialsVec.size());
+        //GBuffer pass descriptors
+        uuids::uuid guidVertex;
+        uuids::uuid guidFragment;
+        CreateNewDescriptors(materialsVec, guidVertex, guidFragment);
 
         descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(guidVertex), resourceShader.GetReflection(guidFragment));
         //after GBuffer pass descriptors
