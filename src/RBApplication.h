@@ -167,6 +167,12 @@ namespace RottenBamboo
 
         RBBuffer<UniformBufferShaderVariables> uniformBuffers[MAX_FRAMES_IN_FLIGHT]{{device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}, {device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}};
 
+        // struct SceneUBO 
+        // {
+        //     UniformBufferShaderVariables objects[MAX_OBJECTS];
+        // };
+        // std::vector<RBBuffer<SceneUBO>> uniformBuffers1;
+
         UniformBufferShaderVariables uniformShaderVariables{};
 
         void updateUniformBuffer(uint32_t currentImage);

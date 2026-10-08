@@ -57,11 +57,12 @@ namespace RottenBamboo
     }
     Transform::Transform(const vector3& pos, const vector3& scale, const quat& rot)
     {
+        quat r = glm::normalize(rot);
         transformData.offset = pos;
         transformData.scale = scale;
-        transformData.myQuat = rot;
-        transformData.euler = glm::eulerAngles(rot);
-        transformData.model = glm::translate(matrix4x4(1.0f), pos) * glm::mat4(rot) * glm::scale(matrix4x4(1.0f), scale);
+        transformData.myQuat = r;
+        transformData.euler = glm::eulerAngles(r);
+        transformData.model = glm::translate(matrix4x4(1.0f), pos) * glm::mat4_cast(r) * glm::scale(matrix4x4(1.0f), scale);
     }
 }
         

@@ -3,6 +3,7 @@
 //
 #pragma once
 #define MAX_FRAMES_IN_FLIGHT 2
+#define MAX_OBJECTS 10000
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include <glm/gtx/hash.hpp>
