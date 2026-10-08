@@ -9,6 +9,8 @@
 #include "RBResource.h"
 #include "RBTransform.h"
 #include "uuid.h"
+#include "RBMaterial.h"
+#include "RBModel.h"
 
 namespace RottenBamboo
 {
@@ -38,8 +40,11 @@ namespace RottenBamboo
         std::string m_Name;
         RBSceneNode* m_Parent;
         std::vector<std::unique_ptr<RBSceneNode>> m_Children;
-
         RBResource* m_Resource;
+        // convenience pointers for common components/resources
+        std::shared_ptr<RBModel> m_Model = nullptr;
+        //class RBMaterial* m_Material = nullptr;
+        std::shared_ptr<RBMaterial> m_Material = nullptr;
         Transform m_Transform;
     };
 }

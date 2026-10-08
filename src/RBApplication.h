@@ -92,8 +92,6 @@ namespace RottenBamboo
         void InitializeMatrix();
         
         void InitializeMaterial();
-
-        void AddDefaultMaterial();
         
         void InitializeEditorMaterial();
         
@@ -102,6 +100,8 @@ namespace RottenBamboo
         void updateDirtyDescriptorSets();
         
         void processFileEvents();
+
+        std::shared_ptr<RBMaterial> AddDefaultMaterial();
 
     private:
         //file event

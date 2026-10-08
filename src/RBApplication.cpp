@@ -111,8 +111,8 @@ namespace RottenBamboo {
         assetsRegistry.Initialize(rootPath, cachePath);
 
         model_paths.insert({0, MODEL_PATH});
-        model_paths.insert({1, SAMURI_PATH});
-        model_paths.insert({2, TERRAIN_PATH});
+        //model_paths.insert({1, SAMURI_PATH});
+        //model_paths.insert({2, TERRAIN_PATH});
         resourceManager.Load<RBModel>(model_paths);
         ptr_resourceManager = &resourceManager;
 
@@ -177,15 +177,16 @@ namespace RottenBamboo {
         RBLOG_INFO("RBApplication::InitializeMaterial()");
     }
 
-    void RBApplication::AddDefaultMaterial()
+    std::shared_ptr<RBMaterial> RBApplication::AddDefaultMaterial()
     {
-        RBMaterial materialLoadItem{"", device, commandBuffer};
-        materialLoadItem.Load(defaultMaterialPath);
-        appendMaterialsVec.push_back(materialLoadItem);
+        ResourceManager* resourceManager = RBApplication::GetResourceManager();
+        std::shared_ptr<RBMaterial> material = resourceManager->Load<RBMaterial>(defaultMaterialPath);
+        appendMaterialsVec.push_back(*material);
         uuids::uuid guidVertex;
         uuids::uuid guidFragment;
         CreateNewDescriptors(appendMaterialsVec, guidVertex, guidFragment);
         appendMaterialsVec.clear();
+        return material;
     }
 
     void RBApplication::InitializeShaderDefinition()

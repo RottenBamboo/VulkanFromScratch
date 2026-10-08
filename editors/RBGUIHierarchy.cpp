@@ -4,6 +4,8 @@
 
 #include "RBGUIHierarchy.h"
 #include "RBApplication.h"
+#include "RBMaterial.h"
+#include "RBModel.h"
 #include <filesystem>
 #include <functional>
 namespace fs = std::filesystem;
@@ -59,7 +61,7 @@ namespace RottenBamboo
         ImGui::End();
     }
 
-    void RBGUIHierarchy::CreatePrimitive(SimplePrimitiveData* data, const std::string& path, const std::string& name)
+    void RBGUIHierarchy::CreatePrimitive(SimplePrimitiveData* data, std::shared_ptr<RBMaterial> mat, const std::string& path, const std::string& name)
     {
         auto mesh = RBApplication::GetSimplePrimitive()->CreateSimplePrimitive(data);
         ResourceManager* resourceManager = RBApplication::GetResourceManager();
@@ -75,7 +77,14 @@ namespace RottenBamboo
         RBSceneNode* root = scene->GetRoot();
         if (!root) return;
 
-        root->CreateChild(name + count);
+        RBSceneNode* node = root->CreateChild(name + count);
+
+        if (node)
+        {
+            node->m_Resource = res.get();
+            node->m_Model = static_cast<std::shared_ptr<RBModel>>(res.get());
+            node->m_Material = mat;
+        }
     }
     void RBGUIHierarchy::RenderScene(VkCommandBuffer& commandBuffer)
     {
@@ -131,8 +140,8 @@ namespace RottenBamboo
                     data.type = SimplePrimitiveType::TYPE_CUBE;
                     data.width = 1;
                     data.height = 1;
-                    CreatePrimitive(&data, "models/cube.gltf", "cube");
-                    RBApplication::instance->AddDefaultMaterial();
+                    std::shared_ptr<RBMaterial> material = RBApplication::instance->AddDefaultMaterial();
+                    CreatePrimitive(&data, material, "models/cube.gltf", "cube");
                 }
                 if (ImGui::MenuItem("Create Sphere"))
                 {
@@ -141,8 +150,8 @@ namespace RottenBamboo
                     data.radius = 1;
                     data.segments = 50;
                     data.rings = 50;
-                    CreatePrimitive(&data, "models/sphere.gltf", "sphere");
-                    RBApplication::instance->AddDefaultMaterial();
+                    std::shared_ptr<RBMaterial> material = RBApplication::instance->AddDefaultMaterial();
+                    CreatePrimitive(&data, material, "models/sphere.gltf", "sphere");
                 }
                 if (ImGui::MenuItem("Create Cylinder"))
                 {
@@ -150,19 +159,19 @@ namespace RottenBamboo
                     data.type = SimplePrimitiveType::TYPE_CYLINDER;
                     data.width = 1;
                     data.height = 2;
-                    CreatePrimitive(&data, "models/cylinder.gltf", "cylinder");
-                    RBApplication::instance->AddDefaultMaterial();
+                    std::shared_ptr<RBMaterial> material = RBApplication::instance->AddDefaultMaterial();
+                    CreatePrimitive(&data, material, "models/cylinder.gltf", "cylinder");
                 }
                 if (ImGui::MenuItem("Create Capsule"))
                 {
                     SimplePrimitiveData data;
                     data.type = SimplePrimitiveType::TYPE_CAPSULE;
                     data.radius = 1;
-                    data.height = 2;
+                    data.height = 3;
                     data.segments = 50;
                     data.rings = 50;
-                    CreatePrimitive(&data, "models/capsule.gltf", "capsule");
-                    RBApplication::instance->AddDefaultMaterial();
+                    std::shared_ptr<RBMaterial> material = RBApplication::instance->AddDefaultMaterial();
+                    CreatePrimitive(&data, material, "models/capsule.gltf", "capsule");
                 }
                 if (ImGui::MenuItem("Create Plane"))
                 {
@@ -170,8 +179,8 @@ namespace RottenBamboo
                     data.type = SimplePrimitiveType::TYPE_PLANE;
                     data.width = 2;
                     data.height = 2;
-                    CreatePrimitive(&data, "models/plane.gltf", "plane");
-                    RBApplication::instance->AddDefaultMaterial();
+                    std::shared_ptr<RBMaterial> material = RBApplication::instance->AddDefaultMaterial();
+                    CreatePrimitive(&data, material, "models/plane.gltf", "plane");
                 }
                 
                 ImGui::EndMenu();

@@ -79,7 +79,8 @@ namespace RottenBamboo {
         {
             auto typeId = std::type_index(typeid(T));
             auto itType = resources.find(typeId);
-            if (itType != resources.end()) {
+            if (itType != resources.end()) 
+            {
                 return &(itType->second);
             }
             return nullptr;
@@ -91,13 +92,15 @@ namespace RottenBamboo {
             std::vector<std::string> paths;
             auto typeId = std::type_index(typeid(T));
             auto itType = resources.find(typeId);
-            if (itType == resources.end()) {
+            if (itType == resources.end()) 
+            {
                 return paths;
             }
 
             const auto& table = itType->second;
             paths.reserve(table.size());
-            for (const auto& pair : table) {
+            for (const auto& pair : table) 
+            {
                 paths.push_back(pair.first);
             }
             std::sort(paths.begin(), paths.end());
@@ -109,7 +112,8 @@ namespace RottenBamboo {
         {
             auto typeId = std::type_index(typeid(T));
             auto itType = resources.find(typeId);
-            if (itType == resources.end()) {
+            if (itType == resources.end()) 
+            {
                 return false;
             }
             const auto& table = itType->second;
@@ -121,7 +125,8 @@ namespace RottenBamboo {
         {
             auto typeId = std::type_index(typeid(T));
             auto itType = resources.find(typeId);
-            if (itType == resources.end()) {
+            if (itType == resources.end())
+            {
                 return false;
             }
             auto& table = itType->second;
@@ -140,7 +145,8 @@ namespace RottenBamboo {
         {
             auto typeId = std::type_index(typeid(T));
             auto itType = resources.find(typeId);
-            if (itType == resources.end()) {
+            if (itType == resources.end()) 
+            {
                 return 0;
             }
             return itType->second.size();
