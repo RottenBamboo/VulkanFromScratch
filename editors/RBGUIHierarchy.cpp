@@ -79,11 +79,15 @@ namespace RottenBamboo
 
         RBSceneNode* node = root->CreateChild(name + count);
 
+        vector3 pos(0, 0, 0);
+        vector3 scale(1, 1, 1);
+        quat rot(0, 0, 0, 1);
         if (node)
         {
             node->m_Resource = res.get();
             node->m_Model = static_cast<std::shared_ptr<RBModel>>(res.get());
             node->m_Material = mat;
+            node->m_Transform = Transform(pos, scale, rot);
         }
     }
     void RBGUIHierarchy::RenderScene(VkCommandBuffer& commandBuffer)
