@@ -59,14 +59,23 @@ namespace RottenBamboo
         ImGui::End();
     }
 
-    void RBGUIHierarchy::CreatePrimitive(SimplePrimitiveData* data, const std::string& path)
+    void RBGUIHierarchy::CreatePrimitive(SimplePrimitiveData* data, const std::string& path, const std::string& name)
     {
         auto mesh = RBApplication::GetSimplePrimitive()->CreateSimplePrimitive(data);
         ResourceManager* resourceManager = RBApplication::GetResourceManager();
-        std::string modelPath = GET_RESOURCE_ROOT_DIR + path + std::to_string(resourceManager->Count<RBModel>());
+        std::string count = std::to_string(resourceManager->Count<RBModel>());
+        std::string modelPath = GET_RESOURCE_ROOT_DIR + path + count;
         modelPath = NormalizePathString(modelPath);
         auto res = resourceManager->Add<RBModel>(modelPath);
         res->addMesh(std::move(mesh));
+
+        auto* scene = RBApplication::GetScene();
+        if (!scene) return;
+
+        RBSceneNode* root = scene->GetRoot();
+        if (!root) return;
+
+        root->CreateChild(name + count);
     }
     void RBGUIHierarchy::RenderScene(VkCommandBuffer& commandBuffer)
     {
@@ -122,7 +131,7 @@ namespace RottenBamboo
                     data.type = SimplePrimitiveType::TYPE_CUBE;
                     data.width = 1;
                     data.height = 1;
-                    CreatePrimitive(&data, "models/cube.gltf");
+                    CreatePrimitive(&data, "models/cube.gltf", "cube");
                     RBApplication::instance->AddDefaultMaterial();
                 }
                 if (ImGui::MenuItem("Create Sphere"))
@@ -132,7 +141,7 @@ namespace RottenBamboo
                     data.radius = 1;
                     data.segments = 50;
                     data.rings = 50;
-                    CreatePrimitive(&data, "models/sphere.gltf");
+                    CreatePrimitive(&data, "models/sphere.gltf", "sphere");
                     RBApplication::instance->AddDefaultMaterial();
                 }
                 if (ImGui::MenuItem("Create Cylinder"))
@@ -141,7 +150,7 @@ namespace RottenBamboo
                     data.type = SimplePrimitiveType::TYPE_CYLINDER;
                     data.width = 1;
                     data.height = 2;
-                    CreatePrimitive(&data, "models/cylinder.gltf");
+                    CreatePrimitive(&data, "models/cylinder.gltf", "cylinder");
                     RBApplication::instance->AddDefaultMaterial();
                 }
                 if (ImGui::MenuItem("Create Capsule"))
@@ -152,7 +161,7 @@ namespace RottenBamboo
                     data.height = 2;
                     data.segments = 50;
                     data.rings = 50;
-                    CreatePrimitive(&data, "models/capsule.gltf");
+                    CreatePrimitive(&data, "models/capsule.gltf", "capsule");
                     RBApplication::instance->AddDefaultMaterial();
                 }
                 if (ImGui::MenuItem("Create Plane"))
@@ -161,7 +170,7 @@ namespace RottenBamboo
                     data.type = SimplePrimitiveType::TYPE_PLANE;
                     data.width = 2;
                     data.height = 2;
-                    CreatePrimitive(&data, "models/plane.gltf");
+                    CreatePrimitive(&data, "models/plane.gltf", "plane");
                     RBApplication::instance->AddDefaultMaterial();
                 }
                 

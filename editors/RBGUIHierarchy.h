@@ -25,7 +25,7 @@ namespace RottenBamboo
 
         void SetLayout() override;
 
-        void CreatePrimitive(SimplePrimitiveData* data, const std::string& path);
+        void CreatePrimitive(SimplePrimitiveData* data, const std::string& path, const std::string& name = "defaultPrimitive");
 
         private:
         void RenderHierarchy(VkCommandBuffer& commandBuffer);  
