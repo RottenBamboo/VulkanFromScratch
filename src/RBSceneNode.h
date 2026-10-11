@@ -32,6 +32,11 @@ namespace RottenBamboo
             return AddChild(std::make_unique<RBSceneNode>(name));
         }
 
+        RBSceneNode* GetChild(size_t index) { return m_Children[index].get(); }
+        const std::vector<std::unique_ptr<RBSceneNode>>& GetChildren() const { return m_Children; }
+
+        size_t GetChildCount() const { return m_Children.size(); }
+
         void SetTransform(const Transform& transform) { m_Transform = transform; }
         Transform& GetTransform() { return m_Transform; }
         

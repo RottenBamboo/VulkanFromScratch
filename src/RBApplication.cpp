@@ -18,9 +18,8 @@ namespace RottenBamboo {
         RBGUI* RBApplication::ptr_gui = nullptr;
         RBResourceShader* RBApplication::ptr_resourceShader = nullptr;
         std::unordered_map<uuids::uuid, RBShaderDefinition>* RBApplication::ptr_shaderDefinition = nullptr;
-        std::unordered_map<int, RBDescriptors*>* RBApplication::ptr_Descriptors = nullptr;
+        std::vector<RBDescriptors*>* RBApplication::ptr_Descriptors = nullptr;
         std::vector<RBDescriptors*> RBApplication::updatedDescriptors{};
-        std::vector<RBMaterial>* RBApplication::ptr_Materials = nullptr;
         bool RBApplication::descriptorSetsUpdate = false;
         std::vector<ImageResourcePtr> RBApplication::oldImageResourceVec;
         RBAssetsRegistry* RBApplication::ptr_assetsRegistry = new RBAssetsRegistry();
@@ -67,7 +66,7 @@ namespace RottenBamboo {
             auto it = ptr_shaderDefinition->find(guid);
             return it != ptr_shaderDefinition->end() ? &ptr_shaderDefinition->at(guid) : nullptr;
         }
-        std::unordered_map<int, RBDescriptors*>* RBApplication::GetDescriptors()
+        std::vector<RBDescriptors*>* RBApplication::GetDescriptors()
         {
             return RBApplication::ptr_Descriptors;
         }
@@ -75,11 +74,6 @@ namespace RottenBamboo {
         std::vector<RBDescriptors*>* RBApplication::GetUpdatedDescriptors()
         {
             return &RBApplication::updatedDescriptors;
-        }
-
-        std::vector<RBMaterial>* RBApplication::GetMaterials()
-        {
-            return RBApplication::ptr_Materials;
         }
         
         std::vector<ImageResourcePtr>* RBApplication::GetOldImageResource()
@@ -98,12 +92,10 @@ namespace RottenBamboo {
         InitializeCamera();
         InitializeDevice();
         InitializeCommandBuffer();
-        
         RBApplication::ptr_assetsRegistry = &assetsRegistry;
         ptr_shaderDefinition = &shaderDefinitions;
         ptr_simplePrimitive = &m_simplePrimitive;
         ptr_resourceShader = &resourceShader;
-        ptr_Materials = &materialsVec;
         ptr_Descriptors = &m_pDescriptorsGBuffersVec;
         ptr_gui = &gui;
 
@@ -111,9 +103,8 @@ namespace RottenBamboo {
         assetsRegistry.Initialize(rootPath, cachePath);
 
         model_paths.insert({0, MODEL_PATH});
-        //model_paths.insert({1, SAMURI_PATH});
-        //model_paths.insert({2, TERRAIN_PATH});
-        resourceManager.Load<RBModel>(model_paths);
+        model_paths.insert({1, SAMURI_PATH});
+
         ptr_resourceManager = &resourceManager;
 
         InitializeShaderDefinition();
@@ -137,6 +128,8 @@ namespace RottenBamboo {
         
         InitializeMaterial();
 
+        InitializeScene();
+
         updatedDescriptors.clear();
         updatedDescriptors.reserve(0);
         InitializeDescriptors();
@@ -146,7 +139,6 @@ namespace RottenBamboo {
         InitializeStaticPtr();
 
         InitializeGUI();
-        InitializeScene();
         InitializeMatrix();
         InitializeEditorMaterial();
         
@@ -162,8 +154,10 @@ namespace RottenBamboo {
     {
         RBMaterial materialLoadItem{"", device, commandBuffer};
         auto count = std::distance(fs::directory_iterator(GET_RESOURCE_ROOT_DIR + materialsFilePath), fs::directory_iterator{});
-        materialsVec.clear();
-        materialsVec.reserve(count);
+        appendMaterialsVec.clear();
+        appendMaterialsVec.reserve(count);
+        ResourceManager* resourceManager = RBApplication::GetResourceManager();
+        int offset = 0;
         for (const auto& entry : fs::directory_iterator(GET_RESOURCE_ROOT_DIR + materialsFilePath))
         {
             if (entry.is_regular_file() && entry.path().extension() == MAT_EXTENSION)
@@ -171,20 +165,29 @@ namespace RottenBamboo {
                 std::string relativePath = fs::relative(entry.path(), GET_RESOURCE_ROOT_DIR).string();
                 relativePath = NormalizePathString(relativePath);
                 materialLoadItem.Load(relativePath);
-                materialsVec.push_back(materialLoadItem);
+                materialLoadItem.SetDescriptorOffset(offset);
+                offset++;
+                appendMaterialsVec.push_back(materialLoadItem);
             }
         }
+
         RBLOG_INFO("RBApplication::InitializeMaterial()");
     }
 
-    std::shared_ptr<RBMaterial> RBApplication::AddDefaultMaterial()
+    std::shared_ptr<RBMaterial> RBApplication::AddMaterial(const std::string& materialPath)
     {
+        std::string path = materialPath;
+        if (materialPath.empty()) 
+        {
+            path = defaultMaterialPath;
+        }
         ResourceManager* resourceManager = RBApplication::GetResourceManager();
-        std::shared_ptr<RBMaterial> material = resourceManager->Load<RBMaterial>(defaultMaterialPath);
+        std::shared_ptr<RBMaterial> material = resourceManager->Load<RBMaterial>(path);
         appendMaterialsVec.push_back(*material);
         uuids::uuid guidVertex;
         uuids::uuid guidFragment;
         CreateNewDescriptors(appendMaterialsVec, guidVertex, guidFragment);
+        material->SetDescriptorOffset(appendMaterialsVec.back().GetDescriptorOffset());
         appendMaterialsVec.clear();
         return material;
     }
@@ -207,7 +210,6 @@ namespace RottenBamboo {
     RBApplication::~RBApplication() 
     {
         GetAssetRegistry()->SaveCache(cachePath);
-        materialsVec.clear();
         appendMaterialsVec.clear();
         ptr_assetsRegistry = nullptr;
 
@@ -216,7 +218,6 @@ namespace RottenBamboo {
         ptr_resourceShader = nullptr;
         ptr_shaderDefinition = nullptr;
         ptr_Descriptors = nullptr;
-        ptr_Materials = nullptr;
         descriptorSetsUpdate = false;
         ptr_resourceManager = nullptr;
         ptr_simplePrimitive = nullptr;
@@ -277,17 +278,18 @@ namespace RottenBamboo {
     {
         for(int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
         {
-            uniformBuffers[i].CreateBufferNoStageing();
+            uniformBuffers1[i].CreateBufferNoStageing();
         }
 
             std::cout << "RBApplication::InitializeBuffers()" << std::endl;
             RBLOG_INFO("RBApplication::InitializeBuffers()");
     }
 
-    void RBApplication::CreateNewDescriptors(const std::vector<RBMaterial>& materials, uuids::uuid& guidVertex, uuids::uuid& guidFragment)
+    void RBApplication::CreateNewDescriptors(std::vector<RBMaterial>& materials, uuids::uuid& guidVertex, uuids::uuid& guidFragment)
     {
         int descriptorIndex = m_descriptorsGBuffersVec.size();
-       for(const auto& item : materials)
+        int materialIndex = 0;
+       for(auto& item : materials)
         {
             int descriptorsCount = item.GetData().shaderReflection.descriptorSets.size();
             if(descriptorsCount > 0)
@@ -347,11 +349,13 @@ namespace RottenBamboo {
                             texturesInfo.push_back(info);
                         }
                         auto descriptor = std::make_unique<RBDescriptors>(device, commandBuffer);
-                        descriptor->SetResourcesInfos(uniformBuffers, texturesInfo, false);
+                        descriptor->SetResourcesInfos(texturesInfo, false, uniformBuffers1, (descriptorIndex + materialIndex) * UNIFORM_BUFFER_SHADER_VARIABLES_SIZE, UNIFORM_BUFFER_SHADER_VARIABLES_SIZE);
                         m_descriptorsGBuffersVec.push_back(std::move(descriptor));
                     }
                 }
             }
+            item.SetDescriptorOffset(descriptorIndex + materialIndex);
+            materialIndex++;
         }
         
         m_pDescriptorsGBuffersVec.reserve(m_descriptorsGBuffersVec.size());
@@ -360,7 +364,7 @@ namespace RottenBamboo {
         std::string pathShader;
         for(int index = descriptorIndex; index < descriptorIndex + materialCount; index++)
         {
-            int materialIndex = index - descriptorIndex;
+            materialIndex = index - descriptorIndex;
             RBShaderDefinition* shaderDef = GetShaderDefinition(materials[materialIndex].GetData().shaderDefinitionGuid);
             for(int i = 0; i < shaderDef->GetData().stages.size(); i++)
             {
@@ -379,7 +383,7 @@ namespace RottenBamboo {
                 }
             }
             m_descriptorsGBuffersVec[index].get()->InitializeDescriptors(resourceShader.GetReflection(guidVertex), resourceShader.GetReflection(guidFragment));
-            m_pDescriptorsGBuffersVec[index] = m_descriptorsGBuffersVec[index].get();
+            m_pDescriptorsGBuffersVec.push_back(m_descriptorsGBuffersVec[index].get());
         } 
     }
     
@@ -387,12 +391,14 @@ namespace RottenBamboo {
     {
 
         RBSwapChain::SetSwapChainExtent(device, windows);
-        m_descriptorsGBuffersVec.reserve(materialsVec.size());
+        m_descriptorsGBuffersVec.reserve(appendMaterialsVec.size());
         //GBuffer pass descriptors
         uuids::uuid guidVertex;
         uuids::uuid guidFragment;
-        CreateNewDescriptors(materialsVec, guidVertex, guidFragment);
+        CreateNewDescriptors(appendMaterialsVec, guidVertex, guidFragment);
 
+        appendMaterialsVec.clear();
+        
         descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(guidVertex), resourceShader.GetReflection(guidFragment));
         //after GBuffer pass descriptors
         auto skyShaderGuid = GetAssetRegistry()->GetGuid(SKY_SHADER_PATH);
@@ -440,6 +446,26 @@ namespace RottenBamboo {
     {
         scene.SetRoot(std::make_unique<RBSceneNode>("Root", nullptr, uuids::uuid()));
         ptr_scene = &scene;
+        RBSceneNode* root = ptr_scene->GetRoot();
+        for(int i = 0; i < model_paths.size(); ++i)
+        {
+            std::string count = std::to_string(resourceManager.Count<RBModel>());
+            auto res = resourceManager.Load<RBModel>(model_paths[i]);
+            std::string modelPath = NormalizePathString(model_paths[i]);
+            modelPath = fs::relative(modelPath, GET_RESOURCE_ROOT_DIR).string();
+            RBSceneNode* node = root->CreateChild(modelPath + count);
+
+            vector3 pos(0, 0, 0);
+            vector3 scale(1, 1, 1);
+            quat rot(1, 0, 0, 0);
+            if (node)
+            {
+                node->m_Resource = res.get();
+                node->m_Model = res;
+                node->m_Material = std::make_shared<RBMaterial>(appendMaterialsVec[i]);
+                node->m_Transform = Transform(pos, scale, rot);
+            }
+        }
     }
 
     void RBApplication::transformModelVertex(
@@ -538,15 +564,44 @@ void RBApplication::processModelNode(
         }
     }
 
+    void RBApplication::UpdateSceneTransform(RBSceneNode* root, vector3 pos = vector3(0, 0, 0), vector3 scale = vector3(1, 1, 1), quat rot = quat(1, 0, 0, 0))
+    {
+        if(root != nullptr)
+        {
+            Transform transform(pos, scale, rot);
+            root->SetTransform(transform);
+        }
+        for (size_t i = 0; i < root->GetChildCount(); ++i) 
+        {
+            RBSceneNode* child = root->GetChild(i);
+            UpdateSceneTransform(child);
+        }
+    }
+
+    void RBApplication::CopySceneTransform(RBSceneNode* root, int frameIndex, UniformBufferShaderVariables* uniformShaderVariables)
+    {
+        int offset = 0;
+        if(root->m_Material)
+        {
+            offset = root->m_Material->GetDescriptorOffset();
+        }
+        UniformBufferShaderVariables* base = static_cast<UniformBufferShaderVariables*>(uniformBuffers1[frameIndex].bufferMapped);
+        memcpy(base + offset, uniformShaderVariables, UNIFORM_BUFFER_SHADER_VARIABLES_SIZE);
+
+        for (size_t i = 0; i < root->GetChildCount(); ++i) 
+        {
+            RBSceneNode* child = root->GetChild(i);
+            uniformShaderVariables->model = child->m_Transform.GetModelMatrix();
+            CopySceneTransform(child, frameIndex, uniformShaderVariables);
+        }
+    }
+
     void RBApplication::InitializeMatrix()
     {
-        // uniformShaderVariables.view = glm::lookAt(glm::vec3(3, 3, 3),
-        //                                 glm::vec3(0, 1.3, 0),
-        //                                 glm::vec3(0, 1, 0));
-        //uniformShaderVariables.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 100.0f);
-        //uniformShaderVariables.proj[1][1] *= -1;
-        uniformShaderVariables.model = glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+        RBSceneNode *root = ptr_scene->GetRoot();
+        UpdateSceneTransform(root);
 
+        uniformShaderVariables.model = root->m_Transform.GetModelMatrix();
         uniformShaderVariables.view = mainCamera.GetViewMatrix();
         float aspectRatio = static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
         uniformShaderVariables.proj = mainCamera.GetProjectionMatrix(aspectRatio);
@@ -557,13 +612,20 @@ void RBApplication::processModelNode(
     void RBApplication::updateUniformBuffer(uint32_t currentImage)
     {
         RBSceneNode *root = ptr_scene->GetRoot();
-        
+
         uniformShaderVariables.view = mainCamera.GetViewMatrix();
         float aspectRatio = static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height);
         uniformShaderVariables.proj = mainCamera.GetProjectionMatrix(aspectRatio);
         uniformShaderVariables.screenSize = glm::vec4(swapChainExtent.width, swapChainExtent.height, 1.0f / swapChainExtent.width, 1.0f / swapChainExtent.height);
         uniformShaderVariables.cameraPos = mainCamera.position;
-        memcpy(uniformBuffers[currentImage].bufferMapped, &uniformShaderVariables, sizeof(UniformBufferShaderVariables));
+
+        if (root) 
+        {
+            uniformShaderVariables.model = root->GetTransform().GetModelMatrix();
+            //copy uniform params per node
+            CopySceneTransform(root, currentImage, &uniformShaderVariables);
+        }
+        
     }
 
 

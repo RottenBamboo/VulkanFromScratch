@@ -90,23 +90,27 @@ private:
 
     public:
 
-        RBBuffer<UniformBufferShaderVariables> *rbBufferPtr;
+        RBBuffer<SceneUBO> *rbBufferPtr;
+
+        int bufferOffset = 0;
+
+        int bufferLength = 0;
 
         RBDescriptorSetManager descriptorSetManager;
 
         RBImageManager rbImageManager;
 
-        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, const std::vector<std::string> &texturePaths, bool isColorAttachment);
+        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, const std::vector<std::string> &texturePaths, bool isColorAttachment, RBBuffer<SceneUBO> *uniformBuffers, int bufferOffset = 0, int bufferLength = 0);
 
-        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment);
+        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment, RBBuffer<SceneUBO> *uniformBuffers, int bufferOffset = 0, int bufferLength = 0);
 
-        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffersonst, bool isColorAttachment);
-
+        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, bool isColorAttachment, RBBuffer<SceneUBO> *uniformBuffers, int bufferOffset = 0, int bufferLength = 0);
+        
         RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer);
 
         ~RBDescriptors();
         
-        void SetResourcesInfos(RBBuffer<UniformBufferShaderVariables> *uniformBuffers, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment);
+        void SetResourcesInfos(const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment, RBBuffer<SceneUBO> *uniformBuffers, int bufferOffset, int bufferLength);
         
         void checkImagesInfo();
                                    

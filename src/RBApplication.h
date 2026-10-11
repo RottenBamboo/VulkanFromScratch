@@ -81,7 +81,7 @@ namespace RottenBamboo
 
         void InitializeDescriptors();
 
-        void CreateNewDescriptors(const std::vector<RBMaterial>& materials, uuids::uuid& guidVertex, uuids::uuid& guidFragment);
+        void CreateNewDescriptors(std::vector<RBMaterial>& materials, uuids::uuid& guidVertex, uuids::uuid& guidFragment);
 
         void InitializeGraphicPipeline();
 
@@ -90,6 +90,10 @@ namespace RottenBamboo
         void InitializeScene();
 
         void InitializeMatrix();
+
+        void UpdateSceneTransform(RBSceneNode* root, vector3 pos, vector3 scale, quat);
+
+        void CopySceneTransform(RBSceneNode* root, int frameIndex, UniformBufferShaderVariables* uniformShaderVariables);
         
         void InitializeMaterial();
         
@@ -101,7 +105,7 @@ namespace RottenBamboo
         
         void processFileEvents();
 
-        std::shared_ptr<RBMaterial> AddDefaultMaterial();
+        std::shared_ptr<RBMaterial> AddMaterial(const std::string& materialPath = "");
 
     private:
         //file event
@@ -141,21 +145,19 @@ namespace RottenBamboo
 
         RBSimplePrimitive m_simplePrimitive{device, commandBuffer};
 
-        std::unordered_map<int, RBDescriptors*> m_pDescriptorsGBuffersVec;
-        std::vector<RBMaterial> materialsVec;
+        std::vector<RBDescriptors*> m_pDescriptorsGBuffersVec;
         std::vector<RBMaterial> appendMaterialsVec;
 
         static std::vector<ImageResourcePtr> oldImageResourceVec;
         
         std::vector<std::unique_ptr<RBDescriptors>> m_descriptorsGBuffersVec;
 
-        RBDescriptors descriptorsGBuffer{device, commandBuffer, uniformBuffers, inputImageInfoMech, false};
+        RBDescriptors descriptorsGBuffer{device, commandBuffer, inputImageInfoMech, false, uniformBuffers1};
 
-        RBDescriptors descriptorsSkyBox{device, commandBuffer, uniformBuffers, inputImageInfoSkyBox, false};
+        RBDescriptors descriptorsSkyBox{device, commandBuffer, inputImageInfoSkyBox, false, uniformBuffers1};
 
-        RBDescriptors descriptorsAttachment{device, commandBuffer, uniformBuffers, true};
-
-        RBDescriptors descriptorsLighting{device, commandBuffer, uniformBuffers, inputImageInfoLighting, true};
+        RBDescriptors descriptorsAttachment{device, commandBuffer, true, uniformBuffers1};
+        RBDescriptors descriptorsLighting{device, commandBuffer, inputImageInfoLighting, true, uniformBuffers1};
 
         RBSwapChain swapChain{device, windows, commandBuffer};
         
@@ -165,13 +167,9 @@ namespace RottenBamboo
 
         RBLightingPass lightPassManager{lightPassColorAttachmentCount, true, false, device, descriptorsLighting, pipelineConfig, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
 
-        RBBuffer<UniformBufferShaderVariables> uniformBuffers[MAX_FRAMES_IN_FLIGHT]{{device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}, {device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}};
+        //RBBuffer<UniformBufferShaderVariables> uniformBuffers[MAX_FRAMES_IN_FLIGHT]{{device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}, {device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}};
 
-        // struct SceneUBO 
-        // {
-        //     UniformBufferShaderVariables objects[MAX_OBJECTS];
-        // };
-        // std::vector<RBBuffer<SceneUBO>> uniformBuffers1;
+        RBBuffer<SceneUBO> uniformBuffers1[MAX_FRAMES_IN_FLIGHT]{{device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}, {device, commandBuffer, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT}};
 
         UniformBufferShaderVariables uniformShaderVariables{};
 
@@ -210,17 +208,13 @@ namespace RottenBamboo
 
         static RBShaderDefinition* GetShaderDefinition(const uuids::uuid& guid);
 
-        static std::unordered_map<int, RBDescriptors*>* ptr_Descriptors;
+        static std::vector<RBDescriptors*>* ptr_Descriptors;
 
-        static std::unordered_map<int, RBDescriptors*>* GetDescriptors();
+        static std::vector<RBDescriptors*>* GetDescriptors();
 
         static std::vector<RBDescriptors*> updatedDescriptors;
 
         static std::vector<RBDescriptors*>* GetUpdatedDescriptors();
-
-        static std::vector<RBMaterial>* ptr_Materials;
-
-        static std::vector<RBMaterial>* GetMaterials();
 
         static std::vector<ImageResourcePtr>* GetOldImageResource();
 

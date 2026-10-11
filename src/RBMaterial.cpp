@@ -263,4 +263,14 @@ namespace RottenBamboo
     {
         return data;
     }
+
+    void RBMaterial::SetDescriptorOffset(int offset)
+    {
+        m_descriptorBufferOffset = offset;
+    }
+
+    int RBMaterial::GetDescriptorOffset() const
+    {
+        return m_descriptorBufferOffset;
+    }
 }

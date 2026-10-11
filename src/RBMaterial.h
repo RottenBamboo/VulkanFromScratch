@@ -18,6 +18,10 @@ namespace RottenBamboo {
 
         RBMaterial(const std::string &path, RBDevice &device, RBCommandBuffer &commandBuffer);
 
+        void SetDescriptorOffset(int offset);
+
+        int GetDescriptorOffset() const;
+
         void Load(const std::string& loadPath) override;
 
         bool Save(const std::string& savePath, RBMaterialData& materialData);
@@ -34,6 +38,7 @@ namespace RottenBamboo {
         RBCommandBuffer &commandBuffer;
         RBMaterialData data;
         RBMetaFile metaFile;
+        int m_descriptorBufferOffset;
     };
 
 } // Rottenbamboo

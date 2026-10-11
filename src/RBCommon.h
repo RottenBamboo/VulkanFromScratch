@@ -26,7 +26,7 @@ enum RootPathType
     PROJECT_ROOT,
     RESOURCE_ROOT
 };
-
+        
 //namespace fs = std::filesystem;
 #define GET_PROJECT_ROOT_DIR RottenBamboo::GetRootPath(PROJECT_ROOT)
 #define GET_RESOURCE_ROOT_DIR RottenBamboo::GetRootPath(RESOURCE_ROOT)
@@ -199,6 +199,8 @@ namespace std
     };
 }
 
+#define UNIFORM_BUFFER_SHADER_VARIABLES_SIZE sizeof(UniformBufferShaderVariables)
+
 struct UniformBufferShaderVariables 
 {
     glm::mat4 model;
@@ -214,6 +216,18 @@ public:
         proj = glm::mat4();
         screenSize = glm::vec4();
         cameraPos = glm::vec3();
+    }
+};
+
+struct SceneUBO 
+{
+    UniformBufferShaderVariables objects[MAX_OBJECTS];
+    SceneUBO()
+    {
+        for(int i = 0; i < MAX_OBJECTS; i++)
+        {
+            objects[i] = UniformBufferShaderVariables();
+        }
     }
 };
 

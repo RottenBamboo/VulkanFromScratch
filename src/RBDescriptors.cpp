@@ -85,8 +85,8 @@ namespace RottenBamboo{
         {
             VkDescriptorBufferInfo bufferInfo{};
             bufferInfo.buffer = rbBufferPtr[i].buffer;
-            bufferInfo.offset = 0;
-            bufferInfo.range = sizeof(UniformBufferShaderVariables);
+            bufferInfo.offset = bufferOffset;
+            bufferInfo.range = bufferLength;
 
             // VkDescriptorImageInfo imageInfo{};
             // imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -117,8 +117,8 @@ namespace RottenBamboo{
         {
             VkDescriptorBufferInfo bufferInfo{};
             bufferInfo.buffer = rbBufferPtr[i].buffer;
-            bufferInfo.offset = 0;
-            bufferInfo.range = sizeof(UniformBufferShaderVariables);
+            bufferInfo.offset = bufferOffset;
+            bufferInfo.range = bufferLength;
 
             // VkDescriptorImageInfo imageInfo{};
             // imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -537,7 +537,7 @@ namespace RottenBamboo{
         rbImageManager.createTextureSampler();
     }
 
-    RBDescriptors::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffers, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment) : 
+    RBDescriptors::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment, RBBuffer<SceneUBO> *uniformBuffers, int bufferOffset, int bufferLength) : 
     rbDevice(device),
     rbCommandBuffer(commandBuffer),
     rbBufferPtr(uniformBuffers),
@@ -548,7 +548,7 @@ namespace RottenBamboo{
     {
     }
 
-    RBDescriptors::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, RBBuffer<UniformBufferShaderVariables> *uniformBuffers, bool isColorAttachment) : 
+    RBDescriptors::RBDescriptors(RBDevice& device, RBCommandBuffer& commandBuffer, bool isColorAttachment, RBBuffer<SceneUBO> *uniformBuffers, int bufferOffset, int bufferLength) : 
     rbDevice(device),
     rbCommandBuffer(commandBuffer),
     rbBufferPtr(uniformBuffers),
@@ -566,9 +566,11 @@ namespace RottenBamboo{
     {
     }
 
-    void RBDescriptors::SetResourcesInfos(RBBuffer<UniformBufferShaderVariables> *uniformBuffers, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment)
+    void RBDescriptors::SetResourcesInfos(const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment, RBBuffer<SceneUBO> *uniformBuffers, int bufferOffset, int bufferLength)
     {
         this->rbBufferPtr = uniformBuffers;
+        this->bufferOffset = bufferOffset;
+        this->bufferLength = bufferLength;
         this->imagesInfo = texturesInfo;
         this->isColorAttachment = isColorAttachment;
     }
