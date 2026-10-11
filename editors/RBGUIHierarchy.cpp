@@ -107,6 +107,11 @@ namespace RottenBamboo
             ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
                                        ImGuiTreeNodeFlags_SpanAvailWidth;
 
+            if (node == m_SelectedNode)
+            {
+                flags |= ImGuiTreeNodeFlags_Selected;
+            }
+
             if (node->m_Children.empty())
                 flags |= ImGuiTreeNodeFlags_Leaf;
 
@@ -116,6 +121,11 @@ namespace RottenBamboo
                 "%s",
                 node->GetName().c_str()
             );
+
+            if (ImGui::IsItemClicked())
+            {
+                SetSelectedNode(node);
+            }
 
             if (opened)
             {
@@ -130,8 +140,30 @@ namespace RottenBamboo
         };
 
         drawNode(root);
+
+        if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0) && !ImGui::IsAnyItemHovered()) 
+        {
+            SetSelectedNode(nullptr);
+        }
     }
 
+    RBSceneNode* RBGUIHierarchy::SetSelectedNode(RBSceneNode* node)
+    {
+        m_SelectedNode = node;
+        return m_SelectedNode;
+    }
+    RBSceneNode* RBGUIHierarchy::GetSelectedNode()
+    {
+        return m_SelectedNode;
+    }
+    
+    void RBGUIHierarchy::OnNodeDestroyed(RBSceneNode* node) 
+    {
+        if (m_SelectedNode == node) 
+        {
+            m_SelectedNode = nullptr;
+        }
+    }
     void RBGUIHierarchy::RenderHierarchy(VkCommandBuffer& commandBuffer)
     {
         if (ImGui::BeginPopupContextWindow("HierarchyContext", ImGuiPopupFlags_MouseButtonRight))

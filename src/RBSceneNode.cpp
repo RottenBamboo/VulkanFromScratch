@@ -21,4 +21,14 @@ namespace RottenBamboo
     void RBSceneNode::UpdateWorldTransformRecursive()
     {
     }
+
+    void RBSceneNode::SetDescriptorOffset(int offset)
+    {
+        m_descriptorBufferOffset = offset;
+    }
+
+    int RBSceneNode::GetDescriptorOffset() const
+    {
+        return m_descriptorBufferOffset;
+    }
 }

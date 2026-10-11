@@ -5,6 +5,7 @@
 #include "RBGUI.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <cstring>
+#include "RBApplication.h"
 
 namespace RottenBamboo
 {
@@ -34,18 +35,35 @@ namespace RottenBamboo
 
         glm::mat4 view = uniformMatrix.view;
         glm::mat4 proj = uniformMatrix.proj;
-        glm::mat4 model = uniformMatrix.model;
+        //glm::mat4 model = uniformMatrix.model;
         proj[1][1] *= -1.0f;
 
+        RBScene* scene = RBApplication::GetScene();
+        if (scene == nullptr) 
+        {
+            return;
+        }
+
+        RBSceneNode* root = scene->GetRoot();
+        if(root == nullptr)
+        {
+            return;
+        }
+
+        RBSceneNode* selectedNode = hierarchyGUI.GetSelectedNode();
+        
+        if (!selectedNode) return;
+
+        matrix4x4 model = selectedNode->GetTransform().GetModelMatrix();
         ImGuizmo::Manipulate(glm::value_ptr(view),
-                             glm::value_ptr(proj),
-                             operation,
-                             mode,
-                             glm::value_ptr(model));
+                                 glm::value_ptr(proj),
+                                 operation,
+                                 mode,
+                                 glm::value_ptr(model));
 
         if (ImGuizmo::IsUsing())
         {
-            uniformMatrix.model = model;
+           selectedNode->GetTransform().SetModelMatrix(&model);
         }
 
         ImGui::Begin("Gizmo Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
@@ -156,6 +174,7 @@ namespace RottenBamboo
         ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
         //ImGui::ShowMetricsWindow();
+        
         RenderGizmo(uniformMatrix);
         if (materialEditorActive)
         {

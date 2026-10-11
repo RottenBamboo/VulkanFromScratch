@@ -185,41 +185,59 @@ namespace RottenBamboo {
 
         RBScene* scene = RBApplication::GetScene();
 
+        if(scene == nullptr)
+        {
+            return;
+        }
+
         RBSceneNode* root = scene->GetRoot();
+        if(root == nullptr)
+        {
+            return;
+        }
+
         int i = 0;
 
         std::function<void(RBSceneNode*)> traverseNode = [&](RBSceneNode* node) 
         {
             if (!node) return;
 
-            auto model = node->m_Model;
+            bool shouldProcess = false;
 
-            if(model != nullptr)
+            auto model = node->m_Model;
+            if(model != nullptr && model->getMeshes(0) != nullptr)
             {
-                auto& mesh = model->getMeshes(0);
+                shouldProcess = true;
+            }
+
+            if(shouldProcess)
+            {
+                auto& mesh = node->m_Model->getMeshes(0);
 
                 if(mesh != nullptr)
                 {
-                int descriptorOffset = node->m_Material->GetDescriptorOffset();
-                
-                VkDeviceSize offsets[] = {0};
+                    int descriptorOffset = node->m_Material->GetDescriptorOffset();
+                    VkDeviceSize offsets[] = {0};
 
-                vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, rbPipelineLayoutManager.pipelineLayout, 0, 1, &(pDescriptorsGBuffersVec[descriptorOffset]->descriptorSetManager.descriptorSets[currentFrame]), 0, nullptr);
-                
-                vkCmdBindVertexBuffers(commandBuffer, 0, 1, &(mesh->vertexBuffer.buffer), offsets);
+                    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, rbPipelineLayoutManager.pipelineLayout, 0, 1, &(pDescriptorsGBuffersVec[descriptorOffset]->descriptorSetManager.descriptorSets[currentFrame]), 0, nullptr);
+                    
+                    vkCmdBindVertexBuffers(commandBuffer, 0, 1, &(mesh->vertexBuffer.buffer), offsets);
 
-                vkCmdBindIndexBuffer(commandBuffer, (*mesh).indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+                    vkCmdBindIndexBuffer(commandBuffer, (*mesh).indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
 
-                vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>((*mesh).indexBuffer.data.size()), 1, 0, 0, 0);
+                    vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>((*mesh).indexBuffer.data.size()), 1, 0, 0, 0);
                 }
 
             }
+
             if(node->GetChildren().size() > 0)
             {
-            for (auto& child : node->m_Children)
+                for (auto& child : node->m_Children)
                 {
                     if (child)
+                    {
                         traverseNode(child.get());
+                    }
                 }
             }
 

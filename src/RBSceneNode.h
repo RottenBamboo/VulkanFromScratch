@@ -39,6 +39,10 @@ namespace RottenBamboo
 
         void SetTransform(const Transform& transform) { m_Transform = transform; }
         Transform& GetTransform() { return m_Transform; }
+
+        void SetDescriptorOffset(int offset);
+
+        int GetDescriptorOffset() const;
         
         void UpdateWorldTransformRecursive();
         uuids::uuid m_guid;
@@ -50,6 +54,7 @@ namespace RottenBamboo
         std::shared_ptr<RBModel> m_Model = nullptr;
         //class RBMaterial* m_Material = nullptr;
         std::shared_ptr<RBMaterial> m_Material = nullptr;
+        int m_descriptorBufferOffset;
         Transform m_Transform;
     };
 }

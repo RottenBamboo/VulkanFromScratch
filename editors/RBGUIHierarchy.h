@@ -9,6 +9,7 @@
 #include "RBShaderDefinition.h"
 #include "RBDescriptors.h"
 #include "RBSimplePrimitive.h"
+#include "RBSceneNode.h"
 #include <iostream>
 namespace RottenBamboo 
 {
@@ -27,9 +28,14 @@ namespace RottenBamboo
 
         void CreatePrimitive(SimplePrimitiveData* data, std::shared_ptr<RBMaterial> mat, const std::string& path, const std::string& name = "defaultPrimitive");
 
+        RBSceneNode* GetSelectedNode();
+        RBSceneNode* SetSelectedNode(RBSceneNode* node);
+
         private:
+        void OnNodeDestroyed(RBSceneNode* node);
         void RenderHierarchy(VkCommandBuffer& commandBuffer);  
         void RenderScene(VkCommandBuffer& commandBuffer);  
+        RBSceneNode* m_SelectedNode = nullptr;
         RBDevice& rbDevice;
         RBCommandBuffer& rbCommandBuffer;
     };
