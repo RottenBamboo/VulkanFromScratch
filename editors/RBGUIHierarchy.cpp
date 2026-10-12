@@ -88,6 +88,7 @@ namespace RottenBamboo
             node->m_Model = res;
             node->m_Material = mat;
             node->m_Transform = Transform(pos, scale, rot);
+            node->SetDescriptorOffset(mat->GetDescriptorOffset());
         }
     }
     void RBGUIHierarchy::RenderScene(VkCommandBuffer& commandBuffer)

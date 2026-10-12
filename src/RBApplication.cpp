@@ -464,6 +464,7 @@ namespace RottenBamboo {
                 node->m_Model = res;
                 node->m_Material = std::make_shared<RBMaterial>(appendMaterialsVec[i]);
                 node->m_Transform = Transform(pos, scale, rot);
+                node->SetDescriptorOffset(node->m_Material->GetDescriptorOffset());
             }
         }
     }
@@ -583,7 +584,7 @@ void RBApplication::processModelNode(
         int offset = 0;
         if(root->m_Material)
         {
-            offset = root->m_Material->GetDescriptorOffset();
+            offset = root->GetDescriptorOffset();
         }
         UniformBufferShaderVariables* base = static_cast<UniformBufferShaderVariables*>(uniformBuffers1[frameIndex].bufferMapped);
         memcpy(base + offset, uniformShaderVariables, UNIFORM_BUFFER_SHADER_VARIABLES_SIZE);

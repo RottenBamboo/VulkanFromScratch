@@ -216,7 +216,7 @@ namespace RottenBamboo {
 
                 if(mesh != nullptr)
                 {
-                    int descriptorOffset = node->m_Material->GetDescriptorOffset();
+                    int descriptorOffset = node->GetDescriptorOffset();
                     VkDeviceSize offsets[] = {0};
 
                     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, rbPipelineLayoutManager.pipelineLayout, 0, 1, &(pDescriptorsGBuffersVec[descriptorOffset]->descriptorSetManager.descriptorSets[currentFrame]), 0, nullptr);
