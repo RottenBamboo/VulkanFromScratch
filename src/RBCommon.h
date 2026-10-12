@@ -20,6 +20,7 @@
 #include "RBWindows.h"
 #include "RBResourceUtils.h"
 #include "RBLogger.h"
+#include <sstream>
 
 enum RootPathType
 {

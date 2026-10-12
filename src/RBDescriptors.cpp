@@ -159,7 +159,7 @@ namespace RottenBamboo{
     }
     
     buffer.resize(fileSize);
-    size_t bytesRead = SDL_ReadIO(file, buffer.data(), fileSize);
+    size_t bytesRead = SDL_ReadIO(file, buffer.data(), static_cast<size_t>(fileSize));
 
     SDL_CloseIO(file);
 
@@ -213,7 +213,11 @@ namespace RottenBamboo{
         std::string metaPath = pathString + META_EXTENSION;
 #ifdef __ANDROID__
         std::vector<uint8_t> buffer;
-        LoadFromMemoryAndroid(imageInfo.path, imageInfo.isHDR, buffer);
+        if (!LoadFromMemoryAndroid(pathString, imageInfo.isHDR, buffer)) 
+        {
+            RBLOG_FATAL("failed to load texture from memory: %s", imageInfo.path.c_str());
+            throw std::runtime_error("failed to load texture image!");
+        }
         // load texture form memory
         if(imageInfo.isHDR)
         {

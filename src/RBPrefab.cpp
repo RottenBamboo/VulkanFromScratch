@@ -4,6 +4,7 @@
 #include "RBPrefab.h"
 #include "uuid.h"
 #include "RBCommon.h"
+#include <fstream>
 namespace RottenBamboo
 {
     RBPrefab::RBPrefab(const std::string& path, const RBObjectData& data)

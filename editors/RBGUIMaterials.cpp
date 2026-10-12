@@ -394,7 +394,7 @@ namespace RottenBamboo
                     borderColor, 0, 0, 1.0f);
 
                     ImGui::SameLine();
-                    ImGui::Text(name.c_str());
+                    ImGui::TextUnformatted(name.c_str());
                     i++;
                 }
                 else

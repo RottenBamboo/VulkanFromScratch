@@ -152,6 +152,9 @@ namespace RottenBamboo {
     }
     void RBApplication::InitializeMaterial()
     {
+        RBLOG_INFO("Resource root: %s, cwd: %s",
+           GET_RESOURCE_ROOT_DIR.c_str(),
+           std::filesystem::current_path().string().c_str());
         RBMaterial materialLoadItem{"", device, commandBuffer};
         auto count = std::distance(fs::directory_iterator(GET_RESOURCE_ROOT_DIR + materialsFilePath), fs::directory_iterator{});
         appendMaterialsVec.clear();
