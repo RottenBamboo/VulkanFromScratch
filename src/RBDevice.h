@@ -98,7 +98,7 @@ namespace RottenBamboo
 
         VkSampleCountFlagBits getMaxUsableSampleCount();
 
-        VkDeviceSize GetAlignedSize(int originSize);
+        VkDeviceSize GetUniformBufferAlignedSize(int originSize);
 
     };
 }

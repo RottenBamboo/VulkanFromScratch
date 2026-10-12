@@ -220,7 +220,7 @@ namespace RottenBamboo
         m_minTexelBufferOffsetAlignment = props.limits.minTexelBufferOffsetAlignment;
     }
 
-    VkDeviceSize RBDevice::GetAlignedSize(int originSize) 
+    VkDeviceSize RBDevice::GetUniformBufferAlignedSize(int originSize) 
     {
         VkDeviceSize size = originSize;
         return (size + m_minUniformBufferAlignment - 1) & ~(m_minUniformBufferAlignment - 1);

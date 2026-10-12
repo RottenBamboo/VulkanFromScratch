@@ -719,7 +719,7 @@ void RBApplication::processModelNode(
             VkDescriptorBufferInfo bufferInfo{};
             bufferInfo.buffer = descriptorsLighting.rbBufferPtr[currentFrame].buffer;
             bufferInfo.offset = 0;
-            bufferInfo.range = device.GetAlignedSize(sizeof(UniformBufferShaderVariables));
+            bufferInfo.range = device.GetUniformBufferAlignedSize(sizeof(UniformBufferShaderVariables));
 
             descriptorsLighting.descriptorSetManager.fillDescriptotSetsWriteBuffer(currentFrame, 0, 0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
 
