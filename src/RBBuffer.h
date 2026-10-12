@@ -23,6 +23,7 @@ namespace RottenBamboo
         std::vector<T> data;
         void* bufferMapped;
         VkBufferUsageFlagBits rbFlagBits;
+
         ~RBBuffer()
         {
             ReleaseBuffer();

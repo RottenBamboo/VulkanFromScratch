@@ -201,7 +201,7 @@ namespace std
 
 #define UNIFORM_BUFFER_SHADER_VARIABLES_SIZE sizeof(UniformBufferShaderVariables)
 
-struct UniformBufferShaderVariables 
+struct alignas(256) UniformBufferShaderVariables 
 {
     glm::mat4 model;
     glm::mat4 view;

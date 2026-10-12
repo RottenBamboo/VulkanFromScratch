@@ -94,17 +94,17 @@ private:
 
         int bufferOffset = 0;
 
-        int bufferLength = 0;
+        int bufferLength = 256;
 
         RBDescriptorSetManager descriptorSetManager;
 
         RBImageManager rbImageManager;
 
-        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, const std::vector<std::string> &texturePaths, bool isColorAttachment, RBBuffer<SceneUBO> *uniformBuffers, int bufferOffset = 0, int bufferLength = 0);
+        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, const std::vector<std::string> &texturePaths, bool isColorAttachment, RBBuffer<SceneUBO> *uniformBuffers, int bufferOffset = 0, int bufferLength = 256);
 
-        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment, RBBuffer<SceneUBO> *uniformBuffers, int bufferOffset = 0, int bufferLength = 0);
+        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, const std::vector<TexturesInfo> &texturesInfo, bool isColorAttachment, RBBuffer<SceneUBO> *uniformBuffers, int bufferOffset = 0, int bufferLength = 256);
 
-        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, bool isColorAttachment, RBBuffer<SceneUBO> *uniformBuffers, int bufferOffset = 0, int bufferLength = 0);
+        RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer, bool isColorAttachment, RBBuffer<SceneUBO> *uniformBuffers, int bufferOffset = 0, int bufferLength = 256);
         
         RBDescriptors(RBDevice &device, RBCommandBuffer &commandBuffer);
 

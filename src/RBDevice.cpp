@@ -58,6 +58,7 @@ namespace RottenBamboo
         createSurface(rbWindows);
         pickPhysicalDevice();
         createLogicalDevice();
+        InitializeDeviceProperties();
         std::cout << "RBDevice::InitializeDevice()" << std::endl;
         RBLOG_INFO("RBDevice::InitializeDevice()");
     }
@@ -208,6 +209,21 @@ namespace RottenBamboo
 #endif
         std::cout << "RBDevice::setupDebugMessenger()" << std::endl;
         RBLOG_INFO("RBDevice::setupDebugMessenger()");
+    }
+
+    void RBDevice::InitializeDeviceProperties() 
+    {
+        VkPhysicalDeviceProperties props;
+        vkGetPhysicalDeviceProperties(physicalDevice, &props);
+        m_minUniformBufferAlignment = props.limits.minUniformBufferOffsetAlignment;
+        m_minStorageBufferOffsetAlignment = props.limits.minStorageBufferOffsetAlignment;
+        m_minTexelBufferOffsetAlignment = props.limits.minTexelBufferOffsetAlignment;
+    }
+
+    VkDeviceSize RBDevice::GetAlignedSize(int originSize) 
+    {
+        VkDeviceSize size = originSize;
+        return (size + m_minUniformBufferAlignment - 1) & ~(m_minUniformBufferAlignment - 1);
     }
 
     VkSampleCountFlagBits RBDevice::getMaxUsableSampleCount() 

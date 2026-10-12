@@ -34,14 +34,17 @@ namespace RottenBamboo
     const std::vector<const char *> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
     const std::vector<const char *> criticalExtensions = {"VK_KHR_portability_enumeration"};
 
-    static float GetVersionMajor() {
+    static float GetVersionMajor() 
+    {
         return VK_API_VERSION_MAJOR(VK_HEADER_VERSION_COMPLETE);
     }
 
-    static float GetVersionMinor() {
+    static float GetVersionMinor() 
+    {
         return VK_API_VERSION_MINOR(VK_HEADER_VERSION_COMPLETE);
     }
-    class RBDevice {
+    class RBDevice 
+    {
 
     public:
         VkInstance instance;
@@ -51,6 +54,9 @@ namespace RottenBamboo
         VkDevice device;
         VkQueue graphicsQueue;
         VkQueue presentQueue;
+        VkDeviceSize m_minUniformBufferAlignment;
+        VkDeviceSize m_minStorageBufferOffsetAlignment;
+        VkDeviceSize m_minTexelBufferOffsetAlignment;
 
     private:
 
@@ -60,6 +66,8 @@ namespace RottenBamboo
 
     public:
         void InitializeDevice();
+
+        void InitializeDeviceProperties();
 
         RBDevice(RBWindows& window);
 
@@ -89,6 +97,8 @@ namespace RottenBamboo
         bool IsDeviceExtensionSupport(VkPhysicalDevice device, const char * checkExtensions);
 
         VkSampleCountFlagBits getMaxUsableSampleCount();
+
+        VkDeviceSize GetAlignedSize(int originSize);
 
     };
 }
