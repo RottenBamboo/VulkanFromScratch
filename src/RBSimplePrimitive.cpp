@@ -256,33 +256,46 @@ namespace RottenBamboo
         std::vector<Vertex> vertices;
         std::vector<uint32_t> indices;
         const glm::vec3 color(0.9f, 0.5f, 0.8f);
-
+    
+        const float halfHeight = height * 0.5f;
+        const uint32_t halfRings = rings / 2;
+    
         for (uint32_t ring = 0; ring <= rings; ++ring)
         {
             const float v = static_cast<float>(ring) / static_cast<float>(rings);
-            const float theta = (v - 0.5f) * glm::pi<float>();
-            const float sinTheta = std::sin(theta);
-            const float cosTheta = std::cos(theta);
-
+            float y, ringRadius;
+        
+            if (ring <= halfRings)
+            {
+                float t = static_cast<float>(ring) / static_cast<float>(halfRings);
+                float theta = (t - 1.0f) * glm::half_pi<float>();
+                y = -halfHeight + radius * std::sin(theta);
+                ringRadius = radius * std::cos(theta);
+            }
+            else
+            {
+                float t = static_cast<float>(ring - halfRings) / static_cast<float>(rings - halfRings);
+                float theta = t * glm::half_pi<float>();
+                y = halfHeight + radius * std::sin(theta);
+                ringRadius = radius * std::cos(theta);
+            }
+        
             for (uint32_t seg = 0; seg <= segments; ++seg)
             {
                 const float u = static_cast<float>(seg) / static_cast<float>(segments);
                 const float phi = u * glm::two_pi<float>();
                 const float sinPhi = std::sin(phi);
                 const float cosPhi = std::cos(phi);
-
-                const float xzRadius = radius * std::cos(theta);
-                const float y = height * 0.5f * 0.5f + radius * std::sin(theta);
-
+            
                 Vertex vertex{};
                 vertex.pos = {
-                    xzRadius * cosPhi,
+                    ringRadius * cosPhi,
                     y,
-                    xzRadius * sinPhi
+                    ringRadius * sinPhi
                 };
                 vertex.color = color;
                 vertex.texCoord = {u, v};
-                vertex.normal = glm::normalize(vertex.pos);
+                vertex.normal = glm::normalize(vertex.pos - glm::vec3(0.0f, y - ringRadius * 0.0f, 0.0f));
                 vertex.tangent = {-sinPhi, 0.0f, cosPhi};
                 vertices.push_back(vertex);
             }

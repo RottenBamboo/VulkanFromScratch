@@ -184,7 +184,7 @@ namespace RottenBamboo
                 {
                     SimplePrimitiveData data;
                     data.type = SimplePrimitiveType::TYPE_SPHERE;
-                    data.radius = 1;
+                    data.radius = 0.5f;
                     data.segments = 50;
                     data.rings = 50;
                     std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
@@ -194,8 +194,8 @@ namespace RottenBamboo
                 {
                     SimplePrimitiveData data;
                     data.type = SimplePrimitiveType::TYPE_CYLINDER;
-                    data.width = 1;
-                    data.height = 2;
+                    data.width = 0.5f;
+                    data.height = 1;
                     std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
                     CreatePrimitive(&data, material, "models/cylinder.gltf", "cylinder");
                 }
@@ -203,8 +203,8 @@ namespace RottenBamboo
                 {
                     SimplePrimitiveData data;
                     data.type = SimplePrimitiveType::TYPE_CAPSULE;
-                    data.radius = 1;
-                    data.height = 3;
+                    data.radius = 0.5f;
+                    data.height = 1;
                     data.segments = 50;
                     data.rings = 50;
                     std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
