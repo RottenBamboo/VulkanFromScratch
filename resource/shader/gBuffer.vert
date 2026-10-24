@@ -32,12 +32,12 @@ void main()
     fragTexCoord = inTexCoord;
 
     // calculate the normal matrix
-    // normalMatrix = transpose(inverse(mat3(ubo.model)));
-    mat3 normalMatrix = transpose(inverse(mat3(ubo.model)));
+    mat3 modelMatrix = mat3(ubo.model);
+    mat3 normalMatrix = transpose(inverse(modelMatrix));
 
     // transform normals and tangents to world space
     fragNormal = normalize(normalMatrix * inNormal);
-    fragTangent = normalize(normalMatrix * inTangent);
+    fragTangent = normalize(modelMatrix * inTangent);
 
     // calculate the bitangent
     fragBitangent = normalize(cross(fragNormal, fragTangent));

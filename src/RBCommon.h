@@ -88,6 +88,7 @@ extern std::unordered_map<int, std::string> model_paths;
 extern const std::string MODEL_PATH;
 extern const std::string TERRAIN_PATH;
 extern const std::string SAMURI_PATH;
+extern const std::string TANK_PATH;
 extern const std::string LOW_POLY_TERRAIN_PATH;
 extern const TexturesInfo fallBackFormat;
 extern const std::string cachePath;

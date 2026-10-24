@@ -104,6 +104,7 @@ namespace RottenBamboo {
 
         model_paths.insert({0, MODEL_PATH});
         model_paths.insert({1, SAMURI_PATH});
+        model_paths.insert({2, TANK_PATH});
 
         ptr_resourceManager = &resourceManager;
 
@@ -339,9 +340,23 @@ namespace RottenBamboo {
                                             info.isHDR = false;
 			                                break;
                                         }
+                                        case RBShaderTextureType::MRAE:
+                                        {
+                                            info.format = VK_FORMAT_R8G8B8A8_UNORM;
+                                            info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
+                                            info.isHDR = false;
+			                                break;
+                                        }
+                                        case RBShaderTextureType::Position:
+                                        {
+                                            info.format = VK_FORMAT_R16G16B16A16_SFLOAT;
+                                            info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
+                                            info.isHDR = false;
+			                                break;
+                                        }
                                         default:
                                         {
-                                            info.format = VK_FORMAT_R8G8B8A8_SRGB;
+                                            info.format = VK_FORMAT_R8G8B8A8_UNORM;
                                             info.aspect = VK_IMAGE_ASPECT_COLOR_BIT;
                                             info.isHDR = false;
 			                                break;

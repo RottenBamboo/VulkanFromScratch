@@ -17,8 +17,8 @@ struct RBCamera
     float pitch = 0.0f;
 
     float fov = 45.0f;
-    float nearPlane = 0.1f;
-    float farPlane = 100.0f;
+    float nearPlane = 0.001f;
+    float farPlane = 5000.0f;
 
     glm::mat4 GetViewMatrix() const 
     {

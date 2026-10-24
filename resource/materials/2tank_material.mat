@@ -1,0 +1,8 @@
+{
+    "name": "2tank_material",
+    "shaderDefinitionGuid": "ce60d2f1-45ba-4357-8ebc-b90cf7a02c48",
+    "normalMap": "textures/tank_normal.png",
+    "albedoMap": "textures/tank_baseColor.png",
+    "emissionMap": "textures/tank_metallicRoughness.png",
+    "metallicRoughnessAOMap": "textures/tank_metallicRoughness.png"
+}

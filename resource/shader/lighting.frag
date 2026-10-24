@@ -24,32 +24,34 @@ void main()
     vec4 baseColor = texture(gAlbedo, fragTexCoord);
     vec4 positionInput = texture(gPosition, fragTexCoord);
     vec4 normalWS = texture(gNormal, fragTexCoord);
-    
     vec3 positionWS = positionInput.xyz;
 
-    float lightIntensity = 5.0f;
+    float lightIntensity = 1.0f;
     if (dot(normalWS.xyz, normalWS.xyz) < 1e-8) 
     {
         discard;
     }
+
+    normalWS.xyz = 2.0f * (normalWS.xyz - 0.5f);
+    vec3 normal = normalize(normalWS.xyz);
     vec3 metallicRoughnessAO = texture(gMetallicRoughnessAO, fragTexCoord).rgb;
     float AO = metallicRoughnessAO.r;
     
     // reserve the normal in world space
-    vec3 normal = normalize(normalWS.xyz * 2.0 - 1.0);
 
     float ambientIntensity = 0.3 * lightIntensity;
 
     // light properties
-    vec3 lightColor = vec3(1.0, 0.75, 0.5) * lightIntensity;
+    vec3 lightColor = vec3(1.0, 1.0, 1.0) * lightIntensity;
     vec3 L = normalize(vec3(-1.0, 0.5, 1));  
     vec3 radiance = lightColor;  
 
     vec3 lightDir = normalize(L);
-    float diff = max(dot(normal, lightDir), 0.0);
     vec3 viewDir = normalize(ubo.cameraPos - positionWS);
+    //viewDir = vec3(1, 0, 1);
 
-    vec3 directLight = PBR_Lighting_Direct(normal.xyz, viewDir, lightDir, baseColor.xyz, metallicRoughnessAO.x, metallicRoughnessAO.y, radiance);
+    //vec3 directLight = PBR_Lighting_Direct(normal.xyz, viewDir, lightDir, baseColor.xyz, metallicRoughnessAO.x, metallicRoughnessAO.y, radiance);
+    vec3 directLight = PBR_Lighting_Direct_Standard(normal.xyz, viewDir, lightDir, baseColor.xyz, metallicRoughnessAO.x, metallicRoughnessAO.y, radiance);
     vec3 ambient = baseColor.rgb * AO * ambientIntensity;
     vec3 finalColor = directLight + ambient;
 

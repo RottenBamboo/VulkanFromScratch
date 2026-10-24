@@ -203,6 +203,8 @@ namespace RottenBamboo
     {
         if (typeName == "Albedo") return RBShaderTextureType::Albedo;
         if (typeName == "Normal") return RBShaderTextureType::Normal;
+        if (typeName == "MRAE") return RBShaderTextureType::MRAE;
+        if (typeName == "Position") return RBShaderTextureType::Position;
         if (typeName == "Cubemap") return RBShaderTextureType::Cubemap;
         if (typeName == "Custom") return RBShaderTextureType::Custom;
         return RBShaderTextureType::Albedo;
@@ -229,6 +231,8 @@ namespace RottenBamboo
         {
             case RBShaderTextureType::Albedo: return "Albedo";
             case RBShaderTextureType::Normal: return "Normal";
+            case RBShaderTextureType::MRAE: return "MRAE";
+            case RBShaderTextureType::Position: return "Position";
             case RBShaderTextureType::Cubemap: return "Cubemap";
             case RBShaderTextureType::Custom: return "Custom";
             default: return "Albedo";

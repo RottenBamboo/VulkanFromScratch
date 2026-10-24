@@ -14,7 +14,7 @@
         {
             "name": "gPosition",
             "type": "texture2D",
-	    "textureType": "Albedo",
+	    "textureType": "Position",
             "set": 1,
             "binding": 1
         },
@@ -35,7 +35,7 @@
 	 {
             "name": "gMetallicRoughnessAO",
             "type": "texture2D",
-	    "textureType": "Albedo",
+	    "textureType": "MRAE",
             "set": 1,
             "binding": 4
         }

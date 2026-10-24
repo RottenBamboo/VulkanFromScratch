@@ -17,6 +17,8 @@ const std::string TERRAIN_PATH = GET_RESOURCE_ROOT_DIR + "models/CraterCityMesh.
 
 const std::string SAMURI_PATH = GET_RESOURCE_ROOT_DIR + "models/samuri.gltf";
 
+const std::string TANK_PATH = GET_RESOURCE_ROOT_DIR + "models/tank.gltf";
+
 const std::string LOW_POLY_TERRAIN_PATH = GET_RESOURCE_ROOT_DIR + "models/low_poly_terrain.gltf";
 
 const TexturesInfo fallBackFormat{VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT, false, ""};
