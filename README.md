@@ -165,3 +165,31 @@ cmake -B buildAndroid -S . \
 cd buildAndroid
 cmake --build .
 ```
+
+<details>
+<summary>启动&运行</summary>
+
+![启动&运行](documents/1.gif)
+
+</details>
+
+<details>
+<summary>缩放&旋转&平移</summary>
+
+![缩放&旋转&平移](documents/2.gif)
+
+</details>
+
+<details>
+<summary>材质实时变更</summary>
+
+![材质实时变更](documents/3.gif)
+
+</details>
+
+<details>
+<summary>按材质配置绑定资源</summary>
+
+![按材质配置绑定资源](documents/4.gif)
+
+</details>
