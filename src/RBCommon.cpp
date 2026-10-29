@@ -8,6 +8,7 @@ std::unordered_map<int, std::string> model_paths;
 
 const std::string META_EXTENSION = ".meta";
 const std::string MAT_EXTENSION = ".mat";
+const std::string SCENE_EXTENSION = ".scene";
 const std::string PREFAB_EXTENSION = ".prefab";
 const std::string SHADER_EXTENSION = ".shader";
 

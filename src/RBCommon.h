@@ -81,6 +81,7 @@ static const int skyBoxPassColorAttachmentCount = 1;
 
 extern const std::string META_EXTENSION;
 extern const std::string MAT_EXTENSION;
+extern const std::string SCENE_EXTENSION;
 extern const std::string PREFAB_EXTENSION;
 extern const std::string SHADER_EXTENSION;
 

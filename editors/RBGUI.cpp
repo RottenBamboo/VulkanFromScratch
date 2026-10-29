@@ -191,6 +191,8 @@ namespace RottenBamboo
             assetsGUI.Render(commandBuffer, uniformMatrix);
         }
         
+        fileGUI.Render(commandBuffer, uniformMatrix);
+        
         ImGui::Render();
         ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
     }

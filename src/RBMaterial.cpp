@@ -178,7 +178,8 @@ namespace RottenBamboo
             }
 
             std::ofstream file(matFilePath, std::ios::trunc);
-            if (!file.is_open()) {
+            if (!file.is_open()) 
+            {
                 RBLOG_INFO("RBMaterial::Save() cannot open file : " + matFilePath.string());
                 return false;
             }
@@ -239,7 +240,7 @@ namespace RottenBamboo
             return false;
         }
 
-        //save material mate file
+        //save material metadata file
         std::string matMetaPath = matPath + META_EXTENSION;
         RBLOG_INFO("RBMaterial::Save() targetMetaPath : " + matMetaPath);
 

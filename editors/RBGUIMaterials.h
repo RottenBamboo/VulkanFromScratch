@@ -25,6 +25,7 @@ namespace RottenBamboo
         virtual void Initialize(VkRenderPass renderPass) override;
 
         virtual void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix) override;
+        
         void SetLayout() override;
         
         void SetMaterial(RBMaterial* material, int descsriptorIndex = 0);

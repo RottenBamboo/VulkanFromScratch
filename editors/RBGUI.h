@@ -5,6 +5,7 @@
 #pragma once
 
 #include "RBGUIMaterials.h"
+#include "RBGUIFileMenu.h"
 #include "RBGUIHierarchy.h"
 #include "RBGUIAssets.h"
 namespace RottenBamboo 
@@ -38,6 +39,7 @@ namespace RottenBamboo
         RBWindows &rbWindows;
         RBCommandBuffer rbCommandBuffer;
         RBGUIMaterials materialsGUI{rbDevice};
+        RBGUIFileMenu fileGUI{rbDevice};
         RBGUIHierarchy hierarchyGUI{rbDevice, rbCommandBuffer};
         RBGUIAssets assetsGUI;
         bool hierarchyEditorActive = true;

@@ -116,6 +116,6 @@ vec3 PBR_Lighting_Direct(vec3 N, vec3 V, vec3 L, vec3 Albedo, float  Metallic, f
 
 vec3 PBR_Lighting_Direct_Standard(vec3 N, vec3 V, vec3 L, vec3 Albedo, float  Metallic, float  Roughness, vec3 Radiance)
 {
-    float NoL = clamp(dot(N, L), 0.0, 1.0);
+    float NoL = clamp(dot(N, L), 0.0001, 1.0);
     return Cook_Torrance(N, V, L, Albedo, Metallic, Roughness) * Radiance * NoL;
 }

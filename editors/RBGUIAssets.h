@@ -18,7 +18,9 @@ namespace RottenBamboo
         virtual ~RBGUIAssets() override = default;
 
         void Initialize(VkRenderPass renderPass) override;
+
         void Render(VkCommandBuffer& commandBuffer, UniformBufferShaderVariables& uniformMatrix) override;
+        
         void SetLayout() override;
 
         void SetResourceManager(ResourceManager* resourceManager);
