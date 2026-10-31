@@ -63,7 +63,7 @@ namespace RottenBamboo
 
         if (ImGuizmo::IsUsing())
         {
-           selectedNode->GetTransform().SetModelMatrix(&model);
+            selectedNode->GetTransform().SetModelMatrix(&model);
         }
 
         ImGui::Begin("Gizmo Controls", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
@@ -76,6 +76,32 @@ namespace RottenBamboo
         ImGui::RadioButton("World", (int *)&mode, ImGuizmo::WORLD);
         ImGui::SameLine();
         ImGui::RadioButton("Local", (int *)&mode, ImGuizmo::LOCAL);
+
+        if (selectedNode)
+        {
+            auto& transform = selectedNode->GetTransform();
+            auto pos = transform.GetPosition();
+            auto rot = glm::degrees(transform.GetEuler());
+            auto scale = transform.GetScale();
+
+            ImGui::Separator();
+            ImGui::Text("Transform");
+            if (ImGui::DragFloat3("Position", &pos.x, 0.01f))
+            {
+                transform.SetPosition(pos);
+            }
+
+            if (ImGui::DragFloat3("Rotation", &rot.x, 0.1f))
+            {
+                transform.SetEuler(glm::radians(rot));
+            }
+
+            if (ImGui::DragFloat3("Scale", &scale.x, 0.01f, 0.001f, 100.0f))
+            {
+                transform.SetScale(scale);
+            }
+        }
+
         ImGui::Checkbox("Material Editor", &materialEditorActive);
         ImGui::End();
     }

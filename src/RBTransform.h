@@ -1,5 +1,8 @@
+#pragma once
+
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+
 using vector4 = glm::vec4;
 using vector3 = glm::vec3;
 using vector2 = glm::vec2;
@@ -17,11 +20,11 @@ namespace RottenBamboo
     {
         vector3 offset = vector3(0, 0, 0);
         vector3 scale = {1, 1, 1};
-        quat myQuat = quat(offset);
+        quat myQuat = quat(vector3(0.0f));
         vector3 euler = {0, 0, 0};
-        matrix4x4 model;
+        matrix4x4 model = matrix4x4(1.0f);
     };
-    
+
     class Transform
     {
     public:
@@ -30,6 +33,10 @@ namespace RottenBamboo
         Transform(const vector3& pos, const vector3& scale, const quat& rot);
 
         TransformData transformData;
+
+        void UpdateModelMatrix();
+        void DecomposeModelMatrix();
+
         void SetScale(const vector3& scale);
         vector3 GetScale() const;
         void SetPosition(const vector3& pos);

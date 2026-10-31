@@ -26,6 +26,10 @@ namespace RottenBamboo
     private:
         RBDevice& rbDevice;
         bool m_ShouldClose = false;
+        bool m_OpenSceneBrowser = false;
+        std::vector<std::string> m_SceneFiles;
 
+        void RefreshSceneFiles();
+        void DrawOpenSceneBrowser();
     };
 }

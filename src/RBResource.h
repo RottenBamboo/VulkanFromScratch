@@ -4,9 +4,10 @@
 // Created by rottenbamboo on 2025/10/13.
 //
 #include <string>
-namespace RottenBamboo {
-
-    class RBResource {
+namespace RottenBamboo 
+{
+    class RBResource 
+    {
     public:
         explicit RBResource(const std::string& path) : path(path) {}
         virtual void Load(const std::string& path) = 0;

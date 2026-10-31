@@ -30,7 +30,7 @@ namespace RottenBamboo {
         std::cout << "  - " << driver << "\n";
     }
 
-    if (!SDL_Init(SDL_INIT_VIDEO)) 
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS)) 
     {
         SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
         RBLOG_FATAL("Failed to initialize SDL!");
@@ -58,6 +58,7 @@ namespace RottenBamboo {
     }
 
     void RBWindows::PollEvents() {
+        SDL_PumpEvents();
         SDL_Event event;
         
         while (SDL_PollEvent(&event)) 
