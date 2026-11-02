@@ -3,31 +3,30 @@
     "nodes": [
         {
             "name": "models/mach.gltf0",
-            "position": [-10.433411,0.000000,-0.375759],
-            "rotation": [0.000000,0.000000,-0.098220],
-            "scale": [1.000000,0.534703,1.000000],
-            "modelGUID": "df18278c-8052-4dae-86b1-5c6d2e6fbc99"
+            "position": [-4.274551,0.000122,3.691284],
+            "rotation": [0.000000,0.466207,0.000000],
+            "scale": [0.780807,0.641175,1.000000],
+            "modelGUID": "df18278c-8052-4dae-86b1-5c6d2e6fbc99",
+            "materialGUID": "8769ea7a-1fed-4200-876e-e58255eb0f33",
+            "descriptorOffset": "0.000000"
         },
         {
             "name": "models/samuri.gltf1",
-            "position": [0.000000,0.000000,0.000000],
-            "rotation": [0.000000,0.000000,0.000000],
-            "scale": [1.000000,1.000000,1.000000],
-            "modelGUID": "5decce96-99ca-45b8-b264-068c27cb5966"
+            "position": [4.501141,-0.000122,2.449927],
+            "rotation": [0.000000,0.882620,0.000000],
+            "scale": [1.000000,2.542840,1.000000],
+            "modelGUID": "5decce96-99ca-45b8-b264-068c27cb5966",
+            "materialGUID": "2a850fd2-f3d7-4ff5-aa71-31e6896cc4e9",
+            "descriptorOffset": "1.000000"
         },
         {
             "name": "models/tank.gltf2",
-            "position": [0.000000,0.000000,0.000000],
-            "rotation": [0.000000,0.000000,0.000000],
-            "scale": [1.000000,1.000000,1.000000],
-            "modelGUID": "78b1f397-e90e-4ef5-9d00-591783e44c3f"
-        },
-        {
-            "name": "cube3",
-            "position": [-7.524131,0.000000,6.417524],
-            "rotation": [0.000000,0.000000,0.000000],
-            "scale": [1.000000,1.000000,1.000000],
-            "modelGUID": ""
+            "position": [1.136638,2.343934,5.514027],
+            "rotation": [0.000000,0.000000,0.401222],
+            "scale": [1.000000,1.000000,3.080741],
+            "modelGUID": "78b1f397-e90e-4ef5-9d00-591783e44c3f",
+            "materialGUID": "410e1ce1-833d-4bf3-b6ba-a03dab294f37",
+            "descriptorOffset": "2.000000"
         }
     ]
 }

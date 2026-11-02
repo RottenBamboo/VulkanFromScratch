@@ -98,6 +98,7 @@ namespace RottenBamboo
                 vector3 rot   = readVec3("rotation");
                 vector3 scale = readVec3("scale");
                 
+                //load model guid
                 uuids::uuid modelGuid{};
                 std::string modelGuidStr = jn.value("modelGUID", std::string());
                 if (!modelGuidStr.empty())
@@ -115,20 +116,64 @@ namespace RottenBamboo
                 }
                 auto modelPathOpt = RBApplication::GetAssetRegistry()->GetPath(modelGuid);
                 std::string modelPath = modelPathOpt.has_value() ? modelPathOpt.value() : "";
-                fs::path root(GET_RESOURCE_ROOT_DIR);
+                //fs::path root(GET_RESOURCE_ROOT_DIR);
                 modelPath = GET_RESOURCE_ROOT_DIR + modelPath;
+
+                //load material guid
+                uuids::uuid materialGuid{};
+                std::string materialGuidStr = jn.value("materialGUID", std::string());
+                if (!materialGuidStr.empty())
+                {
+                    auto optGuid = uuids::uuid::from_string(materialGuidStr);
+                    if (optGuid)
+                    {
+                        materialGuid = *optGuid;
+                    }
+                    else
+                    {
+                        RBLOG_INFO("RBScene::Load() invalid materialGUID: " + materialGuidStr
+                                   + " for node: " + nodeName);
+                    }
+                }
+                auto materialPathOpt = RBApplication::GetAssetRegistry()->GetPath(materialGuid);
+                std::string materialPath = materialPathOpt.has_value() ? materialPathOpt.value() : "";
+                //fs::path root(GET_RESOURCE_ROOT_DIR);
+                materialPath = GET_RESOURCE_ROOT_DIR + materialPath;
+
+                //load descriptor offset
+                std::string descriptorOffsetStr = jn.value("descriptorOffset", std::string());
+                int descriptorOffset = 0;
+                
+                if (!descriptorOffsetStr.empty())
+                {
+                    try
+                    {
+                        descriptorOffset = static_cast<int>(std::stof(descriptorOffsetStr));
+                    }
+                    catch (const std::exception&)
+                    {
+                        RBLOG_INFO("RBScene::Load() invalid descriptorOffset: " + descriptorOffsetStr
+                                   + " for node: " + nodeName);
+                        descriptorOffset = 0;
+                    }
+                }
+
                 RBSceneNode* node = m_Root->CreateChild(nodeName);
                 if (!node) continue;
 
                 node->m_Transform = Transform(pos, scale, quat(rot));
                 node->m_Transform.SetEuler(rot);
                 ResourceManager* resourceManager = RBApplication::GetResourceManager();
+                auto material = materialPathOpt.has_value() ? resourceManager->Load<RBMaterial>(materialPath) : nullptr;
                 auto model = modelPathOpt.has_value() ? resourceManager->Load<RBModel>(modelPath) : nullptr;
+
+                node->m_Material = material;
                 node->m_Model = model;
                 node->m_Resource = model.get();
+                //node->m_Material = 
 
                 //node->m_Transform = Transform(pos, scale, rot);
-                node->SetDescriptorOffset(0);
+                node->SetDescriptorOffset(descriptorOffset);
                 //node->
                 RBSceneNodeData nodeData;
                 nodeData.name     = nodeName;
@@ -192,7 +237,12 @@ namespace RottenBamboo
                 {
                     auto relativeModelPath = fs::relative(child->m_Model->GetPath(), GET_RESOURCE_ROOT_DIR).string();
                     auto modelGuid = RBApplication::GetAssetRegistry()->GetGuid(relativeModelPath);
-                    auto guidStr = modelGuid.has_value() ? uuids::to_string(modelGuid.value()) : "";
+                    auto modelGuidStr = modelGuid.has_value() ? uuids::to_string(modelGuid.value()) : "";
+
+                    auto relativeMaterialPath = child->m_Material->GetPath();
+                    auto materialGuid = RBApplication::GetAssetRegistry()->GetGuid(relativeMaterialPath);
+                    auto materialGuidStr = materialGuid.has_value() ? uuids::to_string(materialGuid.value()) : "";
+
                     if (child) 
                     {
                         sceneFileData += firstNode ? "\n" : ",\n";
@@ -215,7 +265,11 @@ namespace RottenBamboo
                         sceneFileData += std::to_string((float)child->m_Transform.GetScale().y) + ",";
                         sceneFileData += std::to_string((float)child->m_Transform.GetScale().z);
                         sceneFileData += "],\n";
-                        sceneFileData += "            \"modelGUID\": \"" + guidStr + "\"";
+                        sceneFileData += "            \"modelGUID\": \"" + modelGuidStr + "\"";
+                        sceneFileData += ",\n";
+                        sceneFileData += "            \"materialGUID\": \"" + materialGuidStr + "\"";
+                        sceneFileData += ",\n";
+                        sceneFileData += "            \"descriptorOffset\": \"" + std::to_string((float)child->GetDescriptorOffset()) + "\"";
                         sceneFileData += "\n";
                         sceneFileData += "        }";
                     
