@@ -47,6 +47,8 @@ namespace RottenBamboo
         void addMesh(std::unique_ptr<RBMesh> mesh);
 
         size_t getMeshCount() const;
+
+        RBMetaFile* getMetaFile() { return &metaFile; }
     private:
         RBDevice &device;
         RBCommandBuffer &commandBuffer;

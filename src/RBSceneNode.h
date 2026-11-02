@@ -45,6 +45,7 @@ namespace RottenBamboo
         int GetDescriptorOffset() const;
         
         void UpdateWorldTransformRecursive();
+        
         uuids::uuid m_guid;
         std::string m_Name;
         RBSceneNode* m_Parent;

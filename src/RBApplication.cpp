@@ -470,7 +470,7 @@ namespace RottenBamboo {
             std::string count = std::to_string(resourceManager.Count<RBModel>());
             auto res = resourceManager.Load<RBModel>(model_paths[i]);
             std::string modelPath = NormalizePathString(model_paths[i]);
-            modelPath = fs::relative(modelPath, GET_RESOURCE_ROOT_DIR).string();
+            modelPath = NormalizePathString(fs::relative(modelPath, GET_RESOURCE_ROOT_DIR).string());
             RBSceneNode* node = root->CreateChild(modelPath + count);
 
             vector3 pos(0, 0, 0);

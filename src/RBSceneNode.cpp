@@ -8,6 +8,7 @@ namespace RottenBamboo
             , m_guid(guid)
         {
         }
+
     RBSceneNode* RBSceneNode::AddChild(std::unique_ptr<RBSceneNode> child)
     {
         if(!child)

@@ -27,6 +27,7 @@ namespace RottenBamboo
 
         const RBSceneData& GetData() const;
         RBSceneData& GetData();
+
     private:
         std::unique_ptr<RBSceneNode> m_Root;
         RBSceneData data;

@@ -22,12 +22,15 @@ namespace RottenBamboo
         vector3 position;
         vector3 rotate;
         vector3 scale;
+        std::string modelGUID;
+        std::string modelName;
+        std::string materialGUID;
+        std::string materialName;
     };
 
     struct RBSceneData : public RBData
     {
         std::string name = "Scene";
-        std::string rootGuid;
         std::vector<RBSceneNodeData> nodes;
     };
 }
