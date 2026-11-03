@@ -148,7 +148,7 @@ namespace RottenBamboo
 
     bool RBMaterial::Save(const std::string& savePath, RBMaterialData& materialData)
     {
-        std::string currentPath;
+        std::string currentPath;    
         if(savePath.empty())
         {
             RBLOG_INFO("RBMaterial::Save() savePath is empty. Set to default path : " + path);

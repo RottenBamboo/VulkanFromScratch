@@ -56,12 +56,12 @@ namespace RottenBamboo
 
         SetLayout();
 
-        RenderHierarchy(commandBuffer);
+        PopupMenu(commandBuffer, ClickFrom::CLICK_FROM_HIERARCHY);
         RenderScene(commandBuffer);
         ImGui::End();
     }
 
-    void RBGUIHierarchy::CreateModel(std::shared_ptr<RBMaterial> mat, const std::string& modelPath, const std::string& name)
+    void RBGUIHierarchy::CreateModel(std::shared_ptr<RBMaterial> mat, const std::string& modelPath, const std::string& name, RBSceneNode* parentNode)
     {
         ResourceManager* resourceManager = RBApplication::GetResourceManager();
         std::string count = std::to_string(resourceManager->Count<RBModel>());
@@ -73,10 +73,10 @@ namespace RottenBamboo
         auto* scene = RBApplication::GetScene();
         if (!scene) return;
 
-        RBSceneNode* root = scene->GetRoot();
-        if (!root) return;
+        RBSceneNode* parent = parentNode ? parentNode : scene->GetRoot();
+        if (!parent) return;
 
-        RBSceneNode* node = root->CreateChild(name + count);
+        RBSceneNode* node = parent->CreateChild(name + count);
 
         vector3 pos(0, 0, 0);
         vector3 scale(1, 1, 1);
@@ -90,7 +90,7 @@ namespace RottenBamboo
             node->SetDescriptorOffset(mat->GetDescriptorOffset());
         }
     }
-    void RBGUIHierarchy::CreatePrimitive(SimplePrimitiveData* data, std::shared_ptr<RBMaterial> mat, const std::string& modelPath, const std::string& name)
+    void RBGUIHierarchy::CreatePrimitive(SimplePrimitiveData* data, std::shared_ptr<RBMaterial> mat, const std::string& modelPath, const std::string& name, RBSceneNode* parentNode)
     {
         auto mesh = RBApplication::GetSimplePrimitive()->CreateSimplePrimitive(data);
         ResourceManager* resourceManager = RBApplication::GetResourceManager();
@@ -103,10 +103,10 @@ namespace RottenBamboo
         auto* scene = RBApplication::GetScene();
         if (!scene) return;
 
-        RBSceneNode* root = scene->GetRoot();
-        if (!root) return;
+        RBSceneNode* parent = parentNode ? parentNode : scene->GetRoot();
+        if (!parent) return;
 
-        RBSceneNode* node = root->CreateChild(name + count);
+        RBSceneNode* node = parent->CreateChild(name + count);
 
         vector3 pos(0, 0, 0);
         vector3 scale(1, 1, 1);
@@ -129,10 +129,14 @@ namespace RottenBamboo
 
         RBSceneNode* root = scene->GetRoot();
         if (!root) return;
-        
+
+        bool droppedOnNode = false;
+
         std::function<void(RBSceneNode*)> drawNode = [&](RBSceneNode* node)
         {
             if (!node) return;
+
+            ImGui::PushID(node);
 
             ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow |
                                        ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -157,6 +161,25 @@ namespace RottenBamboo
                 SetSelectedNode(node);
             }
 
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_FILE")) 
+                {
+                    const char* filePath = static_cast<const char*>(payload->Data);
+                    std::string path(filePath, payload->DataSize);
+                    std::string assetPath = NormalizePathString(path);
+                
+                    std::string ext = std::filesystem::path(assetPath).extension().string();
+                    if (ext == ".gltf" || ext == ".glb" || ext == ".fbx" || ext == ".obj")
+                    {
+                        std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
+                        CreateModel(material, assetPath, assetPath, node);
+                        droppedOnNode = true;
+                    }
+                }
+                ImGui::EndDragDropTarget();
+            }
+
             if (opened)
             {
                 for (auto& child : node->m_Children)
@@ -167,6 +190,11 @@ namespace RottenBamboo
 
                 ImGui::TreePop();
             }
+
+            //render right click menu
+            PopupMenu(commandBuffer, ClickFrom::CLICK_FROM_NODE, node);
+
+            ImGui::PopID();
         };
 
         drawNode(root);
@@ -179,7 +207,7 @@ namespace RottenBamboo
         ImVec2 dropSize = ImGui::GetContentRegionAvail();
         ImGui::InvisibleButton("HierarchyDropTarget", dropSize);
 
-        if (ImGui::BeginDragDropTarget())
+        if (ImGui::BeginDragDropTarget() && !ImGui::IsAnyItemHovered())
         {
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_FILE")) 
             {
@@ -190,10 +218,6 @@ namespace RottenBamboo
                 std::string ext = std::filesystem::path(assetPath).extension().string();
                 if (ext == ".gltf" || ext == ".glb" || ext == ".fbx" || ext == ".obj")
                 {
-                    SimplePrimitiveData data;
-                    data.type = SimplePrimitiveType::TYPE_CUBE;
-                    data.width = 1;
-                    data.height = 1;
                     std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
                     CreateModel(material, assetPath, assetPath);
                 }
@@ -219,64 +243,84 @@ namespace RottenBamboo
             m_SelectedNode = nullptr;
         }
     }
-    void RBGUIHierarchy::RenderHierarchy(VkCommandBuffer& commandBuffer)
+
+    void RBGUIHierarchy::RenderMenu(VkCommandBuffer& commandBuffer, RBSceneNode* node)
     {
-        if (ImGui::BeginPopupContextWindow("HierarchyContext", ImGuiPopupFlags_MouseButtonRight))
+        if (ImGui::BeginMenu("Create Primitive"))
         {
-            if (ImGui::BeginMenu("Create Primitive"))
+            if (ImGui::MenuItem("Create Cube"))
             {
-                if (ImGui::MenuItem("Create Cube"))
-                {
-                    SimplePrimitiveData data;
-                    data.type = SimplePrimitiveType::TYPE_CUBE;
-                    data.width = 1;
-                    data.height = 1;
-                    std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
-                    CreatePrimitive(&data, material, "models/cube.gltf", "cube");
-                }
-                if (ImGui::MenuItem("Create Sphere"))
-                {
-                    SimplePrimitiveData data;
-                    data.type = SimplePrimitiveType::TYPE_SPHERE;
-                    data.radius = 0.5f;
-                    data.segments = 50;
-                    data.rings = 50;
-                    std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
-                    CreatePrimitive(&data, material, "models/sphere.gltf", "sphere");
-                }
-                if (ImGui::MenuItem("Create Cylinder"))
-                {
-                    SimplePrimitiveData data;
-                    data.type = SimplePrimitiveType::TYPE_CYLINDER;
-                    data.width = 0.5f;
-                    data.height = 1;
-                    std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
-                    CreatePrimitive(&data, material, "models/cylinder.gltf", "cylinder");
-                }
-                if (ImGui::MenuItem("Create Capsule"))
-                {
-                    SimplePrimitiveData data;
-                    data.type = SimplePrimitiveType::TYPE_CAPSULE;
-                    data.radius = 0.5f;
-                    data.height = 1;
-                    data.segments = 50;
-                    data.rings = 50;
-                    std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
-                    CreatePrimitive(&data, material, "models/capsule.gltf", "capsule");
-                }
-                if (ImGui::MenuItem("Create Plane"))
-                {
-                    SimplePrimitiveData data;
-                    data.type = SimplePrimitiveType::TYPE_PLANE;
-                    data.width = 2;
-                    data.height = 2;
-                    std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
-                    CreatePrimitive(&data, material, "models/plane.gltf", "plane");
-                }
-                
-                ImGui::EndMenu();
+                SimplePrimitiveData data;
+                data.type = SimplePrimitiveType::TYPE_CUBE;
+                data.width = 1;
+                data.height = 1;
+                std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
+                CreatePrimitive(&data, material, "models/cube.gltf", "cube", node);
             }
-            ImGui::EndPopup();
+            if (ImGui::MenuItem("Create Sphere"))
+            {
+                SimplePrimitiveData data;
+                data.type = SimplePrimitiveType::TYPE_SPHERE;
+                data.radius = 0.5f;
+                data.segments = 50;
+                data.rings = 50;
+                std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
+                CreatePrimitive(&data, material, "models/sphere.gltf", "sphere", node);
+            }
+            if (ImGui::MenuItem("Create Cylinder"))
+            {
+                SimplePrimitiveData data;
+                data.type = SimplePrimitiveType::TYPE_CYLINDER;
+                data.width = 0.5f;
+                data.height = 1;
+                std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
+                CreatePrimitive(&data, material, "models/cylinder.gltf", "cylinder");
+            }
+            if (ImGui::MenuItem("Create Capsule"))
+            {
+                SimplePrimitiveData data;
+                data.type = SimplePrimitiveType::TYPE_CAPSULE;
+                data.radius = 0.5f;
+                data.height = 1;
+                data.segments = 50;
+                data.rings = 50;
+                std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
+                CreatePrimitive(&data, material, "models/capsule.gltf", "capsule", node);
+            }
+            if (ImGui::MenuItem("Create Plane"))
+            {
+                SimplePrimitiveData data;
+                data.type = SimplePrimitiveType::TYPE_PLANE;
+                data.width = 2;
+                data.height = 2;
+                std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
+                CreatePrimitive(&data, material, "models/plane.gltf", "plane", node);
+            }
+            
+            ImGui::EndMenu();
+        }
+        ImGui::EndPopup();
+    }
+
+    void RBGUIHierarchy::PopupMenu(VkCommandBuffer& commandBuffer, ClickFrom clickFrom, RBSceneNode* node)
+    {
+        //popup from node right click
+        if(clickFrom == ClickFrom::CLICK_FROM_NODE)
+        {
+            
+            if (ImGui::BeginPopupContextItem("node_context", ImGuiPopupFlags_MouseButtonRight))
+            {
+                RenderMenu(commandBuffer, node);
+            }
+        }
+
+        //popup from hierarchy right click
+        if(clickFrom == ClickFrom::CLICK_FROM_HIERARCHY)
+        {
+            if (ImGui::BeginPopupContextWindow("hierarchy_context", ImGuiPopupFlags_MouseButtonRight))
+            {
+                RenderMenu(commandBuffer);
+            }
         }
     }
 }

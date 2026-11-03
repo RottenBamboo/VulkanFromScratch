@@ -25,16 +25,22 @@ namespace RottenBamboo
 
         void SetLayout() override;
 
-        void CreatePrimitive(SimplePrimitiveData* data, std::shared_ptr<RBMaterial> mat, const std::string& modelPath, const std::string& name = "defaultPrimitive");
+        void CreatePrimitive(SimplePrimitiveData* data, std::shared_ptr<RBMaterial> mat, const std::string& modelPath, const std::string& name = "defaultPrimitive", RBSceneNode* parentNode = nullptr);
 
-        void CreateModel(std::shared_ptr<RBMaterial> mat, const std::string& modelPath, const std::string& name = "defaultPrimitive");
+        void CreateModel(std::shared_ptr<RBMaterial> mat, const std::string& modelPath, const std::string& name = "defaultPrimitive", RBSceneNode* parentNode = nullptr);
 
         RBSceneNode* GetSelectedNode();
         RBSceneNode* SetSelectedNode(RBSceneNode* node);
 
+        enum class ClickFrom
+        {
+            CLICK_FROM_HIERARCHY,
+            CLICK_FROM_NODE
+        };
         private:
         void OnNodeDestroyed(RBSceneNode* node);
-        void RenderHierarchy(VkCommandBuffer& commandBuffer);  
+        void RenderMenu(VkCommandBuffer& commandBuffer, RBSceneNode* parentNode = nullptr);  
+        void PopupMenu(VkCommandBuffer& commandBuffer, ClickFrom clickFrom, RBSceneNode* parentNode = nullptr);  
         void RenderScene(VkCommandBuffer& commandBuffer);  
         RBSceneNode* m_SelectedNode = nullptr;
         RBDevice& rbDevice;
