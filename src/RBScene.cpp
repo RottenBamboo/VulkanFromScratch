@@ -137,8 +137,6 @@ namespace RottenBamboo
                 }
                 auto materialPathOpt = RBApplication::GetAssetRegistry()->GetPath(materialGuid);
                 std::string materialPath = materialPathOpt.has_value() ? materialPathOpt.value() : "";
-                //fs::path root(GET_RESOURCE_ROOT_DIR);
-                materialPath = GET_RESOURCE_ROOT_DIR + materialPath;
 
                 //load descriptor offset
                 std::string descriptorOffsetStr = jn.value("descriptorOffset", std::string());
@@ -161,20 +159,17 @@ namespace RottenBamboo
                 RBSceneNode* node = m_Root->CreateChild(nodeName);
                 if (!node) continue;
 
-                node->m_Transform = Transform(pos, scale, quat(rot));
-                node->m_Transform.SetEuler(rot);
                 ResourceManager* resourceManager = RBApplication::GetResourceManager();
-                auto material = materialPathOpt.has_value() ? resourceManager->Load<RBMaterial>(materialPath) : nullptr;
+                auto material = RBApplication::instance->AddMaterial(materialPath);
                 auto model = modelPathOpt.has_value() ? resourceManager->Load<RBModel>(modelPath) : nullptr;
 
                 node->m_Material = material;
                 node->m_Model = model;
                 node->m_Resource = model.get();
-                //node->m_Material = 
-
-                //node->m_Transform = Transform(pos, scale, rot);
+                node->m_Transform = Transform(pos, scale, quat(rot));
+                node->m_Transform.SetEuler(rot);
                 node->SetDescriptorOffset(descriptorOffset);
-                //node->
+                
                 RBSceneNodeData nodeData;
                 nodeData.name     = nodeName;
                 nodeData.position = pos;

@@ -160,7 +160,6 @@ namespace RottenBamboo {
         auto count = std::distance(fs::directory_iterator(GET_RESOURCE_ROOT_DIR + materialsFilePath), fs::directory_iterator{});
         appendMaterialsVec.clear();
         appendMaterialsVec.reserve(count);
-        ResourceManager* resourceManager = RBApplication::GetResourceManager();
         int offset = 0;
         for (const auto& entry : fs::directory_iterator(GET_RESOURCE_ROOT_DIR + materialsFilePath))
         {

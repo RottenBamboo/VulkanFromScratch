@@ -61,14 +61,43 @@ namespace RottenBamboo
         ImGui::End();
     }
 
-    void RBGUIHierarchy::CreatePrimitive(SimplePrimitiveData* data, std::shared_ptr<RBMaterial> mat, const std::string& path, const std::string& name)
+    void RBGUIHierarchy::CreateModel(std::shared_ptr<RBMaterial> mat, const std::string& modelPath, const std::string& name)
+    {
+        ResourceManager* resourceManager = RBApplication::GetResourceManager();
+        std::string count = std::to_string(resourceManager->Count<RBModel>());
+        std::string primitivePath = GET_RESOURCE_ROOT_DIR + modelPath;
+        primitivePath = NormalizePathString(primitivePath);
+        auto res = resourceManager->Load<RBModel>(primitivePath);
+        //res->addMesh(std::move(mesh));
+
+        auto* scene = RBApplication::GetScene();
+        if (!scene) return;
+
+        RBSceneNode* root = scene->GetRoot();
+        if (!root) return;
+
+        RBSceneNode* node = root->CreateChild(name + count);
+
+        vector3 pos(0, 0, 0);
+        vector3 scale(1, 1, 1);
+        quat rot(1, 0, 0, 0);
+        if (node)
+        {
+            node->m_Resource = res.get();
+            node->m_Model = res;
+            node->m_Material = mat;
+            node->m_Transform = Transform(pos, scale, rot);
+            node->SetDescriptorOffset(mat->GetDescriptorOffset());
+        }
+    }
+    void RBGUIHierarchy::CreatePrimitive(SimplePrimitiveData* data, std::shared_ptr<RBMaterial> mat, const std::string& modelPath, const std::string& name)
     {
         auto mesh = RBApplication::GetSimplePrimitive()->CreateSimplePrimitive(data);
         ResourceManager* resourceManager = RBApplication::GetResourceManager();
         std::string count = std::to_string(resourceManager->Count<RBModel>());
-        std::string modelPath = GET_RESOURCE_ROOT_DIR + path + count;
-        modelPath = NormalizePathString(modelPath);
-        auto res = resourceManager->Add<RBModel>(modelPath);
+        std::string primitivePath = GET_RESOURCE_ROOT_DIR + modelPath + count;
+        primitivePath = NormalizePathString(primitivePath);
+        auto res = resourceManager->Add<RBModel>(primitivePath);
         res->addMesh(std::move(mesh));
 
         auto* scene = RBApplication::GetScene();
@@ -100,7 +129,7 @@ namespace RottenBamboo
 
         RBSceneNode* root = scene->GetRoot();
         if (!root) return;
-
+        
         std::function<void(RBSceneNode*)> drawNode = [&](RBSceneNode* node)
         {
             if (!node) return;
@@ -145,6 +174,31 @@ namespace RottenBamboo
         if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0) && !ImGui::IsAnyItemHovered()) 
         {
             SetSelectedNode(nullptr);
+        }
+
+        ImVec2 dropSize = ImGui::GetContentRegionAvail();
+        ImGui::InvisibleButton("HierarchyDropTarget", dropSize);
+
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_FILE")) 
+            {
+                const char* filePath = static_cast<const char*>(payload->Data);
+                std::string path(filePath, payload->DataSize);
+                std::string assetPath = NormalizePathString(path);
+
+                std::string ext = std::filesystem::path(assetPath).extension().string();
+                if (ext == ".gltf" || ext == ".glb" || ext == ".fbx" || ext == ".obj")
+                {
+                    SimplePrimitiveData data;
+                    data.type = SimplePrimitiveType::TYPE_CUBE;
+                    data.width = 1;
+                    data.height = 1;
+                    std::shared_ptr<RBMaterial> material = RBApplication::instance->AddMaterial();
+                    CreateModel(material, assetPath, assetPath);
+                }
+            }
+            ImGui::EndDragDropTarget();
         }
     }
 
