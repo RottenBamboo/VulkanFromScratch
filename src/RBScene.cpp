@@ -77,9 +77,9 @@ namespace RottenBamboo
         }
         else
         {
-            for (const auto& jn : j["nodes"])
+            std::function<void(const json&, RBSceneNode*)> parseNode = [&](const json& jn, RBSceneNode* parent)
             {
-                if (!jn.is_object()) continue;
+                if (!jn.is_object()) return;
 
                 std::string nodeName = jn.value("name", std::string());
 
@@ -116,7 +116,6 @@ namespace RottenBamboo
                 }
                 auto modelPathOpt = RBApplication::GetAssetRegistry()->GetPath(modelGuid);
                 std::string modelPath = modelPathOpt.has_value() ? modelPathOpt.value() : "";
-                //fs::path root(GET_RESOURCE_ROOT_DIR);
                 modelPath = GET_RESOURCE_ROOT_DIR + modelPath;
 
                 //load material guid
@@ -141,7 +140,6 @@ namespace RottenBamboo
                 //load descriptor offset
                 std::string descriptorOffsetStr = jn.value("descriptorOffset", std::string());
                 int descriptorOffset = 0;
-                
                 if (!descriptorOffsetStr.empty())
                 {
                     try
@@ -156,8 +154,8 @@ namespace RottenBamboo
                     }
                 }
 
-                RBSceneNode* node = m_Root->CreateChild(nodeName);
-                if (!node) continue;
+                RBSceneNode* node = parent ? parent->CreateChild(nodeName) : m_Root->CreateChild(nodeName);
+                if (!node) return;
 
                 ResourceManager* resourceManager = RBApplication::GetResourceManager();
                 auto material = RBApplication::instance->AddMaterial(materialPath);
@@ -165,17 +163,30 @@ namespace RottenBamboo
 
                 node->m_Material = material;
                 node->m_Model = model;
-                node->m_Resource = model.get();
+                node->m_Resource = model ? model.get() : nullptr;
                 node->m_Transform = Transform(pos, scale, quat(rot));
                 node->m_Transform.SetEuler(rot);
                 node->SetDescriptorOffset(descriptorOffset);
-                
+
                 RBSceneNodeData nodeData;
                 nodeData.name     = nodeName;
                 nodeData.position = pos;
                 nodeData.rotate   = rot;
                 nodeData.scale    = scale;
                 data.nodes.push_back(nodeData);
+
+                if (jn.contains("nodes") && jn["nodes"].is_array())
+                {
+                    for (const auto& childJson : jn["nodes"])
+                    {
+                        parseNode(childJson, node);
+                    }
+                }
+            };
+
+            for (const auto& jn : j["nodes"])
+            {
+                parseNode(jn, nullptr);
             }
         }
 
@@ -219,65 +230,101 @@ namespace RottenBamboo
                 RBLOG_INFO("RBScene::Save() cannot open file : " + sceneFilePath.string());
                 return false;
             }
-        
-            std::string sceneFileData = "{\n";
-            sceneFileData += "    \"SceneName\": \"" + sceneData.name + "\",\n";
-            sceneFileData += "    \"nodes\": [";
-        
-            bool firstNode = true;
-        
-            std::function<void(const RBSceneNode*)> traverseNode = [&](const RBSceneNode* node) 
+
+            const RBSceneNode* saveRoot = root != nullptr ? root : m_Root.get();
+            std::function<void(const RBSceneNode*, std::ostream&, int)> appendNodeJson = [&](const RBSceneNode* node, std::ostream& out, int indent)
             {
-                for (auto& child : node->m_Children)
+                if (!node)
                 {
-                    auto relativeModelPath = fs::relative(child->m_Model->GetPath(), GET_RESOURCE_ROOT_DIR).string();
+                    return;
+                }
+
+                const std::string pad = std::string(indent, ' ');
+                const std::string childPad = std::string(indent + 4, ' ');
+
+                std::string modelGuidStr = "";
+                if (node->m_Model && !node->m_Model->GetPath().empty())
+                {
+                    auto relativeModelPath = fs::relative(node->m_Model->GetPath(), GET_RESOURCE_ROOT_DIR).string();
                     auto modelGuid = RBApplication::GetAssetRegistry()->GetGuid(relativeModelPath);
-                    auto modelGuidStr = modelGuid.has_value() ? uuids::to_string(modelGuid.value()) : "";
-
-                    auto relativeMaterialPath = child->m_Material->GetPath();
-                    auto materialGuid = RBApplication::GetAssetRegistry()->GetGuid(relativeMaterialPath);
-                    auto materialGuidStr = materialGuid.has_value() ? uuids::to_string(materialGuid.value()) : "";
-
-                    if (child) 
+                    if (modelGuid.has_value())
                     {
-                        sceneFileData += firstNode ? "\n" : ",\n";
-                        firstNode = false;
-                    
-                        sceneFileData += "        {\n";
-                        sceneFileData += "            \"name\": \"" + child->GetName() + "\",\n";
-                        sceneFileData += "            \"position\": [";
-                        sceneFileData += std::to_string((float)child->m_Transform.GetPosition().x) + ",";
-                        sceneFileData += std::to_string((float)child->m_Transform.GetPosition().y) + ",";
-                        sceneFileData += std::to_string((float)child->m_Transform.GetPosition().z);
-                        sceneFileData += "],\n";
-                        sceneFileData += "            \"rotation\": [";
-                        sceneFileData += std::to_string((float)child->m_Transform.GetRotation().x) + ",";
-                        sceneFileData += std::to_string((float)child->m_Transform.GetRotation().y) + ",";
-                        sceneFileData += std::to_string((float)child->m_Transform.GetRotation().z);
-                        sceneFileData += "],\n";
-                        sceneFileData += "            \"scale\": [";
-                        sceneFileData += std::to_string((float)child->m_Transform.GetScale().x) + ",";
-                        sceneFileData += std::to_string((float)child->m_Transform.GetScale().y) + ",";
-                        sceneFileData += std::to_string((float)child->m_Transform.GetScale().z);
-                        sceneFileData += "],\n";
-                        sceneFileData += "            \"modelGUID\": \"" + modelGuidStr + "\"";
-                        sceneFileData += ",\n";
-                        sceneFileData += "            \"materialGUID\": \"" + materialGuidStr + "\"";
-                        sceneFileData += ",\n";
-                        sceneFileData += "            \"descriptorOffset\": \"" + std::to_string((float)child->GetDescriptorOffset()) + "\"";
-                        sceneFileData += "\n";
-                        sceneFileData += "        }";
-                    
-                        traverseNode(child.get());
+                        modelGuidStr = uuids::to_string(modelGuid.value());
                     }
                 }
+
+                std::string materialGuidStr = "";
+                if (node->m_Material && !node->m_Material->GetPath().empty())
+                {
+                    auto materialGuid = RBApplication::GetAssetRegistry()->GetGuid(node->m_Material->GetPath());
+                    if (materialGuid.has_value())
+                    {
+                        materialGuidStr = uuids::to_string(materialGuid.value());
+                    }
+                }
+
+                out << pad << "{\n";
+                out << childPad << "\"name\": \"" << node->GetName() << "\",\n";
+                out << childPad << "\"position\": [" << std::to_string(node->m_Transform.GetPosition().x) << ", "
+                    << std::to_string(node->m_Transform.GetPosition().y) << ", "
+                    << std::to_string(node->m_Transform.GetPosition().z) << "],\n";
+                out << childPad << "\"rotation\": [" << std::to_string(node->m_Transform.GetRotation().x) << ", "
+                    << std::to_string(node->m_Transform.GetRotation().y) << ", "
+                    << std::to_string(node->m_Transform.GetRotation().z) << "],\n";
+                out << childPad << "\"scale\": [" << std::to_string(node->m_Transform.GetScale().x) << ", "
+                    << std::to_string(node->m_Transform.GetScale().y) << ", "
+                    << std::to_string(node->m_Transform.GetScale().z) << "],\n";
+                out << childPad << "\"modelGUID\": \"" << modelGuidStr << "\",\n";
+                out << childPad << "\"materialGUID\": \"" << materialGuidStr << "\",\n";
+                out << childPad << "\"descriptorOffset\": \"" << std::to_string(node->GetDescriptorOffset()) << "\",\n";
+                out << childPad << "\"nodes\": [";
+
+                if (!node->m_Children.empty())
+                {
+                    out << "\n";
+                    for (size_t i = 0; i < node->m_Children.size(); ++i)
+                    {
+                        if (!node->m_Children[i]) continue;
+                        appendNodeJson(node->m_Children[i].get(), out, indent + 8);
+                        if (i + 1 < node->m_Children.size())
+                        {
+                            out << ",";
+                        }
+                        out << "\n";
+                    }
+                    out << pad << "    ]\n";
+                }
+                else
+                {
+                    out << "]\n";
+                }
+
+                out << pad << "}";
             };
-            traverseNode(root);
-        
-            sceneFileData += firstNode ? "]\n" : "\n    ]\n";
-            sceneFileData += "}\n";
-            file << sceneFileData;
-            RBLOG_INFO("RBScene::Save() scene = " + sceneFileData);
+
+            std::ostringstream sceneFileData;
+            sceneFileData << "{\n";
+            sceneFileData << "    \"SceneName\": \"" << sceneData.name << "\",\n";
+            sceneFileData << "    \"nodes\": [\n";
+
+            if (saveRoot)
+            {
+                for (size_t i = 0; i < saveRoot->m_Children.size(); ++i)
+                {
+                    if (!saveRoot->m_Children[i]) continue;
+                    appendNodeJson(saveRoot->m_Children[i].get(), sceneFileData, 8);
+                    if (i + 1 < saveRoot->m_Children.size())
+                    {
+                        sceneFileData << ",";
+                    }
+                    sceneFileData << "\n";
+                }
+            }
+
+            sceneFileData << "    ]\n";
+            sceneFileData << "}\n";
+            file << sceneFileData.str();
+            RBLOG_INFO("RBScene::Save() scene = " + sceneFileData.str());
         }
         catch (const std::exception& e)
         {
