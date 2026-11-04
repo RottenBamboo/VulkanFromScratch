@@ -1,0 +1,89 @@
+{
+    "SceneName": "test",
+    "nodes": [
+        {
+            "name": "models/mach.gltf0",
+            "position": [0.000000, 0.000000, 0.000000],
+            "rotation": [0.000000, 0.000000, 0.000000],
+            "scale": [1.000000, 1.000000, 1.000000],
+            "modelGUID": "df18278c-8052-4dae-86b1-5c6d2e6fbc99",
+            "materialGUID": "8769ea7a-1fed-4200-876e-e58255eb0f33",
+            "descriptorOffset": "0",
+            "nodes": [
+                {
+                    "name": "models/mach.gltf4",
+                    "position": [7.705499, 0.000000, 0.465870],
+                    "rotation": [0.000000, 0.000000, 0.000000],
+                    "scale": [1.000000, 1.000000, 1.000000],
+                    "modelGUID": "df18278c-8052-4dae-86b1-5c6d2e6fbc99",
+                    "materialGUID": "73ad72f0-28f0-4813-b01b-c9db6b4f2135",
+                    "descriptorOffset": "4",
+                    "nodes": []
+                }
+            ]
+        },
+        {
+            "name": "models/samuri.gltf1",
+            "position": [0.000000, 0.000000, 0.000000],
+            "rotation": [0.000000, 0.000000, 0.000000],
+            "scale": [1.000000, 1.000000, 1.000000],
+            "modelGUID": "5decce96-99ca-45b8-b264-068c27cb5966",
+            "materialGUID": "2a850fd2-f3d7-4ff5-aa71-31e6896cc4e9",
+            "descriptorOffset": "1",
+            "nodes": [
+                {
+                    "name": "models/mach.gltf4",
+                    "position": [-9.721663, 0.000061, -4.908487],
+                    "rotation": [0.000000, 0.000000, 0.000000],
+                    "scale": [1.000000, 1.000000, 1.000000],
+                    "modelGUID": "df18278c-8052-4dae-86b1-5c6d2e6fbc99",
+                    "materialGUID": "73ad72f0-28f0-4813-b01b-c9db6b4f2135",
+                    "descriptorOffset": "5",
+                    "nodes": [
+                        {
+                            "name": "models/Mech.obj4",
+                            "position": [-12.146600, -0.000031, -40.288811],
+                            "rotation": [0.000000, 0.000000, 0.000000],
+                            "scale": [1.000000, 1.000000, 1.000000],
+                            "modelGUID": "707a3c33-defa-4d66-9cc8-3a76a6b6deb9",
+                            "materialGUID": "73ad72f0-28f0-4813-b01b-c9db6b4f2135",
+                            "descriptorOffset": "6",
+                            "nodes": []
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "models/tank.gltf2",
+            "position": [0.000000, 0.000000, 0.000000],
+            "rotation": [0.000000, 0.000000, 0.000000],
+            "scale": [1.000000, 1.000000, 1.000000],
+            "modelGUID": "78b1f397-e90e-4ef5-9d00-591783e44c3f",
+            "materialGUID": "410e1ce1-833d-4bf3-b6ba-a03dab294f37",
+            "descriptorOffset": "2",
+            "nodes": [
+                {
+                    "name": "models/low_poly_terrain.gltf3",
+                    "position": [-6.237335, 0.000000, 2.633183],
+                    "rotation": [0.000000, 0.000000, 0.000000],
+                    "scale": [1.000000, 1.000000, 1.000000],
+                    "modelGUID": "988f2395-1449-45ea-b1a3-dc3faa925584",
+                    "materialGUID": "73ad72f0-28f0-4813-b01b-c9db6b4f2135",
+                    "descriptorOffset": "3",
+                    "nodes": []
+                }
+            ]
+        },
+        {
+            "name": "models/steal.gltf5",
+            "position": [0.000000, 0.000000, 0.000000],
+            "rotation": [0.000000, 0.000000, 0.000000],
+            "scale": [0.025000, 0.025000, 0.025000],
+            "modelGUID": "a522ebd2-3047-4314-ae1c-c58aed0963e7",
+            "materialGUID": "73ad72f0-28f0-4813-b01b-c9db6b4f2135",
+            "descriptorOffset": "10",
+            "nodes": []
+        }
+    ]
+}

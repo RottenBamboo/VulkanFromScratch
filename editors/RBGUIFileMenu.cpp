@@ -38,6 +38,49 @@ namespace RottenBamboo
         std::sort(m_SceneFiles.begin(), m_SceneFiles.end());
     }
 
+
+    void RBGUIFileMenu::DrawPopupInputSceneName()
+    {
+        if (!m_NewScenePopupOpen)
+            return;
+
+        ImGui::OpenPopup("New Scene Name");
+        if (ImGui::BeginPopupModal("New Scene Name", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::TextUnformatted("Name");
+            if (ImGui::IsWindowAppearing())
+                ImGui::SetKeyboardFocusHere();
+
+            ImGui::InputText("##newscene", m_NewSceneFileNameBuf, sizeof(m_NewSceneFileNameBuf));
+            m_NewSceneFileName = m_NewSceneFileNameBuf;
+
+            if (ImGui::Button("Save", ImVec2(100, 0)) && m_NewSceneFileNameBuf[0] != '\0')
+            {
+                std::string fileName = m_NewSceneFileName;
+
+                RBScene* scene = RBApplication::GetScene();
+                if (scene != nullptr)
+                {
+                    if(scene->GetRoot())
+                    {
+                        scene->GetRoot()->SetName(fileName);
+                    }
+                    scene->Save(sceneFilePath + fileName,
+                                scene->GetData(), scene->GetRoot());
+                }
+                m_NewScenePopupOpen = false;
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Cancel", ImVec2(100, 0)))
+            {
+                m_NewScenePopupOpen = false;
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
+    }
+
     void RBGUIFileMenu::DrawOpenSceneBrowser()
     {
         if (!m_OpenSceneBrowser)
@@ -107,6 +150,7 @@ namespace RottenBamboo
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
+        DrawPopupInputSceneName();
     }
     
     void RBGUIFileMenu::RenderFileToolbar(VkCommandBuffer& commandBuffer)
@@ -120,8 +164,12 @@ namespace RottenBamboo
     {
         if (ImGui::MenuItem("New Scene", "Ctrl+N"))
         {
-            RBLOG_INFO("RBGUIFileMenu::New Scene");
+             RBLOG_INFO("RBGUIFileMenu::New Scene");
+            m_NewSceneFileName.clear();
+            m_NewSceneFileNameBuf[0] = '\0';
+            m_NewScenePopupOpen = true;
         }
+
         if (ImGui::MenuItem("Open Scene...", "Ctrl+O"))
         {
             RBLOG_INFO("RBGUIFileMenu::Open Scene");
@@ -134,7 +182,9 @@ namespace RottenBamboo
             RBScene* scene = RBApplication::GetScene();
             if (scene != nullptr)
             {
-                scene->Save(sceneFilePath + defaultSceneName, scene->GetData(), scene->GetRoot());
+                std::string sceneName = scene->GetRoot()->GetName();
+                scene->GetData().name = sceneName;
+                scene->Save(sceneFilePath + sceneName, scene->GetData(), scene->GetRoot());
             }
         }
         ImGui::Separator();

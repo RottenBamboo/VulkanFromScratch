@@ -461,7 +461,7 @@ namespace RottenBamboo {
 
     void RBApplication::InitializeScene()
     {
-        scene.SetRoot(std::make_unique<RBSceneNode>("Root", nullptr, uuids::uuid()));
+        scene.SetRoot(std::make_unique<RBSceneNode>("untitled", nullptr, uuids::uuid()));
         ptr_scene = &scene;
         RBSceneNode* root = ptr_scene->GetRoot();
         for(int i = 0; i < model_paths.size(); ++i)

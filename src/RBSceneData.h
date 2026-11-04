@@ -26,7 +26,7 @@ namespace RottenBamboo
         std::string modelName;
         std::string materialGUID;
         std::string materialName;
-        
+
         int childCount;
         std::vector<RBSceneNodeData> children;
         
@@ -34,7 +34,7 @@ namespace RottenBamboo
 
     struct RBSceneData : public RBData
     {
-        std::string name = "Scene";
+        std::string name = "Untitled";
         std::vector<RBSceneNodeData> nodes;
     };
 }

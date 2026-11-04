@@ -25,7 +25,7 @@ namespace RottenBamboo
         if (targetPath.empty())
         {
             RBLOG_INFO("RBScene::Load() loadPath : " + loadPath);
-            m_Root = std::make_unique<RBSceneNode>("Root", nullptr, uuids::uuid());
+            m_Root = std::make_unique<RBSceneNode>("untitled", nullptr, uuids::uuid());
             return;
         }
 
@@ -36,7 +36,7 @@ namespace RottenBamboo
         if (!std::filesystem::exists(filePath))
         {
             RBLOG_INFO("RBScene::Load() scene file does not exist, create empty root : " + filePath.string());
-            m_Root = std::make_unique<RBSceneNode>("Root", nullptr, uuids::uuid());
+            m_Root = std::make_unique<RBSceneNode>("untitled", nullptr, uuids::uuid());
             return;
         }
 
@@ -44,7 +44,7 @@ namespace RottenBamboo
         if (!file.is_open())
         {
             RBLOG_INFO("RBScene::Load() cannot open file : " + filePath.string());
-            m_Root = std::make_unique<RBSceneNode>("Root", nullptr, uuids::uuid());
+            m_Root = std::make_unique<RBSceneNode>("untitled", nullptr, uuids::uuid());
             return;
         }
 
@@ -52,7 +52,7 @@ namespace RottenBamboo
         buffer << file.rdbuf();
         const std::string sceneText = buffer.str();
 
-        m_Root = std::make_unique<RBSceneNode>("Root", nullptr, uuids::uuid());
+        m_Root = std::make_unique<RBSceneNode>("untitled", nullptr, uuids::uuid());
         data = RBSceneData{};
 
         // parse jason file
@@ -68,8 +68,8 @@ namespace RottenBamboo
         }
 
         // scene name
-        data.name = j.value("SceneName", std::string("Scene"));
-
+        data.name = j.value("SceneName", std::string());
+        m_Root->SetName(data.name);
         // node data
         if (!j.contains("nodes") || !j["nodes"].is_array())
         {

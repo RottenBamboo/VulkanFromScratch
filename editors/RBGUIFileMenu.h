@@ -28,8 +28,13 @@ namespace RottenBamboo
         bool m_ShouldClose = false;
         bool m_OpenSceneBrowser = false;
         std::vector<std::string> m_SceneFiles;
+        
+        bool m_NewScenePopupOpen = false;
+        std::string m_NewSceneFileName;
+        char m_NewSceneFileNameBuf[128] = "";
 
         void RefreshSceneFiles();
         void DrawOpenSceneBrowser();
+        void DrawPopupInputSceneName();
     };
 }
