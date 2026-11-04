@@ -29,6 +29,8 @@ namespace RottenBamboo
 
         void CreateModel(std::shared_ptr<RBMaterial> mat, const std::string& modelPath, const std::string& name = "defaultPrimitive", RBSceneNode* parentNode = nullptr);
 
+        void DeletePrimitive(RBSceneNode* node);
+
         RBSceneNode* GetSelectedNode();
         RBSceneNode* SetSelectedNode(RBSceneNode* node);
 
@@ -37,12 +39,14 @@ namespace RottenBamboo
             CLICK_FROM_HIERARCHY,
             CLICK_FROM_NODE
         };
+        
         private:
         void OnNodeDestroyed(RBSceneNode* node);
         void RenderMenu(VkCommandBuffer& commandBuffer, RBSceneNode* parentNode = nullptr);  
         void PopupMenu(VkCommandBuffer& commandBuffer, ClickFrom clickFrom, RBSceneNode* parentNode = nullptr);  
         void RenderScene(VkCommandBuffer& commandBuffer);  
         RBSceneNode* m_SelectedNode = nullptr;
+        RBSceneNode* m_PendingDeleteNode = nullptr;
         RBDevice& rbDevice;
         RBCommandBuffer& rbCommandBuffer;
     };

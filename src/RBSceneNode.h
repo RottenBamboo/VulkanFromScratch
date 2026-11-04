@@ -27,6 +27,10 @@ namespace RottenBamboo
 
         RBSceneNode* AddChild(std::unique_ptr<RBSceneNode> child);
 
+        bool RemoveChild(RBSceneNode* child);
+
+        bool Release();
+
         RBSceneNode* CreateChild(const std::string& name = "Node")
         {
             return AddChild(std::make_unique<RBSceneNode>(name));

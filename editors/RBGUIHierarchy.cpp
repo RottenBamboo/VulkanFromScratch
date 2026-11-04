@@ -90,6 +90,14 @@ namespace RottenBamboo
             node->SetDescriptorOffset(mat->GetDescriptorOffset());
         }
     }
+    void RBGUIHierarchy::DeletePrimitive(RBSceneNode* node)
+    {
+        if (node && node != RBApplication::GetScene()->GetRoot())
+        {
+            node->Release();
+        }
+    }
+
     void RBGUIHierarchy::CreatePrimitive(SimplePrimitiveData* data, std::shared_ptr<RBMaterial> mat, const std::string& modelPath, const std::string& name, RBSceneNode* parentNode)
     {
         auto mesh = RBApplication::GetSimplePrimitive()->CreateSimplePrimitive(data);
@@ -299,6 +307,11 @@ namespace RottenBamboo
             
             ImGui::EndMenu();
         }
+        if (ImGui::MenuItem("Delete"))
+        {
+            DeletePrimitive(node);
+        }
+            
         ImGui::EndPopup();
     }
 
