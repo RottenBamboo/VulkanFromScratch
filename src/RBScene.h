@@ -22,6 +22,8 @@ namespace RottenBamboo
         RBSceneNode* GetRoot();
 
         void Load(const std::string& loadPath) override;
+        
+        inline void SetDefault(bool isDefault) { m_isDefault = isDefault; }
 
         bool Save(const std::string& savePath, RBSceneData& sceneData, const RBSceneNode* root);
 
@@ -32,5 +34,6 @@ namespace RottenBamboo
         std::unique_ptr<RBSceneNode> m_Root;
         RBSceneData data;
         RBMetaFile metaFile;
+        bool m_isDefault;
     };
 }

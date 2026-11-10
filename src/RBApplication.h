@@ -89,6 +89,8 @@ namespace RottenBamboo
 
         void InitializeScene();
 
+        void LoadDefaultScene();
+
         void InitializeMatrix();
 
         void UpdateSceneTransform(RBSceneNode* root, vector3 pos, vector3 scale, quat);
@@ -147,6 +149,7 @@ namespace RottenBamboo
 
         std::vector<RBDescriptors*> m_pDescriptorsGBuffersVec;
         std::vector<RBMaterial> appendMaterialsVec;
+        std::vector<RBMaterial> initializedMaterialsVec;
 
         static std::vector<ImageResourcePtr> oldImageResourceVec;
         

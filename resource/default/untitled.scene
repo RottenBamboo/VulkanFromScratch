@@ -1,0 +1,15 @@
+{
+    "SceneName": "untitled",
+    "nodes": [
+        {
+            "name": "models/mach.gltf0",
+            "position": [0.000000, 0.000000, 0.000000],
+            "rotation": [0.000000, 0.000000, 0.000000],
+            "scale": [1.000000, 1.000000, 1.000000],
+            "modelGUID": "df18278c-8052-4dae-86b1-5c6d2e6fbc99",
+            "materialGUID": "8769ea7a-1fed-4200-876e-e58255eb0f33",
+            "descriptorOffset": "0",
+            "nodes": []
+        }
+    ]
+}

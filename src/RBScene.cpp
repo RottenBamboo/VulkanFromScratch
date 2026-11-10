@@ -30,7 +30,8 @@ namespace RottenBamboo
         }
 
         path = targetPath;
-        std::filesystem::path filePath(GET_RESOURCE_ROOT_DIR + sceneFilePath + targetPath);
+        std::string folderPath = m_isDefault ? defaultFilePath : sceneFilePath;
+        std::filesystem::path filePath(GET_RESOURCE_ROOT_DIR + folderPath + targetPath);
         RBLOG_INFO("RBScene::Load() loadPath : " + filePath.string());
 
         if (!std::filesystem::exists(filePath))

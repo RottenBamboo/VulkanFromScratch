@@ -129,7 +129,8 @@ namespace RottenBamboo {
         
         InitializeMaterial();
 
-        InitializeScene();
+        //InitializeScene();
+        LoadDefaultScene();
 
         updatedDescriptors.clear();
         updatedDescriptors.reserve(0);
@@ -158,8 +159,8 @@ namespace RottenBamboo {
            std::filesystem::current_path().string().c_str());
         RBMaterial materialLoadItem{"", device, commandBuffer};
         auto count = std::distance(fs::directory_iterator(GET_RESOURCE_ROOT_DIR + materialsFilePath), fs::directory_iterator{});
-        appendMaterialsVec.clear();
-        appendMaterialsVec.reserve(count);
+        initializedMaterialsVec.clear();
+        initializedMaterialsVec.reserve(count);
         int offset = 0;
         for (const auto& entry : fs::directory_iterator(GET_RESOURCE_ROOT_DIR + materialsFilePath))
         {
@@ -170,7 +171,7 @@ namespace RottenBamboo {
                 materialLoadItem.Load(relativePath);
                 materialLoadItem.SetDescriptorOffset(offset);
                 offset++;
-                appendMaterialsVec.push_back(materialLoadItem);
+                initializedMaterialsVec.push_back(materialLoadItem);
             }
         }
 
@@ -213,6 +214,7 @@ namespace RottenBamboo {
     RBApplication::~RBApplication() 
     {
         GetAssetRegistry()->SaveCache(cachePath);
+        initializedMaterialsVec.clear();
         appendMaterialsVec.clear();
         ptr_assetsRegistry = nullptr;
 
@@ -408,13 +410,13 @@ namespace RottenBamboo {
     {
 
         RBSwapChain::SetSwapChainExtent(device, windows);
-        m_descriptorsGBuffersVec.reserve(appendMaterialsVec.size());
+        m_descriptorsGBuffersVec.reserve(initializedMaterialsVec.size());
         //GBuffer pass descriptors
         uuids::uuid guidVertex;
         uuids::uuid guidFragment;
-        CreateNewDescriptors(appendMaterialsVec, guidVertex, guidFragment);
+        CreateNewDescriptors(initializedMaterialsVec, guidVertex, guidFragment);
 
-        appendMaterialsVec.clear();
+        //initializedMaterialsVec.clear();
         
         descriptorsGBuffer.InitializeDescriptors(resourceShader.GetReflection(guidVertex), resourceShader.GetReflection(guidFragment));
         //after GBuffer pass descriptors
@@ -459,6 +461,15 @@ namespace RottenBamboo {
             RBLOG_INFO("RBApplication::InitializeGUI()");
     };
 
+    void RBApplication::LoadDefaultScene()
+    {
+        RBScene newScene(defaultScenePath);
+        newScene.SetDefault(true);
+        newScene.Load(defaultScenePath);
+        newScene.SetDefault(false);
+        RBApplication::instance->scene = std::move(newScene);
+        RBApplication::ptr_scene = &RBApplication::instance->scene;
+    }
     void RBApplication::InitializeScene()
     {
         scene.SetRoot(std::make_unique<RBSceneNode>("untitled", nullptr, uuids::uuid()));

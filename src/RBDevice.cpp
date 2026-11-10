@@ -36,7 +36,8 @@ namespace RottenBamboo
             VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
             VkDebugUtilsMessageTypeFlagsEXT messageType,
             const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-            void *pUserData) {
+            void *pUserData) 
+    {
         if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) 
         {
             const char* message = (pCallbackData != nullptr && pCallbackData->pMessage != nullptr)
@@ -356,19 +357,19 @@ namespace RottenBamboo
     std::vector<const char *> RBDevice::getRequiredExtensions() 
     {
 #ifdef __ANDROID__
-        // Android: 返回基本的扩展
+        // Android: return base extensions
         std::vector<const char*> extensions;
         extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
         extensions.push_back(VK_KHR_ANDROID_SURFACE_EXTENSION_NAME);
     
-        // 可选：添加调试扩展
+        // validation
         if (enableValidationLayers) {
             extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
         }
     
         return extensions;
 #else
-        // 桌面端原有代码
+        // pc platform code
         uint32_t glfwExtensionCount = 0;
         const char* const* glfwExtensions;
         glfwExtensions = SDL_Vulkan_GetInstanceExtensions(&glfwExtensionCount);

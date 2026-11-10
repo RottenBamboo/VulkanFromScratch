@@ -371,13 +371,15 @@ namespace RottenBamboo{
         fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
         fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-        for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+        for(size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) 
+        {
             if (vkCreateSemaphore(refDevice.device, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS
                 || vkCreateSemaphore(refDevice.device, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS
-                || vkCreateFence(refDevice.device, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
-                RBLOG_FATAL("failed to create synchronization object for a frame!");
-                throw ::std::runtime_error("failed to create synchronization object for a frame!");
-            }
+                || vkCreateFence(refDevice.device, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) 
+                {
+                    RBLOG_FATAL("failed to create synchronization object for a frame!");
+                    throw ::std::runtime_error("failed to create synchronization object for a frame!");
+                }
         }
         RBLOG_INFO("RBSwapChain::createSyncObjects()");
     }
